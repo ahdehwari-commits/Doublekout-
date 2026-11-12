@@ -37,4 +37,18 @@ assert.ok(auctionUi.includes("auction.current===0"),'auction must wait for the h
 assert.ok(auctionUi.includes("if(auction.current===0){renderAuction();return;}"),'AI seats must act automatically and not require human pass clicks');
 assert.ok(auctionUi.includes("rank=n===6?1:n===7?2:n===8?3:4"),'bid ranks must progress 6, 7, 8, Baun');
 
-console.log('PASS: four/six-player contracts, auction rotation, hand display, 6/7/8/Baun bidding, controls and rank adapter');
+
+for(const suit of ['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs']){
+ assert.ok(html.includes('value="'+suit+'"'),'four-player Hokm must offer '+suit);
+ assert.ok(sixUi.includes('value="'+suit+'"'),'six-player Hokm must offer '+suit);
+}
+assert.ok(html.includes("G.trump=({'hokm_spades':'♠','hokm_hearts':'♥','hokm_diamonds':'♦','hokm_clubs':'♣'})[selected]"));
+assert.ok(sixUi.includes("else if(bid.contract==='hokm_hearts')trumpSuit='H'"));
+assert.ok(sixUi.includes("else if(bid.contract==='hokm_diamonds')trumpSuit='D'"));
+assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\\n if(!game||!game.auctionBid)"));
+assert.ok(sixUi.includes("setScreen('game');renderGame();playAITurn();"));
+assert.ok(sixUi.includes("const choices=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras','partner_middle']"));
+assert.ok(html.includes("$('trickCount').style.display=selected==='partner_middle'?'none':''"));
+assert.ok(sixUi.includes("game.selectedContract==='partner_middle'?'none':''"));
+console.log('PASS: four/six-player all four Hokm suits, partner-middle counter, auction-to-play handoff, auction rotation and rank adapter');
+
