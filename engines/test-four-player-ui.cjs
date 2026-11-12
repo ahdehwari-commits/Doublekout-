@@ -45,8 +45,11 @@ for(const suit of ['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs']){
 assert.ok(html.includes("G.trump=({'hokm_spades':'♠','hokm_hearts':'♥','hokm_diamonds':'♦','hokm_clubs':'♣'})[selected]"));
 assert.ok(sixUi.includes("else if(bid.contract==='hokm_hearts')trumpSuit='H'"));
 assert.ok(sixUi.includes("else if(bid.contract==='hokm_diamonds')trumpSuit='D'"));
-assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\n if(!game||!game.auctionBid||!Number.isInteger(game.auctionWinner)"));
-assert.ok(sixUi.includes("setScreen('game');renderGame();\n if(game.turn!==0)playAITurn();"));
+assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\n try{"));
+assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:trumpSuit||null})"));
+assert.ok(sixUi.includes("setScreen('game');renderGame();\n  if(winner!==0)playAITurn();"));
+assert.ok(sixUi.includes("Kuwaiti AI fallback card selected"),'AI turn must have a legal-card fallback after auction');
+assert.ok(html.includes("if(matchNo===1&&!noTrump){\n   selected='hokm_spades';"),'first four-player game must force spades as trump');
 assert.ok(sixUi.includes("const choices=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras']"));
 assert.ok(!sixUi.includes('value="partner_middle"'),'six-player partner-middle option must be removed');
 assert.ok(!sixUi.includes("'partner_middle'") ,'six-player partner-middle contract must not be selectable by AI');
