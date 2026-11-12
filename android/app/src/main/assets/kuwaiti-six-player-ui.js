@@ -27,13 +27,12 @@ function addStyle(){
  .k-seat[data-p="0"]{grid-column:2;grid-row:3}.k-seat[data-p="1"]{grid-column:3;grid-row:3}.k-seat[data-p="5"]{grid-column:1;grid-row:3}
  .k-card{width:38px;height:54px;border-radius:7px;background:#fffaf0;color:#17251f;border:1px solid #d8d0bd;box-shadow:0 4px 8px #00140f99;display:flex;flex-direction:column;justify-content:space-between;padding:3px;font:700 13px Georgia,serif;flex-shrink:0}
  .k-card.red{color:#c83d43}.k-card .ksuit{font-size:18px;align-self:center}
- .k-card.joker{font:700 8px Georgia,serif;background:radial-gradient(circle at 50% 35%,#fff8e7,#d8c49b 72%,#7c1e28);justify-content:center;text-align:center;overflow:hidden;position:relative;border:2px solid #e7c879;box-shadow:inset 0 0 0 2px #fff7,0 4px 9px #0008;gap:3px}
- .k-card.joker:before{content:'✦  DOUBLE KOUT  ✦';position:absolute;top:5px;left:0;right:0;font:700 5px Georgia,serif;letter-spacing:.5px;opacity:.9}
- .k-card.joker .devil-mark{font-size:25px;line-height:1.05;display:block;text-shadow:0 2px 3px #0008,0 0 7px currentColor}
- .k-card.joker.red{background:radial-gradient(circle at 50% 35%,#ffede4,#c9273b 72%,#480812);color:#fff;border-color:#ffb0a2}
- .k-card.joker.black{background:radial-gradient(circle at 50% 35%,#e8e1d4,#292932 72%,#050509);color:#fff;border-color:#d6c7a0}
- .k-card.joker .joker-title{font:italic 900 8px Georgia,serif;letter-spacing:1px;text-shadow:0 2px 3px #000;display:block}
- .k-card.joker .trident{font-size:14px;position:absolute;bottom:2px;right:3px;color:#f6d47f;text-shadow:0 1px 2px #000}\n .k-back{position:relative;background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px)!important;border:2px solid #f4e7c4!important}\n .k-back:after{content:'Abdolhamid\\A Dehvari';white-space:pre;position:absolute;left:15%;top:20%;width:70%;height:60%;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 700 2.8px/1.1 Georgia,'Times New Roman',serif;letter-spacing:0;color:#ffe8ae;text-shadow:0 1px 2px #071b32,0 0 3px #f2d58a;transform:rotate(-19deg) scale(.68);padding:0;border-radius:3px;background:transparent;overflow:hidden}
+ .k-card.joker{font:700 6px Georgia,serif;display:flex;flex-direction:column;justify-content:space-between;align-items:center;gap:0;padding:2px 1px;overflow:hidden;position:relative;background:#16060b;border:2px solid #e8bd6b;box-shadow:inset 0 0 0 1px #fff5,0 4px 9px #0009}
+ .k-card.joker.red{background:linear-gradient(145deg,#ff4a4f,#6f0612 70%,#21030a);color:#fff;border-color:#ffb36f}
+ .k-card.joker.black{background:linear-gradient(145deg,#aeb5c5,#222633 58%,#070912);color:#fff;border-color:#e2d4b6}
+ .k-card.joker .joker-title{font:900 6px Georgia,serif;letter-spacing:.35px;text-shadow:0 1px 2px #000;display:block;line-height:1.1;white-space:nowrap}
+ .k-card.joker .joker-art{display:block;width:100%;height:39px;filter:drop-shadow(0 1px 2px #0009)}
+ .k-card.joker .joker-caption{font:700 4px Georgia,serif;letter-spacing:.45px;line-height:1;color:#f7dfad;text-shadow:0 1px 2px #000;white-space:nowrap}\n .k-back{position:relative;background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px)!important;border:2px solid #f4e7c4!important}\n .k-back:after{content:'Abdolhamid\\A Dehvari';white-space:pre;position:absolute;left:15%;top:20%;width:70%;height:60%;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 700 2.8px/1.1 Georgia,'Times New Roman',serif;letter-spacing:0;color:#ffe8ae;text-shadow:0 1px 2px #071b32,0 0 3px #f2d58a;transform:rotate(-19deg) scale(.68);padding:0;border-radius:3px;background:transparent;overflow:hidden}
  .k-hand{display:flex;justify-content:center;gap:2px;overflow-x:auto;padding:10px 0 14px;direction:ltr}
  .k-hand button,.k-auction-card{padding:0;background:transparent;border:0;min-width:0;flex:0 0 auto}
  .k-hand button:disabled{opacity:.38}
@@ -54,7 +53,12 @@ function addStyle(){
 }
 function cardNode(c,small=false){
  const d=document.createElement('div');
- if(c.kind==='joker'){const red=c.color==='red';d.className='k-card joker '+(red?'red':'black');d.innerHTML='<span class="devil-mark">😈</span><span class="joker-title">'+(red?'RED JOKER':'BLACK JOKER')+'</span><span class="trident">🔱</span>';return d;}
+ if(c.kind==='joker'){
+  const red=c.color==='red',tone=red?'#ff303d':'#aeb7c8',deep=red?'#58000b':'#080b18',label=red?'RED JOKER':'BLACK JOKER';
+  d.className='k-card joker '+(red?'red':'black');
+  d.innerHTML='<span class="joker-title">'+label+'</span><svg class="joker-art" viewBox="0 0 100 112" role="img" aria-label="'+label+'"><defs><linearGradient id="jbg'+(red?'r':'b')+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+tone+'"/><stop offset="1" stop-color="'+deep+'"/></linearGradient><radialGradient id="jface'+(red?'r':'b')+'"><stop stop-color="'+(red?'#ff8a78':'#b8bdcc')+'"/><stop offset="1" stop-color="'+(red?'#9d0719':'#242938')+'"/></radialGradient></defs><path d="M12 105 L17 20 Q50 -2 83 20 L88 105Z" fill="url(#jbg'+(red?'r':'b')+')" stroke="'+tone+'" stroke-width="2"/><path d="M25 34 Q8 5 7 4 Q30 7 39 26 M75 34 Q92 5 93 4 Q70 7 61 26" fill="'+tone+'" stroke="'+deep+'" stroke-width="3"/><path d="M24 48 Q50 26 76 48 L70 78 Q50 96 30 78Z" fill="url(#jface'+(red?'r':'b')+')" stroke="'+tone+'" stroke-width="2"/><path d="M30 52 L45 57 L36 64Z M70 52 L55 57 L64 64Z" fill="#fff1c9"/><path d="M34 75 Q50 91 66 75 Q50 82 34 75" fill="#21050a" stroke="#fff1c9" stroke-width="2"/><path d="M78 30 L78 91 M70 38 L86 38 M78 30 L70 23 M78 30 L86 23" stroke="#f4d78a" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M72 91 L84 91" stroke="#f4d78a" stroke-width="3" stroke-linecap="round"/></svg><span class="joker-caption">DOUBLE KOUT</span>';
+  return d;
+ }
  d.className='k-card '+(['H','D'].includes(c.suit)?'red':'');
  d.innerHTML='<span>'+c.rank+'</span><span class="ksuit">'+suitGlyph[c.suit]+'</span><span style="align-self:flex-end;font-size:9px">'+c.rank+'</span>';
  return d;
@@ -118,7 +122,7 @@ function startAuction(){
  for(let p=0;p<6;p++){$('kPlayed'+p).innerHTML='';$('kCount'+p).textContent='۹ کارت';}
  const firstAuctionPlayer=firstGame?null:Number($('kFirstAuction').value);
  // Do not allow a prior deal's contract or trump display to leak into the new auction.
- $('kTrumpDisplay').textContent='در انتظار مزایده';
+ $('kTrumpDisplay').textContent='در انتظار مزایده';$('kContract').value='hokm_spades';
  $('kStatus').textContent='کارت‌ها پخش شدند؛ قرارداد این بازی هنوز تعیین نشده است.';
  game=K.newGame({firstGame,previousAuctionWinner,firstAuctionPlayer});
  game.contract=null;game.selectedContract=null;game.trumpSuit=null;game.trumpAnnounced=false;game.hiddenTrump=false;game.isMalzoom=false;
@@ -179,9 +183,12 @@ function submitBid(bid){
  if(bid.type==='pass'){
   auction.passes++;auction.bids.push({player:p,label:'پاس'});
  }else{
+  const allowedContracts=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras'];
+  if(bid.type!=='malzoom'&&!allowedContracts.includes(bid.contract)){setStatus('نوع قرارداد پیشنهادشده نامعتبر است؛ مزایده ادامه پیدا نکرد.');return;}
   if(bid.rank<=auction.highestRank)return;
-  auction.highest=bid;auction.highestRank=bid.rank;auction.highestPlayer=p;auction.passes=0;auction.lastBidder=p;
-  auction.bids.push({player:p,label:bid.label,contract:bid.contract});
+  const committedBid={...bid,contract:bid.type==='malzoom'?'malzoom':bid.contract};
+  auction.highest=committedBid;auction.highestRank=committedBid.rank;auction.highestPlayer=p;auction.passes=0;auction.lastBidder=p;
+  auction.bids.push({player:p,label:committedBid.label,contract:committedBid.contract});
  }
  if(auction.passes>=5&&auction.highest){finishAuction();return;}
  if(auction.passes>=5&&!auction.highest){
@@ -227,7 +234,7 @@ function startActualGame(trumpSuit,hidden){
   if(!Array.isArray(game.hands)||game.hands.length!==6||game.hands.some(h=>!Array.isArray(h)))throw new Error('کارت‌های شش بازیکن آماده نیستند.');
   const winner=game.auctionWinner;
   // The winning bid is the sole source of truth for the contract in this deal.
-  const bidContract=game.isMalzoom?'hokm':game.auctionBid.contract;
+  const bidContract=game.isMalzoom?'hokm':String(game.auctionBid.contract||'');
   const noTrumpContracts=['naras','tak_naras','saras'];
   const suitByContract={hokm_spades:'S',hokm_hearts:'H',hokm_diamonds:'D',hokm_clubs:'C'};
   if(!game.isMalzoom&&!noTrumpContracts.includes(bidContract)&&!Object.prototype.hasOwnProperty.call(suitByContract,bidContract))
@@ -241,7 +248,7 @@ function startActualGame(trumpSuit,hidden){
   game.hiddenTrump=!!hidden;game.trumpSuit=resolvedTrump;game.target=game.auctionBid.target||null;
   if(game.turn!==winner||!Array.isArray(game.trick)||game.trick.length!==0)throw new Error('انتقال نوبت از مزایده به بازی کامل نشد.');
   $('kMalzoomSetup').classList.add('hidden');$('kAuction').classList.add('hidden');
-  $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':('حکم اعلام‌شده: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump])):(noTrumpContracts.includes(bidContract)?'بدون حکم · '+contractName[bidContract]:'حکم: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]);
+  $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':('حکم اعلام‌شده: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump])):(noTrumpContracts.includes(bidContract)?'بدون حکم · '+contractName[bidContract]:'حکم این بازی: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]);
   $('kTrickCards').style.display='';
   $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(winner===0?' · کارت‌های مجاز شما فعال‌اند.':' · هوش مصنوعی در حال بازی است.');
   $('kResult').classList.add('hidden');setScreen('game');renderGame();
