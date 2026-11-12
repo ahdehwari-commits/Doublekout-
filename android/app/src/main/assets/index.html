@@ -8,8 +8,25 @@
 .mode-card.pending{opacity:.78;border-style:dashed}
 .card.back{position:relative}
 .card.back:after{content:"Abdolhamid Dehvari";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font:700 6px Arial,sans-serif;letter-spacing:.15px;color:#f5dfaa;text-shadow:0 1px 2px #000;transform:rotate(-90deg);white-space:nowrap}
+/* 3D table and animated cards */
+#game{perspective:1500px;transform-style:preserve-3d}
+.table{transform:rotateX(5deg) translateZ(0);transform-style:preserve-3d;box-shadow:inset 0 0 0 2px #f8df9a55,inset 0 -24px 55px #0008,0 25px 42px #000b}
+.seat{transform:translateZ(18px);box-shadow:0 12px 18px #0008,inset 0 1px 0 #ffffff22;background:linear-gradient(145deg,#174d3d,#061c16)}
+.center{transform:translateZ(28px)}
+.card{transform-style:preserve-3d;backface-visibility:hidden;border:1px solid #fff9;box-shadow:0 9px 0 #c8bfa9,0 13px 22px #0009, inset 0 1px 0 white;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s}
+.card.red{box-shadow:0 9px 0 #d9a9a9,0 13px 22px #0009,inset 0 1px 0 white}
+.hand button:not(:disabled) .card{transform:translateY(-7px) rotateX(5deg) rotateY(-3deg) translateZ(12px)}
+.hand button:not(:disabled):hover .card{transform:translateY(-17px) rotateX(8deg) rotateY(-5deg) translateZ(28px) scale(1.06);box-shadow:0 12px 0 #c8bfa9,0 23px 28px #000b}
+.card.playing{animation:cardFly .42s cubic-bezier(.18,.8,.25,1) both}
+@keyframes cardFly{0%{opacity:.45;transform:translateY(34px) rotateY(65deg) rotateZ(9deg) scale(.78)}70%{opacity:1;transform:translateY(-7px) rotateY(-8deg) rotateZ(-2deg) scale(1.08)}100%{transform:translateY(0) rotateY(0) rotateZ(0) scale(1)}}
+.card.dealing{animation:dealFlip .55s ease-out both}
+@keyframes dealFlip{0%{opacity:0;transform:translateY(-45px) rotateY(180deg) rotateZ(14deg) scale(.7)}100%{opacity:1;transform:translateY(0) rotateY(0) rotateZ(0) scale(1)}}
+.seat.active{transform:translateZ(30px) scale(1.025);box-shadow:0 0 0 2px #ffe19a,0 0 24px #f4d37b77}
+#trickMsg{color:#ffe7a5;text-shadow:0 2px 8px #000}
+#soundToggle{font-size:12px;padding:8px 10px}
+@media(max-width:520px){.card{box-shadow:0 6px 0 #c8bfa9,0 9px 14px #0009,inset 0 1px 0 white}.table{transform:rotateX(2deg)}}
 @media(max-width:520px){.wrap{padding:8px}.table{min-height:300px;gap:5px}.card{width:54px;height:77px}.center{min-height:140px}.panel{padding:10px}.brand{font-size:20px}.hand{gap:3px}.hand .card{width:43px;height:65px;font-size:15px}.hand .card .suit{font-size:20px}}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه آزمایشی ۰.۵ · چهار نفره · توالی انفرادی</span></header>
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه آزمایشی ۰.۶ · میز سه‌بعدی و صدای بازی</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
 <button class="mode-card" id="modeDouble"><strong>♠ میز چهار نفره</strong><span>دابل کوت توالی · نسخه قابل‌بازی</span></button>
@@ -31,6 +48,22 @@ const suits=['♠','♥','♦','♣'],ranks=['2','3','4','5','6','7','8','9','10
 let G=null, matchNo=1, previousWinner=null, activeMode='double-kout', KuwaitiPreviewGame=null, challengeStats={winA:0,loseA:0,winB:0,loseB:0};
 const $=id=>document.getElementById(id), fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]), team=p=>p%2===0?'A':'B';
 const names=['شما · جنوب','شرق · حریف','هم‌تیمی · شمال','غرب · حریف'];
+// Audio and Persian player voice. Audio starts after the first user tap (mobile browser policy).
+let soundEnabled=true,audioCtx=null,lastVoiceAt=0;
+function audioReady(){if(!soundEnabled)return null;try{const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return null;audioCtx=audioCtx||new Ctx();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx}catch(e){return null}}
+function tone(freq=520,duration=.075,wave='triangle',volume=.045,delay=0){const ctx=audioReady();if(!ctx)return;const osc=ctx.createOscillator(),gain=ctx.createGain(),t=ctx.currentTime+delay;osc.type=wave;osc.frequency.setValueAtTime(freq,t);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.008);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(ctx.destination);osc.start(t);osc.stop(t+duration+.02)}
+function playCardSound(){tone(720,.045,'triangle',.035);tone(430,.065,'sine',.025,.035)}
+function shuffleSound(){[0,1,2,3,4,5].forEach((n)=>tone(260+n*43,.055,'triangle',.018,n*.035))}
+const voiceLines={
+ play:['بگیرش!','تک منو می‌بری؟ بیا!','حریف می‌طلبم!','الان حسابتون می‌رسم!','این دست مال منه!','ببین چی می‌ندازم!','هنوز بازی تموم نشده!'],
+ win:['گرفتمش!','اینم از این دست!','دیدی گفتم می‌برم؟'],
+ lose:['این یکی از دستم در رفت!','باشه، دست بعدی!']
+};
+function speakPlayer(kind='play',player=1){
+ if(!soundEnabled||!('speechSynthesis'in window)||Date.now()-lastVoiceAt<1700)return;
+ const pool=voiceLines[kind]||voiceLines.play,line=pool[Math.floor(Math.random()*pool.length)];
+ try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(line);u.lang='fa-IR';u.rate=.94;u.pitch=player===1?1.02:.88;u.volume=.92;window.speechSynthesis.speak(u);lastVoiceAt=Date.now()}catch(e){}
+}
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function bestTrump(hand){let counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));return suits.sort((a,b)=>counts[b]-counts[a])[0]}
 function dealGame(trump){
@@ -78,10 +111,10 @@ function beginNormalOrChallenge(challengeTeam){
 function legalCards(p){let h=G.hands[p];if(activeMode==='standard-hokm'){const lead=G.plays.length?G.plays[0].card.suit:null;return window.StandardHokmEngine.legalCards(h,lead)}if(!G.plays.length)return h;let lead=G.plays[0].card.s;let follow=h.filter(c=>c.s===lead);return follow.length?follow:h}
 function beats(a,b,lead){if(activeMode==='standard-hokm'){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.beats({suit:code[a.s],rank:a.r},{suit:code[b.s],rank:b.r},code[lead],G.trumpCode)}let ta=a.s===G.trump,tb=b.s===G.trump;if(ta!==tb)return ta;if(a.s===b.s)return rankVal[a.r]>rankVal[b.r];if(a.s===lead)return true;return false}
 function winner(plays){if(activeMode==='standard-hokm'){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.resolveTrick(plays.map(p=>({player:p.player,card:{suit:code[p.card.s],rank:p.card.r}})),G.trumpCode)}let lead=plays[0].card.s,best=plays[0];for(let p of plays.slice(1))if(beats(p.card,best.card,lead))best=p;return best.player}
-function play(p,card){if(G.done||G.waitingChallenge||G.waitingTrump||p!==G.turn)return;let allowed=legalCards(p);if(!allowed.some(c=>c.id===card.id))return;G.hands[p]=G.hands[p].filter(c=>c.id!==card.id);G.plays.push({player:p,card});G.turn=(p+1)%4;render();if(G.plays.length===4)setTimeout(resolveTrick,450);else runAI()}
+function play(p,card){if(G.done||G.waitingChallenge||G.waitingTrump||p!==G.turn)return;let allowed=legalCards(p);if(!allowed.some(c=>c.id===card.id))return;G.hands[p]=G.hands[p].filter(c=>c.id!==card.id);G.plays.push({player:p,card});playCardSound();if(p!==0&&Math.random()<.58)speakPlayer('play',p);G.turn=(p+1)%4;render();if(G.plays.length===4)setTimeout(resolveTrick,450);else runAI()}
 function resolveTrick(){
  let w=winner(G.plays),n=G.trickNo;G.trickWinners.push(w);
- let msg=`دست ${fa(n)} را ${names[w]} برد.`;
+ let msg=`دست ${fa(n)} را ${names[w]} برد.`;tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);if(w!==0)speakPlayer('win',w);
  G.history.push(msg);
  G.plays=[];G.trickNo++;G.leader=w;G.turn=w;$('status').textContent=msg;render();
  if(G.challenge){
@@ -149,7 +182,7 @@ function aiChoose(p){
  return winners[0]||sorted[0];
 }
 function runAI(){if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;setTimeout(()=>{if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;let p=G.turn,c=aiChoose(p);play(p,c)},550)}
-function cardEl(c,small=false){let d=document.createElement('div');d.className='card '+(['♥','♦'].includes(c.s)?'red':'')+(small?' small':'');d.innerHTML=`<span>${c.r}</span><span class="suit">${c.s}</span><span style="align-self:flex-end;font-size:12px">${c.r}</span>`;return d}
+function cardEl(c,small=false){let d=document.createElement('div');d.className='card dealing '+(['♥','♦'].includes(c.s)?'red':'')+(small?' small':'');d.innerHTML=`<span>${c.r}</span><span class="suit">${c.s}</span><span style="align-self:flex-end;font-size:12px">${c.r}</span>`;return d}
 function render(){
  if(!G)return;
  $('scoreA').textContent=fa(G.scoreA);$('scoreB').textContent=fa(G.scoreB);$('trickNo').textContent=fa(Math.min(G.trickNo,13));$('trickCount').textContent=fa(G.plays.length)+' / ۴';
@@ -163,10 +196,11 @@ function render(){
  $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
  $('trickMsg').textContent=G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
 }
-$('modeDouble').onclick=()=>{activeMode='double-kout';$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
-$('modeHokm').onclick=()=>{activeMode='standard-hokm';$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');$('modeMessage').textContent='حکم معمولی چهار نفره با موتور مستقل فعال شد.';};
-$('modeKuwaiti').onclick=()=>{KuwaitiPreviewGame=window.KuwaitiSixPlayerEngine.newGame();$('modeMessage').textContent='موتور و پخش کارت شش‌نفره کوت کویتی بارگذاری شد؛ رابط کامل میز شش‌نفره و مزایده هنوز باید تکمیل شود.';};
-$('start').onclick=startGame;$('confirmTrump').onclick=confirmTrump;
+$('modeDouble').onclick=()=>{audioReady();activeMode='double-kout';$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
+$('modeHokm').onclick=()=>{audioReady();activeMode='standard-hokm';$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');$('modeMessage').textContent='حکم معمولی چهار نفره با موتور مستقل فعال شد.';};
+$('modeKuwaiti').onclick=()=>{audioReady();KuwaitiPreviewGame=window.KuwaitiSixPlayerEngine.newGame();$('modeMessage').textContent='موتور و پخش کارت شش‌نفره کوت کویتی بارگذاری شد؛ رابط کامل میز شش‌نفره و مزایده هنوز باید تکمیل شود.';};
+$('start').onclick=()=>{audioReady();shuffleSound();startGame()};$('confirmTrump').onclick=confirmTrump;
+$('soundToggle').onclick=()=>{soundEnabled=!soundEnabled;$('soundToggle').textContent=soundEnabled?'🔊 صدا روشن':'🔇 صدا خاموش';if(soundEnabled){audioReady();playCardSound()}else if('speechSynthesis'in window)window.speechSynthesis.cancel()};
 $('takeChallenge').onclick=()=>beginNormalOrChallenge('A');$('skipChallenge').onclick=()=>beginNormalOrChallenge(null);
 $('newGame').onclick=()=>{if(G&&!G.done)return;matchNo++;G=null;$('game').classList.add('hidden');$('setup').classList.remove('hidden');$('newGame').textContent='بازی جدید'};
 $('sortHand').onclick=()=>{if(!G)return;G.hands[0].sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);render()};
