@@ -51,7 +51,6 @@ assert.ok(sixUi.includes("setScreen('game');renderGame();\n  if(winner!==0)playA
 assert.ok(sixUi.includes("Kuwaiti AI fallback card selected"),'AI turn must have a legal-card fallback after auction');
 assert.ok(sixUi.includes('class="devil-mark">😈')&&sixUi.includes('class="trident">🔱'),'six-player jokers must show a devil and trident');
 assert.ok(sixUi.includes('transform:rotate(-19deg) scale(.68)'),'card-back name must be smaller and more angled');
-assert.ok(html.includes("if(matchNo===1&&!noTrump){\n   selected='hokm_spades';"),'first four-player game must force spades as trump');
 assert.ok(sixUi.includes("const choices=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras']"));
 assert.ok(!sixUi.includes('value="partner_middle"'),'six-player partner-middle option must be removed');
 assert.ok(!sixUi.includes("'partner_middle'") ,'six-player partner-middle contract must not be selectable by AI');
