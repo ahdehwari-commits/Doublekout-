@@ -490,7 +490,10 @@ function applyScore(success,won,bidderTeam,provided){
 function startNewMatch(){
  if(playedTricks>=matchLimit){firstGame=true;previousAuctionWinner=null;previousWinningTeam=null;points={A:0,B:0};playedTricks=0;resetSetup();return;}
  locked=false;
- $('kFirstAuction').value=String(previousWinningTeam==='B'?1:0);
+ const teamPlayers=previousWinningTeam==='B'?[1,3,5]:[0,2,4];
+ const firstPicker=$('kFirstAuction');
+ firstPicker.innerHTML=teamPlayers.map(p=>'<option value="'+p+'">'+playerNames[p]+'</option>').join('');
+ firstPicker.value=String(teamPlayers[0]);
  $('kNewGame').classList.add('hidden');$('kResult').classList.add('hidden');
  startAuction();
 }
