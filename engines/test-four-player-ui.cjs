@@ -61,3 +61,11 @@ assert.ok(html.includes("$('trickCountWrap').style.display=selected==='partner_m
 assert.ok(sixUi.includes("$('kTrickCards').style.display='';"),'six-player trick counter should remain visible');
 console.log('PASS: four/six-player all four Hokm suits, partner-middle counter, auction-to-play handoff, auction rotation and rank adapter');
 
+
+assert.ok(html.includes("if(matchNo===1){\n   selected='hokm_spades';"),'first game must lock all four-player contracts to spades');
+assert.ok(html.includes("hands[i%4].push({...deck[i],s:")&&html.includes("G.pendingDeck.splice(0,8)"),'later four-player games must deal five cards before asking trump');
+assert.ok(html.includes("G.hands[starter].forEach(c=>$('hakimPreview').append(cardEl(c,true)))"),'five-card hakim preview must be shown before trump selection');
+assert.ok(sixUi.includes('id="kMatchLimit"')&&sixUi.includes('value="54"')&&sixUi.includes('value="108"'),'six-player match must offer 54 and 108 tricks');
+assert.ok(sixUi.includes('playedTricks+=9')&&sixUi.includes("if(playedTricks<matchLimit)"),'six-player match must track total tricks and stop at selected limit');
+assert.ok(sixUi.includes('RED JOKER')&&sixUi.includes('BLACK JOKER'),'jokers must use English titles');
+assert.ok(sixUi.includes('rotate(-19deg) scale(.68)'),'card-back title must be smaller and more angled');
