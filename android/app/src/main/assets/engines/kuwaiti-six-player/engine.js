@@ -106,7 +106,7 @@ function startPlay(game,auctionWinner,contract,{isMalzoom=false,trumpAnnounced=f
  if(noTrump&&trumpSuit)throw new Error('قرارداد بدون حکم نمی‌تواند خال حکم داشته باشد');
  game.contract=contract;game.auctionWinner=auctionWinner;game.leader=auctionWinner;game.turn=auctionWinner;
  game.isMalzoom=!!isMalzoom;game.trumpAnnounced=!!trumpAnnounced;game.trumpSuit=noTrump?null:(trumpSuit||null);
- game.trick=[];game.trickNo=1;game.trickWinners=[];game.done=false;
+ game.trick=[];game.trickNo=1;game.trickWinners=[];game.playedCards=[];game.lastTrick=[];game.done=false;
  return game;
 }
 function playCard(game,player,card){
@@ -120,6 +120,8 @@ function playCard(game,player,card){
  const allowed=legalCards(hand,leadSuit,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:activeTrumpSuit});
  if(!allowed.some(c=>c.id===card.id))throw new Error('بازی این کارت طبق قانون مجاز نیست');
  hand.splice(cardIndex,1);
+ if(!Array.isArray(game.playedCards))game.playedCards=[];
+ game.playedCards.push({player,card:{...card},trickNo:game.trickNo});
  if(game.trick.length===0)game.lastTrick=[];
  game.trick.push({player,card});
  if(game.trick.length<6){game.turn=(player+1)%6;return {completed:false,game};}
@@ -151,7 +153,7 @@ function newGame({rng=Math.random,firstGame=true,previousAuctionWinner=null,firs
  const obligatedPlayer=firstGame?(auctionStarter+5)%6:(previousAuctionWinner+5)%6;
  return {mode:'kuwaiti-six-player',players:6,hands,contract:null,leader:null,turn:null,
    auctionStarter,obligatedPlayer,trick:[],trickNo:1,trickWinners:[],score:{A:0,B:0},
-   openingLeadRequired:false,done:false,firstGame};
+   openingLeadRequired:false,done:false,firstGame,playedCards:[],lastTrick:[]};
 }
 const KuwaitiSixPlayerEngine={SUITS,RANKS,deck,shuffle,deal,teamOf,validateContract,isJoker,isTwoOfClubs,
  findOpeningPlayer,normalPower,cardPower,effectiveLeadSuit,legalCards,findTrickWinner,startPlay,playCard,scoreContract,newGame};
