@@ -5,7 +5,7 @@
 // in the suit led; there is no cutting with another suit.
 const SUITS=['S','H','D','C'];
 const RANKS=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
-const CONTRACTS=new Set(['naras','tak_naras','saras']);
+const CONTRACTS=new Set(['hokm','naras','tak_naras','saras']);
 function deck(){
  const cards=SUITS.flatMap(s=>RANKS.map(r=>({id:r+s,kind:'normal',rank:r,suit:s})));
  cards.push({id:'JR',kind:'joker',color:'red'},{id:'JB',kind:'joker',color:'black'});
@@ -39,7 +39,7 @@ function normalPower(card,contract){
  if(!card||card.kind!=='normal'||!RANKS.includes(card.rank))throw new TypeError('کارت معمولی نامعتبر است');
  if(contract==='naras')return 13-RANKS.indexOf(card.rank); // 2 strongest, A weakest
  if(contract==='tak_naras')return card.rank==='A'?13:12-RANKS.indexOf(card.rank); // A, 2, 3 ... K
- return RANKS.indexOf(card.rank)+1; // Saras: A, K ... 2
+ return RANKS.indexOf(card.rank)+1; // Hokm and Saras: A, K ... 2
 }
 function cardPower(card,contract,{trickNo=1,isLead=false,isMalzoom=false,trumpAnnounced=false}={}){
  validateContract(contract);
