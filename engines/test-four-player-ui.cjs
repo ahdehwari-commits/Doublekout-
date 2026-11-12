@@ -47,8 +47,12 @@ assert.ok(sixUi.includes("else if(bid.contract==='hokm_hearts')trumpSuit='H'"));
 assert.ok(sixUi.includes("else if(bid.contract==='hokm_diamonds')trumpSuit='D'"));
 assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\n if(!game||!game.auctionBid)"));
 assert.ok(sixUi.includes("setScreen('game');renderGame();playAITurn();"));
-assert.ok(sixUi.includes("const choices=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras','partner_middle']"));
-assert.ok(html.includes("$('trickCount').style.display=selected==='partner_middle'?'none':''"));
+assert.ok(sixUi.includes("const choices=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras']"));
+assert.ok(!sixUi.includes('value="partner_middle"'),'six-player partner-middle option must be removed');
+assert.ok(!sixUi.includes("'partner_middle'") ,'six-player partner-middle contract must not be selectable by AI');
+assert.ok(sixUi.includes("if(bid.type==='malzoom'&&p!==game.obligatedPlayer)return"),'only the obligated player may choose Malzoom');
+assert.ok(sixUi.includes("setScreen('game');renderGame();\\n if(game.turn!==0)playAITurn();"),'auction winner must transition into card play');
+assert.ok(html.includes("$('trickCountWrap').style.display=selected==='partner_middle'?'none':''"));
 assert.ok(sixUi.includes("game.selectedContract==='partner_middle'?'none':''"));
 console.log('PASS: four/six-player all four Hokm suits, partner-middle counter, auction-to-play handoff, auction rotation and rank adapter');
 
