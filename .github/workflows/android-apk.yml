@@ -42,6 +42,7 @@ jobs:
         run: |
           node engine/test-kuwaiti-card-power.cjs
           node engines/test-engine-foundations.cjs
+          node engines/test-standard-hokm.cjs
           node engines/test-double-kout-sequence.cjs
 
       - name: Build debug APK
