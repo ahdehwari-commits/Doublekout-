@@ -4,7 +4,7 @@ let K=window.KuwaitiSixPlayerEngine;
 const $=id=>document.getElementById(id);
 const suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'};
 const suitName={S:'پیک',H:'دل',D:'خشت',C:'خاج'};
-const contractName={naras:'نرس',tak_naras:'تک نرس',saras:'سرس'};
+const contractName={hokm_spades:'پیک',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',partner_middle:'برگ وسط یار',hokm:'حکم',malzoom:'ملزوم'};
 const playerNames=['شما','بازیکن ۲','بازیکن ۳','بازیکن ۴','بازیکن ۵','بازیکن ۶'];
 const team=p=>K.teamOf(p);
 const fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
@@ -71,7 +71,7 @@ function setupMarkup(){
  g.innerHTML=`<h2 class="section-title">کوت کویتی · میز شش‌نفره</h2>
  <div class="k-score"><div>امتیاز تیم شما <b id="kScoreA">۰</b></div><div>امتیاز تیم حریف <b id="kScoreB">۰</b></div><div>دست <b id="kTrickNo">۱</b> از ۹</div></div>
  <div id="kAuction" class="k-auction hidden"><b id="kAuctionTitle">مزایده</b><div class="k-small" id="kAuctionInfo"></div>
- <label>نوع قرارداد</label><select id="kContract" class="k-select"><option value="naras">نرس</option><option value="tak_naras">تک نرس</option><option value="saras">سرس</option></select>
+ <label>نوع قرارداد</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار · خال کارت سوم از پنج کارت اول یار</option></select>
  <div class="k-bids"><button data-bid="pass" id="kPass">پاس</button><button data-bid="6">۶ دست</button><button data-bid="7">۷ دست</button><button data-bid="9">باون · ۹ دست</button></div>
  <button id="kMalzoom" class="primary hidden">ملزوم</button></div>
  <div id="kMalzoomSetup" class="k-auction hidden"><b>تنظیم حکم ملزوم</b><label>خال حکم</label><select id="kTrumpSuit" class="k-select"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">خاج ♣</option></select><label><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
@@ -97,6 +97,7 @@ function resetSetup(){
 function startAuction(){
  const firstAuctionPlayer=firstGame?null:Number($('kFirstAuction').value);
  game=K.newGame({firstGame,previousAuctionWinner,firstAuctionPlayer});
+ game.initialHands=game.hands.map(h=>h.slice());
  auction={starter:game.auctionStarter,current:game.auctionStarter,highest:null,highestRank:0,highestPlayer:null,passes:0,bids:[],lastBidder:null};
  $('kAuction').classList.remove('hidden');$('kMalzoomSetup').classList.add('hidden');$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');
  $('kTrumpDisplay').textContent='در حال مزایده';$('kStatus').textContent='کارت‌ها پخش شدند؛ مزایده از '+playerNames[auction.current]+' آغاز می‌شود.';
@@ -128,7 +129,7 @@ function aiBid(p){
  if(auction.passes>=5&&!auction.highest)return {type:'normal',rank:1,label:'۶ دست',target:6,contract:randomContract()};
  return null;
 }
-function randomContract(){return ['naras','tak_naras','saras'][Math.floor(Math.random()*3)];}
+function randomContract(){const choices=['hokm_spades','hokm_clubs','naras','tak_naras','saras','partner_middle'];return choices[Math.floor(Math.random()*choices.length)];}
 function submitBid(bid){
  if(!auction||locked)return;
  const p=auction.current;
@@ -151,10 +152,11 @@ function submitBid(bid){
 function finishAuction(){
  const win=auction.highestPlayer,bid=auction.highest;
  $('kAuction').classList.add('hidden');
- game.auctionBid=bid;game.auctionWinner=win;game.contract=bid.contract;
+ game.auctionBid=bid;game.auctionWinner=win;game.selectedContract=bid.contract;
  game.isMalzoom=bid.type==='malzoom';
- $('kStatus').textContent='برنده مزایده: '+playerNames[win]+' · '+bid.label+' · قرارداد '+contractName[bid.contract];
  if(game.isMalzoom){
+  game.contract='hokm';
+  $('kStatus').textContent='برنده مزایده: '+playerNames[win]+' · ملزوم';
   if(win===0){
    $('kMalzoomSetup').classList.remove('hidden');$('kTrumpDisplay').textContent='حکم مخفی';
    setStatus('خال حکم ملزوم را انتخاب کن و مشخص کن مخفی بماند یا اعلام شود.');
@@ -163,13 +165,25 @@ function finishAuction(){
    const suit=Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
    startActualGame(suit,true);
   }
- }else startActualGame(null,false);
+  return;
+ }
+ let trumpSuit=null;
+ if(bid.contract==='hokm_spades')trumpSuit='S';
+ else if(bid.contract==='hokm_clubs')trumpSuit='C';
+ else if(bid.contract==='partner_middle'){
+  const partner=(win+2)%6,card=game.initialHands&&game.initialHands[partner]&&game.initialHands[partner][2];
+  trumpSuit=card?card.suit:'S';
+ }
+ game.contract=['naras','tak_naras','saras'].includes(bid.contract)?bid.contract:'hokm';
+ game.trumpSuit=trumpSuit;
+ $('kStatus').textContent='برنده مزایده: '+playerNames[win]+' · '+bid.label+' · نوع بازی '+contractName[bid.contract];
+ startActualGame(trumpSuit,false);
 }
 function startActualGame(trumpSuit,hidden){
  K.startPlay(game,game.auctionWinner,game.contract,{isMalzoom:game.isMalzoom,trumpAnnounced:!hidden,trumpSuit});
  game.hiddenTrump=!!hidden;game.trumpSuit=trumpSuit;game.target=game.auctionBid.target||null;
  $('kMalzoomSetup').classList.add('hidden');$('kAuction').classList.add('hidden');
- $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]):'بدون حکم';
+ $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]):(trumpSuit?'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]:'بدون حکم');
  $('kStatus').textContent='بازی آغاز شد. '+playerNames[game.turn]+' اولین کارت را بازی می‌کند.';
  renderGame();playAITurn();
 }
