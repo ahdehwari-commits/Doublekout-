@@ -306,14 +306,72 @@ function auctionTurn(){
  },500);
 }
 function aiCard(p){
- const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
- const legal=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:(game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null});
- const power=c=>c.kind==='joker'?K.cardPower(c,game.contract,{trickNo:game.trickNo,isLead:game.trick.length===0,isMalzoom:game.isMalzoom,trumpAnnounced:game.trumpAnnounced}):K.normalPower(c,game.contract);
- const sorted=[...legal].sort((a,b)=>power(a)-power(b));
- const current=game.trick.length?game.trick.reduce((best,x)=>power(x.card)>power(best.card)?x:best,null):null;
- if(!current)return sorted[Math.floor(sorted.length*.55)]||legal[0];
- const winning=sorted.filter(c=>power(c)>power(current.card));
- return winning.length?winning[0]:sorted[0];
+ const trick=game.trick||[],trickNo=game.trickNo;
+ const lead=K.effectiveLeadSuit(trick,{trickNo});
+ const visibleTrump=(game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null;
+ const legal=K.legalCards(game.hands[p],lead,{trickNo,isFirstPlay:trick.length===0,trumpSuit:visibleTrump});
+ if(!legal.length)throw new Error('هیچ کارت مجازی برای هوش مصنوعی وجود ندارد');
+ const ownInitial=new Set((game.initialHands&&game.initialHands[p]||game.hands[p]).map(c=>c.id));
+ const seen=new Set((game.playedCards||[]).map(x=>x.card.id));
+ const unseen=K.deck().filter(c=>!ownInitial.has(c.id)&&!seen.has(c.id));
+ const unseenHigher=(card,suit)=>unseen.filter(c=>c.kind==='normal'&&c.suit===suit&&K.normalPower(c,game.contract)>K.normalPower(card,game.contract)).length;
+ const cardValue=card=>card.kind==='joker'?(card.color==='red'?55:(trickNo>=5?18:42)):K.normalPower(card,game.contract);
+ const playStrength=(card,leadSuit,isLead)=>{
+  if(card.kind==='joker'){
+   const v=K.cardPower(card,game.contract,{trickNo,isLead,isMalzoom:game.isMalzoom,trumpAnnounced:game.trumpAnnounced});
+   return v>0?{tier:3,power:v}:{tier:0,power:0};
+  }
+  if(visibleTrump&&card.suit===visibleTrump)return {tier:2,power:K.normalPower(card,game.contract)};
+  if(leadSuit&&card.suit===leadSuit)return {tier:1,power:K.normalPower(card,game.contract)};
+  return {tier:0,power:0};
+ };
+ const compare=(a,b,leadSuit)=>{
+  const x=playStrength(a.card,leadSuit,a.index===0),y=playStrength(b.card,leadSuit,b.index===0);
+  return x.tier===y.tier?x.power-y.power:x.tier-y.tier;
+ };
+ const partialWinner=plays=>{
+  if(!plays.length)return null;
+  const effective=K.effectiveLeadSuit(plays,{trickNo});
+  if(trickNo===9&&K.isJoker(plays[0].card)&&plays.length===1)return plays[0];
+  let best={...plays[0],index:0};
+  for(let i=1;i<plays.length;i++){
+   const candidate={...plays[i],index:i};
+   if(compare(candidate,best,effective)>0)best=candidate;
+  }
+  return best;
+ };
+ const current=partialWinner(trick);
+ const partnerWinning=current&&team(current.player)===team(p);
+ const opponentWinning=current&&!partnerWinning;
+ const scores=legal.map(card=>{
+  const power=cardValue(card),isJoker=card.kind==='joker';
+  let cost=isJoker?power:power*.9;
+  if(card.kind==='normal'&&visibleTrump&&card.suit===visibleTrump)cost+=10;
+  if(!trick.length){
+   const length=game.hands[p].filter(c=>c.kind==='normal'&&c.suit===card.suit).length;
+   const higher=unseenHigher(card,card.suit);
+   const control=card.kind==='normal'?(higher===0?18:higher===1?9:0):0;
+   const longSuit=length>=3?length*2.2:0;
+   const avoidShort=length===1?-5:0;
+   const leadBonus=card.kind==='normal'?longSuit+control+avoidShort:-(trickNo===9?0:80);
+   return {card,score:cost-leadBonus};
+  }
+  const candidatePlay={player:p,card,index:trick.length};
+  const candidateWinner=partialWinner([...trick,candidatePlay]);
+  const winsForUs=candidateWinner&&team(candidateWinner.player)===team(p);
+  const candidateTakesLead=compare(candidatePlay,current,lead)>0;
+  if(partnerWinning){
+   // Keep the partner's winning trick; discard the cheapest card without overtaking.
+   return {card,score:cost+(candidateTakesLead?1000:0)};
+  }
+  if(opponentWinning){
+   // Take the trick with the least expensive winning card; otherwise shed cheaply.
+   return {card,score:cost-(candidateTakesLead&&winsForUs?65:0)};
+  }
+  return {card,score:cost};
+ });
+ scores.sort((a,b)=>a.score-b.score);
+ return scores[0].card;
 }
 function playHumanCard(card){
  if(!game||game.done||locked||game.turn!==0)return;
