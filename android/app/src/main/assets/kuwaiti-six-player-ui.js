@@ -29,13 +29,13 @@ function addStyle(){
  .k-card.red{color:#c83d43}.k-card .ksuit{font-size:18px;align-self:center}
  .k-card.joker{font:700 10px Tahoma;background:linear-gradient(145deg,#fff,#e5d8b7);justify-content:center;text-align:center}\n .k-back{position:relative;background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px)!important;border:2px solid #f4e7c4!important}\n .k-back:after{content:'Abdolhamid\\A Dehvari';white-space:pre;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 700 4.3px/1.4 Georgia,'Times New Roman',serif;letter-spacing:.3px;color:#ffe8ae;text-shadow:0 1px 2px #071b32,0 0 4px #f2d58a;transform:none;padding:2px 1px;border-radius:4px;background:linear-gradient(135deg,#0b2340aa,#193f66aa)}
  .k-hand{display:flex;justify-content:center;gap:2px;overflow-x:auto;padding:10px 0 14px;direction:ltr}
- .k-hand button{padding:0;background:transparent;border:0;min-width:0}
+ .k-hand button,.k-auction-card{padding:0;background:transparent;border:0;min-width:0;flex:0 0 auto}
  .k-hand button:disabled{opacity:.38}
  .k-hand button:not(:disabled) .k-card{outline:2px solid #f0d38a;transform:translateY(-4px)}
  .k-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
  .k-actions button{flex:1;min-width:90px}
  .k-auction{background:#08271f;border:1px solid #a58b54;border-radius:14px;padding:12px;margin:10px 0}
- .k-auction .k-bids{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+ .k-auction .k-bids{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
  .k-auction button{padding:9px 4px;font-size:12px}
  .k-status{background:#09271f;border:1px solid #477a68;border-radius:12px;padding:10px;margin:8px 0;color:#f8e9bd;font-size:13px;line-height:1.8;min-height:42px}
  .k-score{display:flex;justify-content:space-around;gap:8px;flex-wrap:wrap;background:#09271f;border-radius:12px;padding:10px;margin-bottom:10px;font-size:13px}
@@ -70,9 +70,9 @@ function setupMarkup(){
  const g=document.createElement('section');g.className='panel hidden';g.id='kuwaitiGame';
  g.innerHTML=`<h2 class="section-title">کوت کویتی · میز شش‌نفره</h2>
  <div class="k-score"><div>امتیاز تیم شما <b id="kScoreA">۰</b></div><div>امتیاز تیم حریف <b id="kScoreB">۰</b></div><div>دست <b id="kTrickNo">۱</b> از ۹</div></div>
- <div id="kAuction" class="k-auction hidden"><b id="kAuctionTitle">مزایده</b><div class="k-small" id="kAuctionInfo"></div>
+ <div id="kAuction" class="k-auction hidden"><b id="kAuctionTitle">مزایده</b><div class="k-small" id="kAuctionInfo"></div><div class="k-small" id="kAuctionLog"></div>
  <label>نوع بازی / خال حکم</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار · خال کارت وسط از پنج کارت اول یار</option></select>
- <div class="k-bids"><button data-bid="pass" id="kPass">پاس</button><button data-bid="6">۶ دست</button><button data-bid="7">۷ دست</button><button data-bid="9">باون · ۹ دست</button></div>
+ <div class="k-bids"><button data-bid="pass" id="kPass">پاس</button><button data-bid="6">۶ دست</button><button data-bid="7">۷ دست</button><button data-bid="8">۸ دست</button><button data-bid="9">باون · ۹ دست</button></div>
  <button id="kMalzoom" class="primary hidden">ملزوم</button></div>
  <div id="kMalzoomSetup" class="k-auction hidden"><b>تنظیم حکم ملزوم</b><label>خال حکم</label><select id="kTrumpSuit" class="k-select"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">خاج ♣</option></select><label><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
  <div class="k-table" id="kTable">${[0,1,2,3,4,5].map(p=>'<div class="k-seat" data-p="'+p+'"><div class="k-name" id="kName'+p+'">'+playerNames[p]+'</div><div class="k-count" id="kCount'+p+'">۹ کارت</div><div class="k-played" id="kPlayed'+p+'"></div></div>').join('')}
@@ -95,27 +95,44 @@ function resetSetup(){
  }
 }
 function startAuction(){
+ locked=false;
  const firstAuctionPlayer=firstGame?null:Number($('kFirstAuction').value);
  game=K.newGame({firstGame,previousAuctionWinner,firstAuctionPlayer});
  game.initialHands=game.hands.map(h=>h.slice());
  auction={starter:game.auctionStarter,current:game.auctionStarter,highest:null,highestRank:0,highestPlayer:null,passes:0,bids:[],lastBidder:null};
  $('kAuction').classList.remove('hidden');$('kMalzoomSetup').classList.add('hidden');$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');
  $('kTrumpDisplay').textContent='در حال مزایده';$('kStatus').textContent='کارت‌ها پخش شدند؛ مزایده از '+playerNames[auction.current]+' آغاز می‌شود.';
- setScreen('game');renderAuction();auctionTurn();
+ setScreen('game');renderAuction();renderAuctionHand();auctionTurn();
 }
 function renderAuction(){
  if(!auction)return;
- $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current];
- const obligated=game.obligatedPlayer;
- $('kAuctionInfo').textContent='ملزوم‌کننده: '+(obligated===null?'ندارد (بازی اول)':playerNames[obligated])+' · بالاترین پیشنهاد: '+(auction.highest?auction.highest.label:'هنوز پیشنهادی ثبت نشده');
  const isHuman=auction.current===0,forced=auction.passes>=5&&!auction.highest;
+ $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':' · نوبت هوش مصنوعی');
+ const obligated=game.obligatedPlayer;
+ $('kAuctionInfo').textContent='ملزوم‌کننده: '+(obligated===null?'ندارد (بازی اول)':playerNames[obligated])+' · بالاترین پیشنهاد: '+(auction.highest?playerNames[auction.highestPlayer]+' · '+auction.highest.label:'هنوز پیشنهادی ثبت نشده')+' · پاس‌های پیاپی: '+auction.passes+' از ۵';
+ $('kAuctionLog').textContent='روند مزایده: '+(auction.bids.length?auction.bids.map(x=>playerNames[x.player]+': '+x.label).join(' ← '):'هنوز کسی پیشنهاد نداده است');
+ document.querySelectorAll('.k-seat').forEach(el=>el.classList.toggle('active',Number(el.dataset.p)===auction.current));
  $('kAuction').classList.toggle('hidden',!isHuman);
  if(isHuman){
   $('kPass').disabled=forced;
-  $('kPass').textContent=forced?'پاس (غیرمجاز)':'پاس';
+  $('kPass').textContent=forced?'پاس (غیرمجاز؛ باید پیشنهاد بدهی)':'پاس';
   $('kMalzoom').classList.toggle('hidden',obligated!==0);
-  [...$('kAuction').querySelectorAll('[data-bid]')].forEach(b=>{const n=b.dataset.bid==='pass'?0:Number(b.dataset.bid);b.disabled=b.dataset.bid!=='pass'&&n<=auction.highestRank;});
+  [...$('kAuction').querySelectorAll('[data-bid]')].forEach(b=>{
+   const n=b.dataset.bid==='pass'?0:Number(b.dataset.bid);
+   b.disabled=b.dataset.bid!=='pass'&&n<=auction.highestRank;
+  });
  }
+ renderAuctionHand();
+}
+function renderAuctionHand(){
+ if(!game||!game.hands||!game.hands[0])return;
+ $('kHand').innerHTML='';
+ game.hands[0].forEach(c=>{
+  const card=document.createElement('div');
+  card.className='k-auction-card';
+  card.append(cardNode(c));
+  $('kHand').append(card);
+ });
 }
 function handStrength(p){
  const h=game.hands[p];let score=0;
@@ -125,7 +142,7 @@ function handStrength(p){
 function aiBid(p){
  const rank=auction.highestRank,str=handStrength(p);
  if(p===game.obligatedPlayer&&rank===0&&str>22&&Math.random()<.28)return {type:'malzoom',rank:1,label:'ملزوم',contract:randomContract()};
- if(str>25&&rank<3&&Math.random()<.65)return {type:'normal',rank:rank+1,label:rank===0?'۶ دست':rank===1?'۷ دست':'باون · ۹ دست',target:rank===0?6:rank===1?7:9,contract:randomContract()};
+ if(str>25&&rank<4&&Math.random()<.65){const next=rank+1,target=next===4?9:5+next;return {type:'normal',rank:next,label:next===4?'باون · ۹ دست':target+' دست',target,contract:randomContract()};}
  if(auction.passes>=5&&!auction.highest)return {type:'normal',rank:1,label:'۶ دست',target:6,contract:randomContract()};
  return null;
 }
@@ -315,7 +332,7 @@ function bind(){
  $('kPass').onclick=()=>submitBid({type:'pass'});
  document.querySelectorAll('#kAuction [data-bid]').forEach(b=>b.addEventListener('click',()=>{
   if(b.dataset.bid==='pass')return;
-  const n=Number(b.dataset.bid),rank=n===6?1:n===7?2:3;
+  const n=Number(b.dataset.bid),rank=n===6?1:n===7?2:n===8?3:4;
   submitBid({type:'normal',rank,label:n===9?'باون · ۹ دست':n+' دست',target:n,contract:$('kContract').value});
  }));
  $('kMalzoom').onclick=()=>submitBid({type:'malzoom',rank:auction.highestRank+1,label:'ملزوم',contract:$('kContract').value});
