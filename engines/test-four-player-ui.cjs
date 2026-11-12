@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const html=fs.readFileSync(require.resolve('../web-prototype.html'),'utf8');
+const inline=[...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/g)].map(m=>m[1]).filter(s=>s.trim());
+assert.ok(inline.length>=1,'main game script must exist');
+new vm.Script(inline[inline.length-1],{filename:'web-prototype-inline.js'});
+assert.match(html,/activeMode='double-kout';\\$\\('hokmContractPicker'\\)\\.classList\\.remove\\('hidden'\\)/);
+assert.match(html,/function startGame\\(\\)[\\s\\S]*const contract=\\$\\('hokmContract'\\)\\.value;[\\s\\S]*if\\(contract!=='hokm'\\)/);
+assert.match(html,/function winner\\(plays\\)[^\\n]*StandardHokmEngine\\.resolveTrick/);
+assert.match(html,/G\\.trickCompletePending\\|\\|G\\.plays\\.length>=4/);
+assert.match(html,/G\\.trickCompletePending=true;G\\.turn=null/);
+assert.match(html,/legal=G\\.turn===0&&!G\\.trickCompletePending&&G\\.plays\\.length<4/);
+console.log('PASS: four-player modes share contract rules and completed tricks cannot accept extra cards');
