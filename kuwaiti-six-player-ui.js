@@ -27,7 +27,7 @@ function addStyle(){
  .k-seat[data-p="0"]{grid-column:2;grid-row:3}.k-seat[data-p="1"]{grid-column:3;grid-row:3}.k-seat[data-p="5"]{grid-column:1;grid-row:3}
  .k-card{width:38px;height:54px;border-radius:7px;background:#fffaf0;color:#17251f;border:1px solid #d8d0bd;box-shadow:0 4px 8px #00140f99;display:flex;flex-direction:column;justify-content:space-between;padding:3px;font:700 13px Georgia,serif;flex-shrink:0}
  .k-card.red{color:#c83d43}.k-card .ksuit{font-size:18px;align-self:center}
- .k-card.joker{font:700 10px Tahoma;background:linear-gradient(145deg,#fff,#e5d8b7);justify-content:center;text-align:center}\n .k-back{position:relative;background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px)!important;border:2px solid #f4e7c4!important}\n .k-back:after{content:'Abdolhamid Dehvari';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font:700 5px Arial,sans-serif;color:#f5dfaa;text-shadow:0 1px 2px #000;transform:rotate(-90deg);white-space:nowrap}
+ .k-card.joker{font:700 10px Tahoma;background:linear-gradient(145deg,#fff,#e5d8b7);justify-content:center;text-align:center}\n .k-back{position:relative;background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px)!important;border:2px solid #f4e7c4!important}\n .k-back:after{content:'Abdolhamid\\A Dehvari';white-space:pre;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 700 4.3px/1.4 Georgia,'Times New Roman',serif;letter-spacing:.3px;color:#ffe8ae;text-shadow:0 1px 2px #071b32,0 0 4px #f2d58a;transform:none;padding:2px 1px;border-radius:4px;background:linear-gradient(135deg,#0b2340aa,#193f66aa)}
  .k-hand{display:flex;justify-content:center;gap:2px;overflow-x:auto;padding:10px 0 14px;direction:ltr}
  .k-hand button{padding:0;background:transparent;border:0;min-width:0}
  .k-hand button:disabled{opacity:.38}
@@ -293,7 +293,7 @@ function startNewMatch(){
  locked=false;resetSetup();
 }
 function bind(){
- $('modeKuwaiti').onclick=()=>{try{if(window.audioReady)audioReady();resetSetup();}catch(e){$('modeMessage').textContent='خطا در باز کردن میز شش‌نفره: '+(e&&e.message?e.message:'خطای ناشناخته');console.error(e);}};
+ $('modeKuwaiti').onclick=()=>{try{if(window.audioReady)audioReady();if(!initialized&&!init())throw new Error('راه‌اندازی میز کامل نشد');resetSetup();}catch(e){$('modeMessage').textContent='خطا در باز کردن میز شش‌نفره: '+(e&&e.message?e.message:'خطای ناشناخته');console.error(e);}};
  $('kStartAuction').onclick=()=>{if(firstGame)points={A:0,B:0};startAuction();};
  $('kBackModes').onclick=()=>setScreen('modes');
  $('kExit').onclick=()=>setScreen('modes');
@@ -330,5 +330,5 @@ window.openKuwaitiMode=function(){
  try{if(!initialized&&!init())return;resetSetup();}
  catch(e){const msg=$('modeMessage');if(msg)msg.textContent='خطا در ورود به کوت کویتی: '+(e&&e.message?e.message:'نامشخص');console.error('Kuwaiti entry failed',e);}
 };
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+// This script is loaded after the complete page markup; initialize synchronously\ninit();
 })();
