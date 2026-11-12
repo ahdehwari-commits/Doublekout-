@@ -35,6 +35,46 @@ assert.equal(hokm.koutMessage(0,13,0),'حاکم کوت شدید');
 assert.equal(hokm.koutMessage(0,13,1),'شما کوت شدید');
 assert.equal(hokm.koutMessage(13,0,1),'حاکم حریف کوت شد');
 assert.equal(hokm.koutMessage(13,0,0),'حریف شما کوت شد');
+assert.equal(hokm.koutMessage(0,13,2),'حاکم کوت شدید');
+assert.equal(hokm.koutMessage(13,0,3),'حاکم حریف کوت شد');
+for(let target=0;target<4;target++){
+ const ranks=['2','3','4','5'];ranks[target]='A';
+ const four=r=>({player:r,card:{rank:ranks[r],suit:'H'}});
+ assert.equal(hokm.resolveTrick([0,1,2,3].map(four),'S'),target);
+}
+assert.equal(hokm.resolveTrick([
+ {player:0,card:{rank:'A',suit:'H'}},
+ {player:1,card:{rank:'2',suit:'S'}},
+ {player:2,card:{rank:'K',suit:'H'}},
+ {player:3,card:{rank:'3',suit:'S'}}
+],'S','hokm'),3);
+const noTrumpCases=[
+ ['naras','2','3','4'],
+ ['tak_naras','A','2','3'],
+ ['saras','A','K','Q']
+];
+for(const [contract,leadRank,thirdRank,fourthRank] of noTrumpCases){
+ const noCut=hokm.currentWinner([
+  {player:0,card:{rank:leadRank,suit:'H'}},
+  {player:1,card:{rank:contract==='naras'?'A':'2',suit:'S'}},
+  {player:2,card:{rank:thirdRank,suit:'H'}},
+  {player:3,card:{rank:fourthRank,suit:'H'}}
+ ],null,contract);
+ assert.equal(noCut,0,'off-suit card must not cut in '+contract);
+}
+assert.equal(hokm.currentWinner([
+ {player:0,card:{rank:'2',suit:'H'}},
+ {player:1,card:{rank:'A',suit:'H'}},
+ {player:2,card:{rank:'3',suit:'H'}},
+ {player:3,card:{rank:'4',suit:'H'}}
+ ],null,'naras'),0);
+assert.equal(hokm.currentWinner([
+ {player:0,card:{rank:'2',suit:'H'}},
+ {player:1,card:{rank:'A',suit:'H'}},
+ {player:2,card:{rank:'3',suit:'H'}},
+ {player:3,card:{rank:'4',suit:'H'}}
+ ],null,'tak_naras'),1);
+
 assert.equal(hokm.koutMessage(5,8,0),null);
 
 const chooseHand=[{id:'3H',rank:'3',suit:'H'},{id:'2S',rank:'2',suit:'S'}];
