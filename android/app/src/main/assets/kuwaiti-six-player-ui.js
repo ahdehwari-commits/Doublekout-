@@ -185,7 +185,7 @@ function auctionTurn(){
 }
 function aiCard(p){
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
- const legal=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trumpSuit});
+ const legal=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:(game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null});
  const power=c=>c.kind==='joker'?K.cardPower(c,game.contract,{trickNo:game.trickNo,isLead:game.trick.length===0,isMalzoom:game.isMalzoom,trumpAnnounced:game.trumpAnnounced}):K.normalPower(c,game.contract);
  const sorted=[...legal].sort((a,b)=>power(a)-power(b));
  const current=game.trick.length?game.trick.reduce((best,x)=>power(x.card)>power(best.card)?x:best,null):null;
@@ -224,7 +224,7 @@ function playAITurn(){
  setTimeout(()=>{
   if(!game||game.done||game.turn!==p)return;
   const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
-  if(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&lead&&!game.hands[p].some(c=>c.kind==='normal'&&c.suit===lead)){
+  if(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&p!==game.auctionWinner&&lead&&!game.hands[p].some(c=>c.kind==='normal'&&c.suit===lead)){
    game.trumpAnnounced=true;setStatus(playerNames[p]+' خال زمینه را نداشت و حکم مخفی را درخواست کرد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit]);
    $('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];
   }
@@ -251,12 +251,12 @@ function renderGame(){
  game.hands[0].forEach(c=>{
   const b=document.createElement('button');
   const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
-  const legal=game.turn===0&&!game.done&&K.legalCards(game.hands[0],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trumpSuit}).some(x=>x.id===c.id);
+  const legal=game.turn===0&&!game.done&&K.legalCards(game.hands[0],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:(game.trumpAnnounced||game.auctionWinner===0)?game.trumpSuit:null}).some(x=>x.id===c.id);
   b.disabled=!legal;b.append(cardNode(c));b.onclick=()=>playHumanCard(c);$('kHand').append(b);
  });
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
  const voidInLead=game.turn===0&&lead&&!game.hands[0].some(c=>c.kind==='normal'&&c.suit===lead);
- $('kAskTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&voidInLead));
+ $('kAskTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&voidInLead&&game.auctionWinner!==0));
  $('kAnnounceTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&game.turn===0&&game.auctionWinner===0));
 }
 function finishGame(){
