@@ -50,6 +50,7 @@ jobs:
           node engine/test-kuwaiti-card-power.cjs
           node engines/test-engine-foundations.cjs
           node engines/test-standard-hokm.cjs
+          node engines/test-four-player-ui.cjs
           node engines/test-browser-engine-load-order.cjs
           node engines/test-double-kout-sequence.cjs
 
