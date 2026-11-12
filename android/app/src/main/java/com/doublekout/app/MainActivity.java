@@ -2,6 +2,7 @@ package com.doublekout.app;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.content.res.Configuration;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -56,6 +57,14 @@ public class MainActivity extends Activity {
                 }).start();
             }, 950)
         ).start();
+    }
+
+    @Override public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (webView != null) {
+            webView.requestLayout();
+            webView.evaluateJavascript("window.dispatchEvent(new Event('resize'))", null);
+        }
     }
 
     @Override public void onBackPressed() {
