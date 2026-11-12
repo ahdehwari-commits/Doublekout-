@@ -1,3 +1,5 @@
+(function(){
+'use strict';
 // Six-player Kuwaiti Kout rules core.
 // All three contracts are no-trump: tricks are won by the strongest card
 // in the suit led; there is no cutting with another suit.
@@ -152,3 +154,5 @@ const KuwaitiSixPlayerEngine={SUITS,RANKS,deck,shuffle,deal,teamOf,validateContr
  findOpeningPlayer,normalPower,cardPower,effectiveLeadSuit,legalCards,findTrickWinner,startPlay,playCard,scoreContract,newGame};
 if(typeof module!=='undefined'&&module.exports)module.exports=KuwaitiSixPlayerEngine;
 if(typeof window!=='undefined')window.KuwaitiSixPlayerEngine=KuwaitiSixPlayerEngine;
+
+})();
