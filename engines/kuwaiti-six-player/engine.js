@@ -35,8 +35,8 @@ function findOpeningPlayer(hands){
 function normalPower(card,contract){
  validateContract(contract);
  if(!card||card.kind!=='normal'||!RANKS.includes(card.rank))throw new TypeError('کارت معمولی نامعتبر است');
- if(contract==='naras')return 14-RANKS.indexOf(card.rank); // 2 strongest, A weakest
- if(contract==='tak_naras')return card.rank==='A'?13:14-RANKS.indexOf(card.rank)-1; // A, 2, 3 ... K
+ if(contract==='naras')return 13-RANKS.indexOf(card.rank); // 2 strongest, A weakest
+ if(contract==='tak_naras')return card.rank==='A'?13:12-RANKS.indexOf(card.rank); // A, 2, 3 ... K
  return RANKS.indexOf(card.rank)+1; // Saras: A, K ... 2
 }
 function cardPower(card,contract,{trickNo=1,isLead=false,isMalzoom=false,trumpAnnounced=false}={}){
