@@ -16,7 +16,7 @@ assert.ok(html.includes("G.trickCompletePending||G.plays.length>=4"));
 assert.ok(html.includes("G.trickCompletePending=true;G.turn=null"));
 assert.ok(html.includes("G.resolvingTrick=true;G.trickCompletePending=false"));
 assert.ok(html.includes("legal=G.turn===0&&!G.trickCompletePending&&G.plays.length<4"));
-assert.ok(html.includes('خال کارت سوم از پنج کارت اول یار'),'partner-middle trump mode must be selectable');
+assert.ok(html.includes('خال کارت وسط از پنج کارت اول یار'),'partner-middle trump mode must be selectable');
 
 const sixUi=fs.readFileSync(require.resolve('../kuwaiti-six-player-ui.js'),'utf8');
 new vm.Script(sixUi,{filename:'kuwaiti-six-player-ui.js'});
