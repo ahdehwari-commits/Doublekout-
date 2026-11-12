@@ -133,6 +133,7 @@ function scoreContract(bid,tricksTaken,{success=null}={}){
  if(bid==='malzoom'){if(success===null)throw new Error('نتیجه موفقیت ملزوم باید صریح مشخص شود');return ok?5:-5;}
  if(bid===6)return ok?6:-12;
  if(bid===7)return ok?7:-14;
+ if(bid===8)return ok?8:-16;
  if(bid===9)return ok?36:-18; // Baun is nine tricks.
  throw new Error('نوع قرارداد یا تعداد دست نامعتبر است');
 }
