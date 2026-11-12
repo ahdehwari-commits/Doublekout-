@@ -92,6 +92,18 @@ const cutPlays=[
 ];
 assert.throws(()=>k.findTrickWinner(cutPlays,'naras',{trickNo:1,trumpSuit:'H'}),/بدون حکم/);
 assert.equal(k.findTrickWinner(cutPlays,'naras',{trickNo:1,trumpSuit:null}).player,2);
+const firstTrickRule=k.newGame({rng:()=>0.3});
+firstTrickRule.hands=[
+ [c('10','S')],
+ [c('2','H'),c('A','D'),red,black],
+ [c('8','S')],[c('9','S')],[c('J','S')],[c('Q','S')]
+];
+k.startPlay(firstTrickRule,0,'hokm',{trumpSuit:'H'});
+assert.equal(k.playCard(firstTrickRule,0,c('10','S')).completed,false);
+assert.throws(()=>k.playCard(firstTrickRule,1,c('2','H')),/طبق قانون مجاز نیست/,'trump cut is forbidden on the first trick');
+assert.throws(()=>k.playCard(firstTrickRule,1,red),/طبق قانون مجاز نیست/,'red joker is forbidden on the first trick');
+assert.throws(()=>k.playCard(firstTrickRule,1,black),/طبق قانون مجاز نیست/,'black joker is forbidden on the first trick');
+assert.equal(k.playCard(firstTrickRule,1,c('A','D')).completed,false);
 
 
 const hiddenObligor=k.newGame({rng:()=>0.3});
