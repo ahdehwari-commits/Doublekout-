@@ -44,6 +44,7 @@ assert.equal(k.effectiveLeadSuit([{card:black},{card:c('K','D')}],{trickNo:9}),'
 const g=k.newGame({rng:()=>0.41});
 assert.equal(g.auctionStarter,k.findOpeningPlayer(g.hands));
 assert.equal(g.turn,null);assert.equal(g.leader,null);assert.equal(g.openingLeadRequired,false);
+assert.equal(g.obligatedPlayer,(g.auctionStarter+5)%6,'first-game obligor must be the player immediately before the 2C holder');
 const later=k.newGame({rng:()=>0.41,firstGame:false,previousAuctionWinner:3,firstAuctionPlayer:1});
 assert.equal(later.obligatedPlayer,2);assert.equal(later.auctionStarter,1);
 // Invalid contract validation.
