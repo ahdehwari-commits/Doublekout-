@@ -1,12 +1,21 @@
 # Independent game engines
 
-- **Double Kout sequence (4 players):** the current playable prototype still lives in `web-prototype.html`. Its trick sequence/challenge logic has not yet been extracted into a standalone module.
-- **Standard Hokm (4 players):** `standard-hokm/engine.js` provides a 52-card, 13-card-per-player dealing and trick-comparison foundation. First match trump is spades.
-- **Kuwaiti Kout (6 players):** `kuwaiti-six-player/engine.js` provides a 54-card, nine-card-per-player foundation plus the recorded joker/contract exceptions.
+- **Double Kout sequence (4 players):** playable prototype remains in `web-prototype.html`; its sequence/scoring logic is not yet extracted into a standalone module.
+- **Standard Hokm (4 players):** `standard-hokm/engine.js` provides a 52-card, 13-card-per-player deal and trick comparison. First match trump is spades.
+- **Kuwaiti Kout (6 players):** `kuwaiti-six-player/engine.js` provides a 54-card deck, nine cards per player, opening lead by the unique holder of 2 clubs, and contract/joker foundations.
 
-The Kuwaiti engine currently supplies dealing, legal-card filtering and card-power handling only. Auction/contract scoring, exact ninth/final-trick resolution, complete team scoring, AI strategy and UI integration remain unfinished. The two foundational engines are not yet wired into the game screen.
+## Explicit Kuwaiti rules currently encoded
+- Contracts: `naras`, `tak_naras`, and `saras`.
+- Naras ranking: red joker > all four 2s > black joker > ordinary cards.
+- Tak-naras and saras ranking: red joker > all four aces > black joker > ordinary cards.
+- Ninth trick exception: if either joker is played as the first card, it has zero power and does not establish the background suit; the second player's card establishes the suit.
+- The six-player deal is 54 cards (52 normal + two jokers), nine cards per player.
 
-Run regression checks with:
+## Still incomplete
+The full auction/baon rules, all contract-specific restrictions beyond the recorded card hierarchy, full trick winner resolution, team scoring, end-of-round conditions, AI strategy and six-seat table UI are not complete. In particular, do not infer the missing rules from standard Hokm.
+
+## Tests
+Run:
 ```bash
 node engine/test-kuwaiti-card-power.cjs
 node engines/test-engine-foundations.cjs
