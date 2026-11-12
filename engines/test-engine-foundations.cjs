@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const hokm=require('./standard-hokm/engine');
+const kuwaiti=require('./kuwaiti-six-player/engine');
+const h=hokm.deal(()=>0.37);
+assert.equal(h.length,4);assert.ok(h.every(x=>x.length===13));
+assert.equal(hokm.newGame({matchNumber:1}).trump,'S');
+const k=kuwaiti.deal(()=>0.41);
+assert.equal(k.length,6);assert.ok(k.every(x=>x.length===9));
+const red={kind:'joker',color:'red'},black={kind:'joker',color:'black'};
+assert.equal(kuwaiti.cardPower(red,'naras'),10000);
+assert.equal(kuwaiti.cardPower({kind:'normal',rank:'2'},'naras'),9000);
+assert.equal(kuwaiti.cardPower(black,'naras'),8000);
+assert.equal(kuwaiti.cardPower({kind:'normal',rank:'A'},'saras'),9000);
+assert.equal(kuwaiti.cardPower(black,'naras',{trickNo:5}),-1);
+assert.equal(kuwaiti.cardPower(red,'naras',{isLead:true}),-1);
+assert.throws(()=>kuwaiti.cardPower(red,'bad'));
+console.log('PASS: Hokm 4x13 deal, fixed first spade trump, Kuwaiti 6x9 deal and joker/contract edge checks');
