@@ -182,7 +182,6 @@ function aiBid(p){
  if(auction.passes>=5&&!auction.highest)return {type:'normal',rank:1,label:'۶ دست',target:6};
  return null;
 }
-function randomContract(){const choices=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras'];return choices[Math.floor(Math.random()*choices.length)];}
 function submitBid(bid){
  if(!auction||locked)return;
  const p=auction.current;
@@ -201,7 +200,7 @@ function submitBid(bid){
  if(auction.passes>=5&&!auction.highest){
   const forcedPlayer=(p+1)%6;auction.current=forcedPlayer;
   auction.passes=5;
-  if(forcedPlayer!==0){const forcedBid={type:'normal',rank:1,label:'۶ دست',target:6,contract:randomContract()};submitBid(forcedBid);return;}
+  if(forcedPlayer!==0){const forcedBid={type:'normal',rank:1,label:'۶ دست',target:6};submitBid(forcedBid);return;}
  }
  auction.current=(p+1)%6;
  renderAuction();auctionTurn();
