@@ -66,8 +66,8 @@ function effectiveLeadSuit(plays,{trickNo=1}={}){
  const first=plays[0].card;
  return first&&first.kind==='normal'?first.suit:null;
 }
-// Jokers cannot be the first card through trick eight. They are allowed
-// on trick nine, and may be played later when the player cannot follow suit.
+// Jokers cannot be used in the opening trick or led through trick eight.
+// From trick two onward, a joker may be played as a special card regardless of follow-suit.
 function legalCards(hand,leadSuit,{trickNo=1,isFirstPlay=true,trumpSuit=null,firstTrickNoCut=false}={}){
  if(!Array.isArray(hand))throw new TypeError('دست کارت نامعتبر است');
  // In the opening trick neither joker may be played, even as a discard.
@@ -78,7 +78,10 @@ function legalCards(hand,leadSuit,{trickNo=1,isFirstPlay=true,trumpSuit=null,fir
  }
  if(!leadSuit)return available.filter(c=>!isJoker(c));
  const follow=available.filter(c=>c.kind==='normal'&&c.suit===leadSuit);
- if(follow.length)return follow;
+ // Jokers are special cards: after the opening trick they may be played
+ // even when the player can follow suit. The normal follow-suit rule still
+ // applies to ordinary cards.
+ if(follow.length)return trickNo>1?[...follow,...available.filter(isJoker)]:follow;
  // No trump cutting in trick one: a void player must discard a non-trump normal card.
  if(trickNo===1&&firstTrickNoCut&&trumpSuit){
   const discards=available.filter(c=>c.kind==='normal'&&c.suit!==trumpSuit);
