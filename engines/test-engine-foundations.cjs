@@ -60,4 +60,17 @@ let outcome;
 for(let p=0;p<6;p++)outcome=k.playCard(playGame,p,playGame.hands[p][0]);
 assert.equal(outcome.completed,true);assert.equal(outcome.winner,0);
 assert.equal(playGame.trickNo,2);assert.equal(playGame.turn,0);
+
+const trumpHand=[c('9','S'),c('2','H'),c('A','D'),c('K','C')];
+assert.deepEqual(k.legalCards(trumpHand,'S',{trickNo:2,isFirstPlay:false,trumpSuit:'H'}),[c('9','S')]);
+const voidHand=[c('2','H'),c('A','D')];
+assert.deepEqual(k.legalCards(voidHand,'S',{trickNo:2,isFirstPlay:false,trumpSuit:'H'}),[c('2','H')]);
+const cutPlays=[
+ {player:0,card:c('10','S')},{player:1,card:c('2','H')},
+ {player:2,card:c('2','S')},{player:3,card:c('A','S')},
+ {player:4,card:c('K','S')},{player:5,card:c('Q','S')}
+];
+assert.equal(k.findTrickWinner(cutPlays,'naras',{trickNo:1,trumpSuit:'H'}).player,1);
+assert.equal(k.findTrickWinner(cutPlays,'naras',{trickNo:1,trumpSuit:null}).player,2);
+
 console.log('PASS: Kuwaiti contracts, no-trump ranks, hidden Malzoom joker, lead restrictions, ninth trick and auction setup');
