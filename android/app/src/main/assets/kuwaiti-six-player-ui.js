@@ -82,7 +82,7 @@ function setupMarkup(){
  <h3 class="section-title">کارت‌های شما</h3><div id="kHand" class="k-hand"></div>
  <div id="kResult" class="k-auction hidden"></div>
  <div class="k-actions"><button id="kNewGame" class="hidden">بازی بعدی</button><button id="kExit">بازگشت به انتخاب بازی</button></div>`;
- $('modePicker').after(s,g);
+ $('modePicker').insertAdjacentElement('afterend',s);s.insertAdjacentElement('afterend',g);
 }
 function resetSetup(){
  game=null;auction=null;locked=false;trickView=[];setScreen('setup');
@@ -293,7 +293,7 @@ function startNewMatch(){
  locked=false;resetSetup();
 }
 function bind(){
- $('modeKuwaiti').onclick=()=>{if(window.audioReady)audioReady();resetSetup();};
+ $('modeKuwaiti').onclick=()=>{try{if(window.audioReady)audioReady();resetSetup();}catch(e){$('modeMessage').textContent='خطا در باز کردن میز شش‌نفره: '+(e&&e.message?e.message:'خطای ناشناخته');console.error(e);}};
  $('kStartAuction').onclick=()=>{if(firstGame)points={A:0,B:0};startAuction();};
  $('kBackModes').onclick=()=>setScreen('modes');
  $('kExit').onclick=()=>setScreen('modes');
@@ -310,8 +310,15 @@ function bind(){
  $('kAnnounceTrump').onclick=()=>{if(game){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم اعلام شد.');renderGame();}};
 }
 function init(){
- if(!K||!$('modeKuwaiti'))return;
- addStyle();setupMarkup();bind();
+ try{
+  if(!K||!$('modeKuwaiti'))throw new Error('موتور یا دکمه ورود به کوت کویتی بارگذاری نشده است');
+  addStyle();setupMarkup();bind();
+  window.openKuwaitiMode=resetSetup;
+  $('modeMessage').textContent='کوت کویتی آماده شروع است.';
+ }catch(e){
+  const msg=$('modeMessage');if(msg)msg.textContent='خطای راه‌اندازی میز شش‌نفره: '+(e&&e.message?e.message:'نامشخص');
+  console.error('Kuwaiti UI initialization failed',e);
+ }
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
