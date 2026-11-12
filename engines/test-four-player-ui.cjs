@@ -29,6 +29,8 @@ assert.ok(sixUi.includes("const partner=(win+2)%6,card=game.initialHands"),'six-
 
 const auctionUi=fs.readFileSync(require.resolve('../kuwaiti-six-player-ui.js'),'utf8');
 assert.ok(auctionUi.includes('id="kAuctionLog"'),'auction must show a turn-by-turn log');
+assert.ok(auctionUi.includes('id="kHumanAuctionControls"'),'only human bidding controls should hide during AI turns');
+assert.ok(auctionUi.includes("$('kAuction').classList.remove('hidden')"),'auction rotation stays visible while AI players act');
 assert.ok(auctionUi.includes('data-bid="8"'),'8-trick bid must be available');
 assert.ok(auctionUi.includes('function renderAuctionHand()'),'human hand must be visible during auction');
 assert.ok(auctionUi.includes("auction.current===0"),'auction must wait for the human only on their own turn');
