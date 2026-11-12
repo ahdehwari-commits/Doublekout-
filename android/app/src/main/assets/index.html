@@ -134,7 +134,22 @@ function beginNormalOrChallenge(challengeTeam){
 function legalCards(p){let h=G.hands[p];if(activeMode==='standard-hokm'){const lead=G.plays.length?G.plays[0].card.suit:null;return window.StandardHokmEngine.legalCards(h,lead)}if(!G.plays.length)return h;let lead=G.plays[0].card.s;let follow=h.filter(c=>c.s===lead);return follow.length?follow:h}
 function beats(a,b,lead){if(activeMode==='standard-hokm'){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.beats({suit:code[a.s],rank:a.r},{suit:code[b.s],rank:b.r},code[lead],G.trumpCode)}let ta=a.s===G.trump,tb=b.s===G.trump;if(ta!==tb)return ta;if(a.s===b.s)return rankVal[a.r]>rankVal[b.r];if(a.s===lead)return true;return false}
 function winner(plays){if(activeMode==='standard-hokm'){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.resolveTrick(plays.map(p=>({player:p.player,card:{suit:code[p.card.s],rank:p.card.r}})),G.trumpCode)}let lead=plays[0].card.s,best=plays[0];for(let p of plays.slice(1))if(beats(p.card,best.card,lead))best=p;return best.player}
-function play(p,card){if(G.done||G.waitingChallenge||G.waitingTrump||p!==G.turn)return;let allowed=legalCards(p);if(!allowed.some(c=>c.id===card.id))return;G.hands[p]=G.hands[p].filter(c=>c.id!==card.id);G.plays.push({player:p,card});playCardSound();if(p!==0)speakPlayer('play',p);G.turn=(p+1)%4;render();if(G.plays.length===4)setTimeout(resolveTrick,450);else runAI()}
+function play(p,card){
+  if(!G||G.done||G.waitingChallenge||G.waitingTrump||p!==G.turn)return;
+  try{
+    let allowed=legalCards(p);
+    if(!allowed.some(c=>c.id===card.id))return;
+    G.hands[p]=G.hands[p].filter(c=>c.id!==card.id);
+    G.plays.push({player:p,card});
+    playCardSound();if(p!==0)speakPlayer('play',p);
+    G.turn=(p+1)%4;render();
+    if(G.plays.length===4)setTimeout(()=>{try{resolveTrick()}catch(e){$('status').textContent='خطا در تعیین برنده دست: '+(e&&e.message?e.message:'نامشخص');console.error(e)}},450);
+    else runAI();
+  }catch(e){
+    $('status').textContent='خطا در اجرای کارت: '+(e&&e.message?e.message:'نامشخص');
+    console.error('Card play failed',e);
+  }
+}
 function resolveTrick(){
  let w=winner(G.plays),n=G.trickNo;G.trickWinners.push(w);
  let msg=`دست ${fa(n)} را ${names[w]} برد.`;tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);if(w!==0)speakPlayer('win',w);
@@ -211,7 +226,29 @@ function aiChoose(p){
  const nonTrump=losers.filter(c=>c.s!==G.trump);
  return nonTrump[nonTrump.length-1]||losers[losers.length-1]||sorted[0];
 }
-function runAI(){if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;setTimeout(()=>{if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;let p=G.turn,c=aiChoose(p);play(p,c)},550)}
+function runAI(){
+  if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;
+  setTimeout(()=>{
+    if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;
+    const p=G.turn;
+    try{
+      let c;
+      try{c=aiChoose(p)}catch(aiError){
+        const lead=G.plays.length?G.plays[0].card.suit:null;
+        const legal=activeMode==='standard-hokm'
+          ?window.StandardHokmEngine.legalCards(G.hands[p],lead)
+          :legalCards(p);
+        c=legal[0];
+        console.warn('AI fallback card selected',aiError);
+      }
+      if(!c)throw new Error('برای بازیکن '+p+' کارت مجاز پیدا نشد');
+      play(p,c);
+    }catch(e){
+      $('status').textContent='خطای نوبت هوش مصنوعی: '+(e&&e.message?e.message:'نامشخص')+' · بازی متوقف شد؛ بازی جدید را آغاز کن.';
+      console.error('AI turn failed',e);
+    }
+  },550)
+}
 function cardEl(c,small=false){let d=document.createElement('div');d.className='card '+(['♥','♦'].includes(c.s)?'red':'')+(small?' small':'');d.innerHTML=`<span>${c.r}</span><span class="suit">${c.s}</span><span style="align-self:flex-end;font-size:12px">${c.r}</span>`;return d}
 function render(){
  if(!G)return;
@@ -228,7 +265,7 @@ function render(){
 }
 $('modeDouble').onclick=()=>{audioReady();activeMode='double-kout';$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
 $('modeHokm').onclick=()=>{audioReady();activeMode='standard-hokm';$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');$('modeMessage').textContent='حکم معمولی چهار نفره با موتور مستقل فعال شد.';};
-$('modeKuwaiti').onclick=()=>{audioReady();KuwaitiPreviewGame=window.KuwaitiSixPlayerEngine.newGame();$('modeMessage').textContent='موتور و پخش کارت شش‌نفره کوت کویتی بارگذاری شد؛ رابط کامل میز شش‌نفره و مزایده هنوز باید تکمیل شود.';};
+$('modeKuwaiti').onclick=()=>{audioReady();if(typeof window.openKuwaitiMode==='function')window.openKuwaitiMode();else $('modeMessage').textContent='رابط میز شش‌نفره بارگذاری نشده است؛ صفحه را یک‌بار ببند و باز کن.';};
 $('start').onclick=()=>{audioReady();shuffleSound();startGame()};$('confirmTrump').onclick=confirmTrump;
 $('soundToggle').onclick=()=>{soundEnabled=!soundEnabled;$('soundToggle').textContent=soundEnabled?'🔊 صدا روشن':'🔇 صدا خاموش';if(soundEnabled){audioReady();playCardSound()}else if('speechSynthesis'in window)window.speechSynthesis.cancel()};
 $('takeChallenge').onclick=()=>beginNormalOrChallenge('A');$('skipChallenge').onclick=()=>beginNormalOrChallenge(null);
