@@ -29,6 +29,14 @@
 .table{background-color:transparent!important;background-image:none!important;position:relative}
 
 
+#modePicker{background-image:linear-gradient(135deg,#071e19,#164b3b 55%,#071b16);border:1px solid #caa65a;box-shadow:0 18px 44px #0009,inset 0 1px 0 #fff2}
+.mode-grid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.mode-card{min-height:142px;background:linear-gradient(150deg,#275c49 0%,#102c24 48%,#071712 100%);border:1px solid #e2c078;border-radius:18px;padding:20px;box-shadow:0 12px 0 #06130f,0 20px 28px #0009,inset 0 2px 0 #ffffff30;transform:perspective(900px) rotateX(5deg) translateZ(0)}
+.mode-card strong{font-size:19px;color:#ffe6a6}.mode-card span{font-size:13px;color:#d7e5dc}
+.mode-card:active{transform:perspective(900px) rotateX(1deg) translateY(5px);box-shadow:0 5px 0 #06130f,0 9px 14px #0008}
+.table{transform:perspective(1100px) rotateX(7deg);transform-origin:center 60%;background-image:radial-gradient(ellipse at 50% 35%,#1b7355,#0b3c2d 65%,#06251d);box-shadow:inset 0 0 0 3px #f1d28a66,inset 0 -30px 50px #001b14aa,0 22px 32px #000b}
+.card{box-shadow:0 7px 0 #c8bfa9,0 12px 18px #0009,inset 0 1px 0 white}
+.seat{box-shadow:0 9px 16px #0008,inset 0 1px 0 #ffffff22}
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه آزمایشی ۰.۶ · میز سه‌بعدی و صدای بازی</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
@@ -55,17 +63,32 @@ const names=['شما · جنوب','شرق · حریف','هم‌تیمی · شم�
 let soundEnabled=true,audioCtx=null,lastVoiceAt=0;
 function audioReady(){if(!soundEnabled)return null;try{const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return null;audioCtx=audioCtx||new Ctx();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx}catch(e){return null}}
 function tone(freq=520,duration=.075,wave='triangle',volume=.045,delay=0){const ctx=audioReady();if(!ctx)return;const osc=ctx.createOscillator(),gain=ctx.createGain(),t=ctx.currentTime+delay;osc.type=wave;osc.frequency.setValueAtTime(freq,t);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.008);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(ctx.destination);osc.start(t);osc.stop(t+duration+.02)}
-function playCardSound(){tone(720,.045,'triangle',.035);tone(430,.065,'sine',.025,.035)}
-function shuffleSound(){[0,1,2,3,4,5].forEach((n)=>tone(260+n*43,.055,'triangle',.018,n*.035))}
+function shortNoise(duration=.075,volume=.075,frequency=1100){
+ const ctx=audioReady();if(!ctx)return;
+ const length=Math.max(1,Math.floor(ctx.sampleRate*duration)),buffer=ctx.createBuffer(1,length,ctx.sampleRate),data=buffer.getChannelData(0);
+ for(let i=0;i<length;i++)data[i]=(Math.random()*2-1)*(1-i/length);
+ const src=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
+ src.buffer=buffer;filter.type='lowpass';filter.frequency.value=frequency;
+ gain.gain.setValueAtTime(volume,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+duration);
+ src.connect(filter);filter.connect(gain);gain.connect(ctx.destination);src.start();src.stop(ctx.currentTime+duration);
+}
+function playCardSound(){shortNoise(.085,.10,1450);tone(190,.075,'sine',.07,.008);tone(620,.035,'triangle',.018,.02)}
+function shuffleSound(){shortNoise(.22,.055,2200);[0,1,2,3].forEach((n)=>tone(280+n*70,.07,'triangle',.025,n*.045))}
 const voiceLines={
  play:['بگیرش!','تک منو می‌بری؟ بیا!','حریف می‌طلبم!','الان حسابتون می‌رسم!','این دست مال منه!','ببین چی می‌ندازم!','هنوز بازی تموم نشده!'],
  win:['گرفتمش!','اینم از این دست!','دیدی گفتم می‌برم؟'],
  lose:['این یکی از دستم در رفت!','باشه، دست بعدی!']
 };
 function speakPlayer(kind='play',player=1){
- if(!soundEnabled||!('speechSynthesis'in window)||Date.now()-lastVoiceAt<1700)return;
+ if(!soundEnabled||!('speechSynthesis'in window)||Date.now()-lastVoiceAt<1100)return;
  const pool=voiceLines[kind]||voiceLines.play,line=pool[Math.floor(Math.random()*pool.length)];
- try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(line);u.lang='fa-IR';u.rate=.94;u.pitch=player===1?1.02:.88;u.volume=.92;window.speechSynthesis.speak(u);lastVoiceAt=Date.now()}catch(e){}
+ try{
+   const voices=window.speechSynthesis.getVoices();
+   const voice=voices.find(v=>/^fa([-_]|$)/i.test(v.lang))||voices.find(v=>/persian|farsi/i.test(v.name));
+   const u=new SpeechSynthesisUtterance(line);u.lang=voice?voice.lang:'fa-IR';if(voice)u.voice=voice;
+   u.rate=.98;u.pitch=player%2?1.08:.91;u.volume=1;
+   window.speechSynthesis.speak(u);lastVoiceAt=Date.now();
+ }catch(e){}
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function bestTrump(hand){let counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));return [...suits].sort((a,b)=>counts[b]-counts[a])[0]}
@@ -109,7 +132,7 @@ function beginNormalOrChallenge(challengeTeam){
 function legalCards(p){let h=G.hands[p];if(activeMode==='standard-hokm'){const lead=G.plays.length?G.plays[0].card.suit:null;return window.StandardHokmEngine.legalCards(h,lead)}if(!G.plays.length)return h;let lead=G.plays[0].card.s;let follow=h.filter(c=>c.s===lead);return follow.length?follow:h}
 function beats(a,b,lead){if(activeMode==='standard-hokm'){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.beats({suit:code[a.s],rank:a.r},{suit:code[b.s],rank:b.r},code[lead],G.trumpCode)}let ta=a.s===G.trump,tb=b.s===G.trump;if(ta!==tb)return ta;if(a.s===b.s)return rankVal[a.r]>rankVal[b.r];if(a.s===lead)return true;return false}
 function winner(plays){if(activeMode==='standard-hokm'){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.resolveTrick(plays.map(p=>({player:p.player,card:{suit:code[p.card.s],rank:p.card.r}})),G.trumpCode)}let lead=plays[0].card.s,best=plays[0];for(let p of plays.slice(1))if(beats(p.card,best.card,lead))best=p;return best.player}
-function play(p,card){if(G.done||G.waitingChallenge||G.waitingTrump||p!==G.turn)return;let allowed=legalCards(p);if(!allowed.some(c=>c.id===card.id))return;G.hands[p]=G.hands[p].filter(c=>c.id!==card.id);G.plays.push({player:p,card});playCardSound();if(p!==0&&Math.random()<.58)speakPlayer('play',p);G.turn=(p+1)%4;render();if(G.plays.length===4)setTimeout(resolveTrick,450);else runAI()}
+function play(p,card){if(G.done||G.waitingChallenge||G.waitingTrump||p!==G.turn)return;let allowed=legalCards(p);if(!allowed.some(c=>c.id===card.id))return;G.hands[p]=G.hands[p].filter(c=>c.id!==card.id);G.plays.push({player:p,card});playCardSound();if(p!==0)speakPlayer('play',p);G.turn=(p+1)%4;render();if(G.plays.length===4)setTimeout(resolveTrick,450);else runAI()}
 function resolveTrick(){
  let w=winner(G.plays),n=G.trickNo;G.trickWinners.push(w);
  let msg=`دست ${fa(n)} را ${names[w]} برد.`;tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);if(w!==0)speakPlayer('win',w);
