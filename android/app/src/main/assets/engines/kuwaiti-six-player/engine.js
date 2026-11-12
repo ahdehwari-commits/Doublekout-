@@ -1,8 +1,7 @@
 (function(){
 'use strict';
 // Six-player Kuwaiti Kout rules core.
-// All three contracts are no-trump: tricks are won by the strongest card
-// in the suit led; there is no cutting with another suit.
+// Hokm suit modes allow trump cutting; Naras, Tak Naras and Saras are no-trump.
 const SUITS=['S','H','D','C'];
 const RANKS=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 const CONTRACTS=new Set(['hokm','naras','tak_naras','saras']);
