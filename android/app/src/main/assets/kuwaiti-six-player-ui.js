@@ -71,9 +71,10 @@ function setupMarkup(){
  g.innerHTML=`<h2 class="section-title">کوت کویتی · میز شش‌نفره</h2>
  <div class="k-score"><div>امتیاز تیم شما <b id="kScoreA">۰</b></div><div>امتیاز تیم حریف <b id="kScoreB">۰</b></div><div>دست <b id="kTrickNo">۱</b> از ۹</div></div>
  <div id="kAuction" class="k-auction hidden"><b id="kAuctionTitle">مزایده</b><div class="k-small" id="kAuctionInfo"></div><div class="k-small" id="kAuctionLog"></div>
+ <div id="kHumanAuctionControls">
  <label>نوع بازی / خال حکم</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار · خال کارت وسط از پنج کارت اول یار</option></select>
  <div class="k-bids"><button data-bid="pass" id="kPass">پاس</button><button data-bid="6">۶ دست</button><button data-bid="7">۷ دست</button><button data-bid="8">۸ دست</button><button data-bid="9">باون · ۹ دست</button></div>
- <button id="kMalzoom" class="primary hidden">ملزوم</button></div>
+ <button id="kMalzoom" class="primary hidden">ملزوم</button></div></div>
  <div id="kMalzoomSetup" class="k-auction hidden"><b>تنظیم حکم ملزوم</b><label>خال حکم</label><select id="kTrumpSuit" class="k-select"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">خاج ♣</option></select><label><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
  <div class="k-table" id="kTable">${[0,1,2,3,4,5].map(p=>'<div class="k-seat" data-p="'+p+'"><div class="k-name" id="kName'+p+'">'+playerNames[p]+'</div><div class="k-count" id="kCount'+p+'">۹ کارت</div><div class="k-played" id="kPlayed'+p+'"></div></div>').join('')}
  <div class="k-center"><div style="color:#f2d998;font-weight:bold">کوت کویتی</div><div id="kTrumpDisplay" style="font-size:25px;color:#f3d58c">بدون حکم</div><div id="kTrickCards" class="k-small">کارت‌های این دست: ۰ از ۶</div><div id="kTurn" class="k-small">در انتظار مزایده</div></div></div>
@@ -107,12 +108,13 @@ function startAuction(){
 function renderAuction(){
  if(!auction)return;
  const isHuman=auction.current===0,forced=auction.passes>=5&&!auction.highest;
- $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':' · نوبت هوش مصنوعی');
+ $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':' · هوش مصنوعی در حال تصمیم‌گیری');
  const obligated=game.obligatedPlayer;
  $('kAuctionInfo').textContent='ملزوم‌کننده: '+(obligated===null?'ندارد (بازی اول)':playerNames[obligated])+' · بالاترین پیشنهاد: '+(auction.highest?playerNames[auction.highestPlayer]+' · '+auction.highest.label:'هنوز پیشنهادی ثبت نشده')+' · پاس‌های پیاپی: '+auction.passes+' از ۵';
  $('kAuctionLog').textContent='روند مزایده: '+(auction.bids.length?auction.bids.map(x=>playerNames[x.player]+': '+x.label).join(' ← '):'هنوز کسی پیشنهاد نداده است');
  document.querySelectorAll('.k-seat').forEach(el=>el.classList.toggle('active',Number(el.dataset.p)===auction.current));
- $('kAuction').classList.toggle('hidden',!isHuman);
+ $('kAuction').classList.remove('hidden');
+ $('kHumanAuctionControls').classList.toggle('hidden',!isHuman);
  if(isHuman){
   $('kPass').disabled=forced;
   $('kPass').textContent=forced?'پاس (غیرمجاز؛ باید پیشنهاد بدهی)':'پاس';
