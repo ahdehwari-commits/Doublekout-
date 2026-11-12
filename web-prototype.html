@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#103d32"><meta name="description" content="نسخه آزمایشی کوت بومی با قانون جفت و چالش"><link rel="manifest" href="manifest.webmanifest"><title>کوت بومی | نسخه آزمایشی</title>
+<style>
+:root{--felt:#0c382d;--felt2:#145343;--gold:#e7c879;--cream:#fffaf0;--ink:#17251f;--muted:#c4d5cd;--red:#c83d43}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at center,#1b624e 0,#0b3027 70%);color:#fff;font-family:Tahoma,Arial,sans-serif;min-height:100vh}.wrap{max-width:980px;margin:auto;padding:14px}.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.brand{font-size:24px;font-weight:900;color:var(--gold)}.pill{background:#09271f;border:1px solid #467565;padding:6px 11px;border-radius:30px;font-size:12px;color:var(--muted)}.panel{background:#0c2e26dd;border:1px solid #477a68;border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 12px 35px #001b1666}.setup{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end}label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}select,button{font:inherit;border:0;border-radius:12px;padding:11px 13px}select{width:100%;background:#f7f1df;color:#17251f}button{background:var(--gold);color:#17251f;font-weight:bold;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}.primary{width:100%;margin-top:10px}.table{display:grid;grid-template-columns:1fr 1.2fr 1fr;grid-template-rows:auto auto auto;gap:9px;align-items:center;text-align:center;min-height:350px}.seat{background:#0a291f;border:1px solid #497967;border-radius:13px;padding:9px;min-width:0}.seat.active{outline:2px solid var(--gold);box-shadow:0 0 15px #e7c87955}.seat .name{font-size:13px;color:var(--muted)}.seat .count{font-size:12px;color:#a8c4b7}.north{grid-column:2;grid-row:1}.west{grid-column:1;grid-row:2}.center{grid-column:2;grid-row:2;min-height:170px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;justify-items:center}.east{grid-column:3;grid-row:2}.south{grid-column:2;grid-row:3}.played{min-height:84px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}.card{width:61px;height:86px;background:var(--cream);color:#17251f;border-radius:9px;border:1px solid #d8d0bd;box-shadow:0 4px 10px #00140f88;display:flex;flex-direction:column;justify-content:space-between;padding:5px;font-family:Georgia,serif;font-size:20px;font-weight:bold;position:relative}.card.red{color:var(--red)}.card .suit{font-size:27px;align-self:center}.card.back{background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px);border:3px solid #f4e7c4}.card.small{width:44px;height:63px;font-size:16px}.card.small .suit{font-size:20px}.hand{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:12px 3px}.hand button{padding:0;background:none;border:0}.hand button:disabled{opacity:.35}.hand button:not(:disabled) .card{transform:translateY(-3px);border:2px solid var(--gold)}.hand button:active .card{transform:translateY(-9px)}.status{background:#09271f;border-radius:12px;padding:10px;margin-top:10px;color:#f8e9bd;font-size:14px;min-height:46px}.scores{display:flex;justify-content:space-around;gap:10px;flex-wrap:wrap}.score{font-size:14px}.score b{color:var(--gold);font-size:21px}.muted{color:var(--muted);font-size:12px;line-height:1.8}.hidden{display:none!important}.history{font-size:12px;max-height:110px;overflow:auto;color:#d5e4dc}.section-title{color:var(--gold);margin:2px 0 8px;font-size:16px}.rules{font-size:12px;color:var(--muted);line-height:1.9}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}.winner{color:#a8efbd;font-weight:bold}@media(max-width:520px){.wrap{padding:8px}.table{min-height:300px;gap:5px}.card{width:54px;height:77px}.center{min-height:140px}.panel{padding:10px}.brand{font-size:20px}.hand{gap:3px}.hand .card{width:43px;height:65px;font-size:15px}.hand .card .suit{font-size:20px}}
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ کوت بومی</div><span class="pill">نسخه آزمایشی ۰.۵ · چهار نفره · توالی انفرادی</span></header>
+<section class="panel" id="setup"><h2 class="section-title">شروع بازی</h2><div class="setup"><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در بازی اول حکم همیشه پیک است. در بازی‌های بعدی، پس از پخش کارت‌ها و دیدن پنج کارت اولِ حاکم، حکم تعیین می‌شود.</p></section>
+<section class="panel hidden" id="game"><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">چالش موفق شما: <b id="challengeWinA">۰</b></div><div class="score">شکست چالش شما: <b id="challengeLoseA">۰</b></div><div class="score">چالش موفق حریف: <b id="challengeWinB">۰</b></div><div class="score">شکست چالش حریف: <b id="challengeLoseB">۰</b></div><div class="score">دست: <b id="trickNo">۱</b> / ۱۳</div></div>
+<div id="challengePanel" class="status" style="display:none"><b>چالش بردن هر ۱۳ دست</b><p class="muted">اگر وارد چالش شوید، باید هر سیزده دست را ببرید. در صورت موفقیت یک امتیاز چالش ثبت می‌شود؛ در صورت شکست، نتیجه عادی جفت‌دست‌ها محاسبه خواهد شد.</p><div class="actions"><button id="takeChallenge">چالش تیم شما</button><button id="challengeOpponent">چالش تیم حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب حکم برای بازی بعدی</b><p class="muted">پنج کارت اول حاکم نمایش داده شده است؛ خال حکم را انتخاب کن.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><select id="nextTrump"><option value="♠">پیک ♠</option><option value="♥">دل ♥</option><option value="♦">خشت ♦</option><option value="♣">گشنیز ♣</option></select><button id="confirmTrump">تأیید حکم و شروع</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div><div class="muted">حکم</div><div id="trumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div><div class="muted">کارت‌های این دست</div><div id="trickCount" style="font-size:25px">۰ / ۴</div></div><div id="trickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div></div><div class="seat east" id="seat1"><div class="name">شرق · حریف</div><div class="count" id="count1"></div><div class="played" id="played1"></div></div><div class="seat south" id="seat0"><div class="name">شما · جنوب</div><div class="count" id="count0"></div><div class="played" id="played0"></div></div></div>
+<h3 class="section-title">کارت‌های شما</h3><div class="hand" id="hand"></div><div class="status" id="status">بازی شروع شد.</div><div class="actions" style="margin-top:10px"><button id="newGame">بازی جدید</button><button id="sortHand">مرتب‌سازی کارت‌ها</button></div><p class="muted">چهار دست اول: فقط اگر یک بازیکن مشخص (نه صرفاً هم‌تیمی‌هایش) دست سوم و چهارم را متوالی ببرد، هر چهار دست به تیم او می‌رسد. از دست پنجم، گروه باز از ابتدای آن نگه داشته می‌شود؛ هرگاه یک بازیکن مشخص دو دست متوالی ببرد، تمام دست‌های گروه تا آن لحظه به تیم او می‌رسد و گروه بعدی از دست بعد آغاز می‌شود. اگر تا دست سیزدهم چنین توالی‌ای شکل نگیرد، تمام دست‌های باقی‌مانده به تیم برنده دست سیزدهم می‌رسد.</p><div class="history" id="history"></div></section>
+<section class="panel"><h3 class="section-title">محدوده این نسخه آزمایشی</h3><div class="rules">این نسخه آزمایشی چهار نفره، بدون جوکر، با حکم ثابت پیک در بازی اول، انتخاب حکم در بازی‌های بعدی، قانون توالی برد توسط یک بازیکن مشخص و چالش ۱۳ دست است. قوانین حالت شش‌نفره در این نسخه تغییر داده نشده‌اند و این نسخه فعلاً میز چهار نفره را اجرا می‌کند. مزایده کامل و بازی آنلاین هنوز در این نسخه وجود ندارد.</div></section>
+</main>
+<script>
+const suits=['♠','♥','♦','♣'],ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'],rankVal=Object.fromEntries(ranks.map((r,i)=>[r,i]));
+let G=null, matchNo=1, previousWinner=null, challengeStats={winA:0,loseA:0,winB:0,loseB:0};
+const $=id=>document.getElementById(id), fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]), team=p=>p%2===0?'A':'B';
+const names=['شما · جنوب','شرق · حریف','هم‌تیمی · شمال','غرب · حریف'];
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function bestTrump(hand){let counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));return suits.sort((a,b)=>counts[b]-counts[a])[0]}
+function dealGame(trump){
+ let deck=shuffle(suits.flatMap(s=>ranks.map(r=>({s,r,id:r+s})))), hands=[[],[],[],[]];
+ deck.forEach((c,i)=>hands[i%4].push(c));
+ hands.forEach(h=>h.sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]));
+ let starter=Number($('starter').value);
+ G={hands,trump,leader:starter,turn:starter,trickNo:1,plays:[],trickWinners:[],scoreA:0,scoreB:0,challenge:null,challengeResolved:false,history:[],done:false,waitingChallenge:true,waitingTrump:false};
+ $('setup').classList.add('hidden');$('game').classList.remove('hidden');
+ $('trumpBig').textContent=trump;$('trumpBig').style.color=['♥','♦'].includes(trump)?'#f17b7b':'#e7c879';
+ $('challengePanel').style.display='block';$('trumpPicker').classList.add('hidden');
+ $('status').textContent='کارت‌ها پخش شدند. پس از انتخاب چالش یا بازی عادی، بازی آغاز می‌شود.';
+ render();updateChallengeStats();
+}
+function startGame(){
+ if(matchNo===1){dealGame('♠');return}
+ // Later games: the previous game's winning team holds the right to choose trump after seeing five cards.
+ if(previousWinner==='A'){
+   dealGame('♠');G.waitingTrump=true;G.waitingChallenge=true;
+   $('challengePanel').style.display='none';$('trumpPicker').classList.remove('hidden');
+   $('status').textContent='پنج کارت اول حاکم نمایش داده شده است؛ حکم را انتخاب کن.';
+   $('trumpBig').textContent='انتخابی';renderHakimPreview();render();return;
+ } else {
+   dealGame('♠');
+   const hakim=1; // east is the opposing team's first player / hakim in this prototype
+   G.trump=bestTrump(G.hands[hakim].slice(0,5));
+   $('trumpBig').textContent=G.trump;$('trumpBig').style.color=['♥','♦'].includes(G.trump)?'#f17b7b':'#e7c879';
+   $('challengePanel').style.display='block';
+   $('status').textContent='حاکم حریف پنج کارت اول را دید و حکم را انتخاب کرد: '+G.trump;
+ }
+}
+function renderHakimPreview(){const box=$('hakimPreview');if(!box||!G)return;box.innerHTML='';G.hands[0].slice(0,5).forEach(c=>box.append(cardEl(c,true)));}
+function confirmTrump(){if(!G||!G.waitingTrump)return;G.trump=$('nextTrump').value;G.waitingTrump=false;$('trumpPicker').classList.add('hidden');$('trumpBig').textContent=G.trump;$('trumpBig').style.color=['♥','♦'].includes(G.trump)?'#f17b7b':'#e7c879';$('challengePanel').style.display='block';$('status').textContent='حکم انتخاب شد. اکنون چالش را انتخاب کن یا بازی عادی را شروع کن.';render()}
+function beginNormalOrChallenge(challengeTeam){
+ if(!G||G.done)return;G.waitingChallenge=false;G.challenge=challengeTeam||null;
+ $('challengePanel').style.display='none';
+ $('status').textContent=challengeTeam?('تیم '+(challengeTeam==='A'?'شما':'حریف')+' وارد چالش ۱۳ دست شد؛ باید تمام دست‌ها را ببرد.'):'بازی عادی آغاز شد.';
+ render();runAI();
+}
+function legalCards(p){let h=G.hands[p];if(!G.plays.length)return h;let lead=G.plays[0].card.s;let follow=h.filter(c=>c.s===lead);return follow.length?follow:h}
+function beats(a,b,lead){let ta=a.s===G.trump,tb=b.s===G.trump;if(ta!==tb)return ta;if(a.s===b.s)return rankVal[a.r]>rankVal[b.r];if(a.s===lead)return true;return false}
+function winner(plays){let lead=plays[0].card.s,best=plays[0];for(let p of plays.slice(1))if(beats(p.card,best.card,lead))best=p;return best.player}
+function play(p,card){if(G.done||G.waitingChallenge||G.waitingTrump||p!==G.turn)return;let allowed=legalCards(p);if(!allowed.some(c=>c.id===card.id))return;G.hands[p]=G.hands[p].filter(c=>c.id!==card.id);G.plays.push({player:p,card});G.turn=(p+1)%4;render();if(G.plays.length===4)setTimeout(resolveTrick,450);else runAI()}
+function resolveTrick(){
+ let w=winner(G.plays),t=team(w),n=G.trickNo;G.trickWinners.push(w);
+ let msg=`دست ${fa(n)} را ${names[w]} برد.`;
+ G.history.push(msg);
+ if(G.challenge && t!==G.challenge && !G.challengeResolved){G.challengeResolved=true;msg+=' چالش شکست خورد؛ در پایان، امتیاز عادی دست‌ها محاسبه می‌شود.'}
+ G.plays=[];G.trickNo++;G.leader=w;G.turn=w;$('status').textContent=msg;render();
+ if(G.trickNo>13){finishGame();return}runAI();
+}
+function addScore(t,n){if(t==='A')G.scoreA+=n;else G.scoreB+=n}
+function scoreNormal(){
+ const winners=G.trickWinners; // player index, not team: consecutive wins must belong to the exact same player.
+ const teamName=t=>t==='A'?'تیم شما':'تیم حریف';
+ // Tricks 1–4: no score unless one individual player wins both tricks 3 and 4.
+ if(winners[2]===winners[3]){
+   const t=team(winners[2]);addScore(t,4);
+   G.history.push('چهار دست اول به '+teamName(t)+' ثبت شد؛ برنده هر دو دست سوم و چهارم یک بازیکن بود.');
+ }else{
+   G.history.push('چهار دست اول امتیاز نگرفت؛ یک بازیکن واحد دست سوم و چهارم را متوالی نبرد.');
+ }
+ // From trick 5 onward, keep a pending group. The first exact player to win two adjacent tricks
+ // closes the group; every pending trick since its start goes to that player's team.
+ // If no such sequence occurs by trick 13, all remaining tricks go to the last trick's winner's team.
+ let groupStart=4;
+ for(let i=5;i<=12;i++){
+   if(i>groupStart && winners[i]===winners[i-1]){
+     const t=team(winners[i]),count=i-groupStart+1;
+     addScore(t,count);
+     G.history.push(`دست‌های ${groupStart+1} تا ${i+1} (${count} دست) به ${teamName(t)} رسید؛ بازیکن ${names[winners[i]]} دو دست متوالی برد.`);
+     groupStart=i+1;
+   }
+ }
+ if(groupStart<=12){
+   const t=team(winners[12]),count=13-groupStart;
+   addScore(t,count);
+   G.history.push(`تا پایان توالی دو بردِ یک بازیکن شکل نگرفت؛ ${count} دست باقی‌مانده (${groupStart+1} تا ۱۳) به برنده دست سیزدهم، ${teamName(t)}، رسید.`);
+ }
+}
+function finishGame(){
+ G.done=true;
+ const challengeSuccess=!!G.challenge && !G.challengeResolved && G.trickWinners.every(p=>team(p)===G.challenge);
+ if(challengeSuccess){
+   if(G.challenge==='A')challengeStats.winA++;else challengeStats.winB++;
+   G.history.push('چالش ۱۳ دست با موفقیت کامل شد؛ یک امتیاز چالش برای '+(G.challenge==='A'?'تیم شما':'تیم حریف')+' ثبت شد.');
+   $('status').innerHTML='<span class="winner">چالش ۱۳ دست با موفقیت کامل شد؛ یک امتیاز جداگانه ثبت شد.</span>';
+ }else{
+   if(G.challenge){if(G.challenge==='A')challengeStats.loseA++;else challengeStats.loseB++;}
+   scoreNormal();
+   const winnerTeam=G.scoreA===G.scoreB?'مساوی':G.scoreA>G.scoreB?'تیم شما':'تیم حریف';
+   $('status').innerHTML=`بازی تمام شد. <span class="winner">${winnerTeam} · ${fa(G.scoreA)} دست به ${fa(G.scoreB)} دست</span>`+(G.challenge?' · چالش ناموفق بود؛ امتیاز عادی محاسبه شد.':'');
+ }
+ if(challengeSuccess)previousWinner=G.challenge;else previousWinner=G.scoreA===G.scoreB?previousWinner:G.scoreA>G.scoreB?'A':'B';
+ updateChallengeStats();render();
+ $('history').innerHTML=G.history.slice(-18).reverse().join('<br>');
+ $('newGame').textContent='بازی بعدی';
+}
+function updateChallengeStats(){
+ $('challengeWinA').textContent=fa(challengeStats.winA);$('challengeLoseA').textContent=fa(challengeStats.loseA);
+ $('challengeWinB').textContent=fa(challengeStats.winB);$('challengeLoseB').textContent=fa(challengeStats.loseB);
+}
+function aiChoose(p){
+ let legal=legalCards(p),difficulty=$('difficulty').value;
+ if(difficulty==='easy')return legal[Math.floor(Math.random()*legal.length)];
+ let lead=G.plays.length?G.plays[0].card.s:null;
+ let current=G.plays.length?winner(G.plays):null;
+ let partnerWinning=current!==null&&team(current)===team(p);
+ let sorted=[...legal].sort((a,b)=>rankVal[a.r]-rankVal[b.r]);
+ if(!lead)return sorted[0];
+ if(partnerWinning){let losing=sorted.filter(c=>!beats(c,G.plays.reduce((best,x)=>beats(x.card,best.card,lead)?x:best).card,lead));return losing[0]||sorted[0]}
+ let winners=sorted.filter(c=>G.plays.every(x=>!beats(x.card,c,lead)));
+ return winners[0]||sorted[0];
+}
+function runAI(){if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;setTimeout(()=>{if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;let p=G.turn,c=aiChoose(p);play(p,c)},550)}
+function cardEl(c,small=false){let d=document.createElement('div');d.className='card '+(['♥','♦'].includes(c.s)?'red':'')+(small?' small':'');d.innerHTML=`<span>${c.r}</span><span class="suit">${c.s}</span><span style="align-self:flex-end;font-size:12px">${c.r}</span>`;return d}
+function render(){
+ if(!G)return;
+ $('scoreA').textContent=fa(G.scoreA);$('scoreB').textContent=fa(G.scoreB);$('trickNo').textContent=fa(Math.min(G.trickNo,13));$('trickCount').textContent=fa(G.plays.length)+' / ۴';
+ for(let p=0;p<4;p++){
+  $('seat'+p).classList.toggle('active',G.turn===p);$('count'+p).textContent=p===0?'کارت شما: '+fa(G.hands[p].length):fa(G.hands[p].length)+' کارت';
+  let slot=$('played'+p);slot.innerHTML='';let x=G.plays.find(v=>v.player===p);
+  if(x)slot.append(cardEl(x.card,true));else if(p!==0&&G.hands[p].length){let back=document.createElement('div');back.className='card back small';slot.append(back)}
+ }
+ $('hand').innerHTML='';
+ G.hands[0].forEach(c=>{let b=document.createElement('button'),legal=G.turn===0&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(0).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(0,c);$('hand').append(b)});
+ $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
+ $('trickMsg').textContent=G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
+}
+$('start').onclick=startGame;$('confirmTrump').onclick=confirmTrump;
+$('takeChallenge').onclick=()=>beginNormalOrChallenge('A');$('challengeOpponent').onclick=()=>beginNormalOrChallenge('B');$('skipChallenge').onclick=()=>beginNormalOrChallenge(null);
+$('newGame').onclick=()=>{if(G&&!G.done)return;matchNo++;G=null;$('game').classList.add('hidden');$('setup').classList.remove('hidden');$('newGame').textContent='بازی جدید'};
+$('sortHand').onclick=()=>{if(!G)return;G.hands[0].sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);render()};
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script></body></html>
