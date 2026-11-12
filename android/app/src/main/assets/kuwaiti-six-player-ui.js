@@ -199,17 +199,25 @@ function finishAuction(){
  startActualGame(trumpSuit,false);
 }
 function startActualGame(trumpSuit,hidden){
- if(!game||!game.auctionBid||!Number.isInteger(game.auctionWinner))throw new Error('اطلاعات برنده مزایده ثبت نشده است؛ بازی آغاز نشد.');
- locked=false;game.turn=game.auctionWinner;
- K.startPlay(game,game.auctionWinner,game.contract,{isMalzoom:game.isMalzoom,trumpAnnounced:!hidden,trumpSuit});
- game.hiddenTrump=!!hidden;game.trumpSuit=trumpSuit;game.target=game.auctionBid.target||null;
- $('kMalzoomSetup').classList.add('hidden');$('kAuction').classList.add('hidden');
- $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]):(trumpSuit?'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]:'بدون حکم');
- $('kTrickCards').style.display='';
- $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[game.turn];
- $('kResult').classList.add('hidden');
- setScreen('game');renderGame();
- if(game.turn!==0)playAITurn();
+ try{
+  if(!game||!game.auctionBid||!Number.isInteger(game.auctionWinner))throw new Error('اطلاعات برنده مزایده ثبت نشده است؛ بازی آغاز نشد.');
+  if(!Array.isArray(game.hands)||game.hands.length!==6||game.hands.some(h=>!Array.isArray(h)))throw new Error('کارت‌های شش بازیکن آماده نیستند.');
+  const winner=game.auctionWinner;
+  const contract=['naras','tak_naras','saras'].includes(game.contract)?game.contract:'hokm';
+  locked=false;game.contract=contract;game.turn=winner;game.leader=winner;
+  K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:trumpSuit||null});
+  game.hiddenTrump=!!hidden;game.trumpSuit=trumpSuit||null;game.target=game.auctionBid.target||null;
+  if(game.turn!==winner||!Array.isArray(game.trick)||game.trick.length!==0)throw new Error('انتقال نوبت از مزایده به بازی کامل نشد.');
+  $('kMalzoomSetup').classList.add('hidden');$('kAuction').classList.add('hidden');
+  $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]):(trumpSuit?'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]:'بدون حکم');
+  $('kTrickCards').style.display='';
+  $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(winner===0?' · کارت‌های مجاز شما فعال‌اند.':' · هوش مصنوعی در حال بازی است.');
+  $('kResult').classList.add('hidden');setScreen('game');renderGame();
+  if(winner!==0)playAITurn();
+ }catch(e){
+  locked=true;setScreen('game');$('kStatus').textContent='خطا در شروع بازی پس از مزایده: '+(e&&e.message?e.message:'خطای ناشناخته');
+  console.error('Kuwaiti auction-to-play transition failed',e);
+ }
 }
 function auctionTurn(){
  if(!auction)return;
