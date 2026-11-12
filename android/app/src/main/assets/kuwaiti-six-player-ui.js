@@ -4,7 +4,7 @@ let K=window.KuwaitiSixPlayerEngine;
 const $=id=>document.getElementById(id);
 const suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'};
 const suitName={S:'پیک',H:'دل',D:'خشت',C:'خاج'};
-const contractName={hokm_spades:'پیک',hokm_hearts:'دل',hokm_diamonds:'خشت',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',partner_middle:'برگ وسط یار',hokm:'حکم',malzoom:'ملزوم'};
+const contractName={hokm_spades:'پیک',hokm_hearts:'دل',hokm_diamonds:'خشت',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',hokm:'حکم',malzoom:'ملزوم'};
 const playerNames=['شما','بازیکن ۲','بازیکن ۳','بازیکن ۴','بازیکن ۵','بازیکن ۶'];
 const team=p=>K.teamOf(p);
 const fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
@@ -72,7 +72,7 @@ function setupMarkup(){
  <div class="k-score"><div>امتیاز تیم شما <b id="kScoreA">۰</b></div><div>امتیاز تیم حریف <b id="kScoreB">۰</b></div><div>دست <b id="kTrickNo">۱</b> از ۹</div></div>
  <div id="kAuction" class="k-auction hidden"><b id="kAuctionTitle">مزایده</b><div class="k-small" id="kAuctionInfo"></div><div class="k-small" id="kAuctionLog"></div>
  <div id="kHumanAuctionControls">
- <label>نوع بازی / خال حکم</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار · خال کارت وسط از پنج کارت اول یار</option></select>
+ <label>نوع بازی / خال حکم</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option></select>
  <div class="k-bids"><button data-bid="pass" id="kPass">پاس</button><button data-bid="6">۶ دست</button><button data-bid="7">۷ دست</button><button data-bid="8">۸ دست</button><button data-bid="9">باون · ۹ دست</button></div>
  <button id="kMalzoom" class="primary hidden">ملزوم</button></div></div>
  <div id="kMalzoomSetup" class="k-auction hidden"><b>تنظیم حکم ملزوم</b><label>خال حکم</label><select id="kTrumpSuit" class="k-select"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">خاج ♣</option></select><label><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
@@ -110,7 +110,7 @@ function renderAuction(){
  const isHuman=auction.current===0,forced=auction.passes>=5&&!auction.highest;
  $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':' · هوش مصنوعی در حال تصمیم‌گیری');
  const obligated=game.obligatedPlayer;
- $('kAuctionInfo').textContent='ملزوم‌کننده: '+(obligated===null?'ندارد (بازی اول)':playerNames[obligated])+' · بالاترین پیشنهاد: '+(auction.highest?playerNames[auction.highestPlayer]+' · '+auction.highest.label:'هنوز پیشنهادی ثبت نشده')+' · پاس‌های پیاپی: '+auction.passes+' از ۵';
+ $('kAuctionInfo').textContent='ملزوم‌کننده: '+(obligated===null?'نامشخص':playerNames[obligated])+' · بالاترین پیشنهاد: '+(auction.highest?playerNames[auction.highestPlayer]+' · '+auction.highest.label:'هنوز پیشنهادی ثبت نشده')+' · پاس‌های پیاپی: '+auction.passes+' از ۵';
  $('kAuctionLog').textContent='روند مزایده: '+(auction.bids.length?auction.bids.map(x=>playerNames[x.player]+': '+x.label).join(' ← '):'هنوز کسی پیشنهاد نداده است');
  document.querySelectorAll('.k-seat').forEach(el=>el.classList.toggle('active',Number(el.dataset.p)===auction.current));
  $('kAuction').classList.remove('hidden');
@@ -143,15 +143,16 @@ function handStrength(p){
 }
 function aiBid(p){
  const rank=auction.highestRank,str=handStrength(p);
- if(p===game.obligatedPlayer&&rank===0&&str>22&&Math.random()<.28)return {type:'malzoom',rank:1,label:'ملزوم',contract:randomContract()};
+ if(p===game.obligatedPlayer&&rank<4&&str>22&&Math.random()<.28)return {type:'malzoom',rank:rank+1,label:'ملزوم',contract:randomContract()};
  if(str>25&&rank<4&&Math.random()<.65){const next=rank+1,target=next===4?9:5+next;return {type:'normal',rank:next,label:next===4?'باون · ۹ دست':target+' دست',target,contract:randomContract()};}
  if(auction.passes>=5&&!auction.highest)return {type:'normal',rank:1,label:'۶ دست',target:6,contract:randomContract()};
  return null;
 }
-function randomContract(){const choices=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras','partner_middle'];return choices[Math.floor(Math.random()*choices.length)];}
+function randomContract(){const choices=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras'];return choices[Math.floor(Math.random()*choices.length)];}
 function submitBid(bid){
  if(!auction||locked)return;
  const p=auction.current;
+ if(bid.type==='malzoom'&&p!==game.obligatedPlayer)return;
  if(bid.type==='pass'){
   auction.passes++;auction.bids.push({player:p,label:'پاس'});
  }else{
@@ -169,6 +170,7 @@ function submitBid(bid){
  renderAuction();auctionTurn();
 }
 function finishAuction(){
+ if(!auction||!auction.highest||!Number.isInteger(auction.highestPlayer)){setStatus('مزایده برنده مشخصی ندارد؛ بازی آغاز نشد.');return;}
  const win=auction.highestPlayer,bid=auction.highest;
  $('kAuction').classList.add('hidden');
  game.auctionBid=bid;game.auctionWinner=win;game.selectedContract=bid.contract;
@@ -191,25 +193,23 @@ function finishAuction(){
  else if(bid.contract==='hokm_hearts')trumpSuit='H';
  else if(bid.contract==='hokm_diamonds')trumpSuit='D';
  else if(bid.contract==='hokm_clubs')trumpSuit='C';
- else if(bid.contract==='partner_middle'){
-  const partner=(win+2)%6,card=game.initialHands&&game.initialHands[partner]&&game.initialHands[partner][2];
-  trumpSuit=card?card.suit:'S';
- }
  game.contract=['naras','tak_naras','saras'].includes(bid.contract)?bid.contract:'hokm';
  game.trumpSuit=trumpSuit;
  $('kStatus').textContent='برنده مزایده: '+playerNames[win]+' · '+bid.label+' · نوع بازی '+contractName[bid.contract];
  startActualGame(trumpSuit,false);
 }
 function startActualGame(trumpSuit,hidden){
- if(!game||!game.auctionBid)throw new Error('اطلاعات برنده مزایده ثبت نشده است؛ بازی آغاز نشد.');
+ if(!game||!game.auctionBid||!Number.isInteger(game.auctionWinner))throw new Error('اطلاعات برنده مزایده ثبت نشده است؛ بازی آغاز نشد.');
  locked=false;game.turn=game.auctionWinner;
  K.startPlay(game,game.auctionWinner,game.contract,{isMalzoom:game.isMalzoom,trumpAnnounced:!hidden,trumpSuit});
  game.hiddenTrump=!!hidden;game.trumpSuit=trumpSuit;game.target=game.auctionBid.target||null;
  $('kMalzoomSetup').classList.add('hidden');$('kAuction').classList.add('hidden');
  $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]):(trumpSuit?'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]:'بدون حکم');
- $('kTrickCards').style.display=game.selectedContract==='partner_middle'?'none':'';
- $('kStatus').textContent='مزایده تمام شد؛ بازی آغاز شد. '+playerNames[game.turn]+' اولین کارت را بازی می‌کند.';
- setScreen('game');renderGame();playAITurn();
+ $('kTrickCards').style.display='';
+ $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[game.turn];
+ $('kResult').classList.add('hidden');
+ setScreen('game');renderGame();
+ if(game.turn!==0)playAITurn();
 }
 function auctionTurn(){
  if(!auction)return;
@@ -275,7 +275,7 @@ function renderGame(){
  $('kTrickNo').textContent=fa(Math.min(game.trickNo,9));
  const currentPlays=game.trick.length?game.trick:(game.lastTrick||[]);
  $('kTrickCards').textContent='کارت‌های این دست: '+fa(game.trick.length)+' از ۶';
- $('kTrickCards').style.display=game.selectedContract==='partner_middle'?'none':'';
+ $('kTrickCards').style.display='';
  $('kTurn').textContent=game.done?'بازی پایان یافت':('نوبت: '+playerNames[game.turn]);
  for(let p=0;p<6;p++){
   const seat=document.querySelector('.k-seat[data-p="'+p+'"]');
