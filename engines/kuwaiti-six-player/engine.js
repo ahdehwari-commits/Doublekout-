@@ -123,8 +123,8 @@ function playCard(game,player,card){
  const cardIndex=hand.findIndex(c=>c.id===card.id);
  if(cardIndex<0)throw new Error('این کارت در دست بازیکن نیست');
  const leadSuit=effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
- const activeTrumpSuit=game.trumpSuit&&(game.trumpAnnounced||player===game.auctionWinner)?game.trumpSuit:null;
- const allowed=legalCards(hand,leadSuit,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:activeTrumpSuit});
+ const activeTrumpSuit=game.trickNo===1?game.trumpSuit:(game.trumpSuit&&(game.trumpAnnounced||player===game.auctionWinner)?game.trumpSuit:null);
+ const allowed=legalCards(hand,leadSuit,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:activeTrumpSuit,firstTrickNoCut:game.trickNo===1});
  if(!allowed.some(c=>c.id===card.id))throw new Error('بازی این کارت طبق قانون مجاز نیست');
  hand.splice(cardIndex,1);
  if(!Array.isArray(game.playedCards))game.playedCards=[];
