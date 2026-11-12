@@ -18,7 +18,10 @@ function addStyle(){
  .k-intro div{background:#09271f;border:1px solid #477a68;border-radius:12px;padding:10px;text-align:center;font-size:12px;color:#e8d9ad}
  .k-table{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto minmax(110px,auto) auto;gap:6px;align-items:center;text-align:center;border:3px solid #c5a15a;border-radius:22px;padding:8px;background:radial-gradient(ellipse at 50% 48%,#1b7355,#0b3c2d 68%,#06251d);box-shadow:inset 0 0 0 2px #fff2,inset 0 -22px 40px #001b14aa,0 15px 30px #0009}
   .k-seat{position:relative;min-width:0;background:linear-gradient(145deg,#174d3d,#061c16);border:1px solid #8c9d70;border-radius:12px;padding:6px 3px;box-shadow:0 5px 12px #0008}
- .k-seat.active{outline:2px solid #f3d58c;box-shadow:0 0 18px #f3d58caa;animation:kTurnPulse 1.05s ease-in-out infinite alternate}\n .k-bid-chip{position:absolute;z-index:3;top:4px;left:4px;min-width:20px;height:20px;padding:0 4px;border-radius:7px;background:linear-gradient(145deg,#ffe6a1,#b27b24);border:1px solid #fff0bd;color:#241708;font:900 12px/18px Georgia,serif;box-shadow:0 2px 7px #0009;text-align:center}\n .k-seat.active .k-bid-chip{transform:scale(1.12);box-shadow:0 0 10px #ffe6a1}\n @keyframes kTurnPulse{from{filter:brightness(1)}to{filter:brightness(1.35)}}
+ .k-seat.active{outline:2px solid #f3d58c;box-shadow:0 0 18px #f3d58caa;animation:kTurnPulse 1.05s ease-in-out infinite alternate}
+ .k-bid-chip{position:absolute;z-index:3;top:4px;left:4px;min-width:20px;height:20px;padding:0 4px;border-radius:7px;background:linear-gradient(145deg,#ffe6a1,#b27b24);border:1px solid #fff0bd;color:#241708;font:900 12px/18px Georgia,serif;box-shadow:0 2px 7px #0009;text-align:center}
+ .k-seat.active .k-bid-chip{transform:scale(1.12);box-shadow:0 0 10px #ffe6a1}
+ @keyframes kTurnPulse{from{filter:brightness(1)}to{filter:brightness(1.35)}}
  .k-seat .k-name{font-size:11px;color:#f4dfaa;font-weight:bold}
  .k-seat .k-count{font-size:10px;color:#c3d6ca;margin:3px}
  .k-played{min-height:48px;display:flex;align-items:center;justify-content:center}
@@ -32,7 +35,9 @@ function addStyle(){
  .k-card.joker.black{background:linear-gradient(145deg,#aeb5c5,#222633 58%,#070912);color:#fff;border-color:#e2d4b6}
  .k-card.joker .joker-title{font:900 6px Georgia,serif;letter-spacing:.35px;text-shadow:0 1px 2px #000;display:block;line-height:1.1;white-space:nowrap}
  .k-card.joker .joker-art{display:block;width:100%;height:39px;filter:drop-shadow(0 1px 2px #0009)}
- .k-card.joker .joker-caption{font:700 4px Georgia,serif;letter-spacing:.45px;line-height:1;color:#f7dfad;text-shadow:0 1px 2px #000;white-space:nowrap}\n .k-back{position:relative;background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px)!important;border:2px solid #f4e7c4!important}\n .k-back:after{content:'Abdolhamid\\A Dehvari';white-space:pre;position:absolute;left:5%;top:18%;width:90%;height:64%;display:flex;align-items:center;justify-content:center;text-align:center;box-sizing:border-box;font:italic 700 4px/1.05 Georgia,'Times New Roman',serif;letter-spacing:-.12px;color:#ffdf83;text-shadow:0 1px 1px #071b32,0 0 2px #f2d58a;transform:rotate(-24deg) scale(.92);padding:1px;border-radius:3px;background:#102b4b55;overflow:hidden}
+ .k-card.joker .joker-caption{font:700 4px Georgia,serif;letter-spacing:.45px;line-height:1;color:#f7dfad;text-shadow:0 1px 2px #000;white-space:nowrap}
+ .k-back{position:relative;background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px)!important;border:2px solid #f4e7c4!important}
+ .k-back:after{content:'Abdolhamid\\A Dehvari';white-space:pre;position:absolute;left:5%;top:18%;width:90%;height:64%;display:flex;align-items:center;justify-content:center;text-align:center;box-sizing:border-box;font:italic 700 4px/1.05 Georgia,'Times New Roman',serif;letter-spacing:-.12px;color:#ffdf83;text-shadow:0 1px 1px #071b32,0 0 2px #f2d58a;transform:rotate(-24deg) scale(.92);padding:1px;border-radius:3px;background:#102b4b55;overflow:hidden}
  .k-hand{display:flex;justify-content:center;gap:2px;overflow-x:auto;padding:10px 0 14px;direction:ltr}
  .k-hand button,.k-auction-card{padding:0;background:transparent;border:0;min-width:0;flex:0 0 auto}
  .k-hand button:disabled{opacity:.38}
