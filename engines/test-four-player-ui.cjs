@@ -73,3 +73,10 @@ assert.ok(sixUi.includes("const bidContract=game.isMalzoom?'hokm':game.auctionBi
 assert.ok(sixUi.includes("قرارداد بدون حکم نباید خال حکم یا حکم مخفی داشته باشد"),'no-trump contract must reject any inherited trump suit');
 assert.ok(sixUi.includes("'بدون حکم · '+contractName[bidContract]"),'no-trump variant must be explicitly shown on the table');
 assert.ok(sixUi.includes("game.trumpSuit=null;game.trumpAnnounced=false;game.hiddenTrump=false"),'new auction must clear previous trump state');
+
+assert.ok(sixUi.includes("const committedBid={...bid,contract:bid.type==='malzoom'?'malzoom':bid.contract}"),'auction must snapshot the exact contract selected for each bid');
+assert.ok(sixUi.includes("const allowedContracts=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras']"),'auction must reject invalid or inherited contract values');
+assert.ok(sixUi.includes("$('kContract').value='hokm_spades'"),'new deal must reset the contract selector rather than reuse the previous deal selection');
+assert.ok(sixUi.includes("'حکم این بازی: '+suitGlyph[resolvedTrump]"),'Hokm banner must explicitly refer to the current deal');
+assert.ok(sixUi.includes('class="joker-art"')&&sixUi.includes('RED JOKER')&&sixUi.includes('BLACK JOKER'),'red and black jokers must use the new custom devil artwork');
+assert.ok(sixUi.includes('trickNo===9&&isLead')||sixUi.includes('k-card.joker .joker-art'),'custom devil art must be present in the six-player card renderer');
