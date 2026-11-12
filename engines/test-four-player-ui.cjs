@@ -43,8 +43,8 @@ for(const suit of ['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs']){
  assert.ok(sixUi.includes('value="'+suit+'"'),'six-player Hokm must offer '+suit);
 }
 assert.ok(html.includes("G.trump=({'hokm_spades':'♠','hokm_hearts':'♥','hokm_diamonds':'♦','hokm_clubs':'♣'})[selected]"));
-assert.ok(sixUi.includes("else if(bid.contract==='hokm_hearts')trumpSuit='H'"));
-assert.ok(sixUi.includes("else if(bid.contract==='hokm_diamonds')trumpSuit='D'"));
+assert.ok(sixUi.includes("const suitByContract={hokm_spades:'S',hokm_hearts:'H',hokm_diamonds:'D',hokm_clubs:'C'}"));
+assert.ok(sixUi.includes("const resolvedTrump=noTrumpContracts.includes(bidContract)?null:(game.isMalzoom?(trumpSuit||null):suitByContract[bidContract])"));
 assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\n try{"));
 assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump})"));
 assert.ok(sixUi.includes("setScreen('game');renderGame();\n  if(winner!==0)playAITurn();"));
