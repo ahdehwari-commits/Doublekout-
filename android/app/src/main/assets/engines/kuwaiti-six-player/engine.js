@@ -67,7 +67,7 @@ function effectiveLeadSuit(plays,{trickNo=1}={}){
 }
 // Jokers cannot be the first card through trick eight. They are allowed
 // on trick nine, and may be played later when the player cannot follow suit.
-function legalCards(hand,leadSuit,{trickNo=1,isFirstPlay=true}={}){
+function legalCards(hand,leadSuit,{trickNo=1,isFirstPlay=true,trumpSuit=null}={}){
  if(!Array.isArray(hand))throw new TypeError('دست کارت نامعتبر است');
  if(isFirstPlay&&!leadSuit){
    if(trickNo<9)return hand.filter(c=>!isJoker(c));
@@ -75,20 +75,23 @@ function legalCards(hand,leadSuit,{trickNo=1,isFirstPlay=true}={}){
  }
  if(!leadSuit)return hand.filter(c=>!isJoker(c));
  const follow=hand.filter(c=>c.kind==='normal'&&c.suit===leadSuit);
- return follow.length?follow:[...hand];
+ if(follow.length)return follow;
+ if(trumpSuit){const trumps=hand.filter(c=>c.kind==='normal'&&c.suit===trumpSuit);if(trumps.length)return [...trumps,...hand.filter(isJoker)];}
+ return [...hand];
 }
-function findTrickWinner(plays,contract,{trickNo=1,isMalzoom=false,trumpAnnounced=false}={}){
+function findTrickWinner(plays,contract,{trickNo=1,isMalzoom=false,trumpAnnounced=false,trumpSuit=null}={}){
  validateContract(contract);
  if(!Array.isArray(plays)||plays.length!==6)throw new Error('برای تعیین برنده باید شش کارت بازی شده باشد');
  const leadSuit=effectiveLeadSuit(plays,{trickNo});
+ const hasTrump=!!trumpSuit&&plays.some(p=>p.card.kind==='normal'&&p.card.suit===trumpSuit);
  const eligible=plays.filter((play,index)=>{
    if(isJoker(play.card))return cardPower(play.card,contract,{trickNo,isLead:index===0,isMalzoom,trumpAnnounced})>0;
-   return play.card.suit===leadSuit;
+   return hasTrump?play.card.suit===trumpSuit:play.card.suit===leadSuit;
  });
  if(!eligible.length)return plays[1]; // Ninth-trick joker lead has no power; second card sets suit.
  return eligible.reduce((best,current)=>{
-   const bestPower=cardPower(best.card,contract,{trickNo,isLead:best===plays[0],isMalzoom,trumpAnnounced});
-   const currentPower=cardPower(current.card,contract,{trickNo,isLead:current===plays[0],isMalzoom,trumpAnnounced});
+   const bestPower=best.card.kind==='normal'?normalPower(best.card,contract):cardPower(best.card,contract,{trickNo,isLead:best===plays[0],isMalzoom,trumpAnnounced});
+   const currentPower=current.card.kind==='normal'?normalPower(current.card,contract):cardPower(current.card,contract,{trickNo,isLead:current===plays[0],isMalzoom,trumpAnnounced});
    return currentPower>bestPower?current:best;
  });
 }
@@ -98,7 +101,7 @@ function startPlay(game,auctionWinner,contract,{isMalzoom=false,trumpAnnounced=f
  if(!Number.isInteger(auctionWinner)||auctionWinner<0||auctionWinner>5)throw new Error('برنده مزایده نامعتبر است');
  validateContract(contract);
  game.contract=contract;game.auctionWinner=auctionWinner;game.leader=auctionWinner;game.turn=auctionWinner;
- game.isMalzoom=!!isMalzoom;game.trumpAnnounced=!!trumpAnnounced;
+ game.isMalzoom=!!isMalzoom;game.trumpAnnounced=!!trumpAnnounced;game.trumpSuit=arguments[3]?.trumpSuit||null;
  game.trick=[];game.trickNo=1;game.trickWinners=[];game.done=false;
  return game;
 }
@@ -109,12 +112,14 @@ function playCard(game,player,card){
  const cardIndex=hand.findIndex(c=>c.id===card.id);
  if(cardIndex<0)throw new Error('این کارت در دست بازیکن نیست');
  const leadSuit=effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
- const allowed=legalCards(hand,leadSuit,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0});
+ const allowed=legalCards(hand,leadSuit,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trumpSuit});
  if(!allowed.some(c=>c.id===card.id))throw new Error('بازی این کارت طبق قانون مجاز نیست');
  hand.splice(cardIndex,1);
+ if(game.trick.length===0)game.lastTrick=[];
  game.trick.push({player,card});
  if(game.trick.length<6){game.turn=(player+1)%6;return {completed:false,game};}
- const winner=findTrickWinner(game.trick,game.contract,{trickNo:game.trickNo,isMalzoom:game.isMalzoom,trumpAnnounced:game.trumpAnnounced});
+ const winner=findTrickWinner(game.trick,game.contract,{trickNo:game.trickNo,isMalzoom:game.isMalzoom,trumpAnnounced:game.trumpAnnounced,trumpSuit:game.trumpSuit});
+ game.lastTrick=game.trick.map(p=>({...p}));game.lastWinner=winner.player;
  game.trickWinners.push(winner.player);
  game.leader=winner.player;game.turn=winner.player;game.trick=[];
  game.trickNo++;
