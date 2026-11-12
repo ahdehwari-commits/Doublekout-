@@ -371,7 +371,7 @@ function aiCard(p){
   const candidatePlay={player:p,card,index:trick.length};
   const candidateWinner=partialWinner([...trick,candidatePlay]);
   const winsForUs=candidateWinner&&team(candidateWinner.player)===team(p);
-  const candidateTakesLead=compare(candidatePlay,current,lead)>0;
+  const candidateTakesLead=!current||compare(candidatePlay,current,lead)>0;
   if(partnerWinning){
    // Keep the partner's winning trick; discard the cheapest card without overtaking.
    return {card,score:cost+(candidateTakesLead?1000:0)};
