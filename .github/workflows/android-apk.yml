@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK # Includes four-player rule and UI regression checks
 
 on:
   workflow_dispatch:
