@@ -23,7 +23,7 @@ new vm.Script(sixUi,{filename:'kuwaiti-six-player-ui.js'});
 for(const mode of ['hokm_spades','hokm_clubs','naras','tak_naras','saras']){
  assert.ok(sixUi.includes('value="'+mode+'"')||sixUi.includes("'"+mode+"'"),'six-player selector/engine must support '+mode);
 }
-assert.ok(sixUi.includes("game.contract=['naras','tak_naras','saras'].includes(bid.contract)?bid.contract:'hokm'"));
+assert.ok(sixUi.includes("game.contract=noTrump?contract:'hokm'")&&sixUi.includes("game.auctionBid.contract=contract"),'winning contract must be selected after the auction');
 assert.ok(!sixUi.includes('partner_middle'),'six-player partner-middle must be completely removed');
 
 
