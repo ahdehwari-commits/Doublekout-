@@ -90,3 +90,5 @@ assert.ok(sixUi.includes('trickNo===9&&isLead')||sixUi.includes('k-card.joker .j
 assert.ok(html.includes("G.cardHistory.push({player:p,card:{...card},trickNo:G.trickNo})"),'four-player table must track all publicly played cards');
 assert.ok(html.includes("G.cardHistory||[],G.initialHands[p]"),'four-player standard Hokm AI must receive card-memory information');
 assert.ok(html.includes("if(G&&G.done){matchNo++;G=null;startGame();return;}"),'four-player next deal must bypass the old setup screen and begin the five-card deal');
+
+assert.ok(html.includes("G.initialHands=G.hands.map(hand=>hand.slice());G.cardHistory=[];G.waitingTrump=false"),'four-player AI memory must be reset after all thirteen cards are dealt following trump selection');
