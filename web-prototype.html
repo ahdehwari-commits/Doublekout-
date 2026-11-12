@@ -162,7 +162,7 @@ function play(p,card){
 }
 function resolveTrick(){
  if(!G||G.done||G.plays.length!==4||G.resolvingTrick)return;
- G.resolvingTrick=true;
+ G.resolvingTrick=true;G.trickCompletePending=false;
  let w=winner(G.plays),n=G.trickNo;G.trickWinners.push(w);
  let msg=`دست ${fa(n)} را ${names[w]} برد.`;tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);if(w!==0)speakPlayer('win',w);
  G.history.push(msg);
