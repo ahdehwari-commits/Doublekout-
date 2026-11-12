@@ -38,6 +38,9 @@ assert.deepEqual(k.legalCards([c('9','S'),c('2','H'),c('A','D'),red,black],'S',{
 assert.deepEqual(k.legalCards([c('2','H'),c('A','D'),red,black],'S',{trickNo:1,isFirstPlay:false,trumpSuit:'H',firstTrickNoCut:true}),[c('A','D')]);
 assert.deepEqual(k.legalCards([c('2','H'),c('A','D'),red,black],null,{trickNo:1,isFirstPlay:true,trumpSuit:'H',firstTrickNoCut:true}),[c('2','H'),c('A','D')]);
 assert.equal(k.legalCards([red,black,c('8')],'H',{trickNo:5,isFirstPlay:false}).length,3);
+// Jokers are special: either may be played from trick two even when following suit is possible.
+assert.deepEqual(k.legalCards([c('8','S'),red,black],'S',{trickNo:2,isFirstPlay:false}),[c('8','S'),red,black]);
+assert.deepEqual(k.legalCards([c('8','S'),red,black],'S',{trickNo:1,isFirstPlay:false}),[c('8','S')]);
 assert.equal(k.legalCards([red,black,c('8','H')],'H',{trickNo:5,isFirstPlay:false}).length,1);
 // Ninth trick: led joker has zero power and second normal card sets the suit.
 assert.equal(k.cardPower(red,'naras',{trickNo:9,isLead:true}),0);
