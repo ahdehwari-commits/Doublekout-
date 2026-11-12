@@ -39,4 +39,25 @@ const later=k.newGame({rng:()=>0.41,firstGame:false,previousAuctionWinner:3,firs
 assert.equal(later.obligatedPlayer,2);assert.equal(later.auctionStarter,1);
 // Invalid contract validation.
 assert.throws(()=>k.cardPower(red,'bad'));
+assert.equal(k.scoreContract(6,6),6);assert.equal(k.scoreContract(6,5),-12);
+assert.equal(k.scoreContract(7,7),7);assert.equal(k.scoreContract(7,6),-14);
+assert.equal(k.scoreContract(9,9),36);assert.equal(k.scoreContract(9,8),-18);
+assert.equal(k.scoreContract('malzoom',0,{success:true}),5);
+assert.equal(k.scoreContract('malzoom',0,{success:false}),-5);
+assert.throws(()=>k.scoreContract('malzoom',0),/نتیجه موفقیت ملزوم/);
+// The holder of 2C chooses the first auction seat, not the first trick leader.
+const playGame=k.newGame({rng:()=>0.41});
+playGame.hands=[
+ [{id:'2S',kind:'normal',rank:'2',suit:'S'}],
+ [{id:'3S',kind:'normal',rank:'3',suit:'S'}],
+ [{id:'4S',kind:'normal',rank:'4',suit:'S'}],
+ [{id:'5S',kind:'normal',rank:'5',suit:'S'}],
+ [{id:'6S',kind:'normal',rank:'6',suit:'S'}],
+ [{id:'7S',kind:'normal',rank:'7',suit:'S'}]
+];
+k.startPlay(playGame,0,'naras');
+let outcome;
+for(let p=0;p<6;p++)outcome=k.playCard(playGame,p,playGame.hands[p][0]);
+assert.equal(outcome.completed,true);assert.equal(outcome.winner,0);
+assert.equal(playGame.trickNo,2);assert.equal(playGame.turn,0);
 console.log('PASS: Kuwaiti contracts, no-trump ranks, hidden Malzoom joker, lead restrictions, ninth trick and auction setup');
