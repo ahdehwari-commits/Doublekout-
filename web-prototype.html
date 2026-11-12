@@ -17,9 +17,9 @@
 .card.red{box-shadow:0 9px 0 #d9a9a9,0 13px 22px #0009,inset 0 1px 0 white}
 .hand button:not(:disabled) .card{transform:translateY(-7px) rotateX(5deg) rotateY(-3deg) translateZ(12px)}
 .hand button:not(:disabled):hover .card{transform:translateY(-17px) rotateX(8deg) rotateY(-5deg) translateZ(28px) scale(1.06);box-shadow:0 12px 0 #c8bfa9,0 23px 28px #000b}
-.card.playing{animation:cardFly .42s cubic-bezier(.18,.8,.25,1) both}
+
 @keyframes cardFly{0%{opacity:.45;transform:translateY(34px) rotateY(65deg) rotateZ(9deg) scale(.78)}70%{opacity:1;transform:translateY(-7px) rotateY(-8deg) rotateZ(-2deg) scale(1.08)}100%{transform:translateY(0) rotateY(0) rotateZ(0) scale(1)}}
-.card.dealing{animation:dealFlip .55s ease-out both}
+
 @keyframes dealFlip{0%{opacity:0;transform:translateY(-45px) rotateY(180deg) rotateZ(14deg) scale(.7)}100%{opacity:1;transform:translateY(0) rotateY(0) rotateZ(0) scale(1)}}
 .seat.active{transform:translateZ(30px) scale(1.025);box-shadow:0 0 0 2px #ffe19a,0 0 24px #f4d37b77}
 #trickMsg{color:#ffe7a5;text-shadow:0 2px 8px #000}
@@ -27,8 +27,8 @@
 @media(max-width:520px){.card{box-shadow:0 6px 0 #c8bfa9,0 9px 14px #0009,inset 0 1px 0 white}.table{transform:rotateX(2deg)}}
 @media(max-width:520px){.wrap{padding:8px}.table{min-height:300px;gap:5px}.card{width:54px;height:77px}.center{min-height:140px}.panel{padding:10px}.brand{font-size:20px}.hand{gap:3px}.hand .card{width:43px;height:65px;font-size:15px}.hand .card .suit{font-size:20px}}
 .table{background-color:transparent!important;background-image:none!important;position:relative}
-.table-3d-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.table>.seat,.table>.center{position:relative;z-index:1}
+
+
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه آزمایشی ۰.۶ · میز سه‌بعدی و صدای بازی</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
@@ -37,10 +37,10 @@
 <button class="mode-card pending" id="modeKuwaiti"><strong>♦ میز شش نفره</strong><span>کوت کویتی · موتور قوانین اولیه متصل؛ میز کامل در حال توسعه</span></button>
 </div>
 <p class="muted" id="modeMessage">حالت شش‌نفره فقط با نام «کوت کویتی» نمایش داده می‌شود.</p></section>
-<section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><div class="setup"><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در بازی اول حکم همیشه پیک است. در بازی‌های بعدی، پس از پخش کارت‌ها و دیدن پنج کارت اولِ حاکم، حکم تعیین می‌شود.</p></section>
+<section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><div class="setup"><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option><option value="hard">سخت</option><option value="expert">خیلی سخت</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در بازی اول حکم همیشه پیک است. در بازی‌های بعدی، پس از پخش کارت‌ها و دیدن پنج کارت اولِ حاکم، حکم تعیین می‌شود.</p></section>
 <section class="panel hidden" id="game"><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">چالش موفق شما: <b id="challengeWinA">۰</b></div><div class="score">شکست چالش شما: <b id="challengeLoseA">۰</b></div><div class="score">دست: <b id="trickNo">۱</b> / ۱۳</div></div>
-<div id="challengePanel" class="status" style="display:none"><b>چالش تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چالش را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چالش فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چالش علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب حکم برای بازی بعدی</b><p class="muted">پنج کارت اول حاکم نمایش داده شده است؛ خال حکم را انتخاب کن.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><select id="nextTrump"><option value="♠">پیک ♠</option><option value="♥">دل ♥</option><option value="♦">خشت ♦</option><option value="♣">گشنیز ♣</option></select><button id="confirmTrump">تأیید حکم و شروع</button></div></div><div class="table"><canvas class="table-3d-canvas" aria-hidden="true"></canvas><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div><div class="muted">حکم</div><div id="trumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div><div class="muted">کارت‌های این دست</div><div id="trickCount" style="font-size:25px">۰ / ۴</div></div><div id="trickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div></div><div class="seat east" id="seat1"><div class="name">شرق · حریف</div><div class="count" id="count1"></div><div class="played" id="played1"></div></div><div class="seat south" id="seat0"><div class="name">شما · جنوب</div><div class="count" id="count0"></div><div class="played" id="played0"></div></div></div>
-<h3 class="section-title">کارت‌های شما</h3><div class="hand" id="hand"></div><div class="status" id="status">بازی شروع شد.</div><div class="actions" style="margin-top:10px"><button id="newGame">بازی جدید</button><button id="sortHand">مرتب‌سازی کارت‌ها</button></div><p class="muted">گروه اول از دست اول آغاز می‌شود: اولین توالی معتبرِ برد دو دست پیاپی توسط یک بازیکن، از توالی دست سوم و چهارم به بعد، کل دست‌های انجام‌شده تا همان لحظه را به تیم او می‌دهد؛ مثلاً اگر توالی در دست چهارم و پنجم رخ دهد، هر پنج دست گروه اول محسوب می‌شود. گروه‌های بعدی نیز از دست بعدی آغاز می‌شوند. اگر تا پایان دست سیزدهم توالی معتبری شکل نگیرد، برنده دست سیزدهم تمام دست‌های باقی‌مانده را می‌برد.</p><div class="history" id="history"></div></section>
+<div id="challengePanel" class="status" style="display:none"><b>چالش تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چالش را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چالش فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چالش علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب حکم برای بازی بعدی</b><p class="muted">پنج کارت اول حاکم نمایش داده شده است؛ خال حکم را انتخاب کن.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><select id="nextTrump"><option value="♠">پیک ♠</option><option value="♥">دل ♥</option><option value="♦">خشت ♦</option><option value="♣">گشنیز ♣</option></select><button id="confirmTrump">تأیید حکم و شروع</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div><div class="muted">حکم</div><div id="trumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div><div class="muted">کارت‌های این دست</div><div id="trickCount" style="font-size:25px">۰ / ۴</div></div><div id="trickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div></div><div class="seat east" id="seat1"><div class="name">شرق · حریف</div><div class="count" id="count1"></div><div class="played" id="played1"></div></div><div class="seat south" id="seat0"><div class="name">شما · جنوب</div><div class="count" id="count0"></div><div class="played" id="played0"></div></div></div>
+<h3 class="section-title">کارت‌های شما</h3><div class="hand" id="hand"></div><div class="status" id="status">بازی شروع شد.</div><div class="actions" style="margin-top:10px"><button id="newGame">بازی جدید</button><button id="sortHand">مرتب‌سازی کارت‌ها</button><button id="backToModes">بازگشت به انتخاب بازی</button></div><p class="muted">گروه اول از دست اول آغاز می‌شود: اولین توالی معتبرِ برد دو دست پیاپی توسط یک بازیکن، از توالی دست سوم و چهارم به بعد، کل دست‌های انجام‌شده تا همان لحظه را به تیم او می‌دهد؛ مثلاً اگر توالی در دست چهارم و پنجم رخ دهد، هر پنج دست گروه اول محسوب می‌شود. گروه‌های بعدی نیز از دست بعدی آغاز می‌شوند. اگر تا پایان دست سیزدهم توالی معتبری شکل نگیرد، برنده دست سیزدهم تمام دست‌های باقی‌مانده را می‌برد.</p><div class="history" id="history"></div></section>
 <section class="panel"><h3 class="section-title">محدوده این نسخه آزمایشی</h3><div class="rules">این نسخه آزمایشی چهار نفره، بدون جوکر، با حکم ثابت پیک در بازی اول، انتخاب حکم در بازی‌های بعدی، قانون توالی برد توسط یک بازیکن مشخص و چالش ۱۳ دست است. قوانین حالت شش‌نفره در این نسخه تغییر داده نشده‌اند و این نسخه فعلاً میز چهار نفره را اجرا می‌کند. مزایده کامل و بازی آنلاین هنوز در این نسخه وجود ندارد.</div></section>
 </main>
 <script src="./engines/standard-hokm/engine.js"></script>
@@ -169,19 +169,24 @@ function updateChallengeStats(){
  if(winB)winB.textContent=fa(challengeStats.winB);if(loseB)loseB.textContent=fa(challengeStats.loseB);
 }
 function aiChoose(p){
- let legal=legalCards(p),difficulty=$('difficulty').value;
+ const legal=legalCards(p),difficulty=$('difficulty').value;
  if(difficulty==='easy')return legal[Math.floor(Math.random()*legal.length)];
- let lead=G.plays.length?G.plays[0].card.s:null;
- let current=G.plays.length?winner(G.plays):null;
- let partnerWinning=current!==null&&team(current)===team(p);
- let sorted=[...legal].sort((a,b)=>rankVal[a.r]-rankVal[b.r]);
- if(!lead)return sorted[0];
- if(partnerWinning){let losing=sorted.filter(c=>!beats(c,G.plays.reduce((best,x)=>beats(x.card,best.card,lead)?x:best).card,lead));return losing[0]||sorted[0]}
- let winners=sorted.filter(c=>G.plays.every(x=>!beats(x.card,c,lead)));
- return winners[0]||sorted[0];
+ const lead=G.plays.length?G.plays[0].card.s:null;
+ const current=G.plays.length?winner(G.plays):null;
+ const partnerWinning=current!==null&&team(current)===team(p);
+ const sorted=[...legal].sort((a,b)=>rankVal[a.r]-rankVal[b.r]);
+ if(!lead)return difficulty==='normal'?sorted[0]:sorted[Math.floor(sorted.length/2)];
+ const top=G.plays.reduce((best,x)=>beats(x.card,best.card,lead)?x:best).card;
+ const winners=sorted.filter(c=>beats(c,top,lead)),losers=sorted.filter(c=>!beats(c,top,lead));
+ if(partnerWinning)return losers[0]||sorted[0];
+ if(difficulty==='normal')return winners[0]||sorted[0];
+ if(difficulty==='hard')return winners[0]||sorted[sorted.length-1];
+ if(winners.length)return winners[0];
+ const nonTrump=losers.filter(c=>c.s!==G.trump);
+ return nonTrump[nonTrump.length-1]||losers[losers.length-1]||sorted[0];
 }
 function runAI(){if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;setTimeout(()=>{if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;let p=G.turn,c=aiChoose(p);play(p,c)},550)}
-function cardEl(c,small=false){let d=document.createElement('div');d.className='card dealing '+(['♥','♦'].includes(c.s)?'red':'')+(small?' small':'');d.innerHTML=`<span>${c.r}</span><span class="suit">${c.s}</span><span style="align-self:flex-end;font-size:12px">${c.r}</span>`;return d}
+function cardEl(c,small=false){let d=document.createElement('div');d.className='card '+(['♥','♦'].includes(c.s)?'red':'')+(small?' small':'');d.innerHTML=`<span>${c.r}</span><span class="suit">${c.s}</span><span style="align-self:flex-end;font-size:12px">${c.r}</span>`;return d}
 function render(){
  if(!G)return;
  $('scoreA').textContent=fa(G.scoreA);$('scoreB').textContent=fa(G.scoreB);$('trickNo').textContent=fa(Math.min(G.trickNo,13));$('trickCount').textContent=fa(G.plays.length)+' / ۴';
@@ -201,7 +206,8 @@ $('modeKuwaiti').onclick=()=>{audioReady();KuwaitiPreviewGame=window.KuwaitiSixP
 $('start').onclick=()=>{audioReady();shuffleSound();startGame()};$('confirmTrump').onclick=confirmTrump;
 $('soundToggle').onclick=()=>{soundEnabled=!soundEnabled;$('soundToggle').textContent=soundEnabled?'🔊 صدا روشن':'🔇 صدا خاموش';if(soundEnabled){audioReady();playCardSound()}else if('speechSynthesis'in window)window.speechSynthesis.cancel()};
 $('takeChallenge').onclick=()=>beginNormalOrChallenge('A');$('skipChallenge').onclick=()=>beginNormalOrChallenge(null);
-$('newGame').onclick=()=>{if(G&&!G.done)return;matchNo++;G=null;$('game').classList.add('hidden');$('setup').classList.remove('hidden');$('newGame').textContent='بازی جدید'};
+$('newGame').onclick=()=>{matchNo++;G=null;$('game').classList.add('hidden');$('setup').classList.remove('hidden');$('newGame').textContent='بازی جدید';$('start').textContent='پخش کارت و شروع بازی'};
+$('backToModes').onclick=()=>{G=null;$('game').classList.add('hidden');$('setup').classList.add('hidden');$('modePicker').classList.remove('hidden');$('modeMessage').textContent='یک حالت بازی را انتخاب کن.'};
 $('sortHand').onclick=()=>{if(!G)return;G.hands[0].sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);render()};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script><script src="./three-d-scene.js"></script></body></html>
+</script></body></html>
