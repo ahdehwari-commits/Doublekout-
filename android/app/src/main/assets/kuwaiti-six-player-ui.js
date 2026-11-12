@@ -3,7 +3,7 @@
 let K=window.KuwaitiSixPlayerEngine;
 const $=id=>document.getElementById(id);
 const suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'};
-const suitName={S:'پیک',H:'دل',D:'خشت',C:'خاج'};
+const suitName={S:'پیک',H:'دل',D:'خشت',C:'گشنیز'};
 const contractName={hokm_spades:'پیک',hokm_hearts:'دل',hokm_diamonds:'خشت',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',hokm:'حکم',malzoom:'ملزوم'};
 const playerNames=['شما','بازیکن ۲','بازیکن ۳','بازیکن ۴','بازیکن ۵','بازیکن ۶'];
 const team=p=>K.teamOf(p);
@@ -92,7 +92,7 @@ function setupMarkup(){
  <button id="kMalzoom" class="primary hidden">ملزوم</button></div></div>
  <div id="kAuctionSummary" class="k-auction-summary hidden">نتیجه مزایده هنوز مشخص نشده است.</div>
  <div id="kContractSetup" class="k-contract-setup hidden"><b>انتخاب قرارداد پس از پایان مزایده</b><label>نوع بازی و خال حکم</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option></select><button id="kConfirmContract" class="primary">تأیید قرارداد و شروع بازی</button></div>
- <div id="kMalzoomSetup" class="k-auction hidden"><b>تنظیم حکم ملزوم</b><label>خال حکم</label><select id="kTrumpSuit" class="k-select"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">خاج ♣</option></select><label><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
+ <div id="kMalzoomSetup" class="k-auction hidden"><b>تنظیم حکم ملزوم</b><label>خال حکم</label><select id="kTrumpSuit" class="k-select"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">گشنیز ♣</option></select><label><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
  <div class="k-table" id="kTable">${[0,1,2,3,4,5].map(p=>'<div class="k-seat" data-p="'+p+'"><div class="k-name" id="kName'+p+'">'+playerNames[p]+'</div><div class="k-count" id="kCount'+p+'">۹ کارت</div><div class="k-played" id="kPlayed'+p+'"></div></div>').join('')}
  <div class="k-center"><div style="color:#f2d998;font-weight:bold">کوت کویتی</div><div id="kTrumpDisplay" style="font-size:25px;color:#f3d58c">بدون حکم</div><div id="kTrickCards" class="k-small">کارت‌های این دست: ۰ از ۶</div><div id="kTurn" class="k-small">در انتظار مزایده</div></div></div>
  <div id="kStatus" class="k-status">کارت‌ها پخش شده‌اند.</div>
@@ -171,14 +171,27 @@ function renderAuctionHand(){
  });
 }
 function handStrength(p){
- const h=game.hands[p];let score=0;
- for(const c of h){if(c.kind==='joker')score+=5;else score+=K.normalPower(c,'saras')/3;}
+ const h=game.hands[p],counts={S:0,H:0,D:0,C:0};
+ let score=0,aces=0,kings=0,queens=0;
+ for(const c of h){
+  if(c.kind==='joker'){score+=c.color==='red'?6:4;continue;}
+  counts[c.suit]++;
+  if(c.rank==='A'){score+=4.8;aces++;}
+  else if(c.rank==='K'){score+=3.7;kings++;}
+  else if(c.rank==='Q'){score+=2.7;queens++;}
+  else if(c.rank==='J')score+=1.8;
+  else if(c.rank==='10')score+=1.1;
+  else if(c.rank==='9')score+=.6;
+ }
+ const lengths=Object.values(counts).sort((a,b)=>b-a);
+ score+=(lengths[0]||0)*1.35+(lengths[1]||0)*.35;
+ if(aces>=2)score+=1.5;if(kings>=2)score+=.8;if(queens>=2)score+=.4;
  return score;
 }
 function aiBid(p){
  const rank=auction.highestRank,str=handStrength(p);
  if(p===game.obligatedPlayer&&!auction.highest&&str>22)return {type:'malzoom',rank:1,label:'ملزوم'};
- if(str>25&&rank<4){const next=rank+1,target=next===4?9:5+next;if(str>30||Math.random()<.72)return {type:'normal',rank:next,label:next===4?'باون · ۹ دست':target+' دست',target};}
+ if(rank<4){const next=rank+1,target=next===4?9:5+next,threshold=[0,15.5,20.5,25.5,30][next];if(str>=threshold)return {type:'normal',rank:next,label:next===4?'باون · ۹ دست':target+' دست',target};}
  if(auction.passes>=5&&!auction.highest)return {type:'normal',rank:1,label:'۶ دست',target:6};
  return null;
 }
@@ -331,7 +344,7 @@ function aiCard(p){
  const partialWinner=plays=>{
   if(!plays.length)return null;
   const effective=K.effectiveLeadSuit(plays,{trickNo});
-  if(trickNo===9&&K.isJoker(plays[0].card)&&plays.length===1)return plays[0];
+  if(trickNo===9&&K.isJoker(plays[0].card)&&plays.length===1)return null;
   let best={...plays[0],index:0};
   for(let i=1;i<plays.length;i++){
    const candidate={...plays[i],index:i};
