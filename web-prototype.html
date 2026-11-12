@@ -144,7 +144,7 @@ function startGame(){
  if(noTrump){G.trump=null;G.trumpCode=null;}
  else if(selected==='partner_middle'){
   const partner=(G.leader+2)%4,mid=G.initialHands[partner][2];G.trump=mid?mid.s:'♠';G.trumpCode=({'♠':'S','♥':'H','♦':'D','♣':'C'})[G.trump];
- }else if(matchNo===1){G.trump='♠';G.trumpCode='S';}
+ }else if(matchNo===1){G.trump='♠';G.trumpCode='S';G.waitingTrump=false;}
  else if(!G.waitingTrump){G.trump=({'hokm_spades':'♠','hokm_hearts':'♥','hokm_diamonds':'♦','hokm_clubs':'♣'})[selected]||'♠';G.trumpCode=({'♠':'S','♥':'H','♦':'D','♣':'C'})[G.trump];}
  $('trickCountWrap').style.display=selected==='partner_middle'?'none':'';$('trickCount').textContent=selected==='partner_middle'?'':'۰ / ۴';
  if(G.waitingTrump){G.contract='hokm';G.trump=null;G.trumpCode=null;G.waitingChallenge=false;render();return;}
@@ -162,7 +162,9 @@ function beginNormalOrChallenge(challengerTeam){
  render();runAI();
 }
 function confirmTrump(){
- if(!G||!G.waitingTrump)return;
+ if(!G)return;
+ if(matchNo===1){G.trump='♠';G.trumpCode='S';G.waitingTrump=false;$('trumpPicker').classList.add('hidden');$('trumpBig').textContent='♠';render();return;}
+ if(!G.waitingTrump)return;
  const suit=$('nextTrump').value;
  G.trump=suit;G.trumpCode=({'♠':'S','♥':'H','♦':'D','♣':'C'})[suit]||null;
  G.hands.forEach(hand=>{G.pendingDeck.splice(0,8).forEach(c=>hand.push(c));hand.sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);});
@@ -336,14 +338,14 @@ function render(){
  $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
  $('trickMsg').textContent=G.trickCompletePending?'در حال اعلام برنده دست…':G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
 }
-$('modeDouble').onclick=()=>{audioReady();activeMode='double-kout';$('hokmContractPicker').classList.remove('hidden');$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
-$('modeHokm').onclick=()=>{audioReady();activeMode='standard-hokm';$('hokmContractPicker').classList.remove('hidden');$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');$('modeMessage').textContent='حکم چهار نفره: قرارداد را انتخاب کن.';};
+$('modeDouble').onclick=()=>{audioReady();matchNo=1;previousWinner=null;previousStarter=null;activeMode='double-kout';$('hokmContractPicker').classList.remove('hidden');$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
+$('modeHokm').onclick=()=>{audioReady();matchNo=1;previousWinner=null;previousStarter=null;activeMode='standard-hokm';$('hokmContractPicker').classList.remove('hidden');$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');$('modeMessage').textContent='حکم چهار نفره: قرارداد را انتخاب کن.';};
 $('modeKuwaiti').onclick=()=>{audioReady();if(typeof window.openKuwaitiMode==='function')window.openKuwaitiMode();else $('modeMessage').textContent='رابط میز شش‌نفره بارگذاری نشده است؛ صفحه را یک‌بار ببند و باز کن.';};
 $('start').onclick=()=>{audioReady();shuffleSound();startGame()};$('confirmTrump').onclick=confirmTrump;
 $('soundToggle').onclick=()=>{soundEnabled=!soundEnabled;$('soundToggle').textContent=soundEnabled?'🔊 صدا روشن':'🔇 صدا خاموش';if(soundEnabled){audioReady();playCardSound()}else if('speechSynthesis'in window)window.speechSynthesis.cancel()};
 $('takeChallenge').onclick=()=>beginNormalOrChallenge('A');$('skipChallenge').onclick=()=>beginNormalOrChallenge(null);
 $('newGame').onclick=()=>{if(G&&G.done){matchNo++;G=null;startGame();return;}matchNo=1;previousWinner=null;previousStarter=null;G=null;$('game').classList.add('hidden');$('setup').classList.remove('hidden');$('hokmContract').disabled=false;$('starter').disabled=false;$('newGame').textContent='بازی جدید';$('start').textContent='پخش کارت و شروع بازی'};
-$('backToModes').onclick=()=>{G=null;$('game').classList.add('hidden');$('setup').classList.add('hidden');$('modePicker').classList.remove('hidden');$('modeMessage').textContent='یک حالت بازی را انتخاب کن.'};
+$('backToModes').onclick=()=>{G=null;matchNo=1;previousWinner=null;previousStarter=null;$('game').classList.add('hidden');$('setup').classList.add('hidden');$('modePicker').classList.remove('hidden');$('modeMessage').textContent='یک حالت بازی را انتخاب کن.'};
 $('sortHand').onclick=()=>{if(!G)return;G.hands[0].sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);render()};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script><script src="./kuwaiti-six-player-ui.js"></script></body></html>
