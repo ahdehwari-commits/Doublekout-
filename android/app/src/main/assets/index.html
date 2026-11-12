@@ -171,8 +171,8 @@ function confirmTrump(){
  $('status').textContent='حکم '+suit+' ثبت شد؛ بازی آغاز شد.';render();runAI();
 }
 function legalCards(p){let h=G.hands[p];if(activeMode==='standard-hokm'){const lead=G.plays.length?G.plays[0].card.suit:null;return window.StandardHokmEngine.legalCards(h,lead)}if(!G.plays.length)return h;let lead=G.plays[0].card.s;let follow=h.filter(c=>c.s===lead);return follow.length?follow:h}
-function cardRank(c){return c&&c.r!==undefined?c.r:c&&c.rank!==undefined?c.rank:undefined}
-function cardSuit(c){return c&&c.s!==undefined?c.s:c&&c.suit?({'S':'♠','H':'♥','D':'♦','C':'♣'})[c.suit]:undefined}
+function cardRank(c){if(!c)return undefined;if(c.r!==undefined)return c.r;if(c.rank!==undefined)return c.rank;return typeof c.id==='string'?c.id.slice(0,-1):undefined}
+function cardSuit(c){if(!c)return undefined;if(c.s!==undefined)return c.s;if(c.suit)return ({'S':'♠','H':'♥','D':'♦','C':'♣'})[c.suit];return typeof c.id==='string'?({'S':'♠','H':'♥','D':'♦','C':'♣'})[c.id.slice(-1)]:undefined}
 function beats(a,b,lead){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.beats({suit:code[cardSuit(a)],rank:cardRank(a)},{suit:code[cardSuit(b)],rank:cardRank(b)},code[lead],G.trumpCode,G.contract||'hokm')}
 function winner(plays){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.resolveTrick(plays.map(p=>({player:p.player,card:{suit:code[cardSuit(p.card)],rank:cardRank(p.card)}})),G.trumpCode,G.contract||'hokm')}
 function play(p,card){
