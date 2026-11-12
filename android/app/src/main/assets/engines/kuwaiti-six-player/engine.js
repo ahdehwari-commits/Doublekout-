@@ -101,8 +101,10 @@ function startPlay(game,auctionWinner,contract,{isMalzoom=false,trumpAnnounced=f
  if(!game||game.mode!=='kuwaiti-six-player')throw new Error('وضعیت بازی کوت کویتی نامعتبر است');
  if(!Number.isInteger(auctionWinner)||auctionWinner<0||auctionWinner>5)throw new Error('برنده مزایده نامعتبر است');
  validateContract(contract);
+ const noTrump=contract==='naras'||contract==='tak_naras'||contract==='saras';
+ if(noTrump&&trumpSuit)throw new Error('قرارداد بدون حکم نمی‌تواند خال حکم داشته باشد');
  game.contract=contract;game.auctionWinner=auctionWinner;game.leader=auctionWinner;game.turn=auctionWinner;
- game.isMalzoom=!!isMalzoom;game.trumpAnnounced=!!trumpAnnounced;game.trumpSuit=trumpSuit;
+ game.isMalzoom=!!isMalzoom;game.trumpAnnounced=!!trumpAnnounced;game.trumpSuit=noTrump?null:(trumpSuit||null);
  game.trick=[];game.trickNo=1;game.trickWinners=[];game.done=false;
  return game;
 }
