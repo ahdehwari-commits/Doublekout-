@@ -256,7 +256,7 @@ function renderGame(){
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
  const voidInLead=game.turn===0&&lead&&!game.hands[0].some(c=>c.kind==='normal'&&c.suit===lead);
  $('kAskTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&voidInLead));
- $('kAnnounceTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&game.turn===0));
+ $('kAnnounceTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&game.turn===0&&game.auctionWinner===0));
 }
 function finishGame(){
  game.done=true;locked=true;
