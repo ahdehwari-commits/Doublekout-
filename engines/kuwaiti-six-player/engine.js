@@ -123,7 +123,7 @@ function playCard(game,player,card){
 }
 function scoreContract(bid,tricksTaken,{success=null}={}){
  const ok=success===null?(typeof bid==='number'?tricksTaken>=bid:tricksTaken>=5):!!success;
- if(bid==='malzoom')return ok?5:-5;
+ if(bid==='malzoom'){if(success===null)throw new Error('نتیجه موفقیت ملزوم باید صریح مشخص شود');return ok?5:-5;}
  if(bid===6)return ok?6:-12;
  if(bid===7)return ok?7:-14;
  if(bid===9)return ok?36:-18; // Baun is nine tricks.
