@@ -92,3 +92,11 @@ assert.ok(html.includes("G.cardHistory||[],G.initialHands[p]"),'four-player stan
 assert.ok(html.includes("if(G&&G.done){matchNo++;G=null;startGame();return;}"),'four-player next deal must bypass the old setup screen and begin the five-card deal');
 
 assert.ok(html.includes("G.initialHands=G.hands.map(hand=>hand.slice());G.cardHistory=[];G.waitingTrump=false"),'four-player AI memory must be reset after all thirteen cards are dealt following trump selection');
+
+assert.ok(html.includes("function lastPlayerOfTeam(winners,winningTeam,fallback)")&&html.includes("previousStarter=lastPlayerOfTeam(G.trickWinners,winningTeam,G.leader)"),'the next four-player hakim must come from the previous winning team');
+assert.ok(html.includes('id="liveWonA"')&&html.includes('id="liveWonB"')&&html.includes("G.trickWinners||[]).filter(p=>team(p)==='A')"),'four-player tables must show live tricks won by both teams');
+assert.ok(sixUi.includes("firstTrickNoCut:trickNo===1")&&sixUi.includes("firstTrickNoCut:game.trickNo===1"),'six-player AI and human must both enforce first-trick no-cut rules');
+assert.ok(sixUi.includes("label:String(target)")&&sixUi.includes('data-bid="6">۶</button>'),'auction bids must show only their numeric value');
+assert.ok(sixUi.includes('k-bid-chip')&&sixUi.includes('animation:kTurnPulse'),'auction turn must animate around player seats and display their bid number');
+assert.ok(sixUi.indexOf('id="kAuction"')<sixUi.indexOf('class="k-live-tricks"'),'six-player live trick counter must sit below the auction process');
+assert.ok(sixUi.includes("font:italic 700 4px/1.05")&&sixUi.includes("color:#ffdf83")&&sixUi.includes("rotate(-24deg) scale(.92)"),'card-back name must be contained and gold');
