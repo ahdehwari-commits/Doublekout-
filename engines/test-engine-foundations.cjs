@@ -86,21 +86,21 @@ const cutPlays=[
  {player:2,card:c('2','S')},{player:3,card:c('A','S')},
  {player:4,card:c('K','S')},{player:5,card:c('Q','S')}
 ];
-assert.equal(k.findTrickWinner(cutPlays,'naras',{trickNo:1,trumpSuit:'H'}).player,1);
+assert.throws(()=>k.findTrickWinner(cutPlays,'naras',{trickNo:1,trumpSuit:'H'}),/بدون حکم/);
 assert.equal(k.findTrickWinner(cutPlays,'naras',{trickNo:1,trumpSuit:null}).player,2);
 
 
 const hiddenObligor=k.newGame({rng:()=>0.3});
 hiddenObligor.hands=Array.from({length:6},()=>[]);
 hiddenObligor.hands[1]=[c('2','H'),c('3','D')];
-k.startPlay(hiddenObligor,1,'naras',{isMalzoom:true,trumpAnnounced:false,trumpSuit:'H'});
+k.startPlay(hiddenObligor,1,'hokm',{isMalzoom:true,trumpAnnounced:false,trumpSuit:'H'});
 hiddenObligor.trick=[{player:0,card:c('10','S')}];hiddenObligor.turn=1;
 assert.throws(()=>k.playCard(hiddenObligor,1,c('3','D')),/طبق قانون مجاز نیست/);
 assert.equal(k.playCard(hiddenObligor,1,c('2','H')).completed,false);
 const hiddenOpponent=k.newGame({rng:()=>0.3});
 hiddenOpponent.hands=Array.from({length:6},()=>[]);
 hiddenOpponent.hands[1]=[c('2','H'),c('3','D')];
-k.startPlay(hiddenOpponent,0,'naras',{isMalzoom:true,trumpAnnounced:false,trumpSuit:'H'});
+k.startPlay(hiddenOpponent,0,'hokm',{isMalzoom:true,trumpAnnounced:false,trumpSuit:'H'});
 hiddenOpponent.trick=[{player:0,card:c('10','S')}];hiddenOpponent.turn=1;
 assert.equal(k.playCard(hiddenOpponent,1,c('3','D')).completed,false);
 
