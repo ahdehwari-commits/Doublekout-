@@ -100,3 +100,8 @@ assert.ok(sixUi.includes("label:String(target)")&&sixUi.includes('data-bid="6">Û
 assert.ok(sixUi.includes('k-bid-chip')&&sixUi.includes('animation:kTurnPulse'),'auction turn must animate around player seats and display their bid number');
 assert.ok(sixUi.indexOf('id="kAuction"')<sixUi.indexOf('class="k-live-tricks"'),'six-player live trick counter must sit below the auction process');
 assert.ok(sixUi.includes("font:italic 700 4px/1.05")&&sixUi.includes("color:#ffdf83")&&sixUi.includes("rotate(-24deg) scale(.92)"),'card-back name must be contained and gold');
+
+const manifest=fs.readFileSync(require.resolve('../android/app/src/main/AndroidManifest.xml'),'utf8');
+const activity=fs.readFileSync(require.resolve('../android/app/src/main/java/com/doublekout/app/MainActivity.java'),'utf8');
+assert.ok(manifest.includes('android:configChanges="orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"'),'Android activity must not be recreated on screen rotation');
+assert.ok(activity.includes('onConfigurationChanged(Configuration newConfig)')&&activity.includes('webView.requestLayout()'),'WebView must preserve game state and relayout on orientation changes');
