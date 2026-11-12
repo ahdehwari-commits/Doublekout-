@@ -51,10 +51,16 @@ assert.ok(sixUi.includes("setScreen('game');renderGame();\n  if(winner!==0)playA
 assert.ok(sixUi.includes("Kuwaiti AI fallback card selected"),'AI turn must have a legal-card fallback after auction');
 assert.ok(sixUi.includes('class="joker-art"')&&sixUi.includes("M12 105")&&sixUi.includes("RED JOKER")&&sixUi.includes("BLACK JOKER"),'six-player jokers must use custom devil-and-trident card artwork');
 assert.ok(sixUi.includes('transform:rotate(-19deg) scale(.68)'),'card-back name must be smaller and more angled');
-assert.ok(sixUi.includes("const choices=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras']"));
+assert.ok(sixUi.includes("const noTrump=['naras','tak_naras','saras'].includes(contract)"));
 assert.ok(!sixUi.includes('value="partner_middle"'),'six-player partner-middle option must be removed');
 assert.ok(!sixUi.includes("'partner_middle'") ,'six-player partner-middle contract must not be selectable by AI');
-assert.ok(sixUi.includes("if(bid.type==='malzoom'&&p!==game.obligatedPlayer)return"),'only the obligated player may choose Malzoom');
+assert.ok(sixUi.includes("if(bid.type==='malzoom'&&(p!==game.obligatedPlayer||auction.highest||auction.highestRank>0)"),'Malzoom is restricted to the obligor before any player bids');
+assert.ok(sixUi.includes("function aiCard(p)")&&sixUi.includes("const unseen=K.deck().filter(c=>!ownInitial.has(c.id)&&!seen.has(c.id))"),'six-player AI must infer remaining cards from its own initial hand and public played cards');
+assert.ok(sixUi.includes("const partnerWinning=current&&team(current.player)===team(p)")&&sixUi.includes("candidateTakesLead?1000:0"),'six-player AI must avoid overtaking its partner and preserve high cards');
+assert.ok(sixUi.includes("function aiChooseContract(p)")&&sixUi.includes("function confirmWinningContract()"),'contract selection must occur after the auction winner is determined');
+assert.ok(sixUi.includes('id="kAuctionSummary"')&&sixUi.includes('نتیجه مزایده · برنده:'),'auction winner and bid history must remain visible throughout the deal');
+assert.ok(sixUi.includes('id="kWonA"')&&sixUi.includes('id="kWonB"')&&sixUi.includes('game.trickWinners.filter(p=>team(p)'), 'live won-trick counters must be displayed for both teams');
+assert.ok(sixUi.includes('const teamPlayers=previousWinningTeam===\'B\'?[1,3,5]:[0,2,4]')&&sixUi.includes('startAuction();'), 'next six-player deal must skip setup and go directly to auction');
 
 assert.ok(html.includes("$('trickCountWrap').style.display=selected==='partner_middle'?'none':''"));
 assert.ok(sixUi.includes("$('kTrickCards').style.display='';"),'six-player trick counter should remain visible');
@@ -74,9 +80,13 @@ assert.ok(sixUi.includes("قرارداد بدون حکم نباید خال حک�
 assert.ok(sixUi.includes("'بدون حکم · '+contractName[bidContract]"),'no-trump variant must be explicitly shown on the table');
 assert.ok(sixUi.includes("game.trumpSuit=null;game.trumpAnnounced=false;game.hiddenTrump=false"),'new auction must clear previous trump state');
 
-assert.ok(sixUi.includes("const committedBid={...bid,contract:bid.type==='malzoom'?'malzoom':bid.contract}"),'auction must snapshot the exact contract selected for each bid');
-assert.ok(sixUi.includes("const allowedContracts=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras']"),'auction must reject invalid or inherited contract values');
+assert.ok(sixUi.includes("const committedBid={...bid}"),'auction bid must not contain a prematurely selected contract');
+assert.ok(sixUi.includes("function beginWinningContract(contract)")&&sixUi.includes("game.auctionBid.contract=contract"),'winning contract is committed only after auction');
 assert.ok(sixUi.includes("$('kContract').value='hokm_spades'"),'new deal must reset the contract selector rather than reuse the previous deal selection');
 assert.ok(sixUi.includes("'حکم این بازی: '+suitGlyph[resolvedTrump]"),'Hokm banner must explicitly refer to the current deal');
 assert.ok(sixUi.includes('class="joker-art"')&&sixUi.includes('RED JOKER')&&sixUi.includes('BLACK JOKER'),'red and black jokers must use the new custom devil artwork');
 assert.ok(sixUi.includes('trickNo===9&&isLead')||sixUi.includes('k-card.joker .joker-art'),'custom devil art must be present in the six-player card renderer');
+
+assert.ok(html.includes("G.cardHistory.push({player:p,card:{...card},trickNo:G.trickNo})"),'four-player table must track all publicly played cards');
+assert.ok(html.includes("G.cardHistory||[],G.initialHands[p]"),'four-player standard Hokm AI must receive card-memory information');
+assert.ok(html.includes("if(G&&G.done){matchNo++;G=null;startGame();return;}"),'four-player next deal must bypass the old setup screen and begin the five-card deal');
