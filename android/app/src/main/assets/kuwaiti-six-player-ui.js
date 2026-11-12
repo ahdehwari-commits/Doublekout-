@@ -349,5 +349,6 @@ window.openKuwaitiMode=function(){
  try{if(!initialized&&!init()){if(engineLoading)return;throw new Error('راه‌اندازی میز کامل نشد');}resetSetup();}
  catch(e){const msg=$('modeMessage');if(msg)msg.textContent='خطا در ورود به کوت کویتی: '+(e&&e.message?e.message:'نامشخص');console.error('Kuwaiti entry failed',e);}
 };
-// This script is loaded after the complete page markup; initialize synchronously.\ninit();
+// This script is loaded after the complete page markup; initialize synchronously.
+init();
 })();
