@@ -4,7 +4,7 @@ const h=k.deal(()=>0.41);
 assert.equal(h.length,6);assert.ok(h.every(x=>x.length===9));assert.equal(k.deck().length,54);
 const red={kind:'joker',color:'red'},black={kind:'joker',color:'black'};
 const c=(rank,suit='S')=>({id:rank+suit,kind:'normal',rank,suit});
-// All contracts are no-trump and have their specified within-suit order.
+// No-trump contracts and suit-based Hokm have their specified within-suit order.
 assert.equal(k.normalPower(c('2'),'naras'),13);
 assert.equal(k.normalPower(c('A'),'naras'),1);
 assert.equal(k.normalPower(c('A'),'tak_naras'),13);
@@ -13,6 +13,15 @@ assert.equal(k.normalPower(c('K'),'tak_naras'),1);
 assert.equal(k.normalPower(c('A'),'saras'),13);
 assert.equal(k.normalPower(c('K'),'saras'),12);
 assert.equal(k.normalPower(c('2'),'saras'),1);
+assert.equal(k.normalPower(c('A'),'hokm'),13);
+assert.equal(k.normalPower(c('2'),'hokm'),1);
+const hokmTrick=[
+ {player:0,card:c('A','S')},{player:1,card:c('2','H')},
+ {player:2,card:c('K','S')},{player:3,card:c('3','H')},
+ {player:4,card:c('Q','S')},{player:5,card:c('J','S')}
+];
+assert.equal(k.findTrickWinner(hokmTrick,'hokm',{trickNo:1,trumpSuit:'H'}).player,3);
+assert.equal(k.findTrickWinner(hokmTrick,'hokm',{trickNo:1,trumpSuit:null}).player,0);
 assert.equal(k.cardPower(red,'naras'),10000);
 assert.equal(k.cardPower(black,'naras'),8000);
 assert.equal(k.cardPower(black,'naras',{trickNo:5}),0);
@@ -88,4 +97,4 @@ k.startPlay(hiddenOpponent,0,'naras',{isMalzoom:true,trumpAnnounced:false,trumpS
 hiddenOpponent.trick=[{player:0,card:c('10','S')}];hiddenOpponent.turn=1;
 assert.equal(k.playCard(hiddenOpponent,1,c('3','D')).completed,false);
 
-console.log('PASS: Kuwaiti contracts, no-trump ranks, hidden Malzoom joker, lead restrictions, ninth trick and auction setup');
+console.log('PASS: six-player suit-based Hokm, no-trump ranks, hidden Malzoom joker, lead restrictions, ninth trick and auction setup');
