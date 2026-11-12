@@ -165,7 +165,7 @@ function confirmTrump(){
  const suit=$('nextTrump').value;
  G.trump=suit;G.trumpCode=({'♠':'S','♥':'H','♦':'D','♣':'C'})[suit]||null;
  G.hands.forEach(hand=>{G.pendingDeck.splice(0,8).forEach(c=>hand.push(c));hand.sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);});
- G.pendingDeck=[];G.waitingTrump=false;$('trumpPicker').classList.add('hidden');
+ G.pendingDeck=[];G.initialHands=G.hands.map(hand=>hand.slice());G.cardHistory=[];G.waitingTrump=false;$('trumpPicker').classList.add('hidden');
  $('trumpBig').textContent=suit;$('trumpBig').style.color=['♥','♦'].includes(suit)?'#f17b7b':'#e7c879';
  $('trickCountWrap').style.display='';
  if(activeMode==='double-kout'){
