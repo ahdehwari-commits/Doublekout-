@@ -23,6 +23,8 @@ assert.equal(kuwaiti.findOpeningPlayer(game.hands),game.turn);
 
 // Ninth-trick exception applies to both jokers: zero power, and player two sets suit.
 assert.equal(kuwaiti.cardPower(red,'naras',{trickNo:9,isLead:true}),0);
+assert.ok(kuwaiti.legalCards([red,black,{kind:'normal',rank:'8',suit:'S'}],null,{trickNo:9,isFirstPlay:true}).some(c=>c.color==='red'));
+assert.equal(kuwaiti.legalCards([red,black,{kind:'normal',rank:'8',suit:'S'}],null,{trickNo:9,isFirstPlay:false}).length,1);
 assert.equal(kuwaiti.cardPower(black,'saras',{trickNo:9,isLead:true}),0);
 assert.equal(kuwaiti.effectiveLeadSuit([{card:red},{card:{kind:'normal',rank:'7',suit:'H'}}],{trickNo:9}),'H');
 assert.equal(kuwaiti.effectiveLeadSuit([{card:black},{card:{kind:'normal',rank:'K',suit:'D'}}],{trickNo:9}),'D');
