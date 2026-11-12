@@ -261,12 +261,23 @@ function playAITurn(){
  const p=game.turn;
  setTimeout(()=>{
   if(!game||game.done||game.turn!==p)return;
-  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
-  if(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&p!==game.auctionWinner&&lead&&!game.hands[p].some(c=>c.kind==='normal'&&c.suit===lead)){
-   game.trumpAnnounced=true;setStatus(playerNames[p]+' خال زمینه را نداشت و حکم مخفی را درخواست کرد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit]);
-   $('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];
+  try{
+   const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
+   if(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&p!==game.auctionWinner&&lead&&!game.hands[p].some(c=>c.kind==='normal'&&c.suit===lead)){
+    game.trumpAnnounced=true;setStatus(playerNames[p]+' خال زمینه را نداشت و حکم مخفی را درخواست کرد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit]);
+    $('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];
+   }
+   let c;
+   try{c=aiCard(p);}catch(aiError){
+    const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:(game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null});
+    c=allowed[0];console.warn('Kuwaiti AI fallback card selected',aiError);
+   }
+   if(!c)throw new Error('کارت مجاز برای بازیکن '+playerNames[p]+' پیدا نشد');
+   playOne(p,c);
+  }catch(e){
+   locked=true;setStatus('خطای نوبت هوش مصنوعی: '+(e&&e.message?e.message:'نامشخص')+' · بازی متوقف شد.');
+   console.error('Kuwaiti AI turn failed',e);
   }
-  const c=aiCard(p);if(!c){setStatus('هوش مصنوعی کارت مجاز پیدا نکرد؛ نوبت '+playerNames[p]+' متوقف شد.');return;}playOne(p,c);
  },550);
 }
 function renderGame(){
