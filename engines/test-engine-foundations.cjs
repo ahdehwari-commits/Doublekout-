@@ -57,6 +57,11 @@ assert.equal(k.scoreContract('malzoom',0,{success:true}),5);
 assert.equal(k.scoreContract('malzoom',0,{success:false}),-5);
 assert.throws(()=>k.scoreContract('malzoom',0),/نتیجه موفقیت ملزوم/);
 // The holder of 2C chooses the first auction seat, not the first trick leader.
+const noTrumpGuard=k.newGame({rng:()=>0.41});
+assert.throws(()=>k.startPlay(noTrumpGuard,0,'naras',{trumpSuit:'C'}),/بدون حکم/);
+k.startPlay(noTrumpGuard,0,'naras',{trumpSuit:null});
+assert.equal(noTrumpGuard.trumpSuit,null);
+assert.equal(noTrumpGuard.contract,'naras');
 const playGame=k.newGame({rng:()=>0.41});
 playGame.hands=[
  [{id:'2S',kind:'normal',rank:'2',suit:'S'}],
