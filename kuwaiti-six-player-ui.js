@@ -29,13 +29,13 @@ function addStyle(){
  .k-card.red{color:#c83d43}.k-card .ksuit{font-size:18px;align-self:center}
  .k-card.joker{font:700 10px Tahoma;background:linear-gradient(145deg,#fff,#e5d8b7);justify-content:center;text-align:center}\n .k-back{position:relative;background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px)!important;border:2px solid #f4e7c4!important}\n .k-back:after{content:'Abdolhamid\\A Dehvari';white-space:pre;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 700 4.3px/1.4 Georgia,'Times New Roman',serif;letter-spacing:.3px;color:#ffe8ae;text-shadow:0 1px 2px #071b32,0 0 4px #f2d58a;transform:none;padding:2px 1px;border-radius:4px;background:linear-gradient(135deg,#0b2340aa,#193f66aa)}
  .k-hand{display:flex;justify-content:center;gap:2px;overflow-x:auto;padding:10px 0 14px;direction:ltr}
- .k-hand button{padding:0;background:transparent;border:0;min-width:0}
+ .k-hand button,.k-auction-card{padding:0;background:transparent;border:0;min-width:0;flex:0 0 auto}
  .k-hand button:disabled{opacity:.38}
  .k-hand button:not(:disabled) .k-card{outline:2px solid #f0d38a;transform:translateY(-4px)}
  .k-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
  .k-actions button{flex:1;min-width:90px}
  .k-auction{background:#08271f;border:1px solid #a58b54;border-radius:14px;padding:12px;margin:10px 0}
- .k-auction .k-bids{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+ .k-auction .k-bids{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
  .k-auction button{padding:9px 4px;font-size:12px}
  .k-status{background:#09271f;border:1px solid #477a68;border-radius:12px;padding:10px;margin:8px 0;color:#f8e9bd;font-size:13px;line-height:1.8;min-height:42px}
  .k-score{display:flex;justify-content:space-around;gap:8px;flex-wrap:wrap;background:#09271f;border-radius:12px;padding:10px;margin-bottom:10px;font-size:13px}
@@ -111,6 +111,7 @@ function renderAuction(){
  const obligated=game.obligatedPlayer;
  $('kAuctionInfo').textContent='ملزوم‌کننده: '+(obligated===null?'ندارد (بازی اول)':playerNames[obligated])+' · بالاترین پیشنهاد: '+(auction.highest?playerNames[auction.highestPlayer]+' · '+auction.highest.label:'هنوز پیشنهادی ثبت نشده')+' · پاس‌های پیاپی: '+auction.passes+' از ۵';
  $('kAuctionLog').textContent='روند مزایده: '+(auction.bids.length?auction.bids.map(x=>playerNames[x.player]+': '+x.label).join(' ← '):'هنوز کسی پیشنهاد نداده است');
+ document.querySelectorAll('.k-seat').forEach(el=>el.classList.toggle('active',Number(el.dataset.p)===auction.current));
  $('kAuction').classList.toggle('hidden',!isHuman);
  if(isHuman){
   $('kPass').disabled=forced;
