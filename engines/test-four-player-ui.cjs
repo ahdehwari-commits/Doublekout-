@@ -45,7 +45,7 @@ for(const suit of ['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs']){
 assert.ok(html.includes("G.trump=({'hokm_spades':'♠','hokm_hearts':'♥','hokm_diamonds':'♦','hokm_clubs':'♣'})[selected]"));
 assert.ok(sixUi.includes("else if(bid.contract==='hokm_hearts')trumpSuit='H'"));
 assert.ok(sixUi.includes("else if(bid.contract==='hokm_diamonds')trumpSuit='D'"));
-assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\\n if(!game||!game.auctionBid)"));
+assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\n if(!game||!game.auctionBid)"));
 assert.ok(sixUi.includes("setScreen('game');renderGame();playAITurn();"));
 assert.ok(sixUi.includes("const choices=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras','partner_middle']"));
 assert.ok(html.includes("$('trickCount').style.display=selected==='partner_middle'?'none':''"));
