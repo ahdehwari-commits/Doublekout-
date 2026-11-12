@@ -196,7 +196,7 @@ function aiCard(p){
 function playHumanCard(card){
  if(!game||game.done||locked||game.turn!==0)return;
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
- const allowed=K.legalCards(game.hands[0],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trumpSuit});
+ const allowed=K.legalCards(game.hands[0],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:(game.trumpAnnounced||game.auctionWinner===0)?game.trumpSuit:null});
  if(!allowed.some(c=>c.id===card.id)){setStatus('این کارت طبق قانون فعلی مجاز نیست.');return;}
  if(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&lead&&!game.hands[0].some(c=>c.kind==='normal'&&c.suit===lead)){
   setStatus('حکم هنوز مخفی است. ابتدا می‌توانی درخواست اعلام حکم بدهی یا بدون درخواست کارت مجاز بازی کنی.');
