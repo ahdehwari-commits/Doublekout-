@@ -110,51 +110,51 @@ function dealGame(trump){
  render();updateChallengeStats();
 }
 function startGame(){
- const starterSelect=$('starter');
- if(matchNo>1&&previousStarter!==null){starterSelect.value=String(previousStarter);starterSelect.disabled=true;}else starterSelect.disabled=false;
- if(activeMode==='standard-hokm'){
+  const starterSelect=$('starter');
+  if(matchNo>1&&previousStarter!==null){starterSelect.value=String(previousStarter);starterSelect.disabled=true;}else starterSelect.disabled=false;
   const contract=$('hokmContract').value;
   if(contract!=='hokm'){
-   dealGame(null);G.contract=contract;G.trump=null;G.trumpCode=null;G.waitingTrump=false;G.waitingChallenge=false;
-   $('challengePanel').style.display='none';$('trumpPicker').classList.add('hidden');
-   const labels={naras:'نرس · بدون حکم',tak_naras:'تک نرس · بدون حکم',saras:'سرس · بدون حکم'};
-   $('trumpBig').textContent=labels[contract];
-   $('status').textContent='قرارداد '+labels[contract]+' آغاز شد؛ خال زمینه ملاک است و حکم وجود ندارد.';
-   render();runAI();return;
+    dealGame(null);
+    G.contract=contract;G.trump=null;G.trumpCode=null;G.waitingTrump=false;
+    G.waitingChallenge=activeMode==='double-kout';
+    $('challengePanel').style.display=activeMode==='double-kout'?'block':'none';
+    $('trumpPicker').classList.add('hidden');
+    const labels={naras:'نرس · بدون حکم',tak_naras:'تک نرس · بدون حکم',saras:'سرس · بدون حکم'};
+    $('trumpBig').textContent=labels[contract];$('trumpBig').style.color='#e7c879';
+    $('status').textContent='قرارداد '+labels[contract]+' آغاز شد؛ حکم و بریدن وجود ندارد و خال زمینه و ترتیب مخصوص قرارداد ملاک است.';
+    render();
+    if(activeMode==='standard-hokm')runAI();
+    return;
   }
-  if(matchNo===1){dealGame('♠');runAI();return;}
-  dealGame('♠');
-  if(previousWinner==='A'){G.waitingTrump=true;$('challengePanel').style.display='none';$('trumpPicker').classList.remove('hidden');$('status').textContent='پنج کارت اول حاکم نمایش داده شده است؛ حکم را انتخاب کن.';$('trumpBig').textContent='انتخابی';renderHakimPreview();render();return;}
-  const hakim=G.leader;G.trump=bestTrump(G.hands[hakim].slice(0,5));G.trumpCode=({'♠':'S','♥':'H','♦':'D','♣':'C'})[G.trump];
-  $('trumpBig').textContent=G.trump;$('trumpBig').style.color=['♥','♦'].includes(G.trump)?'#f17b7b':'#e7c879';
-  $('challengePanel').style.display='none';$('trumpPicker').classList.add('hidden');$('status').textContent='حاکم پنج کارت اول را دید و حکم را انتخاب کرد: '+G.trump;runAI();return;
+  if(activeMode==='standard-hokm'){
+   if(matchNo===1){dealGame('♠');runAI();return;}
+   dealGame('♠');
+   if(previousWinner==='A'){G.waitingTrump=true;$('challengePanel').style.display='none';$('trumpPicker').classList.remove('hidden');$('status').textContent='پنج کارت اول حاکم نمایش داده شده است؛ حکم را انتخاب کن.';$('trumpBig').textContent='انتخابی';renderHakimPreview();render();return;}
+   const hakim=G.leader;G.trump=bestTrump(G.hands[hakim].slice(0,5));G.trumpCode=({'♠':'S','♥':'H','♦':'D','♣':'C'})[G.trump];
+   $('trumpBig').textContent=G.trump;$('trumpBig').style.color=['♥','♦'].includes(G.trump)?'#f17b7b':'#e7c879';
+   $('challengePanel').style.display='none';$('trumpPicker').classList.add('hidden');$('status').textContent='حاکم پنج کارت اول را دید و حکم را انتخاب کرد: '+G.trump;runAI();return;
+  }
+  if(matchNo===1){dealGame('♠');return;}
+  if(previousWinner==='A'){dealGame('♠');G.waitingTrump=true;G.waitingChallenge=true;$('challengePanel').style.display='none';$('trumpPicker').classList.remove('hidden');$('status').textContent='پنج کارت اول حاکم نمایش داده شده است؛ حکم را انتخاب کن.';$('trumpBig').textContent='انتخابی';renderHakimPreview();render();return;}
+  dealGame('♠');const hakim=1;G.trump=bestTrump(G.hands[hakim].slice(0,5));G.trumpCode=({'♠':'S','♥':'H','♦':'D','♣':'C'})[G.trump];$('trumpBig').textContent=G.trump;$('trumpBig').style.color=['♥','♦'].includes(G.trump)?'#f17b7b':'#e7c879';$('challengePanel').style.display='block';$('status').textContent='حاکم حریف پنج کارت اول را دید و حکم را انتخاب کرد: '+G.trump;
  }
- if(matchNo===1){dealGame('♠');return;}
- if(previousWinner==='A'){dealGame('♠');G.waitingTrump=true;G.waitingChallenge=true;$('challengePanel').style.display='none';$('trumpPicker').classList.remove('hidden');$('status').textContent='پنج کارت اول حاکم نمایش داده شده است؛ حکم را انتخاب کن.';$('trumpBig').textContent='انتخابی';renderHakimPreview();render();return;}
- dealGame('♠');const hakim=1;G.trump=bestTrump(G.hands[hakim].slice(0,5));G.trumpCode=({'♠':'S','♥':'H','♦':'D','♣':'C'})[G.trump];$('trumpBig').textContent=G.trump;$('trumpBig').style.color=['♥','♦'].includes(G.trump)?'#f17b7b':'#e7c879';$('challengePanel').style.display='block';$('status').textContent='حاکم حریف پنج کارت اول را دید و حکم را انتخاب کرد: '+G.trump;
-}
-function renderHakimPreview(){const box=$('hakimPreview');if(!box||!G)return;box.innerHTML='';G.hands[G.leader].slice(0,5).forEach(c=>box.append(cardEl(c,true)));}
-function confirmTrump(){if(!G||!G.waitingTrump)return;G.trump=$('nextTrump').value;G.waitingTrump=false;$('trumpPicker').classList.add('hidden');G.trumpCode=({'♠':'S','♥':'H','♦':'D','♣':'C'})[G.trump];G.waitingChallenge=activeMode==='double-kout';$('trumpBig').textContent=G.trump;$('trumpBig').style.color=['♥','♦'].includes(G.trump)?'#f17b7b':'#e7c879';$('challengePanel').style.display=activeMode==='double-kout'?'block':'none';$('status').textContent=activeMode==='double-kout'?'حکم انتخاب شد. اکنون چالش را انتخاب کن یا بازی عادی را شروع کن.':'حکم انتخاب شد؛ بازی آغاز می‌شود.';render();if(activeMode==='standard-hokm')runAI()}
-function beginNormalOrChallenge(challengeTeam){
- if(!G||G.done||(challengeTeam&&challengeTeam!=='A'))return;G.waitingChallenge=false;G.challenge=challengeTeam||null;
- $('challengePanel').style.display='none';
- $('status').textContent=challengeTeam?('تیم '+(challengeTeam==='A'?'شما':'حریف')+' وارد چالش ۱۳ دست شد؛ باید تمام دست‌ها را ببرد.'):'بازی عادی آغاز شد.';
- render();runAI();
-}
 function legalCards(p){let h=G.hands[p];if(activeMode==='standard-hokm'){const lead=G.plays.length?G.plays[0].card.suit:null;return window.StandardHokmEngine.legalCards(h,lead)}if(!G.plays.length)return h;let lead=G.plays[0].card.s;let follow=h.filter(c=>c.s===lead);return follow.length?follow:h}
-function beats(a,b,lead){if(activeMode==='standard-hokm'){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.beats({suit:code[a.s],rank:a.r},{suit:code[b.s],rank:b.r},code[lead],G.trumpCode)}let ta=a.s===G.trump,tb=b.s===G.trump;if(ta!==tb)return ta;if(a.s===b.s)return rankVal[a.r]>rankVal[b.r];if(a.s===lead)return true;return false}
-function winner(plays){if(activeMode==='standard-hokm'){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.resolveTrick(plays.map(p=>({player:p.player,card:{suit:code[p.card.s],rank:p.card.r}})),G.trumpCode,G.contract||'hokm')}let lead=plays[0].card.s,best=plays[0];for(let p of plays.slice(1))if(beats(p.card,best.card,lead))best=p;return best.player}
+function beats(a,b,lead){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.beats({suit:code[a.s],rank:a.r},{suit:code[b.s],rank:b.r},code[lead],G.trumpCode,G.contract||'hokm')}
+function winner(plays){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.resolveTrick(plays.map(p=>({player:p.player,card:{suit:code[p.card.s],rank:p.card.r}})),G.trumpCode,G.contract||'hokm')}
 function play(p,card){
-  if(!G||G.done||G.waitingChallenge||G.waitingTrump||p!==G.turn)return;
+  if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||p!==G.turn)return;
   try{
     let allowed=legalCards(p);
     if(!allowed.some(c=>c.id===card.id))return;
     G.hands[p]=G.hands[p].filter(c=>c.id!==card.id);
     G.plays.push({player:p,card});
     playCardSound();if(p!==0)speakPlayer('play',p);
-    G.turn=(p+1)%4;render();
-    if(G.plays.length===4)setTimeout(()=>{try{resolveTrick()}catch(e){$('status').textContent='خطا در تعیین برنده دست: '+(e&&e.message?e.message:'نامشخص');console.error(e)}},450);
-    else runAI();
+    if(G.plays.length===4){
+      G.trickCompletePending=true;G.turn=null;render();
+      setTimeout(()=>{try{resolveTrick()}catch(e){G.trickCompletePending=false;$('status').textContent='خطا در تعیین برنده دست: '+(e&&e.message?e.message:'نامشخص');console.error(e)}},450);
+    }else{
+      G.turn=(p+1)%4;render();runAI();
+    }
   }catch(e){
     $('status').textContent='خطا در اجرای کارت: '+(e&&e.message?e.message:'نامشخص');
     console.error('Card play failed',e);
@@ -234,7 +234,7 @@ function aiChoose(p){
   const lead=G.plays.length?G.plays[0].card.s:null;
   const current=G.plays.length?G.plays.reduce((best,x)=>beats(x.card,best.card,lead)?x:best):null;
   const partnerWinning=current!==null&&team(current.player)===team(p);
-  const sorted=[...legal].sort((a,b)=>rankVal[a.r]-rankVal[b.r]);
+  const sorted=[...legal].sort((a,b)=>window.StandardHokmEngine.rankPower(a.r,G.contract||'hokm')-window.StandardHokmEngine.rankPower(b.r,G.contract||'hokm'));
   if(!lead)return difficulty==='normal'?sorted[0]:sorted[Math.floor(sorted.length/2)];
   const top=G.plays.reduce((best,x)=>beats(x.card,best.card,lead)?x:best).card;
   const winners=sorted.filter(c=>beats(c,top,lead)),losers=sorted.filter(c=>!beats(c,top,lead));
@@ -243,9 +243,9 @@ function aiChoose(p){
   return difficulty==='hard'?sorted[sorted.length-1]:sorted[0];
 }
 function runAI(){
-  if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;
+  if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||G.turn===0)return;
   setTimeout(()=>{
-    if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.turn===0)return;
+    if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||G.turn===0)return;
     const p=G.turn;
     try{
       let c;
@@ -275,11 +275,11 @@ function render(){
   if(x)slot.append(cardEl(x.card,true));else if(p!==0&&G.hands[p].length){let back=document.createElement('div');back.className='card back small';slot.append(back)}
  }
  $('hand').innerHTML='';
- G.hands[0].forEach(c=>{let b=document.createElement('button'),legal=G.turn===0&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(0).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(0,c);$('hand').append(b)});
+ G.hands[0].forEach(c=>{let b=document.createElement('button'),legal=G.turn===0&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(0).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(0,c);$('hand').append(b)});
  $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
- $('trickMsg').textContent=G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
+ $('trickMsg').textContent=G.trickCompletePending?'در حال اعلام برنده دست…':G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
 }
-$('modeDouble').onclick=()=>{audioReady();activeMode='double-kout';$('hokmContractPicker').classList.add('hidden');$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
+$('modeDouble').onclick=()=>{audioReady();activeMode='double-kout';$('hokmContractPicker').classList.remove('hidden');$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
 $('modeHokm').onclick=()=>{audioReady();activeMode='standard-hokm';$('hokmContractPicker').classList.remove('hidden');$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');$('modeMessage').textContent='حکم چهار نفره: قرارداد را انتخاب کن.';};
 $('modeKuwaiti').onclick=()=>{audioReady();if(typeof window.openKuwaitiMode==='function')window.openKuwaitiMode();else $('modeMessage').textContent='رابط میز شش‌نفره بارگذاری نشده است؛ صفحه را یک‌بار ببند و باز کن.';};
 $('start').onclick=()=>{audioReady();shuffleSound();startGame()};$('confirmTrump').onclick=confirmTrump;
