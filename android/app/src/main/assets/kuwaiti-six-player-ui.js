@@ -4,7 +4,7 @@ let K=window.KuwaitiSixPlayerEngine;
 const $=id=>document.getElementById(id);
 const suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'};
 const suitName={S:'پیک',H:'دل',D:'خشت',C:'خاج'};
-const contractName={hokm_spades:'پیک',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',partner_middle:'برگ وسط یار',hokm:'حکم',malzoom:'ملزوم'};
+const contractName={hokm_spades:'پیک',hokm_hearts:'دل',hokm_diamonds:'خشت',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',partner_middle:'برگ وسط یار',hokm:'حکم',malzoom:'ملزوم'};
 const playerNames=['شما','بازیکن ۲','بازیکن ۳','بازیکن ۴','بازیکن ۵','بازیکن ۶'];
 const team=p=>K.teamOf(p);
 const fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
@@ -72,7 +72,7 @@ function setupMarkup(){
  <div class="k-score"><div>امتیاز تیم شما <b id="kScoreA">۰</b></div><div>امتیاز تیم حریف <b id="kScoreB">۰</b></div><div>دست <b id="kTrickNo">۱</b> از ۹</div></div>
  <div id="kAuction" class="k-auction hidden"><b id="kAuctionTitle">مزایده</b><div class="k-small" id="kAuctionInfo"></div><div class="k-small" id="kAuctionLog"></div>
  <div id="kHumanAuctionControls">
- <label>نوع بازی / خال حکم</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار · خال کارت وسط از پنج کارت اول یار</option></select>
+ <label>نوع بازی / خال حکم</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار · خال کارت وسط از پنج کارت اول یار</option></select>
  <div class="k-bids"><button data-bid="pass" id="kPass">پاس</button><button data-bid="6">۶ دست</button><button data-bid="7">۷ دست</button><button data-bid="8">۸ دست</button><button data-bid="9">باون · ۹ دست</button></div>
  <button id="kMalzoom" class="primary hidden">ملزوم</button></div></div>
  <div id="kMalzoomSetup" class="k-auction hidden"><b>تنظیم حکم ملزوم</b><label>خال حکم</label><select id="kTrumpSuit" class="k-select"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">خاج ♣</option></select><label><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
@@ -148,7 +148,7 @@ function aiBid(p){
  if(auction.passes>=5&&!auction.highest)return {type:'normal',rank:1,label:'۶ دست',target:6,contract:randomContract()};
  return null;
 }
-function randomContract(){const choices=['hokm_spades','hokm_clubs','naras','tak_naras','saras','partner_middle'];return choices[Math.floor(Math.random()*choices.length)];}
+function randomContract(){const choices=['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras','partner_middle'];return choices[Math.floor(Math.random()*choices.length)];}
 function submitBid(bid){
  if(!auction||locked)return;
  const p=auction.current;
@@ -188,6 +188,8 @@ function finishAuction(){
  }
  let trumpSuit=null;
  if(bid.contract==='hokm_spades')trumpSuit='S';
+ else if(bid.contract==='hokm_hearts')trumpSuit='H';
+ else if(bid.contract==='hokm_diamonds')trumpSuit='D';
  else if(bid.contract==='hokm_clubs')trumpSuit='C';
  else if(bid.contract==='partner_middle'){
   const partner=(win+2)%6,card=game.initialHands&&game.initialHands[partner]&&game.initialHands[partner][2];
@@ -199,12 +201,15 @@ function finishAuction(){
  startActualGame(trumpSuit,false);
 }
 function startActualGame(trumpSuit,hidden){
+ if(!game||!game.auctionBid)throw new Error('اطلاعات برنده مزایده ثبت نشده است؛ بازی آغاز نشد.');
+ locked=false;game.turn=game.auctionWinner;
  K.startPlay(game,game.auctionWinner,game.contract,{isMalzoom:game.isMalzoom,trumpAnnounced:!hidden,trumpSuit});
  game.hiddenTrump=!!hidden;game.trumpSuit=trumpSuit;game.target=game.auctionBid.target||null;
  $('kMalzoomSetup').classList.add('hidden');$('kAuction').classList.add('hidden');
  $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]):(trumpSuit?'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]:'بدون حکم');
- $('kStatus').textContent='بازی آغاز شد. '+playerNames[game.turn]+' اولین کارت را بازی می‌کند.';
- renderGame();playAITurn();
+ $('kTrickCards').style.display=game.selectedContract==='partner_middle'?'none':'';
+ $('kStatus').textContent='مزایده تمام شد؛ بازی آغاز شد. '+playerNames[game.turn]+' اولین کارت را بازی می‌کند.';
+ setScreen('game');renderGame();playAITurn();
 }
 function auctionTurn(){
  if(!auction)return;
@@ -240,7 +245,7 @@ function playOne(p,card){
  if(!game||game.done)return;
  const wasFirst=game.trick.length===0;
  if(typeof playCardSound==='function')playCardSound();if(p!==0&&typeof speakPlayer==='function')speakPlayer('play',p);
- const res=K.playCard(game,p,card);
+ let res;try{res=K.playCard(game,p,card);}catch(e){setStatus('خطا در اجرای کارت: '+(e&&e.message?e.message:'نامشخص'));console.error('Kuwaiti playCard failed',e);return;}
  if(wasFirst&&game.trick.length===1)game.lastTrick=[];
  $('kStatus').textContent=playerNames[p]+' کارت '+cardLabel(card)+' را بازی کرد.';
  if(res.completed){
@@ -261,7 +266,7 @@ function playAITurn(){
    game.trumpAnnounced=true;setStatus(playerNames[p]+' خال زمینه را نداشت و حکم مخفی را درخواست کرد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit]);
    $('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];
   }
-  const c=aiCard(p);playOne(p,c);
+  const c=aiCard(p);if(!c){setStatus('هوش مصنوعی کارت مجاز پیدا نکرد؛ نوبت '+playerNames[p]+' متوقف شد.');return;}playOne(p,c);
  },550);
 }
 function renderGame(){
@@ -270,6 +275,7 @@ function renderGame(){
  $('kTrickNo').textContent=fa(Math.min(game.trickNo,9));
  const currentPlays=game.trick.length?game.trick:(game.lastTrick||[]);
  $('kTrickCards').textContent='کارت‌های این دست: '+fa(game.trick.length)+' از ۶';
+ $('kTrickCards').style.display=game.selectedContract==='partner_middle'?'none':'';
  $('kTurn').textContent=game.done?'بازی پایان یافت':('نوبت: '+playerNames[game.turn]);
  for(let p=0;p<6;p++){
   const seat=document.querySelector('.k-seat[data-p="'+p+'"]');
