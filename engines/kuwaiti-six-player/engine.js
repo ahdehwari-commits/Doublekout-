@@ -81,5 +81,6 @@ function newGame({rng=Math.random}={}){
  return {mode:'kuwaiti-six-player',players:6,hands,contract:null,leader:starter,turn:starter,
    trick:[],trickNo:1,trickWinners:[],score:{A:0,B:0},openingLeadRequired:true,done:false};
 }
-module.exports={SUITS,RANKS,deck,shuffle,deal,teamOf,validateContract,isJoker,isTwoOfClubs,
- effectiveLeadSuit,cardPower,legalCards,findOpeningPlayer,newGame};
+const KuwaitiSixPlayerEngine={SUITS,RANKS,deck,shuffle,deal,teamOf,validateContract,isJoker,isTwoOfClubs,effectiveLeadSuit,cardPower,legalCards,findOpeningPlayer,newGame};
+if(typeof module!=='undefined'&&module.exports)module.exports=KuwaitiSixPlayerEngine;
+if(typeof window!=='undefined')window.KuwaitiSixPlayerEngine=KuwaitiSixPlayerEngine;
