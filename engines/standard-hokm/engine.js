@@ -30,20 +30,37 @@ function currentWinner(plays,trumpSuit,contract='hokm'){
  for(const p of plays.slice(1))if(beats(p.card,best.card,lead,trumpSuit,contract))best=p;
  return best.player;
 }
-function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='hokm'){
+function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='hokm',playedCards=[],initialHand=null){
  const lead=plays.length?plays[0].card.suit:null;
  const legal=legalCards(hand,lead);
  if(!legal.length)throw new Error('No legal Hokm card available');
- const sorted=[...legal].sort((a,b)=>rankPower(a.rank,contract)-rankPower(b.rank,contract));
- if(!plays.length)return difficulty==='hard'?sorted[Math.floor(sorted.length/2)]:sorted[0];
+ const original=Array.isArray(initialHand)?initialHand:hand;
+ const known=new Set(original.map(c=>c.id));
+ (playedCards||[]).forEach(x=>known.add(x.card?x.card.id:x.id));
+ const unseen=createDeck().filter(c=>!known.has(c.id));
+ const threatCount=card=>unseen.filter(c=>c.suit===card.suit&&rankPower(c.rank,contract)>rankPower(card.rank,contract)).length;
+ const value=card=>rankPower(card.rank,contract);
+ const cost=card=>value(card)+(card.suit===trumpSuit&&contract==='hokm'?7:0);
+ const sorted=[...legal].sort((a,b)=>cost(a)-cost(b));
+ if(!plays.length){
+  const suitLength=s=>hand.filter(c=>c.suit===s).length;
+  const scored=legal.map(card=>{
+   const length=suitLength(card.suit),threats=threatCount(card);
+   const control=threats===0?18:threats===1?8:0;
+   const longSuit=length>=3?length*2.5:0;
+   const shortPenalty=length===1?-5:0;
+   return {card,score:cost(card)-control-longSuit-shortPenalty};
+  }).sort((a,b)=>a.score-b.score);
+  return scored[0].card;
+ }
  const winnerPlayer=currentWinner(plays,trumpSuit,contract);
  const winningPlay=plays.find(p=>p.player===winnerPlayer);
  const partnerWinning=teamOf(winnerPlayer)===teamOf(player);
  const winning=sorted.filter(c=>beats(c,winningPlay.card,lead,trumpSuit,contract));
  const losing=sorted.filter(c=>!beats(c,winningPlay.card,lead,trumpSuit,contract));
  if(partnerWinning)return losing[0]||sorted[0];
- if(winning.length)return difficulty==='hard'?winning[winning.length-1]:winning[0];
- return difficulty==='hard'?sorted[sorted.length-1]:sorted[0];
+ if(winning.length)return winning[0];
+ return sorted[0];
 }
 function resolveTrick(plays,trumpSuit,contract='hokm'){if(!Array.isArray(plays)||plays.length!==4)throw new Error('A Hokm trick requires four plays');return currentWinner(plays,trumpSuit,contract);}
 function koutMessage(scoreA,scoreB,hakemPlayer){
