@@ -92,6 +92,44 @@ function findTrickWinner(plays,contract,{trickNo=1,isMalzoom=false,trumpAnnounce
    return currentPower>bestPower?current:best;
  });
 }
+
+function startPlay(game,auctionWinner,contract,{isMalzoom=false,trumpAnnounced=false}={}){
+ if(!game||game.mode!=='kuwaiti-six-player')throw new Error('وضعیت بازی کوت کویتی نامعتبر است');
+ if(!Number.isInteger(auctionWinner)||auctionWinner<0||auctionWinner>5)throw new Error('برنده مزایده نامعتبر است');
+ validateContract(contract);
+ game.contract=contract;game.auctionWinner=auctionWinner;game.leader=auctionWinner;game.turn=auctionWinner;
+ game.isMalzoom=!!isMalzoom;game.trumpAnnounced=!!trumpAnnounced;
+ game.trick=[];game.trickNo=1;game.trickWinners=[];game.done=false;
+ return game;
+}
+function playCard(game,player,card){
+ if(!game||game.mode!=='kuwaiti-six-player'||game.done)throw new Error('بازی فعال نیست');
+ if(player!==game.turn)throw new Error('نوبت این بازیکن نیست');
+ const hand=game.hands[player];
+ const cardIndex=hand.findIndex(c=>c.id===card.id);
+ if(cardIndex<0)throw new Error('این کارت در دست بازیکن نیست');
+ const leadSuit=effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
+ const allowed=legalCards(hand,leadSuit,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0});
+ if(!allowed.some(c=>c.id===card.id))throw new Error('بازی این کارت طبق قانون مجاز نیست');
+ hand.splice(cardIndex,1);
+ game.trick.push({player,card});
+ if(game.trick.length<6){game.turn=(player+1)%6;return {completed:false,game};}
+ const winner=findTrickWinner(game.trick,game.contract,{trickNo:game.trickNo,isMalzoom:game.isMalzoom,trumpAnnounced:game.trumpAnnounced});
+ game.trickWinners.push(winner.player);
+ game.leader=winner.player;game.turn=winner.player;game.trick=[];
+ game.trickNo++;
+ if(game.trickNo>9)game.done=true;
+ return {completed:true,winner:winner.player,game};
+}
+function scoreContract(bid,tricksTaken,{success=null}={}){
+ const ok=success===null?(typeof bid==='number'?tricksTaken>=bid:tricksTaken>=5):!!success;
+ if(bid==='malzoom')return ok?5:-5;
+ if(bid===6)return ok?6:-12;
+ if(bid===7)return ok?7:-14;
+ if(bid===9)return ok?36:-18; // Baun is nine tricks.
+ throw new Error('نوع قرارداد یا تعداد دست نامعتبر است');
+}
+
 function newGame({rng=Math.random,firstGame=true,previousAuctionWinner=null,firstAuctionPlayer=null}={}){
  const hands=deal(rng);
  const auctionStarter=firstGame?findOpeningPlayer(hands):firstAuctionPlayer;
@@ -105,6 +143,6 @@ function newGame({rng=Math.random,firstGame=true,previousAuctionWinner=null,firs
    openingLeadRequired:false,done:false,firstGame};
 }
 const KuwaitiSixPlayerEngine={SUITS,RANKS,deck,shuffle,deal,teamOf,validateContract,isJoker,isTwoOfClubs,
- findOpeningPlayer,normalPower,cardPower,effectiveLeadSuit,legalCards,findTrickWinner,newGame};
+ findOpeningPlayer,normalPower,cardPower,effectiveLeadSuit,legalCards,findTrickWinner,startPlay,playCard,scoreContract,newGame};
 if(typeof module!=='undefined'&&module.exports)module.exports=KuwaitiSixPlayerEngine;
 if(typeof window!=='undefined')window.KuwaitiSixPlayerEngine=KuwaitiSixPlayerEngine;
