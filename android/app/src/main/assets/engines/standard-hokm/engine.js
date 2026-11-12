@@ -47,8 +47,9 @@ function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='
 }
 function resolveTrick(plays,trumpSuit,contract='hokm'){if(!Array.isArray(plays)||plays.length!==4)throw new Error('A Hokm trick requires four plays');return currentWinner(plays,trumpSuit,contract);}
 function koutMessage(scoreA,scoreB,hakemPlayer){
- if(scoreA===0&&scoreB===13)return hakemPlayer===0?'حاکم کوت شدید':'شما کوت شدید';
- if(scoreB===0&&scoreA===13)return hakemPlayer!==0?'حاکم حریف کوت شد':'حریف شما کوت شد';
+ const hakemTeam=teamOf(hakemPlayer);
+ if(scoreA===0&&scoreB===13)return hakemTeam==='A'?'حاکم کوت شدید':'شما کوت شدید';
+ if(scoreB===0&&scoreA===13)return hakemTeam==='B'?'حاکم حریف کوت شد':'حریف شما کوت شد';
  return null;
 }
 function newGame({starter=0,matchNumber=1,rng=Math.random,contract='hokm'}={}){
