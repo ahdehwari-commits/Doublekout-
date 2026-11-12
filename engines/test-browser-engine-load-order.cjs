@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const window={};
+const context=vm.createContext({window});
+vm.runInContext(fs.readFileSync(require.resolve('./standard-hokm/engine.js'),'utf8'),context,{filename:'standard-hokm/engine.js'});
+vm.runInContext(fs.readFileSync(require.resolve('./kuwaiti-six-player/engine.js'),'utf8'),context,{filename:'kuwaiti-six-player/engine.js'});
+assert.ok(window.StandardHokmEngine);
+assert.ok(window.KuwaitiSixPlayerEngine);
+assert.equal(window.KuwaitiSixPlayerEngine.deck().length,54);
+console.log('PASS: both browser engines load together without global lexical collisions');
