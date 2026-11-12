@@ -303,7 +303,7 @@ function runAI(){
 function cardEl(c,small=false){let d=document.createElement('div');d.className='card '+(['♥','♦'].includes(c.s)?'red':'')+(small?' small':'');d.innerHTML=`<span>${c.r}</span><span class="suit">${c.s}</span><span style="align-self:flex-end;font-size:12px">${c.r}</span>`;return d}
 function render(){
  if(!G)return;
- $('scoreA').textContent=fa(G.scoreA);$('scoreB').textContent=fa(G.scoreB);$('trickNo').textContent=fa(Math.min(G.trickNo,13));$('trickCount').textContent=activeMode==='standard-hokm'&&$('hokmContract').value==='partner_middle'?'':fa(G.plays.length)+' / ۴';$('trickCountWrap').style.display=activeMode==='standard-hokm'&&$('hokmContract').value==='partner_middle'?'none':'';
+ $('scoreA').textContent=fa(G.scoreA);$('scoreB').textContent=fa(G.scoreB);$('trickNo').textContent=fa(Math.min(G.trickNo,13));$('trickCount').textContent=activeMode==='standard-hokm'&&$('hokmContract').value==='partner_middle'?'':fa(G.plays.length)+' / ۴';$('trickCountWrap').style.display=$('hokmContract').value==='partner_middle'?'none':'';
  for(let p=0;p<4;p++){
   $('seat'+p).classList.toggle('active',G.turn===p);$('count'+p).textContent=p===0?'کارت شما: '+fa(G.hands[p].length):fa(G.hands[p].length)+' کارت';
   let slot=$('played'+p);slot.innerHTML='';let x=G.plays.find(v=>v.player===p);
