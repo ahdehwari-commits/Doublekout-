@@ -33,6 +33,10 @@ for(let n=1;n<=8;n++){
  assert.deepEqual(k.legalCards([red,black,c('8')],null,{trickNo:n,isFirstPlay:true}),[c('8')]);
 }
 assert.equal(k.legalCards([red,black,c('8')],null,{trickNo:9,isFirstPlay:true}).length,3);
+// First six-player trick: no trump cut and neither joker may be used, even as a discard.
+assert.deepEqual(k.legalCards([c('9','S'),c('2','H'),c('A','D'),red,black],'S',{trickNo:1,isFirstPlay:false,trumpSuit:'H',firstTrickNoCut:true}),[c('9','S')]);
+assert.deepEqual(k.legalCards([c('2','H'),c('A','D'),red,black],'S',{trickNo:1,isFirstPlay:false,trumpSuit:'H',firstTrickNoCut:true}),[c('A','D')]);
+assert.deepEqual(k.legalCards([c('2','H'),c('A','D'),red,black],null,{trickNo:1,isFirstPlay:true,trumpSuit:'H',firstTrickNoCut:true}),[c('2','H'),c('A','D')]);
 assert.equal(k.legalCards([red,black,c('8')],'H',{trickNo:5,isFirstPlay:false}).length,3);
 assert.equal(k.legalCards([red,black,c('8','H')],'H',{trickNo:5,isFirstPlay:false}).length,1);
 // Ninth trick: led joker has zero power and second normal card sets the suit.
