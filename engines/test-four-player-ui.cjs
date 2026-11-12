@@ -68,3 +68,8 @@ assert.ok(sixUi.includes('id="kMatchLimit"')&&sixUi.includes('value="54"')&&sixU
 assert.ok(sixUi.includes('playedTricks+=9')&&sixUi.includes("if(playedTricks<matchLimit)"),'six-player match must track total tricks and stop at selected limit');
 assert.ok(sixUi.includes('RED JOKER')&&sixUi.includes('BLACK JOKER'),'jokers must use English titles');
 assert.ok(sixUi.includes('rotate(-19deg) scale(.68)'),'card-back title must be smaller and more angled');
+
+assert.ok(sixUi.includes("const bidContract=game.isMalzoom?'hokm':game.auctionBid.contract"),'winning bid must be the only source of the active six-player contract');
+assert.ok(sixUi.includes("قرارداد بدون حکم نباید خال حکم یا حکم مخفی داشته باشد"),'no-trump contract must reject any inherited trump suit');
+assert.ok(sixUi.includes("'بدون حکم · '+contractName[bidContract]"),'no-trump variant must be explicitly shown on the table');
+assert.ok(sixUi.includes("game.trumpSuit=null;game.trumpAnnounced=false;game.hiddenTrump=false"),'new auction must clear previous trump state');
