@@ -213,7 +213,7 @@ function aiChoose(p){
  const legal=legalCards(p),difficulty=$('difficulty').value;
  if(difficulty==='easy')return legal[Math.floor(Math.random()*legal.length)];
  const lead=G.plays.length?G.plays[0].card.s:null;
- const current=G.plays.length?winner(G.plays):null;
+ const current=G.plays.length?(activeMode==='standard-hokm'?(()=>{const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.currentWinner(G.plays.map(x=>({player:x.player,card:{suit:code[x.card.s],rank:x.card.r}})),G.trumpCode)})():G.plays.reduce((best,x)=>beats(x.card,best.card,lead)?x:best)):null;
  const partnerWinning=current!==null&&team(current)===team(p);
  const sorted=[...legal].sort((a,b)=>rankVal[a.r]-rankVal[b.r]);
  if(!lead)return difficulty==='normal'?sorted[0]:sorted[Math.floor(sorted.length/2)];
