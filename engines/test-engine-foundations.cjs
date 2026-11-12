@@ -50,6 +50,7 @@ assert.equal(later.obligatedPlayer,2);assert.equal(later.auctionStarter,1);
 assert.throws(()=>k.cardPower(red,'bad'));
 assert.equal(k.scoreContract(6,6),6);assert.equal(k.scoreContract(6,5),-12);
 assert.equal(k.scoreContract(7,7),7);assert.equal(k.scoreContract(7,6),-14);
+assert.equal(k.scoreContract(8,8),8);assert.equal(k.scoreContract(8,7),-16);
 assert.equal(k.scoreContract(9,9),36);assert.equal(k.scoreContract(9,8),-18);
 assert.equal(k.scoreContract('malzoom',0,{success:true}),5);
 assert.equal(k.scoreContract('malzoom',0,{success:false}),-5);
