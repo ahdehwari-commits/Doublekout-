@@ -82,6 +82,7 @@ function legalCards(hand,leadSuit,{trickNo=1,isFirstPlay=true,trumpSuit=null}={}
 }
 function findTrickWinner(plays,contract,{trickNo=1,isMalzoom=false,trumpAnnounced=false,trumpSuit=null}={}){
  validateContract(contract);
+ if((contract==='naras'||contract==='tak_naras'||contract==='saras')&&trumpSuit)throw new Error('قرارداد بدون حکم نمی‌تواند خال حکم داشته باشد');
  if(!Array.isArray(plays)||plays.length!==6)throw new Error('برای تعیین برنده باید شش کارت بازی شده باشد');
  const leadSuit=effectiveLeadSuit(plays,{trickNo});
  const hasTrump=!!trumpSuit&&plays.some(p=>p.card.kind==='normal'&&p.card.suit===trumpSuit);
