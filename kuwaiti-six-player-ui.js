@@ -117,7 +117,11 @@ function startAuction(){
  $('kHand').innerHTML='';$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');$('kTrickCards').textContent='کارت‌های این دست: ۰ از ۶';
  for(let p=0;p<6;p++){$('kPlayed'+p).innerHTML='';$('kCount'+p).textContent='۹ کارت';}
  const firstAuctionPlayer=firstGame?null:Number($('kFirstAuction').value);
+ // Do not allow a prior deal's contract or trump display to leak into the new auction.
+ $('kTrumpDisplay').textContent='در انتظار مزایده';
+ $('kStatus').textContent='کارت‌ها پخش شدند؛ قرارداد این بازی هنوز تعیین نشده است.';
  game=K.newGame({firstGame,previousAuctionWinner,firstAuctionPlayer});
+ game.contract=null;game.selectedContract=null;game.trumpSuit=null;game.trumpAnnounced=false;game.hiddenTrump=false;game.isMalzoom=false;
  game.initialHands=game.hands.map(h=>h.slice());
  auction={starter:game.auctionStarter,current:game.auctionStarter,highest:null,highestRank:0,highestPlayer:null,passes:0,bids:[],lastBidder:null};
  $('kAuction').classList.remove('hidden');$('kMalzoomSetup').classList.add('hidden');$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');
@@ -130,7 +134,7 @@ function renderAuction(){
  $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':' · هوش مصنوعی در حال تصمیم‌گیری');
  const obligated=game.obligatedPlayer;
  $('kAuctionInfo').textContent='ملزوم‌کننده: '+(obligated===null?'نامشخص':playerNames[obligated])+' · بالاترین پیشنهاد: '+(auction.highest?playerNames[auction.highestPlayer]+' · '+auction.highest.label:'هنوز پیشنهادی ثبت نشده')+' · پاس‌های پیاپی: '+auction.passes+' از ۵';
- $('kAuctionLog').textContent='روند مزایده: '+(auction.bids.length?auction.bids.map(x=>playerNames[x.player]+': '+x.label).join(' ← '):'هنوز کسی پیشنهاد نداده است');
+ $('kAuctionLog').textContent='روند مزایده: '+(auction.bids.length?auction.bids.map(x=>playerNames[x.player]+': '+x.label+(x.contract?' · '+(contractName[x.contract]||x.contract):'')).join(' ← '):'هنوز کسی پیشنهاد نداده است');
  document.querySelectorAll('.k-seat').forEach(el=>el.classList.toggle('active',Number(el.dataset.p)===auction.current));
  $('kAuction').classList.remove('hidden');
  $('kHumanAuctionControls').classList.toggle('hidden',!isHuman);
@@ -222,13 +226,22 @@ function startActualGame(trumpSuit,hidden){
   if(!game||!game.auctionBid||!Number.isInteger(game.auctionWinner))throw new Error('اطلاعات برنده مزایده ثبت نشده است؛ بازی آغاز نشد.');
   if(!Array.isArray(game.hands)||game.hands.length!==6||game.hands.some(h=>!Array.isArray(h)))throw new Error('کارت‌های شش بازیکن آماده نیستند.');
   const winner=game.auctionWinner;
-  const contract=['naras','tak_naras','saras'].includes(game.contract)?game.contract:'hokm';
-  locked=false;game.contract=contract;game.turn=winner;game.leader=winner;
-  K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:trumpSuit||null});
-  game.hiddenTrump=!!hidden;game.trumpSuit=trumpSuit||null;game.target=game.auctionBid.target||null;
+  // The winning bid is the sole source of truth for the contract in this deal.
+  const bidContract=game.isMalzoom?'hokm':game.auctionBid.contract;
+  const noTrumpContracts=['naras','tak_naras','saras'];
+  const suitByContract={hokm_spades:'S',hokm_hearts:'H',hokm_diamonds:'D',hokm_clubs:'C'};
+  if(!game.isMalzoom&&!noTrumpContracts.includes(bidContract)&&!Object.prototype.hasOwnProperty.call(suitByContract,bidContract))
+   throw new Error('نوع قرارداد مزایده نامعتبر است: '+String(bidContract));
+  const contract=noTrumpContracts.includes(bidContract)?bidContract:'hokm';
+  const resolvedTrump=noTrumpContracts.includes(bidContract)?null:(game.isMalzoom?(trumpSuit||null):suitByContract[bidContract]);
+  if(noTrumpContracts.includes(bidContract)&&(trumpSuit||hidden))throw new Error('قرارداد بدون حکم نباید خال حکم یا حکم مخفی داشته باشد.');
+  if(!game.isMalzoom&&resolvedTrump!==null&&trumpSuit&&trumpSuit!==resolvedTrump)throw new Error('خال حکم با قرارداد برنده مزایده مغایرت دارد.');
+  locked=false;game.contract=contract;game.selectedContract=bidContract;game.turn=winner;game.leader=winner;
+  K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump});
+  game.hiddenTrump=!!hidden;game.trumpSuit=resolvedTrump;game.target=game.auctionBid.target||null;
   if(game.turn!==winner||!Array.isArray(game.trick)||game.trick.length!==0)throw new Error('انتقال نوبت از مزایده به بازی کامل نشد.');
   $('kMalzoomSetup').classList.add('hidden');$('kAuction').classList.add('hidden');
-  $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]):(trumpSuit?'حکم: '+suitGlyph[trumpSuit]+' '+suitName[trumpSuit]:'بدون حکم');
+  $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':('حکم اعلام‌شده: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump])):(noTrumpContracts.includes(bidContract)?'بدون حکم · '+contractName[bidContract]:'حکم: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]);
   $('kTrickCards').style.display='';
   $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(winner===0?' · کارت‌های مجاز شما فعال‌اند.':' · هوش مصنوعی در حال بازی است.');
   $('kResult').classList.add('hidden');setScreen('game');renderGame();
