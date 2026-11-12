@@ -236,4 +236,4 @@ $('newGame').onclick=()=>{if(G&&G.done){matchNo++;}else{matchNo=1;previousWinner
 $('backToModes').onclick=()=>{G=null;$('game').classList.add('hidden');$('setup').classList.add('hidden');$('modePicker').classList.remove('hidden');$('modeMessage').textContent='یک حالت بازی را انتخاب کن.'};
 $('sortHand').onclick=()=>{if(!G)return;G.hands[0].sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);render()};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script></body></html>
+</script><script src="./kuwaiti-six-player-ui.js"></script></body></html>
