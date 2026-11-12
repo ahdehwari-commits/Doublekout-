@@ -30,5 +30,5 @@ c=evaluateChallenge([0,1,0,1,1],'A');assert.equal(c.status,'failed-opponent-sequ
 // If no opposing sequence through trick 12, challenger must win trick 13.
 const prefix=[0,1,0,1,0,1,0,1,0,1,0,1];
 assert.equal(evaluateChallenge([...prefix,0],'A').status,'success');
-assert.equal(evaluateChallenge([...prefix,1],'A').status,'failed-last-trick');
+assert.equal(evaluateChallenge([...prefix,3],'A').status,'failed-last-trick');
 console.log('PASS: Double Kout sequence scoring and challenge regression cases');
