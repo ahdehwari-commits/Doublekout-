@@ -24,6 +24,6 @@ for(const mode of ['hokm_spades','hokm_clubs','naras','tak_naras','saras','partn
  assert.ok(sixUi.includes('value="'+mode+'"')||sixUi.includes("'"+mode+"'"),'six-player selector/engine must support '+mode);
 }
 assert.ok(sixUi.includes("game.contract=['naras','tak_naras','saras'].includes(bid.contract)?bid.contract:'hokm'"));
-assert.ok(sixUi.includes("game.initialHands[(win+2)%6][2]"),'six-player partner-middle trump must use partner initial cards');
+assert.ok(sixUi.includes("const partner=(win+2)%6,card=game.initialHands"),'six-player partner-middle trump must use partner initial cards');
 
 console.log('PASS: four/six-player contract choices, controls, rank adapter and trick lock');
