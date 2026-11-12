@@ -293,7 +293,7 @@ function startNewMatch(){
 }
 function bind(){
  $('modeKuwaiti').onclick=()=>{if(window.audioReady)audioReady();resetSetup();};
- $('kStartAuction').onclick=()=>{points={A:0,B:0};startAuction();};
+ $('kStartAuction').onclick=()=>{if(firstGame)points={A:0,B:0};startAuction();};
  $('kBackModes').onclick=()=>setScreen('modes');
  $('kExit').onclick=()=>setScreen('modes');
  $('kNewGame').onclick=()=>startNewMatch();
