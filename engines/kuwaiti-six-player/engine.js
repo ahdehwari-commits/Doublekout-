@@ -145,7 +145,7 @@ function newGame({rng=Math.random,firstGame=true,previousAuctionWinner=null,firs
    throw new Error('برای بازی بعدی، برنده مزایده قبلی لازم است');
  if(!firstGame&&(!Number.isInteger(auctionStarter)||auctionStarter<0||auctionStarter>5))
    throw new Error('تیم برنده باید نفر اول مزایده را مشخص کند');
- const obligatedPlayer=firstGame?null:(previousAuctionWinner+5)%6;
+ const obligatedPlayer=firstGame?(auctionStarter+5)%6:(previousAuctionWinner+5)%6;
  return {mode:'kuwaiti-six-player',players:6,hands,contract:null,leader:null,turn:null,
    auctionStarter,obligatedPlayer,trick:[],trickNo:1,trickWinners:[],score:{A:0,B:0},
    openingLeadRequired:false,done:false,firstGame};
