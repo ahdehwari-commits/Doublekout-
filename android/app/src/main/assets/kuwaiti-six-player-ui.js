@@ -365,8 +365,9 @@ function applyScore(success,won,bidderTeam,provided){
  firstGame=false;
  $('kResult').classList.remove('hidden');
  $('kResult').innerHTML='<b>'+(success?'قرارداد موفق شد':'قرارداد ناموفق شد')+'</b><p class="k-small">تعداد دست تیم مزایده‌برنده: '+fa(won)+' · امتیاز این بازی: '+(val>0?'+':'')+fa(val)+'</p>';
- if(playedTricks<matchLimit){$('kNewGame').classList.remove('hidden');$('kNewGame').textContent='بازی بعدی';}
- else{$('kNewGame').classList.add('hidden');$('kResult').innerHTML+='<p class="k-small">مسابقه کامل شد: '+fa(matchLimit)+' دست انجام شد.</p>';}
+ $('kNewGame').classList.remove('hidden');
+ if(playedTricks<matchLimit)$('kNewGame').textContent='بازی بعدی';
+ else{$('kNewGame').textContent='شروع مسابقه جدید';$('kResult').innerHTML+='<p class="k-small">مسابقه کامل شد: '+fa(matchLimit)+' دست انجام شد.</p>';}
  renderGame();
 }
 function startNewMatch(){
