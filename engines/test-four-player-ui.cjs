@@ -26,4 +26,13 @@ for(const mode of ['hokm_spades','hokm_clubs','naras','tak_naras','saras','partn
 assert.ok(sixUi.includes("game.contract=['naras','tak_naras','saras'].includes(bid.contract)?bid.contract:'hokm'"));
 assert.ok(sixUi.includes("const partner=(win+2)%6,card=game.initialHands"),'six-player partner-middle trump must use partner initial cards');
 
-console.log('PASS: four/six-player contract choices, controls, rank adapter and trick lock');
+
+const auctionUi=fs.readFileSync(require.resolve('../kuwaiti-six-player-ui.js'),'utf8');
+assert.ok(auctionUi.includes('id="kAuctionLog"'),'auction must show a turn-by-turn log');
+assert.ok(auctionUi.includes('data-bid="8"'),'8-trick bid must be available');
+assert.ok(auctionUi.includes('function renderAuctionHand()'),'human hand must be visible during auction');
+assert.ok(auctionUi.includes("auction.current===0"),'auction must wait for the human only on their own turn');
+assert.ok(auctionUi.includes("if(auction.current===0){renderAuction();return;}"),'AI seats must act automatically and not require human pass clicks');
+assert.ok(auctionUi.includes("rank=n===6?1:n===7?2:n===8?3:4"),'bid ranks must progress 6, 7, 8, Baun');
+
+console.log('PASS: four/six-player contracts, auction rotation, hand display, 6/7/8/Baun bidding, controls and rank adapter');
