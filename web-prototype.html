@@ -13,7 +13,7 @@
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
 <button class="mode-card" id="modeDouble"><strong>♠ دابل کوت توالی</strong><span>چهار نفره · نسخه آزمایشی قابل‌بازی</span></button>
-<button class="mode-card pending" id="modeHokm"><strong>♥ حکم معمولی</strong><span>چهار نفره · هسته قوانین اولیه آماده، اتصال میز در حال توسعه</span></button>
+<button class="mode-card" id="modeHokm"><strong>♥ حکم معمولی</strong><span>چهار نفره · موتور مستقل متصل</span></button>
 <button class="mode-card pending" id="modeKuwaiti"><strong>♦ کوت کویتی</strong><span>شش نفره · هسته کارت و قرارداد اولیه آماده، اتصال میز در حال توسعه</span></button>
 </div>
 <p class="muted" id="modeMessage">حالت شش‌نفره فقط با نام «کوت کویتی» نمایش داده می‌شود.</p></section>
@@ -23,22 +23,30 @@
 <h3 class="section-title">کارت‌های شما</h3><div class="hand" id="hand"></div><div class="status" id="status">بازی شروع شد.</div><div class="actions" style="margin-top:10px"><button id="newGame">بازی جدید</button><button id="sortHand">مرتب‌سازی کارت‌ها</button></div><p class="muted">گروه اول از دست اول آغاز می‌شود: اولین توالی معتبرِ برد دو دست پیاپی توسط یک بازیکن، از توالی دست سوم و چهارم به بعد، کل دست‌های انجام‌شده تا همان لحظه را به تیم او می‌دهد؛ مثلاً اگر توالی در دست چهارم و پنجم رخ دهد، هر پنج دست گروه اول محسوب می‌شود. گروه‌های بعدی نیز از دست بعدی آغاز می‌شوند. اگر تا پایان دست سیزدهم توالی معتبری شکل نگیرد، برنده دست سیزدهم تمام دست‌های باقی‌مانده را می‌برد.</p><div class="history" id="history"></div></section>
 <section class="panel"><h3 class="section-title">محدوده این نسخه آزمایشی</h3><div class="rules">این نسخه آزمایشی چهار نفره، بدون جوکر، با حکم ثابت پیک در بازی اول، انتخاب حکم در بازی‌های بعدی، قانون توالی برد توسط یک بازیکن مشخص و چالش ۱۳ دست است. قوانین حالت شش‌نفره در این نسخه تغییر داده نشده‌اند و این نسخه فعلاً میز چهار نفره را اجرا می‌کند. مزایده کامل و بازی آنلاین هنوز در این نسخه وجود ندارد.</div></section>
 </main>
+<script src="./engines/standard-hokm/engine.js"></script>
+<script src="./engines/kuwaiti-six-player/engine.js"></script>
+<script src="./engines/double-kout-sequence.js"></script>
 <script>
 const suits=['♠','♥','♦','♣'],ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'],rankVal=Object.fromEntries(ranks.map((r,i)=>[r,i]));
-let G=null, matchNo=1, previousWinner=null, challengeStats={winA:0,loseA:0,winB:0,loseB:0};
+let G=null, matchNo=1, previousWinner=null, activeMode='double-kout', KuwaitiPreviewGame=null, challengeStats={winA:0,loseA:0,winB:0,loseB:0};
 const $=id=>document.getElementById(id), fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]), team=p=>p%2===0?'A':'B';
 const names=['شما · جنوب','شرق · حریف','هم‌تیمی · شمال','غرب · حریف'];
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function bestTrump(hand){let counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));return suits.sort((a,b)=>counts[b]-counts[a])[0]}
 function dealGame(trump){
- let deck=shuffle(suits.flatMap(s=>ranks.map(r=>({s,r,id:r+s})))), hands=[[],[],[],[]];
- deck.forEach((c,i)=>hands[i%4].push(c));
+ let starter=Number($('starter').value),hands;
+ if(activeMode==='standard-hokm'){
+   const glyph={S:'♠',H:'♥',D:'♦',C:'♣'};
+   hands=window.StandardHokmEngine.deal().map(hand=>hand.map(card=>({...card,s:glyph[card.suit],r:card.rank})));
+ }else{
+   let deck=shuffle(suits.flatMap(s=>ranks.map(r=>({s,r,id:r+s})))),dealt=[[],[],[],[]];
+   deck.forEach((card,i)=>dealt[i%4].push(card));hands=dealt;
+ }
  hands.forEach(h=>h.sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]));
- let starter=Number($('starter').value);
- G={hands,trump,leader:starter,turn:starter,trickNo:1,plays:[],trickWinners:[],scoreA:0,scoreB:0,challenge:null,challengeResolved:false,history:[],done:false,waitingChallenge:true,waitingTrump:false};
+ G={mode:activeMode,hands,trump,trumpCode:({'♠':'S','♥':'H','♦':'D','♣':'C'})[trump],leader:starter,turn:starter,trickNo:1,plays:[],trickWinners:[],scoreA:0,scoreB:0,challenge:null,challengeResult:null,challengeResolved:false,history:[],done:false,waitingChallenge:activeMode==='double-kout',waitingTrump:false};
  $('setup').classList.add('hidden');$('game').classList.remove('hidden');
  $('trumpBig').textContent=trump;$('trumpBig').style.color=['♥','♦'].includes(trump)?'#f17b7b':'#e7c879';
- $('challengePanel').style.display='block';$('trumpPicker').classList.add('hidden');
+ $('challengePanel').style.display=activeMode==='double-kout'?'block':'none';$('trumpPicker').classList.add('hidden');
  $('status').textContent='کارت‌ها پخش شدند. پس از انتخاب چالش یا بازی عادی، بازی آغاز می‌شود.';
  render();updateChallengeStats();
 }
@@ -60,16 +68,16 @@ function startGame(){
  }
 }
 function renderHakimPreview(){const box=$('hakimPreview');if(!box||!G)return;box.innerHTML='';G.hands[0].slice(0,5).forEach(c=>box.append(cardEl(c,true)));}
-function confirmTrump(){if(!G||!G.waitingTrump)return;G.trump=$('nextTrump').value;G.waitingTrump=false;$('trumpPicker').classList.add('hidden');$('trumpBig').textContent=G.trump;$('trumpBig').style.color=['♥','♦'].includes(G.trump)?'#f17b7b':'#e7c879';$('challengePanel').style.display='block';$('status').textContent='حکم انتخاب شد. اکنون چالش را انتخاب کن یا بازی عادی را شروع کن.';render()}
+function confirmTrump(){if(!G||!G.waitingTrump)return;G.trump=$('nextTrump').value;G.waitingTrump=false;$('trumpPicker').classList.add('hidden');G.trumpCode=({'♠':'S','♥':'H','♦':'D','♣':'C'})[G.trump];G.waitingChallenge=activeMode==='double-kout';$('trumpBig').textContent=G.trump;$('trumpBig').style.color=['♥','♦'].includes(G.trump)?'#f17b7b':'#e7c879';$('challengePanel').style.display=activeMode==='double-kout'?'block':'none';$('status').textContent=activeMode==='double-kout'?'حکم انتخاب شد. اکنون چالش را انتخاب کن یا بازی عادی را شروع کن.':'حکم انتخاب شد؛ بازی آغاز می‌شود.';render()}
 function beginNormalOrChallenge(challengeTeam){
  if(!G||G.done||(challengeTeam&&challengeTeam!=='A'))return;G.waitingChallenge=false;G.challenge=challengeTeam||null;
  $('challengePanel').style.display='none';
  $('status').textContent=challengeTeam?('تیم '+(challengeTeam==='A'?'شما':'حریف')+' وارد چالش ۱۳ دست شد؛ باید تمام دست‌ها را ببرد.'):'بازی عادی آغاز شد.';
  render();runAI();
 }
-function legalCards(p){let h=G.hands[p];if(!G.plays.length)return h;let lead=G.plays[0].card.s;let follow=h.filter(c=>c.s===lead);return follow.length?follow:h}
-function beats(a,b,lead){let ta=a.s===G.trump,tb=b.s===G.trump;if(ta!==tb)return ta;if(a.s===b.s)return rankVal[a.r]>rankVal[b.r];if(a.s===lead)return true;return false}
-function winner(plays){let lead=plays[0].card.s,best=plays[0];for(let p of plays.slice(1))if(beats(p.card,best.card,lead))best=p;return best.player}
+function legalCards(p){let h=G.hands[p];if(activeMode==='standard-hokm'){const lead=G.plays.length?G.plays[0].card.suit:null;return window.StandardHokmEngine.legalCards(h,lead)}if(!G.plays.length)return h;let lead=G.plays[0].card.s;let follow=h.filter(c=>c.s===lead);return follow.length?follow:h}
+function beats(a,b,lead){if(activeMode==='standard-hokm'){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.beats({suit:code[a.s],rank:a.r},{suit:code[b.s],rank:b.r},code[lead],G.trumpCode)}let ta=a.s===G.trump,tb=b.s===G.trump;if(ta!==tb)return ta;if(a.s===b.s)return rankVal[a.r]>rankVal[b.r];if(a.s===lead)return true;return false}
+function winner(plays){if(activeMode==='standard-hokm'){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.resolveTrick(plays.map(p=>({player:p.player,card:{suit:code[p.card.s],rank:p.card.r}})),G.trumpCode)}let lead=plays[0].card.s,best=plays[0];for(let p of plays.slice(1))if(beats(p.card,best.card,lead))best=p;return best.player}
 function play(p,card){if(G.done||G.waitingChallenge||G.waitingTrump||p!==G.turn)return;let allowed=legalCards(p);if(!allowed.some(c=>c.id===card.id))return;G.hands[p]=G.hands[p].filter(c=>c.id!==card.id);G.plays.push({player:p,card});G.turn=(p+1)%4;render();if(G.plays.length===4)setTimeout(resolveTrick,450);else runAI()}
 function resolveTrick(){
  let w=winner(G.plays),n=G.trickNo;G.trickWinners.push(w);
@@ -86,6 +94,7 @@ function resolveTrick(){
 }
 function addScore(t,n){if(t==='A')G.scoreA+=n;else G.scoreB+=n}
 function scoreNormal(){
+ if(activeMode==='standard-hokm'){G.scoreA=G.trickWinners.filter(p=>team(p)==='A').length;G.scoreB=13-G.scoreA;G.history.push('امتیاز حکم معمولی بر اساس تعداد دست‌های برده‌شده محاسبه شد.');return;}
  const result=window.DoubleKoutSequence.scoreSequence(G.trickWinners);
  G.scoreA=result.scores.A;G.scoreB=result.scores.B;
  const teamName=t=>t==='A'?'تیم شما':'تیم حریف';
@@ -154,9 +163,9 @@ function render(){
  $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
  $('trickMsg').textContent=G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
 }
-$('modeDouble').onclick=()=>{$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
-$('modeHokm').onclick=()=>{$('modeMessage').textContent='هسته مستقل حکم معمولی در مخزن ثبت شده؛ میز بازی و امتیازدهی هنوز به رابط متصل نشده است.';};
-$('modeKuwaiti').onclick=()=>{$('modeMessage').textContent='هسته مستقل کوت کویتی در مخزن ثبت شده؛ مزایده، استثناهای جوکر و میز شش‌نفره هنوز کامل به رابط متصل نشده‌اند.';};
+$('modeDouble').onclick=()=>{activeMode='double-kout';$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
+$('modeHokm').onclick=()=>{activeMode='standard-hokm';$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');$('modeMessage').textContent='حکم معمولی چهار نفره با موتور مستقل فعال شد.';};
+$('modeKuwaiti').onclick=()=>{KuwaitiPreviewGame=window.KuwaitiSixPlayerEngine.newGame();$('modeMessage').textContent='موتور و پخش کارت شش‌نفره کوت کویتی بارگذاری شد؛ رابط کامل میز شش‌نفره و مزایده هنوز باید تکمیل شود.';};
 $('start').onclick=startGame;$('confirmTrump').onclick=confirmTrump;
 $('takeChallenge').onclick=()=>beginNormalOrChallenge('A');$('skipChallenge').onclick=()=>beginNormalOrChallenge(null);
 $('newGame').onclick=()=>{if(G&&!G.done)return;matchNo++;G=null;$('game').classList.add('hidden');$('setup').classList.remove('hidden');$('newGame').textContent='بازی جدید'};
