@@ -18,7 +18,10 @@ function addStyle(){
  .k-intro div{background:#09271f;border:1px solid #477a68;border-radius:12px;padding:10px;text-align:center;font-size:12px;color:#e8d9ad}
  .k-table{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto minmax(110px,auto) auto;gap:6px;align-items:center;text-align:center;border:3px solid #c5a15a;border-radius:22px;padding:8px;background:radial-gradient(ellipse at 50% 48%,#1b7355,#0b3c2d 68%,#06251d);box-shadow:inset 0 0 0 2px #fff2,inset 0 -22px 40px #001b14aa,0 15px 30px #0009}
   .k-seat{position:relative;min-width:0;background:linear-gradient(145deg,#174d3d,#061c16);border:1px solid #8c9d70;border-radius:12px;padding:6px 3px;box-shadow:0 5px 12px #0008}
- .k-seat.active{outline:2px solid #f3d58c;box-shadow:0 0 18px #f3d58caa;animation:kTurnPulse 1.05s ease-in-out infinite alternate}
+.k-seat.active{outline:2px solid #f3d58c;box-shadow:0 0 18px #f3d58caa;animation:kTurnPulse 1.05s ease-in-out infinite alternate}
+ .k-seat.active:after{content:'';position:absolute;inset:-5px;border:2px solid transparent;border-top-color:#ffe6a1;border-right-color:#c99a43;border-radius:16px;pointer-events:none;animation:kAuctionOrbit 1.15s linear infinite}
+ @keyframes kAuctionOrbit{to{transform:rotate(360deg)}}
+ .k-bid-chip.pass{background:linear-gradient(145deg,#d7e1d7,#718b7a);border-color:#e7f0e5;color:#14251d;font-size:9px;letter-spacing:.2px}
  .k-bid-chip{position:absolute;z-index:3;top:4px;left:4px;min-width:20px;height:20px;padding:0 4px;border-radius:7px;background:linear-gradient(145deg,#ffe6a1,#b27b24);border:1px solid #fff0bd;color:#241708;font:900 12px/18px Georgia,serif;box-shadow:0 2px 7px #0009;text-align:center}
  .k-seat.active .k-bid-chip{transform:scale(1.12);box-shadow:0 0 10px #ffe6a1}
  @keyframes kTurnPulse{from{filter:brightness(1)}to{filter:brightness(1.35)}}
@@ -94,13 +97,13 @@ function setupMarkup(){
  <div id="kHumanAuctionControls">
  <div class="k-bids"><button data-bid="pass" id="kPass">پاس</button><button data-bid="6">۶</button><button data-bid="7">۷</button><button data-bid="8">۸</button><button data-bid="9">۹</button></div>
  <button id="kMalzoom" class="primary hidden">ملزوم</button></div></div>
- <div class="k-live-tricks"><span>دست‌های برده تیم شما: <b id="kWonA">۰</b></span><span>دست‌های برده حریف: <b id="kWonB">۰</b></span></div>
  <div id="kAuctionSummary" class="k-auction-summary hidden">نتیجه مزایده هنوز مشخص نشده است.</div>
  <div id="kContractSetup" class="k-contract-setup hidden"><b>انتخاب قرارداد پس از پایان مزایده</b><label>نوع بازی و خال حکم</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option></select><button id="kConfirmContract" class="primary">تأیید قرارداد و شروع بازی</button></div>
  <div id="kMalzoomSetup" class="k-auction hidden"><b>تنظیم حکم ملزوم</b><label>خال حکم</label><select id="kTrumpSuit" class="k-select"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">گشنیز ♣</option></select><label><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
  <div class="k-table" id="kTable">${[0,1,2,3,4,5].map(p=>'<div class="k-seat" data-p="'+p+'"><div class="k-name" id="kName'+p+'">'+playerNames[p]+'</div><div class="k-count" id="kCount'+p+'">۹ کارت</div><div class="k-played" id="kPlayed'+p+'"></div></div>').join('')}
  <div class="k-center"><div style="color:#f2d998;font-weight:bold">کوت کویتی</div><div id="kTrumpDisplay" style="font-size:25px;color:#f3d58c">بدون حکم</div><div id="kTrickCards" class="k-small">کارت‌های این دست: ۰ از ۶</div><div id="kTurn" class="k-small">در انتظار مزایده</div></div></div>
- <div id="kStatus" class="k-status">کارت‌ها پخش شده‌اند.</div>
+ <div class="k-live-tricks" id="kLiveTricks"><span>دست‌های برده تیم شما: <b id="kWonA">۰</b></span><span>دست‌های برده حریف: <b id="kWonB">۰</b></span></div>
+ <div id="kStatus" class="k-status hidden">وضعیت بازی</div>
  <div class="k-actions"><button id="kAskTrump" class="hidden">درخواست اعلام حکم مخفی</button><button id="kAnnounceTrump" class="hidden">اعلام حکم</button></div>
  <h3 class="section-title">کارت‌های شما</h3><div id="kHand" class="k-hand"></div>
  <div id="kResult" class="k-auction hidden"></div>
@@ -155,8 +158,11 @@ function renderAuction(){
   const p=Number(el.dataset.p);el.classList.toggle('active',p===auction.current);
   el.querySelector('.k-bid-chip')?.remove();
   const latest=[...auction.bids].reverse().find(b=>b.player===p);
-  if(latest&&latest.label!=='پاس'){
-   const chip=document.createElement('span');chip.className='k-bid-chip';chip.textContent=latest.label==='ملزوم'?'M':latest.label;chip.title='پیشنهاد مزایده '+latest.label;el.append(chip);
+  if(latest){
+   const isPass=latest.label==='پاس';
+   const chip=document.createElement('span');chip.className='k-bid-chip'+(isPass?' pass':'');
+   chip.textContent=isPass?'PASS':(latest.label==='ملزوم'?'M':fa(latest.label));
+   chip.title=isPass?'پاس در مزایده':'پیشنهاد مزایده '+latest.label;el.append(chip);
   }
  });
  $('kAuction').classList.remove('hidden');
@@ -414,7 +420,7 @@ function playOne(p,card){
  if(typeof playCardSound==='function')playCardSound();if(p!==0&&typeof speakPlayer==='function')speakPlayer('play',p);
  let res;try{res=K.playCard(game,p,card);}catch(e){setStatus('خطا در اجرای کارت: '+(e&&e.message?e.message:'نامشخص'));console.error('Kuwaiti playCard failed',e);return;}
  if(wasFirst&&game.trick.length===1)game.lastTrick=[];
- $('kStatus').textContent=playerNames[p]+' کارت '+cardLabel(card)+' را بازی کرد.';
+ // The live team trick counter occupies this area; do not replace it with a per-card announcement.
  if(res.completed){
   const win=res.winner;if(typeof tone==='function'){tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);}if(win!==0&&typeof speakPlayer==='function')speakPlayer('win',win);setStatus('دست '+fa(game.trickNo-1)+' را '+playerNames[win]+' برد.');
   renderGame();
