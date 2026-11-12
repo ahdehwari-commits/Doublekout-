@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const K=window.KuwaitiSixPlayerEngine;
+let K=window.KuwaitiSixPlayerEngine;
 const $=id=>document.getElementById(id);
 const suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'};
 const suitName={S:'پیک',H:'دل',D:'خشت',C:'خاج'};
@@ -309,11 +309,29 @@ function bind(){
  $('kAskTrump').onclick=()=>{if(game){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم مخفی اعلام شد.');renderGame();}};
  $('kAnnounceTrump').onclick=()=>{if(game){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم اعلام شد.');renderGame();}};
 }
-let initialized=false;
+let initialized=false,engineLoading=false;
+function loadEngine(){
+ if(engineLoading)return;
+ engineLoading=true;
+ const script=document.createElement('script');
+ script.src='./engines/kuwaiti-six-player/engine.js';
+ script.onload=()=>{
+  engineLoading=false;K=window.KuwaitiSixPlayerEngine;
+  if(init())resetSetup();
+  else {const msg=$('modeMessage');if(msg)msg.textContent='موتور کوت کویتی بارگذاری شد اما راه‌اندازی رابط کامل نشد.';}
+ };
+ script.onerror=()=>{
+  engineLoading=false;
+  const msg=$('modeMessage');if(msg)msg.textContent='فایل موتور کوت کویتی پیدا نشد؛ مسیر engines/kuwaiti-six-player/engine.js را بررسی کن.';
+ };
+ document.head.appendChild(script);
+}
 function init(){
  try{
   if(initialized)return true;
-  if(!K||!$('modeKuwaiti'))throw new Error('موتور یا دکمه ورود به کوت کویتی بارگذاری نشده است');
+  K=window.KuwaitiSixPlayerEngine||K;
+  if(!K){const msg=$('modeMessage');if(msg)msg.textContent='در حال بارگذاری موتور کوت کویتی…';loadEngine();return false;}
+  if(!$('modeKuwaiti'))throw new Error('دکمه ورود به کوت کویتی در صفحه پیدا نشد');
   addStyle();
   if(!$('kuwaitiSetup')||!$('kuwaitiGame'))setupMarkup();
   bind();initialized=true;
@@ -326,9 +344,10 @@ function init(){
   return false;
  }
 }
+
 window.openKuwaitiMode=function(){
- try{if(!initialized&&!init())return;resetSetup();}
+ try{if(!initialized&&!init()){if(engineLoading)return;throw new Error('راه‌اندازی میز کامل نشد');}resetSetup();}
  catch(e){const msg=$('modeMessage');if(msg)msg.textContent='خطا در ورود به کوت کویتی: '+(e&&e.message?e.message:'نامشخص');console.error('Kuwaiti entry failed',e);}
 };
-// This script is loaded after the complete page markup; initialize synchronously\ninit();
+// This script is loaded after the complete page markup; initialize synchronously.\ninit();
 })();
