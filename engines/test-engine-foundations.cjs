@@ -3,7 +3,7 @@ const k=require('./kuwaiti-six-player/engine');
 const h=k.deal(()=>0.41);
 assert.equal(h.length,6);assert.ok(h.every(x=>x.length===9));assert.equal(k.deck().length,54);
 const red={kind:'joker',color:'red'},black={kind:'joker',color:'black'};
-const c=(rank,suit='S')=>({kind:'normal',rank,suit});
+const c=(rank,suit='S')=>({id:rank+suit,kind:'normal',rank,suit});
 // All contracts are no-trump and have their specified within-suit order.
 assert.equal(k.normalPower(c('2'),'naras'),13);
 assert.equal(k.normalPower(c('A'),'naras'),1);
