@@ -206,7 +206,8 @@ function playHumanCard(card){
 function playOne(p,card){
  if(!game||game.done)return;
  const wasFirst=game.trick.length===0;
- if(typeof playCardSound==='function')playCardSound();if(p!==0&&typeof speakPlayer==='function')speakPlayer('play',p);\n const res=K.playCard(game,p,card);
+ if(typeof playCardSound==='function')playCardSound();if(p!==0&&typeof speakPlayer==='function')speakPlayer('play',p);
+ const res=K.playCard(game,p,card);
  if(wasFirst&&game.trick.length===1)game.lastTrick=[];
  $('kStatus').textContent=playerNames[p]+' کارت '+cardLabel(card)+' را بازی کرد.';
  if(res.completed){
