@@ -105,3 +105,11 @@ const manifest=fs.readFileSync(require.resolve('../android/app/src/main/AndroidM
 const activity=fs.readFileSync(require.resolve('../android/app/src/main/java/com/doublekout/app/MainActivity.java'),'utf8');
 assert.ok(manifest.includes('android:configChanges="orientation|screenSize|smallestScreenSize|keyboardHidden|uiMode"'),'Android activity must not be recreated on screen rotation');
 assert.ok(activity.includes('onConfigurationChanged(Configuration newConfig)')&&activity.includes('webView.requestLayout()'),'WebView must preserve game state and relayout on orientation changes');
+
+assert.ok(sixUi.includes("chip.textContent=isPass?'PASS'")&&sixUi.includes("className='k-bid-chip'+(isPass?' pass':'')"),'auction passes must be visible as PASS chips on player seats');
+assert.ok(sixUi.includes('@keyframes kAuctionOrbit')&&sixUi.includes('.k-seat.active:after'),'auction turn indicator must rotate around the active seat');
+assert.ok(sixUi.indexOf('id="kTable"')<sixUi.indexOf('id="kLiveTricks"')&&sixUi.indexOf('id="kLiveTricks"')<sixUi.indexOf('id="kStatus"'),'six-player live counters must replace the old status/card-announcement area below the table');
+assert.ok(!sixUi.includes("playerNames[p]+' کارت '+cardLabel(card)+' را بازی کرد.'"),'per-card announcement must be removed from the six-player status area');
+assert.ok(html.includes("matchNo=1;previousWinner=null;previousStarter=null;activeMode='double-kout'"),'starting four-player DoubleKout must reset the series and fixed first game');
+assert.ok(html.includes("matchNo=1;previousWinner=null;previousStarter=null;activeMode='standard-hokm'"),'starting four-player Standard Hokm must reset the series and fixed first game');
+assert.ok(html.includes("if(matchNo===1){G.trump='♠';G.trumpCode='S';G.waitingTrump=false;}"),'first four-player game must lock trump to spades');
