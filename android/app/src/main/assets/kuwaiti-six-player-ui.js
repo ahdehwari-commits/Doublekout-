@@ -309,16 +309,26 @@ function bind(){
  $('kAskTrump').onclick=()=>{if(game){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم مخفی اعلام شد.');renderGame();}};
  $('kAnnounceTrump').onclick=()=>{if(game){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم اعلام شد.');renderGame();}};
 }
+let initialized=false;
 function init(){
  try{
+  if(initialized)return true;
   if(!K||!$('modeKuwaiti'))throw new Error('موتور یا دکمه ورود به کوت کویتی بارگذاری نشده است');
-  addStyle();setupMarkup();bind();
+  addStyle();
+  if(!$('kuwaitiSetup')||!$('kuwaitiGame'))setupMarkup();
+  bind();initialized=true;
   window.openKuwaitiMode=resetSetup;
   $('modeMessage').textContent='کوت کویتی آماده شروع است.';
+  return true;
  }catch(e){
   const msg=$('modeMessage');if(msg)msg.textContent='خطای راه‌اندازی میز شش‌نفره: '+(e&&e.message?e.message:'نامشخص');
   console.error('Kuwaiti UI initialization failed',e);
+  return false;
  }
 }
+window.openKuwaitiMode=function(){
+ try{if(!initialized&&!init())return;resetSetup();}
+ catch(e){const msg=$('modeMessage');if(msg)msg.textContent='خطا در ورود به کوت کویتی: '+(e&&e.message?e.message:'نامشخص');console.error('Kuwaiti entry failed',e);}
+};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
