@@ -47,6 +47,7 @@
 <p class="muted" id="modeMessage">حالت شش‌نفره فقط با نام «کوت کویتی» نمایش داده می‌شود.</p></section>
 <section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><div id="hokmContractPicker" class="hidden"><label>نوع بازی و خال حکم</label><select id="hokmContract"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار · خال کارت وسط از پنج کارت اول یار</option></select></div><div class="setup"><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option><option value="hard">سخت</option><option value="expert">خیلی سخت</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
 <section class="panel hidden" id="game"><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">چالش موفق شما: <b id="challengeWinA">۰</b></div><div class="score">شکست چالش شما: <b id="challengeLoseA">۰</b></div><div class="score">دست: <b id="trickNo">۱</b> / ۱۳</div></div>
+<div class="k-live-tricks" style="display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:13px;font-weight:bold"><span>دست‌های برده این بازی · تیم شما: <b id="liveWonA">۰</b></span><span>تیم حریف: <b id="liveWonB">۰</b></span></div>
 <div id="challengePanel" class="status" style="display:none"><b>چالش تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چالش را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چالش فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چالش علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب حکم برای بازی بعدی</b><p class="muted">پنج کارت اول حاکم نمایش داده شده است؛ خال حکم را انتخاب کن.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><select id="nextTrump"><option value="♠">پیک ♠</option><option value="♥">دل ♥</option><option value="♦">خشت ♦</option><option value="♣">گشنیز ♣</option></select><button id="confirmTrump">تأیید حکم و شروع</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div><div class="muted">حکم</div><div id="trumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div id="trickCountWrap"><div class="muted">کارت‌های این دست</div><div id="trickCount" style="font-size:25px">۰ / ۴</div></div><div id="trickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div></div><div class="seat east" id="seat1"><div class="name">شرق · حریف</div><div class="count" id="count1"></div><div class="played" id="played1"></div></div><div class="seat south" id="seat0"><div class="name">شما · جنوب</div><div class="count" id="count0"></div><div class="played" id="played0"></div></div></div>
 <h3 class="section-title">کارت‌های شما</h3><div class="hand" id="hand"></div><div class="status" id="status">بازی شروع شد.</div><div class="actions" style="margin-top:10px"><button id="newGame">بازی جدید</button><button id="sortHand">مرتب‌سازی کارت‌ها</button><button id="backToModes">بازگشت به انتخاب بازی</button></div><p class="muted">گروه اول از دست اول آغاز می‌شود: اولین توالی معتبرِ برد دو دست پیاپی توسط یک بازیکن، از توالی دست سوم و چهارم به بعد، کل دست‌های انجام‌شده تا همان لحظه را به تیم او می‌دهد؛ مثلاً اگر توالی در دست چهارم و پنجم رخ دهد، هر پنج دست گروه اول محسوب می‌شود. گروه‌های بعدی نیز از دست بعدی آغاز می‌شوند. اگر تا پایان دست سیزدهم توالی معتبری شکل نگیرد، برنده دست سیزدهم تمام دست‌های باقی‌مانده را می‌برد.</p><div class="history" id="history"></div></section>
 <section class="panel"><h3 class="section-title">محدوده این نسخه آزمایشی</h3><div class="rules">این نسخه شامل میز چهار نفره و میز شش نفره کوت کویتی است. در حالت شش نفره، مزایده، قراردادهای نرس و تک نرس و سرس، ملزوم، حکم مخفی، جوکرها، بازی ۹ دست و بازیکنان هوش مصنوعی فعال هستند. بازی آنلاین چندنفره هنوز فعال نیست.</div></section>
@@ -237,7 +238,7 @@ function finishGame(){
      challengeStats.winA++;
      G.history.push('چالش با موفقیت انجام شد؛ یک امتیاز مستقل برای تیم شما ثبت شد.');
      $('status').innerHTML='<span class="winner">چالش موفق شد؛ تیم شما هر ۱۳ دست را کامل کرد.</span>';
-     previousWinner='A';previousStarter=G.trickWinners[G.trickWinners.length-1]??G.leader;
+     previousWinner='A';previousStarter=lastPlayerOfTeam(G.trickWinners,'A',G.leader);
    }else{
      challengeStats.loseA++;
      const reason=outcome.status==='failed-opponent-sequence'
@@ -245,7 +246,7 @@ function finishGame(){
        :'تیم شما دست سیزدهم را نبرد؛ چالش ناموفق شد.';
      G.history.push(reason);
      $('status').innerHTML='<span class="winner">چالش شکست خورد؛ امتیاز مستقل چالش ثبت شد.</span> '+reason;
-     previousWinner='B';previousStarter=G.trickWinners[G.trickWinners.length-1]??G.leader;
+     previousWinner='B';previousStarter=lastPlayerOfTeam(G.trickWinners,'B',G.leader);
    }
  }else{
    scoreNormal();
@@ -253,12 +254,16 @@ function finishGame(){
    const kout=activeMode==='standard-hokm'?window.StandardHokmEngine.koutMessage(G.scoreA,G.scoreB,G.hakemPlayer):null;
    if(kout)G.history.push(kout+'؛ نتیجه ۱۳ بر صفر ثبت شد.');
    $('status').innerHTML=`بازی تمام شد. <span class="winner">${kout||winnerTeam} · ${fa(G.scoreA)} دست به ${fa(G.scoreB)} دست</span>`;
-   previousWinner=G.scoreA===G.scoreB?previousWinner:G.scoreA>G.scoreB?'A':'B';
-   previousStarter=G.trickWinners.length?G.trickWinners[G.trickWinners.length-1]:G.leader;
+   const winningTeam=G.scoreA===G.scoreB?previousWinner:(G.scoreA>G.scoreB?'A':'B');
+   if(winningTeam){previousWinner=winningTeam;previousStarter=lastPlayerOfTeam(G.trickWinners,winningTeam,G.leader);}
  }
  updateChallengeStats();render();
  $('history').innerHTML=G.history.slice(-18).reverse().join('<br>');
  $('newGame').textContent='بازی بعدی';
+}
+function lastPlayerOfTeam(winners,winningTeam,fallback){
+ for(let i=(winners||[]).length-1;i>=0;i--){if(team(winners[i])===winningTeam)return winners[i];}
+ return fallback??(winningTeam==='A'?0:1);
 }
 function updateChallengeStats(){
  const winA=$('challengeWinA'),loseA=$('challengeLoseA'),winB=$('challengeWinB'),loseB=$('challengeLoseB');
@@ -319,6 +324,7 @@ function runAI(){
 function cardEl(c,small=false){let d=document.createElement('div');d.className='card '+(['♥','♦'].includes(c.s)?'red':'')+(small?' small':'');d.innerHTML=`<span>${c.r}</span><span class="suit">${c.s}</span><span style="align-self:flex-end;font-size:12px">${c.r}</span>`;return d}
 function render(){
  if(!G)return;
+ $('liveWonA').textContent=fa((G.trickWinners||[]).filter(p=>team(p)==='A').length);$('liveWonB').textContent=fa((G.trickWinners||[]).filter(p=>team(p)==='B').length);
  $('scoreA').textContent=fa(G.scoreA);$('scoreB').textContent=fa(G.scoreB);$('trickNo').textContent=fa(Math.min(G.trickNo,13));$('trickCount').textContent=activeMode==='standard-hokm'&&$('hokmContract').value==='partner_middle'?'':fa(G.plays.length)+' / ۴';$('trickCountWrap').style.display=$('hokmContract').value==='partner_middle'?'none':'';
  for(let p=0;p<4;p++){
   $('seat'+p).classList.toggle('active',G.turn===p);$('count'+p).textContent=p===0?'کارت شما: '+fa(G.hands[p].length):fa(G.hands[p].length)+' کارت';
