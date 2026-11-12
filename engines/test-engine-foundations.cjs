@@ -75,7 +75,7 @@ k.startPlay(playGame,0,'naras');
 let outcome;
 for(let p=0;p<6;p++)outcome=k.playCard(playGame,p,playGame.hands[p][0]);
 assert.equal(outcome.completed,true);assert.equal(outcome.winner,0);
-assert.equal(playGame.trickNo,2);assert.equal(playGame.turn,0);
+assert.equal(playGame.trickNo,2);assert.equal(playGame.turn,0);assert.equal(playGame.playedCards.length,6);assert.equal(playGame.playedCards[0].card.id,'2S');assert.equal(playGame.playedCards[5].player,5);
 
 const trumpHand=[c('9','S'),c('2','H'),c('A','D'),c('K','C')];
 assert.deepEqual(k.legalCards(trumpHand,'S',{trickNo:2,isFirstPlay:false,trumpSuit:'H'}),[c('9','S')]);
@@ -105,3 +105,5 @@ hiddenOpponent.trick=[{player:0,card:c('10','S')}];hiddenOpponent.turn=1;
 assert.equal(k.playCard(hiddenOpponent,1,c('3','D')).completed,false);
 
 console.log('PASS: six-player suit-based Hokm, no-trump ranks, hidden Malzoom joker, lead restrictions, ninth trick and auction setup');
+
+assert.ok(Array.isArray(g.playedCards)&&g.playedCards.length===0,'new six-player deal must start with an empty public card-memory log');
