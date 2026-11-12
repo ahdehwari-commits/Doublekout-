@@ -54,14 +54,16 @@ function cardPower(card,contract,{trickNo=1,isLead=false,isFinalTrick=false,isBi
  if(card.kind==='normal'&&POWER[card.rank])return POWER[card.rank];
  throw new Error('نوع یا رتبه کارت ناشناخته است');
 }
-function legalCards(hand,leadSuit,{trickNo=1,openingLeadRequired=false}={}){
+function legalCards(hand,leadSuit,{trickNo=1,openingLeadRequired=false,isFirstPlay=true}={}){
  if(openingLeadRequired){
    const opening=hand.filter(isTwoOfClubs);
    if(opening.length!==1)throw new Error('کارت ۲ خاج برای شروع در دست این بازیکن نیست');
    return opening;
  }
  if(!leadSuit){
-   // Jokers may be held for a later play; the opening lead is separately constrained to 2♣.
+   // On trick nine, the first player may lead either joker; it has no power.
+   // If this is the second play after a joker lead, a normal card establishes the suit.
+   if(trickNo===9&&isFirstPlay)return [...hand];
    return hand.filter(c=>c.kind==='normal');
  }
  const follow=hand.filter(c=>c.kind==='normal'&&c.suit===leadSuit);
