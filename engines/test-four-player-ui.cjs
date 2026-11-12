@@ -46,7 +46,7 @@ assert.ok(html.includes("G.trump=({'hokm_spades':'♠','hokm_hearts':'♥','hokm
 assert.ok(sixUi.includes("else if(bid.contract==='hokm_hearts')trumpSuit='H'"));
 assert.ok(sixUi.includes("else if(bid.contract==='hokm_diamonds')trumpSuit='D'"));
 assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\n try{"));
-assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:trumpSuit||null})"));
+assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump})"));
 assert.ok(sixUi.includes("setScreen('game');renderGame();\n  if(winner!==0)playAITurn();"));
 assert.ok(sixUi.includes("Kuwaiti AI fallback card selected"),'AI turn must have a legal-card fallback after auction');
 assert.ok(sixUi.includes('class="devil-mark">😈')&&sixUi.includes('class="trident">🔱'),'six-player jokers must show a devil and trident');
