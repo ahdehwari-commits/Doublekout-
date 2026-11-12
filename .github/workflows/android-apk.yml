@@ -38,6 +38,13 @@ jobs:
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
+      - name: Validate six-player UI and Android asset sync
+        run: |
+          node --check kuwaiti-six-player-ui.js
+          node --check engines/kuwaiti-six-player/engine.js
+          cmp kuwaiti-six-player-ui.js android/app/src/main/assets/kuwaiti-six-player-ui.js
+          cmp engines/kuwaiti-six-player/engine.js android/app/src/main/assets/engines/kuwaiti-six-player/engine.js
+
       - name: Run JavaScript engine tests
         run: |
           node engine/test-kuwaiti-card-power.cjs
