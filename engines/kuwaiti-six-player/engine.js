@@ -68,17 +68,24 @@ function effectiveLeadSuit(plays,{trickNo=1}={}){
 }
 // Jokers cannot be the first card through trick eight. They are allowed
 // on trick nine, and may be played later when the player cannot follow suit.
-function legalCards(hand,leadSuit,{trickNo=1,isFirstPlay=true,trumpSuit=null}={}){
+function legalCards(hand,leadSuit,{trickNo=1,isFirstPlay=true,trumpSuit=null,firstTrickNoCut=false}={}){
  if(!Array.isArray(hand))throw new TypeError('دست کارت نامعتبر است');
+ // In the opening trick neither joker may be played, even as a discard.
+ const available=trickNo===1?hand.filter(c=>!isJoker(c)):hand;
  if(isFirstPlay&&!leadSuit){
-   if(trickNo<9)return hand.filter(c=>!isJoker(c));
-   return [...hand];
+   if(trickNo<9)return available.filter(c=>!isJoker(c));
+   return [...available];
  }
- if(!leadSuit)return hand.filter(c=>!isJoker(c));
- const follow=hand.filter(c=>c.kind==='normal'&&c.suit===leadSuit);
+ if(!leadSuit)return available.filter(c=>!isJoker(c));
+ const follow=available.filter(c=>c.kind==='normal'&&c.suit===leadSuit);
  if(follow.length)return follow;
- if(trumpSuit){const trumps=hand.filter(c=>c.kind==='normal'&&c.suit===trumpSuit);if(trumps.length)return [...trumps,...hand.filter(isJoker)];}
- return [...hand];
+ // No trump cutting in trick one: a void player must discard a non-trump normal card.
+ if(trickNo===1&&firstTrickNoCut&&trumpSuit){
+  const discards=available.filter(c=>c.kind==='normal'&&c.suit!==trumpSuit);
+  if(discards.length)return discards;
+ }
+ if(trumpSuit){const trumps=available.filter(c=>c.kind==='normal'&&c.suit===trumpSuit);if(trumps.length)return [...trumps,...available.filter(isJoker)];}
+ return [...available];
 }
 function findTrickWinner(plays,contract,{trickNo=1,isMalzoom=false,trumpAnnounced=false,trumpSuit=null}={}){
  validateContract(contract);
