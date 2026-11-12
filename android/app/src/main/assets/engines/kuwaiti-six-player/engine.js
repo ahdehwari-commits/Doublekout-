@@ -1,7 +1,8 @@
-// Six-player Kuwaiti Kout core. Contract scoring and auction UI are separate modules.
+// Six-player Kuwaiti Kout rules core.
+// All three contracts are no-trump: tricks are won by the strongest card
+// in the suit led; there is no cutting with another suit.
 const SUITS=['S','H','D','C'];
 const RANKS=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
-const POWER=Object.fromEntries(RANKS.map((r,i)=>[r,i+1]));
 const CONTRACTS=new Set(['naras','tak_naras','saras']);
 function deck(){
  const cards=SUITS.flatMap(s=>RANKS.map(r=>({id:r+s,kind:'normal',rank:r,suit:s})));
@@ -24,9 +25,36 @@ function validateContract(contract){
 }
 function isJoker(card){return !!card&&card.kind==='joker';}
 function isTwoOfClubs(card){return !!card&&card.kind==='normal'&&card.rank==='2'&&card.suit==='C';}
-
-// The ninth-trick exception: a joker led first has no power and does not establish
-// the lead suit. The second player's card establishes the trick's background suit.
+function findOpeningPlayer(hands){
+ if(!Array.isArray(hands)||hands.length!==6)throw new Error('کوت کویتی به شش دست کارت نیاز دارد');
+ const holders=hands.map((hand,index)=>hand.some(isTwoOfClubs)?index:-1).filter(i=>i>=0);
+ if(holders.length!==1)throw new Error('دارنده یکتای ۲ خاج پیدا نشد');
+ return holders[0];
+}
+// Return normal-card strength from weakest (1) to strongest (13).
+function normalPower(card,contract){
+ validateContract(contract);
+ if(!card||card.kind!=='normal'||!RANKS.includes(card.rank))throw new TypeError('کارت معمولی نامعتبر است');
+ if(contract==='naras')return 14-RANKS.indexOf(card.rank); // 2 strongest, A weakest
+ if(contract==='tak_naras')return card.rank==='A'?13:14-RANKS.indexOf(card.rank)-1; // A, 2, 3 ... K
+ return RANKS.indexOf(card.rank)+1; // Saras: A, K ... 2
+}
+function cardPower(card,contract,{trickNo=1,isLead=false,isMalzoom=false,trumpAnnounced=false}={}){
+ validateContract(contract);
+ if(!card||typeof card!=='object')throw new TypeError('کارت نامعتبر است');
+ if(card.kind==='normal')return normalPower(card,contract);
+ if(!isJoker(card)||!['red','black'].includes(card.color))throw new Error('نوع کارت ناشناخته است');
+ // A joker led in the ninth trick is legal, but powerless.
+ if(trickNo===9&&isLead)return 0;
+ // Black joker loses its power from trick five onward.
+ if(card.color==='black'&&trickNo>=5)return 0;
+ // In a hidden Malzoom contract, black joker is powerless until the
+ // obligated player announces the hidden trump.
+ if(card.color==='black'&&isMalzoom&&!trumpAnnounced)return 0;
+ return card.color==='red'?10000:8000;
+}
+// On trick nine, a first-played joker does not establish the suit;
+// the second player's normal card establishes the lead suit.
 function effectiveLeadSuit(plays,{trickNo=1}={}){
  if(!Array.isArray(plays)||plays.length===0)return null;
  if(trickNo===9&&isJoker(plays[0].card)){
@@ -37,50 +65,46 @@ function effectiveLeadSuit(plays,{trickNo=1}={}){
  const first=plays[0].card;
  return first&&first.kind==='normal'?first.suit:null;
 }
-function cardPower(card,contract,{trickNo=1,isLead=false,isFinalTrick=false,isBidderLead=false}={}){
- validateContract(contract);
- if(!card||typeof card!=='object')throw new TypeError('کارت نامعتبر است');
- const joker=isJoker(card);
- // Ninth trick only: either joker, if led first, is powerless (not illegal).
- if(trickNo===9&&isLead&&joker)return 0;
- // A joker cannot establish a suit on other leads in this foundation.
- if(joker&&isLead)return -1;
- if(joker&&card.color==='black'&&trickNo>4)return -1;
- if(joker&&isFinalTrick&&isBidderLead)return -1;
- if(joker&&card.color==='red')return 10000;
- if(contract==='naras'&&card.kind==='normal'&&card.rank==='2')return 9000;
- if((contract==='tak_naras'||contract==='saras')&&card.kind==='normal'&&card.rank==='A')return 9000;
- if(joker&&card.color==='black')return 8000;
- if(card.kind==='normal'&&POWER[card.rank])return POWER[card.rank];
- throw new Error('نوع یا رتبه کارت ناشناخته است');
-}
-function legalCards(hand,leadSuit,{trickNo=1,openingLeadRequired=false,isFirstPlay=true}={}){
- if(openingLeadRequired){
-   const opening=hand.filter(isTwoOfClubs);
-   if(opening.length!==1)throw new Error('کارت ۲ خاج برای شروع در دست این بازیکن نیست');
-   return opening;
+// Jokers cannot be the first card through trick eight. They are allowed
+// on trick nine, and may be played later when the player cannot follow suit.
+function legalCards(hand,leadSuit,{trickNo=1,isFirstPlay=true}={}){
+ if(!Array.isArray(hand))throw new TypeError('دست کارت نامعتبر است');
+ if(isFirstPlay&&!leadSuit){
+   if(trickNo<9)return hand.filter(c=>!isJoker(c));
+   return [...hand];
  }
- if(!leadSuit){
-   // On trick nine, the first player may lead either joker; it has no power.
-   // If this is the second play after a joker lead, a normal card establishes the suit.
-   if(trickNo===9&&isFirstPlay)return [...hand];
-   return hand.filter(c=>c.kind==='normal');
- }
+ if(!leadSuit)return hand.filter(c=>!isJoker(c));
  const follow=hand.filter(c=>c.kind==='normal'&&c.suit===leadSuit);
- // Jokers do not have a suit. They may be used only when the player cannot follow suit.
- return follow.length?follow:hand.filter(c=>c.kind!=='joker'||trickNo<=4);
+ return follow.length?follow:[...hand];
 }
-function findOpeningPlayer(hands){
- if(!Array.isArray(hands)||hands.length!==6)throw new Error('کوت کویتی به شش دست کارت نیاز دارد');
- const holders=hands.map((hand,index)=>hand.some(isTwoOfClubs)?index:-1).filter(i=>i>=0);
- if(holders.length!==1)throw new Error('دارنده یکتای ۲ خاج پیدا نشد');
- return holders[0];
+function findTrickWinner(plays,contract,{trickNo=1,isMalzoom=false,trumpAnnounced=false}={}){
+ validateContract(contract);
+ if(!Array.isArray(plays)||plays.length!==6)throw new Error('برای تعیین برنده باید شش کارت بازی شده باشد');
+ const leadSuit=effectiveLeadSuit(plays,{trickNo});
+ const eligible=plays.filter((play,index)=>{
+   if(isJoker(play.card))return cardPower(play.card,contract,{trickNo,isLead:index===0,isMalzoom,trumpAnnounced})>0;
+   return play.card.suit===leadSuit;
+ });
+ if(!eligible.length)return plays[1]; // Ninth-trick joker lead has no power; second card sets suit.
+ return eligible.reduce((best,current)=>{
+   const bestPower=cardPower(best.card,contract,{trickNo,isLead:best===plays[0],isMalzoom,trumpAnnounced});
+   const currentPower=cardPower(current.card,contract,{trickNo,isLead:current===plays[0],isMalzoom,trumpAnnounced});
+   return currentPower>bestPower?current:best;
+ });
 }
-function newGame({rng=Math.random}={}){
- const hands=deal(rng),starter=findOpeningPlayer(hands);
- return {mode:'kuwaiti-six-player',players:6,hands,contract:null,leader:starter,turn:starter,
-   trick:[],trickNo:1,trickWinners:[],score:{A:0,B:0},openingLeadRequired:true,done:false};
+function newGame({rng=Math.random,firstGame=true,previousAuctionWinner=null,firstAuctionPlayer=null}={}){
+ const hands=deal(rng);
+ const auctionStarter=firstGame?findOpeningPlayer(hands):firstAuctionPlayer;
+ if(!firstGame&&(!Number.isInteger(previousAuctionWinner)||previousAuctionWinner<0||previousAuctionWinner>5))
+   throw new Error('برای بازی بعدی، برنده مزایده قبلی لازم است');
+ if(!firstGame&&(!Number.isInteger(auctionStarter)||auctionStarter<0||auctionStarter>5))
+   throw new Error('تیم برنده باید نفر اول مزایده را مشخص کند');
+ const obligatedPlayer=firstGame?null:(previousAuctionWinner+5)%6;
+ return {mode:'kuwaiti-six-player',players:6,hands,contract:null,leader:null,turn:null,
+   auctionStarter,obligatedPlayer,trick:[],trickNo:1,trickWinners:[],score:{A:0,B:0},
+   openingLeadRequired:false,done:false,firstGame};
 }
-const KuwaitiSixPlayerEngine={SUITS,RANKS,deck,shuffle,deal,teamOf,validateContract,isJoker,isTwoOfClubs,effectiveLeadSuit,cardPower,legalCards,findOpeningPlayer,newGame};
+const KuwaitiSixPlayerEngine={SUITS,RANKS,deck,shuffle,deal,teamOf,validateContract,isJoker,isTwoOfClubs,
+ findOpeningPlayer,normalPower,cardPower,effectiveLeadSuit,legalCards,findTrickWinner,newGame};
 if(typeof module!=='undefined'&&module.exports)module.exports=KuwaitiSixPlayerEngine;
 if(typeof window!=='undefined')window.KuwaitiSixPlayerEngine=KuwaitiSixPlayerEngine;
