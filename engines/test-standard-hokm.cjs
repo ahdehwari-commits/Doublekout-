@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const hokm=require('./standard-hokm/engine');
+const hands=hokm.deal(()=>0.37);
+assert.equal(hands.length,4);
+assert.ok(hands.every(h=>h.length===13));
+assert.equal(new Set(hands.flat().map(c=>c.id)).size,52);
+const sample=[{id:'AS',rank:'A',suit:'S'},{id:'KH',rank:'K',suit:'H'},{id:'2S',rank:'2',suit:'S'}];
+assert.deepEqual(hokm.legalCards(sample,'S').map(c=>c.id),['AS','2S']);
+assert.deepEqual(hokm.legalCards(sample,'D').map(c=>c.id),sample.map(c=>c.id));
+assert.equal(hokm.beats({rank:'2',suit:'S'},{rank:'A',suit:'H'},'H','S'),true);
+assert.equal(hokm.beats({rank:'A',suit:'H'},{rank:'K',suit:'H'},'H','S'),true);
+assert.equal(hokm.beats({rank:'2',suit:'D'},{rank:'A',suit:'H'},'H','S'),false);
+const plays=[{player:0,card:{rank:'A',suit:'H'}},{player:1,card:{rank:'2',suit:'S'}},{player:2,card:{rank:'K',suit:'H'}},{player:3,card:{rank:'A',suit:'D'}}];
+assert.equal(hokm.resolveTrick(plays,'S'),1);
+const game=hokm.newGame({starter:2,matchNumber:1,rng:()=>0.37});
+assert.equal(game.turn,2);assert.equal(game.trump,'S');assert.equal(game.hands.length,4);
+console.log('PASS: standard four-player Hokm deal, follow-suit, trump and trick winner');
