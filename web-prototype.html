@@ -68,7 +68,7 @@ function speakPlayer(kind='play',player=1){
  try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(line);u.lang='fa-IR';u.rate=.94;u.pitch=player===1?1.02:.88;u.volume=.92;window.speechSynthesis.speak(u);lastVoiceAt=Date.now()}catch(e){}
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function bestTrump(hand){let counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));return suits.sort((a,b)=>counts[b]-counts[a])[0]}
+function bestTrump(hand){let counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));return [...suits].sort((a,b)=>counts[b]-counts[a])[0]}
 function dealGame(trump){
  let starter=Number($('starter').value),hands;
  if(activeMode==='standard-hokm'){
@@ -82,7 +82,7 @@ function dealGame(trump){
  G={mode:activeMode,hands,trump,trumpCode:({'♠':'S','♥':'H','♦':'D','♣':'C'})[trump],leader:starter,turn:starter,trickNo:1,plays:[],trickWinners:[],scoreA:0,scoreB:0,challenge:null,challengeResult:null,challengeResolved:false,history:[],done:false,waitingChallenge:activeMode==='double-kout',waitingTrump:false};
  $('setup').classList.add('hidden');$('game').classList.remove('hidden');
  $('trumpBig').textContent=trump;$('trumpBig').style.color=['♥','♦'].includes(trump)?'#f17b7b':'#e7c879';
- $('challengePanel').style.display=activeMode==='double-kout'?'block':'none';$('trumpPicker').classList.add('hidden');
+ $('challengePanel').style.display=activeMode==='double-kout'?'block':'none';$('trumpPicker').classList.add('hidden');$('challengeWinA').parentElement.style.display=activeMode==='double-kout'?'':'none';$('challengeLoseA').parentElement.style.display=activeMode==='double-kout'?'':'none';
  $('status').textContent='کارت‌ها پخش شدند. پس از انتخاب چالش یا بازی عادی، بازی آغاز می‌شود.';
  render();updateChallengeStats();
 }
@@ -164,8 +164,9 @@ function finishGame(){
  $('newGame').textContent='بازی بعدی';
 }
 function updateChallengeStats(){
- $('challengeWinA').textContent=fa(challengeStats.winA);$('challengeLoseA').textContent=fa(challengeStats.loseA);
- $('challengeWinB').textContent=fa(challengeStats.winB);$('challengeLoseB').textContent=fa(challengeStats.loseB);
+ const winA=$('challengeWinA'),loseA=$('challengeLoseA'),winB=$('challengeWinB'),loseB=$('challengeLoseB');
+ if(winA)winA.textContent=fa(challengeStats.winA);if(loseA)loseA.textContent=fa(challengeStats.loseA);
+ if(winB)winB.textContent=fa(challengeStats.winB);if(loseB)loseB.textContent=fa(challengeStats.loseB);
 }
 function aiChoose(p){
  let legal=legalCards(p),difficulty=$('difficulty').value;
