@@ -27,7 +27,11 @@ function addStyle(){
  .k-seat[data-p="0"]{grid-column:2;grid-row:3}.k-seat[data-p="1"]{grid-column:3;grid-row:3}.k-seat[data-p="5"]{grid-column:1;grid-row:3}
  .k-card{width:38px;height:54px;border-radius:7px;background:#fffaf0;color:#17251f;border:1px solid #d8d0bd;box-shadow:0 4px 8px #00140f99;display:flex;flex-direction:column;justify-content:space-between;padding:3px;font:700 13px Georgia,serif;flex-shrink:0}
  .k-card.red{color:#c83d43}.k-card .ksuit{font-size:18px;align-self:center}
- .k-card.joker{font:700 10px Tahoma;background:linear-gradient(145deg,#fff,#e5d8b7);justify-content:center;text-align:center}\n .k-back{position:relative;background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px)!important;border:2px solid #f4e7c4!important}\n .k-back:after{content:'Abdolhamid\\A Dehvari';white-space:pre;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 700 4.3px/1.4 Georgia,'Times New Roman',serif;letter-spacing:.3px;color:#ffe8ae;text-shadow:0 1px 2px #071b32,0 0 4px #f2d58a;transform:none;padding:2px 1px;border-radius:4px;background:linear-gradient(135deg,#0b2340aa,#193f66aa)}
+ .k-card.joker{font:700 9px Tahoma;background:radial-gradient(circle at 50% 35%,#fff8e7,#d8c49b 72%,#7c1e28);justify-content:center;text-align:center;overflow:hidden;position:relative;border:2px solid #e7c879}
+ .k-card.joker .devil-mark{font-size:23px;line-height:1.05;display:block;text-shadow:0 2px 3px #0008}
+ .k-card.joker.red{background:radial-gradient(circle at 50% 35%,#ffe8df,#bd2635 72%,#4a0710);color:#fff}
+ .k-card.joker.black{background:radial-gradient(circle at 50% 35%,#eee5d4,#25242b 72%,#050509);color:#fff}
+ .k-card.joker .trident{font-size:13px;position:absolute;bottom:1px;right:3px;color:#f6d47f;text-shadow:0 1px 2px #000}\n .k-back{position:relative;background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px)!important;border:2px solid #f4e7c4!important}\n .k-back:after{content:'Abdolhamid\\A Dehvari';white-space:pre;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 700 3.5px/1.25 Georgia,'Times New Roman',serif;letter-spacing:.15px;color:#ffe8ae;text-shadow:0 1px 2px #071b32,0 0 3px #f2d58a;transform:rotate(-12deg) scale(.88);padding:2px 1px;border-radius:4px;background:linear-gradient(135deg,#0b2340aa,#193f66aa)}
  .k-hand{display:flex;justify-content:center;gap:2px;overflow-x:auto;padding:10px 0 14px;direction:ltr}
  .k-hand button,.k-auction-card{padding:0;background:transparent;border:0;min-width:0;flex:0 0 auto}
  .k-hand button:disabled{opacity:.38}
@@ -48,7 +52,7 @@ function addStyle(){
 }
 function cardNode(c,small=false){
  const d=document.createElement('div');
- if(c.kind==='joker'){d.className='k-card joker '+(c.color==='red'?'red':'');d.textContent=c.color==='red'?'جوکر قرمز':'جوکر مشکی';return d;}
+ if(c.kind==='joker'){d.className='k-card joker '+(c.color==='red'?'red':'black');d.innerHTML='<span class="devil-mark">😈</span><span>'+(c.color==='red'?'جوکر قرمز':'جوکر مشکی')+'</span><span class="trident">🔱</span>';return d;}
  d.className='k-card '+(['H','D'].includes(c.suit)?'red':'');
  d.innerHTML='<span>'+c.rank+'</span><span class="ksuit">'+suitGlyph[c.suit]+'</span><span style="align-self:flex-end;font-size:9px">'+c.rank+'</span>';
  return d;
