@@ -88,7 +88,6 @@ function setupMarkup(){
  <div class="k-live-tricks"><span>دست‌های برده تیم شما: <b id="kWonA">۰</b></span><span>دست‌های برده حریف: <b id="kWonB">۰</b></span></div>
  <div id="kAuction" class="k-auction hidden"><b id="kAuctionTitle">مزایده</b><div class="k-small" id="kAuctionInfo"></div><div class="k-small" id="kAuctionLog"></div>
  <div id="kHumanAuctionControls">
- <div class="k-bids"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option></select>
  <div class="k-bids"><button data-bid="pass" id="kPass">پاس</button><button data-bid="6">۶ دست</button><button data-bid="7">۷ دست</button><button data-bid="8">۸ دست</button><button data-bid="9">باون · ۹ دست</button></div>
  <button id="kMalzoom" class="primary hidden">ملزوم</button></div></div>
  <div id="kAuctionSummary" class="k-auction-summary hidden">نتیجه مزایده هنوز مشخص نشده است.</div>
