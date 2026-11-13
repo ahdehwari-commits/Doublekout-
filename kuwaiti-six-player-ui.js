@@ -685,3 +685,4 @@ window.openKuwaitiMode=function(){
 // This script is loaded after the complete page markup; initialize synchronously.
 init();
 })();
+/* build: 0.8.13 LAN-ready UI validation checkpoint */
