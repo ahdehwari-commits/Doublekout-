@@ -133,6 +133,11 @@ declare
   v_fail_at integer;
   v_score_a integer := 0;
   v_score_b integer := 0;
+  v_group_start integer;
+  v_search_from integer;
+  v_close_at integer;
+  v_group_team integer;
+  v_group_end integer;
   v_count integer;
   v_rank_order text[] := array['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
   v_i integer;
@@ -230,9 +235,31 @@ begin
         v_done := true;
       end if;
     elsif jsonb_array_length(v_winners)=13 then
-      for v_i in 0..12 loop
-        if mod((v_winners->>v_i)::integer,2)=0 then v_score_a:=v_score_a+1; else v_score_b:=v_score_b+1; end if;
-      end loop;
+      if v_room.game_mode='double-kout' then
+        v_group_start:=0; v_search_from:=3;
+        while v_group_start<13 loop
+          v_close_at:=null;
+          for v_i in v_search_from..12 loop
+            if (v_winners->>v_i)=(v_winners->>(v_i-1)) then v_close_at:=v_i; exit; end if;
+          end loop;
+          if v_close_at is not null then
+            v_group_team:=mod((v_winners->>v_close_at)::integer,2);
+            v_group_end:=v_close_at;
+            if v_group_team=0 then v_score_a:=v_score_a+(v_group_end-v_group_start+1);
+            else v_score_b:=v_score_b+(v_group_end-v_group_start+1); end if;
+            v_group_start:=v_close_at+1; v_search_from:=v_group_start+1;
+          else
+            v_group_team:=mod((v_winners->>12)::integer,2);
+            if v_group_team=0 then v_score_a:=v_score_a+(13-v_group_start);
+            else v_score_b:=v_score_b+(13-v_group_start); end if;
+            v_group_start:=13;
+          end if;
+        end loop;
+      else
+        for v_i in 0..12 loop
+          if mod((v_winners->>v_i)::integer,2)=0 then v_score_a:=v_score_a+1; else v_score_b:=v_score_b+1; end if;
+        end loop;
+      end if;
       v_state := jsonb_set(v_state,'{scoreA}',to_jsonb(v_score_a),true);
       v_state := jsonb_set(v_state,'{scoreB}',to_jsonb(v_score_b),true);
       v_done := true;
