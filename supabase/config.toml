@@ -11,3 +11,6 @@ major_version = 15
 
 [realtime]
 enabled = true
+
+[functions.room-action]
+verify_jwt = true
