@@ -33,7 +33,7 @@ function makeUI(){
  }
  if(!$('lanOverlay')){
   var root=document.createElement('div');root.id='lanOverlay';
-  root.innerHTML='<section id="lanPanel"><button id="lanClose" class="secondary">بستن</button><h2>بازی چندگوشی در شبکه محلی</h2><p>یک گوشی اندرویدی میزبان می‌شود. بقیهٔ گوشی‌ها، از جمله آیفون، با مرورگر و از طریق همان Wi‑Fi یا هات‌اسپات وارد می‌شوند. اینترنت لازم نیست.</p><div id="lanStartChoices"><label>تعداد صندلی‌ها</label><select id="lanCapacity"><option value="4">چهار نفره</option><option value="6">شش نفره · کوت کویتی</option></select><label>نام بازیکن میزبان</label><input id="lanName" maxlength="18" value="میزبان"><div class="lan-row"><button id="lanHost">میزبان اندرویدی شو</button><button id="lanJoinToggle" class="secondary">ورود به میز</button></div><div id="lanJoinFields" class="hidden"><label>نشانی میزبان (IP)</label><input id="lanHostIp" placeholder="مثلاً 192.168.1.10"><label>نام بازیکن</label><input id="lanGuestName" maxlength="18" value="مهمان"><button id="lanJoin" style="width:100%;margin-top:8px">اتصال به میز</button></div></div><div id="lanRoom" class="hidden"><div id="lanAddress"></div><div id="lanStatus">در حال اتصال...</div><h3 style="color:#f4d58b;font-size:15px">صندلی‌های میز</h3><div id="lanSeats"></div><div class="lan-row"><button id="lanReady">آماده‌ام</button><button id="lanLeave" class="secondary">خروج از میز</button></div><p id="lanNextStep">اتصال محلی و انتخاب صندلی در این مرحله فعال است. همگام‌سازی کامل کارت‌ها، مزایده و نوبت‌ها مرحلهٔ بعدی توسعه است.</p></div></section>';
+  root.innerHTML='<section id="lanPanel"><button id="lanClose" class="secondary">بستن</button><h2>بازی چندگوشی در شبکه محلی</h2><p>یک گوشی اندرویدی میزبان می‌شود. بقیهٔ گوشی‌ها، از جمله آیفون، با مرورگر و از طریق همان Wi‑Fi یا هات‌اسپات وارد می‌شوند. اینترنت لازم نیست.</p><div id="lanStartChoices"><label>تعداد صندلی‌ها</label><select id="lanCapacity"><option value="4">چهار نفره</option><option value="6">شش نفره · کوت کویتی</option></select><label>نام بازیکن میزبان</label><input id="lanName" maxlength="18" value="میزبان"><div class="lan-row"><button id="lanHost">میزبان اندرویدی شو</button><button id="lanJoinToggle" class="secondary">ورود به میز</button></div><div id="lanJoinFields" class="hidden"><label>نشانی میزبان (IP)</label><input id="lanHostIp" placeholder="مثلاً 192.168.1.10"><label>نام بازیکن</label><input id="lanGuestName" maxlength="18" value="مهمان"><button id="lanJoin" style="width:100%;margin-top:8px">اتصال به میز</button></div></div><div id="lanRoom" class="hidden"><div id="lanAddress"></div><div id="lanQrWrap" style="display:none;text-align:center;margin:12px auto"><img id="lanQr" alt="QR اتصال به میز" style="width:210px;height:210px;max-width:70vw;background:#fff;padding:8px;border-radius:12px"><div style="font-size:11px;color:#f4dfaa;margin-top:6px">با دوربین گوشی مهمان اسکن کن؛ نشانی میز هم پایین قابل استفاده است.</div></div><div id="lanStatus">در حال اتصال...</div><h3 style="color:#f4d58b;font-size:15px">صندلی‌های میز</h3><div id="lanSeats"></div><div class="lan-row"><button id="lanReady">آماده‌ام</button><button id="lanLeave" class="secondary">خروج از میز</button></div><p id="lanNextStep">اتصال محلی و انتخاب صندلی در این مرحله فعال است. همگام‌سازی کامل کارت‌ها، مزایده و نوبت‌ها مرحلهٔ بعدی توسعه است.</p></div></section>';
   document.body.appendChild(root);
   $('lanClose').onclick=closeOverlay;
   $('lanHost').onclick=startHost;
@@ -62,12 +62,20 @@ function connect(url,isHost,cap,name){
  socket.onclose=function(){status('اتصال قطع شد. میزبان باید سرور را دوباره اجرا کند.');};
  socket.onerror=function(){status('اتصال برقرار نشد؛ مطمئن شوید همهٔ گوشی‌ها به یک Wi‑Fi یا هات‌اسپات وصل‌اند.');};
 }
+function renderHostQr(info){
+ var wrap=$('lanQrWrap'),img=$('lanQr');
+ if(!wrap||!img||!window.AndroidApp||typeof AndroidApp.createLanQr!=='function')return;
+ // QR opens the host-served PWA and pre-fills the guest connection details.
+ var invite='http://'+info.ip+':'+info.port+'/index.html?lanHost='+encodeURIComponent(info.ip);
+ var encoded='';try{encoded=AndroidApp.createLanQr(invite)||'';}catch(e){}
+ if(encoded){img.src='data:image/png;base64,'+encoded;wrap.style.display='block';}
+}
 function startHost(){
  if(!window.AndroidApp||typeof AndroidApp.startLanServer!=='function'){status('میزبان فقط روی نسخهٔ اندروید اجرا می‌شود. برای آیفون از گزینهٔ ورود به میز استفاده کن.');return;}
  var info;try{info=JSON.parse(AndroidApp.startLanServer());}catch(e){status('سرور محلی اجرا نشد.');return;}
  if(!info.ok){status(info.error||'سرور محلی اجرا نشد.');return;}
- capacity=Number($('lanCapacity').value)||4;hostUrl=info.url;showRoom(hostUrl);
- $('lanAddress').textContent='آدرس مهمان‌ها: '+hostUrl+' · همه باید به یک شبکه متصل باشند.';
+ capacity=Number($('lanCapacity').value)||4;hostUrl=info.url;showRoom(hostUrl);renderHostQr(info);
+ $('lanAddress').textContent='نشانی HTTP میز: '+hostUrl+' · اتصال با QR یا ورود دستی IP · همه به یک Wi‑Fi/هات‌اسپات وصل باشند.';
  connect('ws://127.0.0.1:'+info.port+'/ws',true,capacity,$('lanName').value||'میزبان');
 }
 function joinGuest(){
@@ -95,5 +103,10 @@ function leave(){
  $('lanRoom').classList.add('hidden');$('lanStartChoices').classList.remove('hidden');status('از میز خارج شدی.');
 }
 makeUI();
+// QR invitations open the host-served PWA, prefill the IP and join the local lobby.
+try{
+ var inviteParams=new URLSearchParams(window.location.search),inviteIp=inviteParams.get('lanHost');
+ if(inviteIp){openOverlay();$('lanJoinFields').classList.remove('hidden');$('lanHostIp').value=inviteIp;$('lanGuestName').value='مهمان';status('دعوت میزبان اسکن شد؛ در حال اتصال به میز محلی...');setTimeout(joinGuest,350);}
+}catch(e){}
 window.LanMultiplayer={open:openOverlay,leave:leave};
 })();
