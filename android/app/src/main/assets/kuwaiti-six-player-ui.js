@@ -78,20 +78,20 @@ function addStyle(){
 .k-back:before{content:"";position:absolute;inset:5px;border:1px solid #e9d49a;border-radius:5px;background:repeating-linear-gradient(45deg,transparent 0 5px,#f4d88a33 5px 7px),radial-gradient(circle at 50% 50%,#d8b86a44,transparent 55%)}
 .k-back:after{content:"Abdolhamid Dehvari";position:absolute;inset:40% 4% auto;height:20%;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 700 7px/1.1 Georgia,"Times New Roman",serif;letter-spacing:0;color:#ffe6a0;text-shadow:0 2px 3px #06172b;transform:rotate(-18deg);padding:1px}
 .k-hand{direction:ltr;display:flex;justify-content:flex-start;align-items:flex-end;gap:0;overflow-x:auto;overflow-y:visible;padding:22px 16px 30px;min-height:160px;scrollbar-width:thin}
-.k-hand button{flex:0 0 auto;margin-left:-24px;perspective:700px}
+.k-hand button{flex:0 0 auto;margin-left:-54px;perspective:700px}
 .k-hand button:first-child{margin-left:0}
 .k-hand button .k-card{width:80px;height:120px}
 .k-hand button .k-card .ksuit{font-size:36px}
 .k-hand button:not(:disabled) .k-card{outline:2px solid #f0d38a;transform:translateY(-5px) rotateY(-3deg);filter:saturate(1.12)}
 .k-hand button:not(:disabled):hover .k-card{transform:translateY(-17px) rotateY(0) scale(1.04);z-index:5}
 .k-opponent-fan{direction:ltr;display:flex;align-items:center;justify-content:center;height:66px;max-width:100%;overflow:visible;padding:2px}
-.k-opponent-fan .k-card.k-back{width:25px;height:57px;min-width:25px;padding:0;margin-left:-11px;border-width:2px!important;border-radius:5px;transform:rotate(calc((var(--fan-index) - 3)*3deg))}
+.k-opponent-fan .k-card.k-back{width:18px;height:54px;min-width:18px;padding:0;margin-left:-10px;border-width:2px!important;border-radius:5px;transform:rotate(calc((var(--fan-index) - 3)*3deg))}
 .k-opponent-fan .k-card.k-back:first-child{margin-left:0}
 .k-center{position:relative;min-height:175px;transform:translateZ(28px);border:1px solid #e9d49a88;background:radial-gradient(ellipse,#05291eaa,#031a1488);box-shadow:inset 0 0 22px #0009,0 9px 18px #0006}
 .k-center-cards{display:flex;align-items:center;justify-content:center;direction:ltr;min-height:95px;overflow:visible}
-.k-center-cards .k-table-played{width:65px;height:96px;margin-left:-23px;box-shadow:0 13px 22px #000b,inset 2px 2px 3px #fff;transform:rotate(calc((var(--play-index) - 2.5)*7deg)) translateY(calc(abs(var(--play-index) - 2.5)*-3px))}
+.k-center-cards .k-table-played{width:65px;height:96px;margin-left:-23px;box-shadow:0 13px 22px #000b,inset 2px 2px 3px #fff;transform:rotate(calc((var(--play-index) - 2.5)*7deg)) translateY(0)}
 .k-center-cards .k-table-played:first-child{margin-left:0}
-@media(max-width:520px){.k-table{min-height:440px;gap:4px;padding:6px}.k-hand button{margin-left:-27px}.k-hand button .k-card{width:74px;height:111px}.k-center-cards .k-table-played{width:53px;height:80px}.k-center{min-height:150px}}
+@media(max-width:520px){.k-table{min-height:440px;gap:4px;padding:6px}.k-hand button{margin-left:-57px}.k-hand button .k-card{width:74px;height:111px}.k-center-cards .k-table-played{width:53px;height:80px}.k-center{min-height:150px}}
 
  document.head.appendChild(s);
 }
