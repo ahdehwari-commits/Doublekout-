@@ -44,6 +44,8 @@ alter table public.game_rooms enable row level security;
 alter table public.room_members enable row level security;
 alter table public.private_hands enable row level security;
 
+grant select on public.game_rooms, public.room_members, public.private_hands to authenticated;
+
 drop policy if exists "members can read their room" on public.game_rooms;
 create policy "members can read their room"
 on public.game_rooms for select to authenticated
@@ -180,3 +182,21 @@ revoke all on function public.create_game_room(text, smallint, text) from public
 revoke all on function public.join_game_room(text, text) from public;
 grant execute on function public.create_game_room(text, smallint, text) to authenticated;
 grant execute on function public.join_game_room(text, text) to authenticated;
+
+-- Enable row-filtered Realtime updates. Safe to rerun if a table is already published.
+do $$
+declare
+  t text;
+begin
+  foreach t in array array['game_rooms','room_members','private_hands'] loop
+    if not exists (
+      select 1 from pg_publication_tables
+      where pubname = 'supabase_realtime'
+        and schemaname = 'public'
+        and tablename = t
+    ) then
+      execute format('alter publication supabase_realtime add table public.%I', t);
+    end if;
+  end loop;
+end;
+$$;
