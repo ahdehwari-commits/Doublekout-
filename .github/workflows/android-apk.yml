@@ -41,6 +41,9 @@ jobs:
       - name: Validate six-player UI and Android asset sync
         run: |
           node --check kuwaiti-six-player-ui.js
+          node --check lan-multiplayer.js
+          cmp lan-multiplayer.js android/app/src/main/assets/lan-multiplayer.js
+          cmp web-prototype.html android/app/src/main/assets/index.html
           node --check engines/kuwaiti-six-player/engine.js
           cmp kuwaiti-six-player-ui.js android/app/src/main/assets/kuwaiti-six-player-ui.js
           cmp engines/kuwaiti-six-player/engine.js android/app/src/main/assets/engines/kuwaiti-six-player/engine.js
