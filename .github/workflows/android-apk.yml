@@ -54,6 +54,14 @@ jobs:
           node engines/test-browser-engine-load-order.cjs
           node engines/test-double-kout-sequence.cjs
 
+      # Keep the same debug signing key between CI builds so APK updates
+      # install over the previous version. The first build seeds this cache.
+      - name: Restore persistent Android debug signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: doublekout-android-debug-signing-v1
+
       - name: Build debug APK
         working-directory: android
         run: gradle --no-daemon assembleDebug
