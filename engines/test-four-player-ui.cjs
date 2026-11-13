@@ -16,8 +16,8 @@ assert.ok(html.includes("function winner(plays){const code=")&&html.includes("St
 assert.ok(html.includes("G.trickCompletePending||G.plays.length>=4"));
 assert.ok(html.includes("G.trickCompletePending=true;G.turn=null"));
 assert.ok(html.includes("G.resolvingTrick=true;G.trickCompletePending=false"));
-assert.ok(html.includes("const handPlayer=playStyle==='hotseat'?G.turn:0")&&html.includes("playStyle==='hotseat'&&!hotseatRevealed"),'hotseat must reveal only the current player hand after an explicit pass-phone confirmation');
-assert.ok(html.includes("if(playStyle==='hotseat'||playStyle==='online')return"),'AI must not play cards in local hotseat or online mode');
+assert.ok(html.includes("const handPlayer=playStyle==='hotseat'?G.turn:0")&&html.includes("playStyle==='hotseat'&&humanSeats.has(G.turn)&&!hotseatRevealed"),'hotseat must reveal only the current player hand after an explicit pass-phone confirmation');
+assert.ok(html.includes("if(playStyle==='online')return")&&html.includes("playStyle==='hotseat'?humanSeats.has(G.turn):G.turn===0"),'AI must not play cards in local hotseat or online mode');
 assert.ok(html.includes('id="playStyle"')&&html.includes('value="hotseat"')&&html.includes('value="online"'),'four-player setup must offer AI, private pass-and-play, and online play styles');
 assert.ok(html.includes("G.turn=(p+1)%4;hotseatRevealed=false;render();runAI()"),'the next local player must receive a privacy screen after each card');
 assert.ok(html.includes('id="hotseatGate"')&&html.includes('id="revealHotseatHand"'),'hotseat must cover the table until the next player confirms the phone handoff');
@@ -38,8 +38,8 @@ assert.ok(auctionUi.includes('id="kHumanAuctionControls"'),'only human bidding c
 assert.ok(auctionUi.includes("$('kAuction').classList.remove('hidden')"),'auction rotation stays visible while AI players act');
 assert.ok(auctionUi.includes('data-bid="8"'),'8-trick bid must be available');
 assert.ok(auctionUi.includes('function renderAuctionHand()'),'human hand must be visible during auction');
-assert.ok(auctionUi.includes("auction.current===0"),'auction must wait for the human only on their own turn');
-assert.ok(auctionUi.includes("if(auction.current===0){renderAuction();return;}"),'AI seats must act automatically and not require human pass clicks');
+assert.ok(auctionUi.includes("isHumanSeat(auction.current)"),'auction must wait for the human only on their own turn');
+assert.ok(auctionUi.includes("if(isHumanSeat(auction.current)){renderAuction();renderAuctionHand();return;}"),'AI seats must act automatically and not require human pass clicks');
 assert.ok(auctionUi.includes("rank=n===6?1:n===7?2:n===8?3:4"),'bid ranks must progress 6, 7, 8, Baun');
 
 
@@ -60,7 +60,7 @@ assert.ok(sixUi.includes("const suitByContract={hokm_spades:'S',hokm_hearts:'H',
 assert.ok(sixUi.includes("const resolvedTrump=noTrumpContracts.includes(bidContract)?null:(game.isMalzoom?(trumpSuit||null):suitByContract[bidContract])"));
 assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\n try{"));
 assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump})"));
-assert.ok(sixUi.includes("setScreen('game');renderGame();\n  if(winner!==0)playAITurn();"));
+assert.ok(sixUi.includes("setScreen('game');renderGame();\n  if(!isHumanSeat(winner))playAITurn();"));
 assert.ok(sixUi.includes("Kuwaiti AI fallback card selected"),'AI turn must have a legal-card fallback after auction');
 assert.ok(sixUi.includes('class="joker-art"')&&sixUi.includes("M12 105")&&sixUi.includes("RED JOKER")&&sixUi.includes("BLACK JOKER"),'six-player jokers must use custom devil-and-trident card artwork');
 assert.ok(sixUi.includes('transform:rotate(-24deg) scale(.92)'),'card-back name must be smaller, gold and contained within the card');
