@@ -224,6 +224,18 @@ function addStyle(){
   }
   `;
   
+/* iOS Safari: avoid stale composited layers after scroll and orientation changes. */
+s.textContent+=`
+@media(max-width:900px){
+ .k-table{transform:none!important;transform-style:flat!important;perspective:none!important}
+ .k-seat{transform:none!important;transform-style:flat!important}
+ .k-center{transform:none!important}
+ .k-card,.k-opponent-fan,.k-hand button{backface-visibility:visible;-webkit-backface-visibility:visible}
+ .k-opponent-fan .k-card.k-back{transform:translateZ(0) rotate(calc((var(--fan-index) - 3)*3deg))}
+ .k-hand button .k-card{translate:0 0}
+}
+html,body{min-height:100%;min-height:100dvh}
+`;
 document.head.appendChild(s);
 }
 function royalPortrait(rank){
@@ -848,6 +860,19 @@ window.openKuwaitiMode=function(){
  try{if(!initialized&&!init()){if(engineLoading)return;throw new Error('راه‌اندازی میز کامل نشد');}resetSetup();}
  catch(e){const msg=$('modeMessage');if(msg)msg.textContent='خطا در ورود به کوت کویتی: '+(e&&e.message?e.message:'نامشخص');console.error('Kuwaiti entry failed',e);}
 };
+// Rebuild only the six-player view after iOS viewport changes so cards never remain in stale layers.
+let kuwaitiViewportRaf=0;
+function refreshKuwaitiViewport(){
+ if(kuwaitiViewportRaf)cancelAnimationFrame(kuwaitiViewportRaf);
+ kuwaitiViewportRaf=requestAnimationFrame(()=>{
+  kuwaitiViewportRaf=0;
+  document.documentElement.style.setProperty('--kuwaiti-vh',(window.visualViewport?window.visualViewport.height:window.innerHeight)+'px');
+  if(initialized&&game&&!$('kuwaitiGame').classList.contains('hidden'))renderGame();
+ });
+}
+window.addEventListener('orientationchange',()=>setTimeout(refreshKuwaitiViewport,180),{passive:true});
+window.addEventListener('resize',refreshKuwaitiViewport,{passive:true});
+if(window.visualViewport)window.visualViewport.addEventListener('resize',refreshKuwaitiViewport,{passive:true});
 // This script is loaded after the complete page markup; initialize synchronously.
 init();
 })();
