@@ -505,7 +505,7 @@ function renderGame(){
  if(isHuman&&hotseatRevealed)game.hands[p].forEach(c=>{
   const b=document.createElement('button');
   const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
-  const legal=isHuman&&!game.done&&hotseatRevealed&&K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||game.auctionWinner===0)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1}).some(x=>x.id===c.id);
+  const legal=isHuman&&!game.done&&hotseatRevealed&&K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1}).some(x=>x.id===c.id);
   b.disabled=!legal;b.append(cardNode(c));b.onclick=()=>playHumanCard(c);$('kHand').append(b);
  });
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
