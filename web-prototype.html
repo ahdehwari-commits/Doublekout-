@@ -143,6 +143,7 @@
 <script src="./engines/standard-hokm/engine.js"></script>
 <script src="./engines/kuwaiti-six-player/engine.js"></script>
 <script src="./engines/double-kout-sequence.js"></script>
+<script src="./engines/double-kout-game.js"></script>
 <script>
 const suits=['♠','♥','♦','♣'],ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'],rankVal=Object.fromEntries(ranks.map((r,i)=>[r,i]));
 let G=null, matchNo=1, previousWinner=null, previousStarter=null, activeMode='double-kout', playStyle='ai', hotseatRevealed=false, humanSeats=new Set([0]), KuwaitiPreviewGame=null, challengeStats={winA:0,loseA:0,winB:0,loseB:0};
