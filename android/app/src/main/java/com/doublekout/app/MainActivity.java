@@ -13,6 +13,16 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.util.Base64;
+import java.io.ByteArrayOutputStream;
+import java.util.EnumMap;
+import java.util.Map;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import android.widget.FrameLayout.LayoutParams;
 import org.json.JSONObject;
 
@@ -49,6 +59,25 @@ public class MainActivity extends Activity {
                     catch (Exception ignored) {}
                     return out.toString();
                 }
+            }
+            @JavascriptInterface public String createLanQr(String value) {
+                try {
+                    Map<EncodeHintType,Object> hints = new EnumMap<>(EncodeHintType.class);
+                    hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+                    hints.put(EncodeHintType.MARGIN, 2);
+                    BitMatrix matrix = new MultiFormatWriter().encode(value, BarcodeFormat.QR_CODE, 512, 512, hints);
+                    int width = matrix.getWidth(), height = matrix.getHeight();
+                    int[] pixels = new int[width * height];
+                    for (int y = 0; y < height; y++)
+                        for (int x = 0; x < width; x++)
+                            pixels[y * width + x] = matrix.get(x, y) ? Color.BLACK : Color.WHITE;
+                    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                    bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+                    bitmap.recycle();
+                    return Base64.encodeToString(bytes.toByteArray(), Base64.NO_WRAP);
+                } catch (Exception e) { return ""; }
             }
             @JavascriptInterface public void stopLanServer() { lanServer.stop(); }
         }, "AndroidApp");
