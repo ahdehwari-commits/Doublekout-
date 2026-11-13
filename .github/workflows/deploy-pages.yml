@@ -29,6 +29,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Assemble web app
         run: |
           mkdir -p dist/engines/standard-hokm dist/engines/kuwaiti-six-player
