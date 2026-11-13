@@ -436,7 +436,6 @@ function render(){
   if((playStyle==='hotseat'?(!humanSeats.has(p)||p!==G.turn):p!==0)&&G.hands[p].length){const fan=document.createElement('div');fan.className='opponent-fan';const n=Math.min(7,G.hands[p].length);for(let j=0;j<n;j++){const back=document.createElement('div');back.className='card back';back.style.setProperty('--fan-index',j);fan.append(back);}slot.append(fan);}
  }
  $('hand').innerHTML='';
- const handPlayer=playStyle==='hotseat'?G.turn:0;
  const centerTrick=$('centerTrick');if(centerTrick){centerTrick.innerHTML='';G.plays.forEach((x,i)=>{const played=cardEl(x.card,true);played.classList.add('table-played');played.style.setProperty('--play-index',i);centerTrick.append(played);});}
  const handTitle=document.querySelector('#game h3.section-title');if(handTitle)handTitle.textContent=playStyle==='hotseat'?'کارت‌های بازیکن نوبت‌دار':'کارت‌های شما';
  (playStyle==='hotseat'&&!humanSeats.has(G.turn)?[]:(G.hands[handPlayer]||[])).forEach(c=>{let b=document.createElement('button'),legal=(playStyle==='hotseat'?humanSeats.has(G.turn)&&hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(handPlayer).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
