@@ -651,7 +651,7 @@ function renderGame(){
   $('kCount'+p).textContent=fa(game.hands[p].length)+' کارت';
   const slot=$('kPlayed'+p);slot.innerHTML='';
   const played=currentPlays.find(x=>x.player===p);
-  if(p!==game.turn&&game.hands[p].length){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=game.hands[p].length;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';const offset=j-(n-1)/2;back.style.setProperty('--fan-index',String(j));back.style.setProperty('--fan-count',String(n));back.style.zIndex=String(10+j);fan.append(back);}slot.append(fan);}
+  if(p!==game.turn&&game.hands[p].length&&!($('kPlayStyle').value!=='hotseat'&&p===0)){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=game.hands[p].length;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';const offset=j-(n-1)/2;back.style.setProperty('--fan-index',String(j));back.style.setProperty('--fan-count',String(n));back.style.zIndex=String(10+j);fan.append(back);}slot.append(fan);}
  }
  $('kHand').innerHTML='';
  const turnPlayer=game.turn;
