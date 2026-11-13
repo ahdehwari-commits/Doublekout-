@@ -46,7 +46,7 @@ assert.ok(html.includes("const contract=$('nextContract').value;")&&html.include
 assert.ok(html.includes("value=\"naras\"")&&html.includes("value=\"tak_naras\"")&&html.includes("value=\"saras\"")&&html.includes("value=\"partner_middle\""),'later four-player contract picker must offer Naras, Tak Naras, Saras and partner-middle');
 assert.ok(html.includes("const staged=matchNo>1;"),'all later four-player contracts must deal five cards before selection');
 assert.ok(html.includes("function aiChooseFourPlayerContract(hand)")&&html.includes("const chosen=aiChooseFourPlayerContract(G.hands[starter])"),'AI hakim must choose among all supported contracts after seeing five cards');
-assert.ok(html.includes("DoubleKoutSequence.scoreSequence(G.trickWinners||[])")&&html.includes("liveResult.scores.A")&&html.includes("liveResult.scores.B"),'live DoubleKout counters must use the exact same scoring function as the final result');
+assert.ok(html.includes("liveSequenceScores(G.trickWinners||[])")&&html.includes("function liveSequenceScores(winners)")&&html.includes("scores[winningTeam]+=count"),'live DoubleKout counters must use the exact same scoring function as the final result');
 assert.ok(html.includes("globalStatsBtn")&&html.includes("function recordGlobalGame()")&&html.includes("localStorage.setItem(GLOBAL_STATS_KEY"),'four-player cumulative game statistics must be persisted and accessible from the mode menu');
 assert.ok(html.includes("exitAppBtn")&&html.includes("AndroidApp.exitApp()"),'mode menu must provide a real native Android exit action');
 assert.ok(!html.includes("nextTrumpWrap")&&!html.includes("nextTrump"),'four-player UI must not allow contract and trump suit to be selected separately');
