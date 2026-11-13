@@ -8,6 +8,7 @@ on:
       - "android/**"
       - "engine/**"
       - "engines/**"
+      - "scripts/**"
       - ".github/workflows/android-apk.yml"
 
 jobs:
