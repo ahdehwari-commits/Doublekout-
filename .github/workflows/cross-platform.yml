@@ -9,6 +9,7 @@ on:
       - "lan-multiplayer.js"
       - "three-d-scene.js"
       - "engines/**"
+      - "scripts/**"
       - "desktop/**"
       - "package.json"
       - "manifest.webmanifest"
