@@ -548,7 +548,7 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 'use strict';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
-var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,gameTimer=null,gameBusy=false,aiBusy=false,myOnlineSeat=-1,lastGameRevision=-1;
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,gameTimer=null,gameBusy=false,aiBusy=false,myOnlineSeat=-1,lastGameRevision=-1;
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
@@ -621,7 +621,8 @@ function subscribe(){
  }
 }
 async function refreshRoster(){
- if(!roomId||!client||rosterBusy)return;
+ if(!roomId||!client)return;
+ if(rosterBusy){rosterRefreshQueued=true;return;}
  rosterBusy=true;
  try{
   var r=await client.rpc('get_room_roster',{p_room_id:roomId});
@@ -640,7 +641,7 @@ async function refreshRoster(){
   if(!allReady)say(rows.length+' از '+cap+' بازیکن وارد شده‌اند. وضعیت آمادگی از سرور دریافت شد.');
   await refreshOnlineGame();
  }catch(e){say('به‌روزرسانی فهرست بازیکنان: '+(e.message||e));}
- finally{rosterBusy=false;}
+ finally{rosterBusy=false;if(rosterRefreshQueued){rosterRefreshQueued=false;Promise.resolve().then(refreshRoster);}}
 }
 async function createRoom(){
  var stage='آماده‌سازی';try{
