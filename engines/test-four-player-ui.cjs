@@ -116,7 +116,7 @@ assert.ok(sixUi.indexOf('id="kTable"')<sixUi.indexOf('id="kLiveTricks"')&&sixUi.
 assert.ok(!sixUi.includes("playerNames[p]+' کارت '+cardLabel(card)+' را بازی کرد.'"),'per-card announcement must be removed from the six-player status area');
 assert.ok(html.includes("matchNo=1;previousWinner=null;previousStarter=null;activeMode='double-kout'"),'starting four-player DoubleKout must reset the series and fixed first game');
 assert.ok(html.includes("matchNo=1;previousWinner=null;previousStarter=null;activeMode='standard-hokm'"),'starting four-player Standard Hokm must reset the series and fixed first game');
-assert.ok(html.includes("if(matchNo===1){G.trump='♠';G.trumpCode='S';G.waitingTrump=false;}"),'first four-player game must lock trump to spades');
+assert.ok(html.includes("G.contract='hokm';G.trump='♠';G.trumpCode='S';G.waitingTrump=false;"),'first four-player game must lock trump to spades');
 
 assert.ok(sixUi.includes("const win=auction.highestPlayer,bid={...auction.highest}")&&sixUi.includes("winningSeat.classList.add('auction-winner')"),'after auction only the winner should retain a seat marker');
 assert.ok(sixUi.includes("el.querySelector('.k-bid-chip')?.remove()")&&sixUi.includes("chip.className='k-bid-chip winner'"),'all pass markers must be removed when the auction ends');
