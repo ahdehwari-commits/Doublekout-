@@ -22,6 +22,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Test four-player shared game engine
+        run: node engines/test-double-kout-game.cjs
       - name: Build portable Windows EXE
         run: |
           npm install --no-audit --no-fund
@@ -42,7 +44,7 @@ jobs:
           cp kuwaiti-six-player-ui.js three-d-scene.js lan-multiplayer.js IMG_3647.png manifest.webmanifest sw.js dist-pwa/
           cp engines/standard-hokm/engine.js dist-pwa/engines/standard-hokm/
           cp engines/kuwaiti-six-player/engine.js dist-pwa/engines/kuwaiti-six-player/
-          cp engines/double-kout-sequence.js dist-pwa/engines/
+          cp engines/double-kout-sequence.js engines/double-kout-game.js dist-pwa/engines/
           cd dist-pwa
           zip -r ../DoubleKout-iPhone-PWA-0.8.21.zip .
       - uses: actions/upload-artifact@v4
