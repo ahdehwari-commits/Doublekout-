@@ -44,6 +44,7 @@ jobs:
           node --check lan-multiplayer.js
           cmp lan-multiplayer.js android/app/src/main/assets/lan-multiplayer.js
           cmp web-prototype.html android/app/src/main/assets/index.html
+          cmp engines/double-kout-game.js android/app/src/main/assets/engines/double-kout-game.js
           node --check engines/kuwaiti-six-player/engine.js
           cmp kuwaiti-six-player-ui.js android/app/src/main/assets/kuwaiti-six-player-ui.js
           cmp engines/kuwaiti-six-player/engine.js android/app/src/main/assets/engines/kuwaiti-six-player/engine.js
@@ -56,6 +57,7 @@ jobs:
           node engines/test-four-player-ui.cjs
           node engines/test-browser-engine-load-order.cjs
           node engines/test-double-kout-sequence.cjs
+          node engines/test-double-kout-game.cjs
 
       # Seed a fixed debug signing key once; subsequent CI builds restore it.
       - name: Create Android signing key if absent
