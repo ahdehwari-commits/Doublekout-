@@ -6,6 +6,7 @@ on:
     paths:
       - "web-prototype.html"
       - "kuwaiti-six-player-ui.js"
+      - "lan-multiplayer.js"
       - "three-d-scene.js"
       - "engines/**"
       - "desktop/**"
