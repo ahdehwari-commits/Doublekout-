@@ -14,9 +14,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.graphics.Color;
 import android.widget.FrameLayout.LayoutParams;
+import org.json.JSONObject;
 
 public class MainActivity extends Activity {
     private WebView webView;
+    private LanServer lanServer;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +38,20 @@ public class MainActivity extends Activity {
         settings.setMediaPlaybackRequiresUserGesture(true);
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(new WebChromeClient());
-        webView.addJavascriptInterface(new Object() { @JavascriptInterface public void exitApp() { runOnUiThread(() -> finishAndRemoveTask()); } }, "AndroidApp");
+        lanServer = new LanServer(getAssets());
+        webView.addJavascriptInterface(new Object() {
+            @JavascriptInterface public void exitApp() { runOnUiThread(() -> finishAndRemoveTask()); }
+            @JavascriptInterface public String startLanServer() {
+                try { return lanServer.start().toString(); }
+                catch (Exception e) {
+                    JSONObject out = new JSONObject();
+                    try { out.put("ok", false).put("error", e.getMessage()==null?"خطا در راه‌اندازی سرور":e.getMessage()); }
+                    catch (Exception ignored) {}
+                    return out.toString();
+                }
+            }
+            @JavascriptInterface public void stopLanServer() { lanServer.stop(); }
+        }, "AndroidApp");
         root.addView(webView, new FrameLayout.LayoutParams(
             LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
@@ -75,6 +90,7 @@ public class MainActivity extends Activity {
     }
 
     @Override protected void onDestroy() {
+        if (lanServer != null) lanServer.stop();
         if (webView != null) { webView.destroy(); webView = null; }
         super.onDestroy();
     }
