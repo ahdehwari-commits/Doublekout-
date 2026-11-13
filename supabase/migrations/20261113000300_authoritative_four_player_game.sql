@@ -218,7 +218,7 @@ begin
       v_opponent := case when v_challenge='A' then 'B' else 'A' end;
       v_fail_at := null;
       for v_i in 3..jsonb_array_length(v_winners)-1 loop
-        if mod((v_winners->>v_i)::integer,2)::text = case when v_opponent='A' then '0' else '1' end
+        if mod((v_winners->>v_i)::integer,2)::text = (case when v_opponent='A' then '0' else '1' end)
            and (v_winners->>v_i)=(v_winners->>(v_i-1)) then
           v_fail_at := v_i+1; exit;
         end if;
