@@ -3,7 +3,8 @@
 <style>
 #game{transform-style:flat;transform:none;transition:none}:root{--felt:#0c382d;--felt2:#145343;--gold:#e7c879;--cream:#fffaf0;--ink:#17251f;--muted:#c4d5cd;--red:#c83d43}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#071d18 0%,#0b3027 48%,#061b16 100%);color:#fff;font-family:Tahoma,Arial,sans-serif;min-height:100vh}.wrap{max-width:980px;margin:auto;padding:14px}.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.brand{font-size:24px;font-weight:900;color:var(--gold)}.pill{background:#09271f;border:1px solid #467565;padding:6px 11px;border-radius:30px;font-size:12px;color:var(--muted)}.panel{background:#0c2e26dd;border:1px solid #477a68;border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 12px 35px #001b1666}.setup{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end}label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}select,button{font:inherit;border:0;border-radius:12px;padding:11px 13px}select{width:100%;background:#f7f1df;color:#17251f}button{background:var(--gold);color:#17251f;font-weight:bold;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}.primary{width:100%;margin-top:10px}.table{position:relative;cursor:grab;touch-action:pan-y;transform-style:preserve-3d;isolation:isolate;overflow:hidden;border:4px solid #b99045;border-radius:30px;padding:12px;background-color:#252523;background-image:radial-gradient(ellipse at 50% 45%,rgba(52,58,55,.72),rgba(20,21,20,.96) 68%),repeating-linear-gradient(18deg,rgba(255,255,255,.018) 0 2px,transparent 2px 7px),linear-gradient(135deg,#45423c,#151615 55%,#38342d);box-shadow:inset 0 0 0 2px rgba(255,226,158,.22),inset 0 0 55px rgba(0,0,0,.72),0 16px 38px #000b;display:grid;grid-template-columns:1fr 1.2fr 1fr;grid-template-rows:auto auto auto;gap:9px;align-items:center;text-align:center;min-height:350px}.seat{background:#0a291f;border:1px solid #497967;border-radius:13px;padding:9px;min-width:0}.seat.active{outline:2px solid var(--gold);box-shadow:0 0 15px #e7c87955}.seat .name{font-size:13px;color:var(--muted)}.seat .count{font-size:12px;color:#a8c4b7}.north{grid-column:2;grid-row:1}.west{grid-column:1;grid-row:2}.center{grid-column:2;grid-row:2;min-height:170px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;justify-items:center}.east{grid-column:3;grid-row:2}.south{grid-column:2;grid-row:3}.played{min-height:84px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}.card{width:61px;height:86px;background:var(--cream);color:#17251f;border-radius:9px;border:1px solid #d8d0bd;box-shadow:0 4px 10px #00140f88;display:flex;flex-direction:column;justify-content:space-between;padding:5px;font-family:Georgia,serif;font-size:20px;font-weight:bold;position:relative}.card.red{color:var(--red)}.card .suit{font-size:27px;align-self:center}.card.back{background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px);border:3px solid #f4e7c4}.card.small{width:44px;height:63px;font-size:16px}.card.small .suit{font-size:20px}.hand{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:12px 3px}.hand button{padding:0;background:none;border:0}.hand button:disabled{opacity:.35}.hand button:not(:disabled) .card{transform:translateY(-3px);border:2px solid var(--gold)}.hand button:active .card{transform:translateY(-9px)}.status{background:#09271f;border-radius:12px;padding:10px;margin-top:10px;color:#f8e9bd;font-size:14px;min-height:46px}.scores{display:flex;justify-content:space-around;gap:10px;flex-wrap:wrap}.score{font-size:14px}.score b{color:var(--gold);font-size:21px}.muted{color:var(--muted);font-size:12px;line-height:1.8}.hidden{display:none!important}.history{font-size:12px;max-height:110px;overflow:auto;color:#d5e4dc}.section-title{color:var(--gold);margin:2px 0 8px;font-size:16px}.rules{font-size:12px;color:var(--muted);line-height:1.9}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}.winner{color:#a8efbd;font-weight:bold}
 #modePicker{background-image:linear-gradient(120deg,rgba(4,20,16,.90),rgba(4,20,16,.58)),url("./IMG_3647.png");background-size:cover;background-position:center;min-height:260px}.mode-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
-.mode-card{min-height:108px;text-align:right;display:flex;flex-direction:column;gap:9px;justify-content:center;background:linear-gradient(145deg,#39352e,#090a09 70%);border:1px solid #d0a44d;color:#f4d58b;border-radius:14px;padding:16px;box-shadow:0 9px 20px #0009,inset 0 1px 0 #fff3;transform:perspective(700px) rotateX(3deg);transition:transform .2s,box-shadow .2s}.mode-card:active{transform:perspective(700px) rotateX(0deg) translateY(3px);box-shadow:0 3px 8px #0009}
+.mode-card{min-height:108px;text-align:right;display:flex;flex-direction:column;gap:9px;justify-content:center;background:linear-gradient(145deg,#39352e,#090a09 70%);border:1px solid #d0a44d;color:#f4d58b;border-radius:14px;padding:16px;box-shadow:0 9px 20px #0009,inset 0 1px 0 #fff3;transform:perspective(700px) rotateX(3deg);transition:transform .2s,box-shadow .2s} .mode-card:active{transform:perspective(700px) rotateX(0deg) translateY(3px);box-shadow:0 3px 8px #0009}
+#hotseatGate{position:fixed;inset:0;z-index:9999;background:radial-gradient(ellipse at center,#174c3b,#061b15 75%);display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}#hotseatGate .gate-card{max-width:440px;width:100%;padding:28px 20px;border:1px solid #e7c879;border-radius:22px;background:#0a2a21;box-shadow:0 20px 60px #000b}#hotseatGate h2{color:#f3d58d}#hotseatGate p{line-height:2;color:#d5e5dc}#hotseatGate button{width:100%;margin-top:12px;font-size:17px}
 .mode-card strong{font-size:17px}.mode-card span{font-size:12px;line-height:1.7;color:#d4c5a4}
 .mode-card.pending{opacity:.78;border-style:dashed}
 .card.back{position:relative}
@@ -46,8 +47,8 @@
 </div>
 <p class="muted" id="modeMessage">حالت شش‌نفره فقط با نام «کوت کویتی» نمایش داده می‌شود.</p><div class="actions" style="margin-top:12px"><button id="globalStatsBtn" type="button">آمار کل بازی‌ها</button><button id="exitAppBtn" type="button">خروج از برنامه</button></div>
 <section class="panel hidden" id="globalStatsPanel"><h3 class="section-title">آمار کل بازی‌ها</h3><div id="globalStatsReport" class="rules"></div><div class="actions"><button id="closeGlobalStats" type="button">بستن آمار</button><button id="resetGlobalStats" type="button">پاک‌کردن آمار</button></div></section></section>
-<section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><select id="hokmContract" class="hidden" aria-hidden="true"><option value="hokm_spades" selected>پیک</option><option value="hokm_hearts">دل</option><option value="hokm_diamonds">خشت</option><option value="hokm_clubs">گشنیز</option></select><div id="hokmContractPicker" class="hidden"></div><div class="setup"><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option><option value="hard">سخت</option><option value="expert">خیلی سخت</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
-<section class="panel hidden" id="game"><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">چالش موفق شما: <b id="challengeWinA">۰</b></div><div class="score">شکست چالش شما: <b id="challengeLoseA">۰</b></div><div class="score">دست: <b id="trickNo">۱</b> / ۱۳</div></div>
+<section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><select id="hokmContract" class="hidden" aria-hidden="true"><option value="hokm_spades" selected>پیک</option><option value="hokm_hearts">دل</option><option value="hokm_diamonds">خشت</option><option value="hokm_clubs">گشنیز</option></select><div id="hokmContractPicker" class="hidden"></div><div class="setup"><div><label>شیوه بازی</label><select id="playStyle"><option value="ai">یک نفر در برابر هوش مصنوعی</option><option value="hotseat">چهار بازیکن واقعی روی همین گوشی (تحویل نوبتی)</option><option value="online">آنلاین با چهار گوشی (اتاق اینترنتی)</option></select></div><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option><option value="hard">سخت</option><option value="expert">خیلی سخت</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><div id="onlineSetupInfo" class="status hidden">بازی آنلاین واقعی به سرور اتاق‌ها نیاز دارد. پس از اتصال سرویس آنلاین، میزبان اتاق می‌سازد و دیگران با کد وارد می‌شوند؛ تا آن زمان این گزینه شروع نمی‌شود.</div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
+<section class="panel hidden" id="game"><div id="hotseatGate" class="hidden"><div class="gate-card"><div style="font-size:42px">♠ ♥ ♦ ♣</div><h2>تحویل گوشی به بازیکن بعدی</h2><p id="hotseatGateText">گوشی را به بازیکن بعدی بدهید. مطمئن شوید نفر قبلی دیگر صفحه را نمی‌بیند؛ سپس کارت‌های خود را نمایش دهید.</p><button id="revealHotseatHand" type="button">کارت‌های من را نمایش بده</button></div></div><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">چالش موفق شما: <b id="challengeWinA">۰</b></div><div class="score">شکست چالش شما: <b id="challengeLoseA">۰</b></div><div class="score">دست: <b id="trickNo">۱</b> / ۱۳</div></div>
 <div class="k-live-tricks" style="display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:13px;font-weight:bold"><span>دست‌های برده این بازی · تیم شما: <b id="liveWonA">۰</b></span><span>تیم حریف: <b id="liveWonB">۰</b></span></div>
 <div id="challengePanel" class="status" style="display:none"><b>چالش تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چالش را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چالش فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چالش علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب قرارداد بازی بعدی</b><p class="muted">پس از دیدن پنج کارت اول، می‌توانی یکی از چهار خال حکم، نرس، تک نرس، سرس یا برگ وسط یار را انتخاب کنی. هشت کارت باقی‌مانده بعد از انتخاب پخش می‌شود.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><div><label>نوع قرارداد</label><select id="nextContract"><option value="hokm_spades">حکم پیک ♠</option><option value="hokm_hearts">حکم دل ♥</option><option value="hokm_diamonds">حکم خشت ♦</option><option value="hokm_clubs">حکم گشنیز ♣</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار</option></select></div><button id="confirmTrump">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div><div class="muted">حکم</div><div id="trumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div id="trickCountWrap"><div class="muted">کارت‌های این دست</div><div id="trickCount" style="font-size:25px">۰ / ۴</div></div><div id="trickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div></div><div class="seat east" id="seat1"><div class="name">شرق · حریف</div><div class="count" id="count1"></div><div class="played" id="played1"></div></div><div class="seat south" id="seat0"><div class="name">شما · جنوب</div><div class="count" id="count0"></div><div class="played" id="played0"></div></div></div>
 <h3 class="section-title">کارت‌های شما</h3><div class="hand" id="hand"></div><div class="status" id="status">بازی شروع شد.</div><div class="actions" style="margin-top:10px"><button id="newGame">بازی جدید</button><button id="sortHand">مرتب‌سازی کارت‌ها</button><button id="backToModes">بازگشت به انتخاب بازی</button></div><p class="muted">گروه اول از دست اول آغاز می‌شود: اولین توالی معتبرِ برد دو دست پیاپی توسط یک بازیکن، از توالی دست سوم و چهارم به بعد، کل دست‌های انجام‌شده تا همان لحظه را به تیم او می‌دهد؛ مثلاً اگر توالی در دست چهارم و پنجم رخ دهد، هر پنج دست گروه اول محسوب می‌شود. گروه‌های بعدی نیز از دست بعدی آغاز می‌شوند. اگر تا پایان دست سیزدهم توالی معتبری شکل نگیرد، برنده دست سیزدهم تمام دست‌های باقی‌مانده را می‌برد.</p><div class="history" id="history"></div></section>
@@ -58,7 +59,7 @@
 <script src="./engines/double-kout-sequence.js"></script>
 <script>
 const suits=['♠','♥','♦','♣'],ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'],rankVal=Object.fromEntries(ranks.map((r,i)=>[r,i]));
-let G=null, matchNo=1, previousWinner=null, previousStarter=null, activeMode='double-kout', KuwaitiPreviewGame=null, challengeStats={winA:0,loseA:0,winB:0,loseB:0};
+let G=null, matchNo=1, previousWinner=null, previousStarter=null, activeMode='double-kout', playStyle='ai', hotseatRevealed=false, KuwaitiPreviewGame=null, challengeStats={winA:0,loseA:0,winB:0,loseB:0};
 const $=id=>document.getElementById(id), fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]), team=p=>p%2===0?'A':'B';
 const names=['شما · جنوب','شرق · حریف','هم‌تیمی · شمال','غرب · حریف'];
 // Audio and Persian player voice. Audio starts after the first user tap (mobile browser policy).
@@ -150,6 +151,9 @@ function aiChooseFourPlayerContract(hand){
  return ({'♠':'hokm_spades','♥':'hokm_hearts','♦':'hokm_diamonds','♣':'hokm_clubs'})[suitScores[0].s];
 }
 function startGame(){
+ playStyle=$('playStyle').value;hotseatRevealed=false;
+ if(playStyle==='online'){ $('onlineSetupInfo').classList.remove('hidden');$('onlineSetupInfo').textContent='اتصال سرور آنلاین هنوز پیکربندی نشده است؛ بازی آنلاین را فعلاً شروع نکنید. بازی محلی و هوش مصنوعی در دسترس‌اند.';return;}
+ $('onlineSetupInfo').classList.add('hidden');
  const starterSelect=$('starter');
  if(matchNo>1&&previousStarter!==null){starterSelect.value=String(previousStarter);starterSelect.disabled=true;}else starterSelect.disabled=false;
  let selected=$('hokmContract').value;
@@ -176,7 +180,7 @@ function startGame(){
 function beginNormalOrChallenge(challengerTeam){
  if(!G||G.done||activeMode!=='double-kout')return;
  G.challenge=challengerTeam==='A'?'A':null;
- G.waitingChallenge=false;
+ G.waitingChallenge=false;hotseatRevealed=false;
  $('challengePanel').style.display='none';
  $('status').textContent=G.challenge?'چالش آغاز شد؛ تیم شما باید شرط چالش را کامل کند.':'بازی عادی آغاز شد.';
  render();runAI();
@@ -213,6 +217,7 @@ function beats(a,b,lead){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};re
 function winner(plays){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.resolveTrick(plays.map(p=>({player:p.player,card:{suit:code[cardSuit(p.card)],rank:cardRank(p.card)}})),G.trumpCode,G.contract||'hokm')}
 function play(p,card){
   if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||p!==G.turn)return;
+  if(playStyle==='hotseat'&&!hotseatRevealed)return;
   try{
     let allowed=legalCards(p);
     if(!allowed.some(c=>c.id===card.id))return;
@@ -225,7 +230,7 @@ function play(p,card){
       G.trickCompletePending=true;G.turn=null;render();
       setTimeout(()=>{try{resolveTrick()}catch(e){G.trickCompletePending=false;$('status').textContent='خطا در تعیین برنده دست: '+(e&&e.message?e.message:'نامشخص');console.error(e)}},450);
     }else{
-      G.turn=(p+1)%4;render();runAI();
+      G.turn=(p+1)%4;hotseatRevealed=false;render();runAI();
     }
   }catch(e){
     $('status').textContent='خطا در اجرای کارت: '+(e&&e.message?e.message:'نامشخص');
@@ -238,7 +243,7 @@ function resolveTrick(){
  let w=winner(G.plays),n=G.trickNo;G.trickWinners.push(w);
  let msg=`دست ${fa(n)} را ${names[w]} برد.`;tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);if(w!==0)speakPlayer('win',w);
  G.history.push(msg);
- G.plays=[];G.trickNo++;G.leader=w;G.turn=w;G.resolvingTrick=false;$('status').textContent=msg;render();
+ G.plays=[];G.trickNo++;G.leader=w;G.turn=w;G.resolvingTrick=false;hotseatRevealed=false;$('status').textContent=msg;render();
  if(G.challenge){
    const outcome=window.DoubleKoutSequence.evaluateChallenge(G.trickWinners,G.challenge);
    if(outcome.status==='failed-opponent-sequence'||outcome.status==='success'||outcome.status==='failed-last-trick'){
@@ -343,6 +348,7 @@ function aiChoose(p){
   return sorted[0];
 }
 function runAI(){
+  if(playStyle==='hotseat'||playStyle==='online')return;
   if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||G.turn===0)return;
   setTimeout(()=>{
     if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||G.turn===0)return;
@@ -385,6 +391,7 @@ function liveSequenceScores(winners){
 }
 function render(){
  if(!G)return;
+ const gate=$('hotseatGate');if(gate){const hide=playStyle==='hotseat'&&!hotseatRevealed&&!G.done;gate.classList.toggle('hidden',!hide);if(hide)$('hotseatGateText').textContent='گوشی را به '+(['بازیکن جنوب','بازیکن شرق','بازیکن شمال','بازیکن غرب'][G.turn]||'بازیکن بعدی')+' بدهید. پس از اینکه نفر قبلی دیگر صفحه را نمی‌بیند، دکمه زیر را بزنید.';}
  const liveResult=activeMode==='double-kout'&&!G.challenge?liveSequenceScores(G.trickWinners||[]):null;
  const liveA=liveResult?liveResult.A:(G.trickWinners||[]).filter(p=>team(p)==='A').length;
  const liveB=liveResult?liveResult.B:(G.trickWinners||[]).filter(p=>team(p)==='B').length;
@@ -396,10 +403,13 @@ function render(){
   if(x)slot.append(cardEl(x.card,true));else if(p!==0&&G.hands[p].length){let back=document.createElement('div');back.className='card back small';slot.append(back)}
  }
  $('hand').innerHTML='';
- G.hands[0].forEach(c=>{let b=document.createElement('button'),legal=G.turn===0&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(0).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(0,c);$('hand').append(b)});
+ const handPlayer=playStyle==='hotseat'?G.turn:0;
+ (G.hands[handPlayer]||[]).forEach(c=>{let b=document.createElement('button'),legal=(playStyle==='hotseat'?hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(handPlayer).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
  $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
  $('trickMsg').textContent=G.trickCompletePending?'در حال اعلام برنده دست…':G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
 }
+$('revealHotseatHand').onclick=()=>{if(playStyle!=='hotseat'||!G||G.done)return;hotseatRevealed=true;render();};
+$('playStyle').onchange=()=>{$('onlineSetupInfo').classList.toggle('hidden',$('playStyle').value!=='online');};
 $('globalStatsBtn').onclick=showGlobalStats;
 $('closeGlobalStats').onclick=()=>$('globalStatsPanel').classList.add('hidden');
 $('resetGlobalStats').onclick=()=>{if(confirm('تمام آمار ذخیره‌شده پاک شود؟')){localStorage.removeItem(GLOBAL_STATS_KEY);showGlobalStats();}};
