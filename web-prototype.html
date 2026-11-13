@@ -41,7 +41,7 @@
 
 /* Premium large overlapping 3D card layout */
 .hand{direction:ltr;display:flex;flex-wrap:nowrap;justify-content:flex-start;align-items:flex-end;gap:0;overflow-x:auto;overflow-y:visible;padding:24px 16px 30px;min-height:164px;scrollbar-width:thin}
-.hand button{flex:0 0 auto;margin-left:-25px;position:relative;perspective:700px}
+.hand button{flex:0 0 auto;margin-left:-57px;position:relative;perspective:700px}
 .hand button:first-child{margin-left:0}
 .hand button .card{width:84px;height:126px;border-radius:12px;padding:7px 6px;font-size:25px;background:linear-gradient(145deg,#fffef8 0%,#f5edda 52%,#d8cdb4 100%);border:1px solid #fff9e8;box-shadow:inset 2px 2px 3px #fff, inset -3px -4px 8px #9e9277,0 8px 14px #0009,0 2px 2px #fff;transform:rotateY(-4deg) rotateX(2deg);transition:transform .18s,filter .18s}
 .hand button:nth-child(odd) .card{transform:rotateZ(-1.5deg) rotateY(-4deg)}
@@ -56,15 +56,15 @@
 .card.back:before{content:"";position:absolute;inset:7px;border:1px solid #e9d49a;border-radius:6px;background:repeating-linear-gradient(45deg,transparent 0 5px,#f4d88a33 5px 7px),radial-gradient(circle at 50% 50%,#d8b86a44,transparent 55%)}
 .card.back:after{content:"Abdolhamid Dehvari";position:absolute;inset:36% 5% auto;height:24%;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 700 7px/1.2 Georgia,"Times New Roman",serif;letter-spacing:.1px;color:#ffe6a0;text-shadow:0 2px 3px #06172b;transform:rotate(-18deg);padding:2px}
 .opponent-fan{direction:ltr;display:flex;align-items:center;justify-content:center;height:68px;max-width:100%;overflow:visible;padding:2px}
-.opponent-fan .card.back{width:25px;height:57px;min-width:25px;padding:0;margin-left:-11px;border-width:2px;border-radius:5px;transform:rotate(calc((var(--fan-index) - 3)*3deg)) translateY(calc(abs(var(--fan-index) - 3)*1px));}
+.opponent-fan .card.back{width:18px;height:54px;min-width:18px;padding:0;margin-left:-10px;border-width:2px;border-radius:5px;transform:rotate(calc((var(--fan-index) - 3)*3deg)) translateY(0);}
 .opponent-fan .card.back:first-child{margin-left:0}
 .center{position:relative;min-height:185px}
 .center-trick{position:absolute;left:50%;top:50%;transform:translate(-50%,-42%);display:flex;align-items:center;justify-content:center;direction:ltr;pointer-events:none;z-index:3;min-width:100%;height:118px}
-.center-trick .table-played{width:67px;height:99px;font-size:21px;margin-left:-28px;box-shadow:0 13px 22px #000b, inset 2px 2px 3px #fff;transform:rotate(calc((var(--play-index) - 1.5)*8deg)) translateY(calc(abs(var(--play-index) - 1.5)*-3px));}
+.center-trick .table-played{width:67px;height:99px;font-size:21px;margin-left:-28px;box-shadow:0 13px 22px #000b, inset 2px 2px 3px #fff;transform:rotate(calc((var(--play-index) - 1.5)*8deg)) translateY(0);}
 .center-trick .table-played:first-child{margin-left:0}
 .played{min-height:70px}
 .table{min-height:390px;background-image:radial-gradient(ellipse at 50% 45%,rgba(20,112,79,.94),rgba(5,48,34,.98) 68%),repeating-linear-gradient(18deg,rgba(255,255,255,.025) 0 2px,transparent 2px 7px),linear-gradient(135deg,#24704e,#0a3024 55%,#06231b);box-shadow:inset 0 0 0 2px #f8e2a355,inset 0 0 60px #001b12aa,0 22px 40px #000c;transform:perspective(1000px) rotateX(3deg);transform-style:preserve-3d}
-@media(max-width:520px){.hand button{margin-left:-29px}.hand button .card{width:79px;height:119px}.center-trick .table-played{width:59px;height:88px}.center{min-height:165px}}
+@media(max-width:520px){.hand button{margin-left:-61px}.hand button .card{width:79px;height:119px}.center-trick .table-played{width:59px;height:88px}.center{min-height:165px}}
 
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۱۲ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
@@ -428,11 +428,12 @@ function render(){
  $('liveWonA').textContent=fa(liveA);$('liveWonB').textContent=fa(liveB);
  $('scoreA').textContent=fa(G.scoreA);$('scoreB').textContent=fa(G.scoreB);$('trickNo').textContent=fa(Math.min(G.trickNo,13));
  const globalStats=readGlobalStats();$('gamesWonA').textContent=fa(globalStats.double.wins+globalStats.hokm.wins);$('gamesWonB').textContent=fa(globalStats.double.losses+globalStats.hokm.losses);
+ const handPlayer=playStyle==='hotseat'?G.turn:0;
  for(let p=0;p<4;p++){
   const seatName=$('seat'+p).querySelector('.name');if(seatName)seatName.textContent=playStyle==='hotseat'?(humanSeats.has(p)?'بازیکن انسانی':'هوش مصنوعی')+' · '+(['جنوب · هم‌تیمی','شرق · حریف','شمال · هم‌تیمی','غرب · حریف'][p]):names[p];
   $('seat'+p).classList.toggle('active',G.turn===p);$('count'+p).textContent=p===0?'کارت شما: '+fa(G.hands[p].length):fa(G.hands[p].length)+' کارت';
   let slot=$('played'+p);slot.innerHTML='';
-  if(p!==handPlayer&&G.hands[p].length){const fan=document.createElement('div');fan.className='opponent-fan';const n=Math.min(7,G.hands[p].length);for(let j=0;j<n;j++){const back=document.createElement('div');back.className='card back';back.style.setProperty('--fan-index',j);fan.append(back);}slot.append(fan);}
+  if((playStyle==='hotseat'?(!humanSeats.has(p)||p!==G.turn):p!==0)&&G.hands[p].length){const fan=document.createElement('div');fan.className='opponent-fan';const n=Math.min(7,G.hands[p].length);for(let j=0;j<n;j++){const back=document.createElement('div');back.className='card back';back.style.setProperty('--fan-index',j);fan.append(back);}slot.append(fan);}
  }
  $('hand').innerHTML='';
  const handPlayer=playStyle==='hotseat'?G.turn:0;
