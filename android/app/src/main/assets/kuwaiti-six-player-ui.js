@@ -83,7 +83,7 @@ function addStyle(){
 .k-hand button:not(:disabled) .k-card{outline:2px solid #f0d38a;transform:translateY(-5px) rotateY(-3deg);filter:saturate(1.12)}
 .k-hand button:not(:disabled):hover .k-card{transform:translateY(-17px) rotateY(0) scale(1.04);z-index:5}
 .k-opponent-fan{direction:ltr;display:flex;align-items:center;justify-content:center;height:66px;max-width:100%;overflow:visible;padding:2px}
-.k-opponent-fan .k-card.k-back{width:18px;height:54px;min-width:18px;padding:0;margin-left:-10px;border-width:2px!important;border-radius:5px;transform:rotate(calc((var(--fan-index) - 3)*3deg))}
+.k-opponent-fan .k-card.k-back{width:38px;height:58px;min-width:38px;padding:0;margin-left:-28px;border-width:2px!important;border-radius:5px;transform:rotate(calc((var(--fan-index) - 3)*3deg))}
 .k-opponent-fan .k-card.k-back:first-child{margin-left:0}
 .k-center{position:relative;min-height:175px;transform:translateZ(28px);border:1px solid #e9d49a88;background:radial-gradient(ellipse,#05291eaa,#031a1488);box-shadow:inset 0 0 22px #0009,0 9px 18px #0006}
 .k-center-cards{display:flex;align-items:center;justify-content:center;direction:ltr;min-height:95px;overflow:visible}
