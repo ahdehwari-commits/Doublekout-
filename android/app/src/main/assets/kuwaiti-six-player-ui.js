@@ -191,7 +191,25 @@ function addStyle(){
    .k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:translateX(-15px) rotate(90deg) scale(1.08)!important}
   }
   `;
-  document.head.appendChild(s);
+  
+/* 0.8.18: six-player-only corner seating and wide radial opponent fans. */
+.k-table{position:relative!important;display:block!important;min-height:620px!important;padding:0!important;overflow:visible!important}
+.k-table>.k-center{position:absolute!important;left:29%!important;right:29%!important;top:34%!important;bottom:34%!important;min-height:0!important;z-index:2}
+.k-table>.k-seat{position:absolute!important;width:29%!important;min-height:118px;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:5px 2px!important;z-index:3}
+.k-table>.k-seat[data-p="3"]{top:1%!important;left:35.5%!important;right:auto!important;bottom:auto!important}
+.k-table>.k-seat[data-p="2"]{top:17%!important;right:1%!important;left:auto!important;bottom:auto!important}
+.k-table>.k-seat[data-p="1"]{bottom:17%!important;right:1%!important;left:auto!important;top:auto!important}
+.k-table>.k-seat[data-p="0"]{bottom:1%!important;left:35.5%!important;right:auto!important;top:auto!important}
+.k-table>.k-seat[data-p="5"]{bottom:17%!important;left:1%!important;right:auto!important;top:auto!important}
+.k-table>.k-seat[data-p="4"]{top:17%!important;left:1%!important;right:auto!important;bottom:auto!important}
+.k-seat .k-opponent-fan{height:110px!important;width:100%!important;max-width:none!important;justify-content:center!important;overflow:visible!important;transform:none!important;position:relative;left:auto;right:auto}
+.k-seat .k-opponent-fan .k-card.k-back{width:68px!important;height:102px!important;min-width:68px!important;flex:0 0 68px!important;margin-left:-48px!important;transform-origin:50% 100%!important}
+.k-seat .k-opponent-fan .k-card.k-back:first-child{margin-left:0!important}
+.k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:rotate(24deg) translate(-10px,8px) scale(1.12)!important}
+.k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan{transform:rotate(-24deg) translate(10px,8px) scale(1.12)!important}
+.k-seat[data-p="3"] .k-opponent-fan{transform:rotate(0deg) translateY(-5px) scale(1.12)!important}
+@media(max-width:520px){.k-table{min-height:600px!important}.k-table>.k-center{left:28%!important;right:28%!important;top:35%!important;bottom:35%!important}.k-table>.k-seat{width:31%!important;min-height:112px}.k-seat .k-opponent-fan{height:104px!important}.k-seat .k-opponent-fan .k-card.k-back{width:66px!important;height:99px!important;min-width:66px!important;flex-basis:66px!important;margin-left:-49px!important}}
+\ndocument.head.appendChild(s);
 }
 function royalPortrait(rank){
  const p=rank==='K'?{coat:'#173e72',light:'#d9b45d',hair:'#49301f'}:rank==='Q'?{coat:'#8c2854',light:'#f0c66c',hair:'#38233b'}:{coat:'#17644e',light:'#e0b85d',hair:'#57351f'};
@@ -337,8 +355,13 @@ function renderAuction(){
 }
 function renderAuctionHand(){
  if(!game||!game.hands)return;
- $('kHand').innerHTML='';const p=auction?auction.current:game.turn;
- const gate=$('kHotseatGate'),hide=isHumanSeat(p)&&!hotseatRevealed;gate.classList.toggle('hidden',!!hide);if(hide){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[p];$('kHotseatText').textContent='گوشی را به '+playerNames[p]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
+ $('kHand').innerHTML='';
+ // In solo-vs-AI mode the human's own cards remain visible throughout the auction,
+ // regardless of whose bid turn it is. Hotseat keeps the private handoff gate.
+ const hotseat=$('kPlayStyle').value==='hotseat';
+ const p=hotseat?(auction?auction.current:game.turn):0;
+ const gate=$('kHotseatGate'),hide=hotseat&&isHumanSeat(p)&&!hotseatRevealed;
+ gate.classList.toggle('hidden',!!hide);if(hide){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[p];$('kHotseatText').textContent='گوشی را به '+playerNames[p]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
  if(!isHumanSeat(p)||hide)return;
  game.hands[p].forEach((c,i,arr)=>{
   const card=document.createElement('div');
@@ -585,7 +608,7 @@ function aiCard(p){
  return scores[0].card;
 }
 function playHumanCard(card){
- if(!game||game.done||locked||!isHumanSeat(game.turn)||!hotseatRevealed)return;
+ if(!game||game.done||locked||!isHumanSeat(game.turn)||($('kPlayStyle').value==='hotseat'&&!hotseatRevealed))return;
  const p=game.turn;
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
  const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});
@@ -611,9 +634,10 @@ function playOne(p,card){
 }
 function cardLabel(c){return c.kind==='joker'?(c.color==='red'?'جوکر قرمز':'جوکر مشکی'):c.rank+' '+suitGlyph[c.suit];}
 function playAITurn(){
- if(!game||game.done||isHumanSeat(game.turn)||locked||game.waitingResult)return;
+ if(!game||game.done||isHumanSeat(game.turn)||locked||game.waitingResult||aiTimer)return;
  const p=game.turn;
- setTimeout(()=>{
+ aiTimer=setTimeout(()=>{
+  aiTimer=null;
   if(!game||game.done||game.turn!==p||isHumanSeat(game.turn))return;
   try{
    const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
@@ -623,14 +647,19 @@ function playAITurn(){
    }
    let c;
    try{c=aiCard(p);}catch(aiError){
-    const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:(game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null});
+    const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});
     c=allowed[0];console.warn('Kuwaiti AI fallback card selected',aiError);
    }
    if(!c)throw new Error('کارت مجاز برای بازیکن '+playerNames[p]+' پیدا نشد');
    playOne(p,c);
   }catch(e){
-   locked=true;setStatus('خطای نوبت هوش مصنوعی: '+(e&&e.message?e.message:'نامشخص')+' · بازی متوقف شد.');
-   console.error('Kuwaiti AI turn failed',e);
+   console.error('Kuwaiti AI turn failed; attempting legal fallback',e);
+   try{
+    const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
+    const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});
+    if(!allowed.length)throw new Error('هیچ کارت مجازی باقی نمانده است');
+    playOne(p,allowed[0]);
+   }catch(fallbackError){locked=true;setStatus('خطای نوبت '+playerNames[p]+': '+(fallbackError&&fallbackError.message?fallbackError.message:'نامشخص')+' · بازی متوقف شد.');console.error('Kuwaiti AI fallback failed',fallbackError);}
   }
  },550);
 }
