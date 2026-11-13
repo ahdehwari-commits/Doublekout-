@@ -22,6 +22,8 @@ function addStyle(){
  .k-seat.active:after{content:'';position:absolute;inset:-5px;border:2px solid transparent;border-top-color:#ffe6a1;border-right-color:#c99a43;border-radius:16px;pointer-events:none;animation:kAuctionOrbit 1.15s linear infinite}
  @keyframes kAuctionOrbit{to{transform:rotate(360deg)}}
  .k-bid-chip.pass{background:linear-gradient(145deg,#d7e1d7,#718b7a);border-color:#e7f0e5;color:#14251d;font-size:9px;letter-spacing:.2px}
+ .k-bid-chip.winner{background:linear-gradient(145deg,#ffe6a2,#bd8730);border:1px solid #fff0b7;color:#241a08;font-weight:900;box-shadow:0 0 12px #f6d47a88}
+ .k-seat.auction-winner{outline:2px solid #f5d487;box-shadow:0 0 20px #e7c87966,inset 0 0 0 1px #ffe9b2}
  .k-bid-chip{position:absolute;z-index:3;top:4px;left:4px;min-width:20px;height:20px;padding:0 4px;border-radius:7px;background:linear-gradient(145deg,#ffe6a1,#b27b24);border:1px solid #fff0bd;color:#241708;font:900 12px/18px Georgia,serif;box-shadow:0 2px 7px #0009;text-align:center}
  .k-seat.active .k-bid-chip{transform:scale(1.12);box-shadow:0 0 10px #ffe6a1}
  @keyframes kTurnPulse{from{filter:brightness(1)}to{filter:brightness(1.35)}}
@@ -239,6 +241,21 @@ function submitBid(bid){
 function finishAuction(){
  if(!auction||!auction.highest||!Number.isInteger(auction.highestPlayer)){setStatus('مزایده برنده مشخصی ندارد؛ بازی آغاز نشد.');return;}
  const win=auction.highestPlayer,bid={...auction.highest};
+ // Once the auction closes, remove every PASS/bid marker and retain only the
+ // winning contract value on the winning player's seat.
+ document.querySelectorAll('.k-seat').forEach(el=>{
+  el.querySelector('.k-bid-chip')?.remove();
+  el.classList.remove('auction-winner');
+  el.classList.remove('active');
+ });
+ const winningSeat=document.querySelector('.k-seat[data-p="'+win+'"]');
+ if(winningSeat){
+  winningSeat.classList.add('auction-winner');
+  const chip=document.createElement('span');chip.className='k-bid-chip winner';
+  chip.textContent=bid.type==='malzoom'?'M':fa(bid.target||bid.label||'');
+  chip.title=bid.type==='malzoom'?'برنده مزایده · ملزوم':'برنده مزایده · '+(bid.target||bid.label)+' دست';
+  winningSeat.append(chip);
+ }
  game.auctionBid=bid;game.auctionWinner=win;game.selectedContract=null;
  game.isMalzoom=bid.type==='malzoom';
  $('kAuction').classList.add('hidden');
