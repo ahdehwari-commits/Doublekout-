@@ -1,6 +1,6 @@
 # Independent game engines
 
-- **Double Kout sequence (4 players):** playable prototype remains in `web-prototype.html`; its sequence/scoring logic is not yet extracted into a standalone module.
+- **Double Kout / Standard Hokm (4 players):** `double-kout-game.js` provides a reusable four-seat deal, legal-card, turn, trick-resolution, AI-card and scoring/challenge core for local and future online orchestration. `double-kout-sequence.js` contains the sequence/challenge rules.
 - **Standard Hokm (4 players):** `standard-hokm/engine.js` provides a 52-card, 13-card-per-player deal and trick comparison. First match trump is spades.
 - **Kuwaiti Kout (6 players):** `kuwaiti-six-player/engine.js` provides a 54-card deck, nine cards per player, opening lead by the unique holder of 2 clubs, and contract/joker foundations.
 
@@ -19,4 +19,5 @@ Run:
 ```bash
 node engine/test-kuwaiti-card-power.cjs
 node engines/test-engine-foundations.cjs
+node engines/test-double-kout-game.cjs
 ```
