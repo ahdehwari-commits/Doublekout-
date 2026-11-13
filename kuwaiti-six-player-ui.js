@@ -535,7 +535,13 @@ function startActualGame(trumpSuit,hidden){
   if(noTrumpContracts.includes(bidContract)&&(trumpSuit||hidden))throw new Error('قرارداد بدون حکم نباید خال حکم یا حکم مخفی داشته باشد.');
   if(!game.isMalzoom&&resolvedTrump!==null&&trumpSuit&&trumpSuit!==resolvedTrump)throw new Error('خال حکم با قرارداد برنده مزایده مغایرت دارد.');
   if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
-  locked=false;hotseatRevealed=$('kPlayStyle').value!=='hotseat';game.waitingResult=false;game.contract=contract;game.selectedContract=bidContract;game.turn=winner;game.leader=winner;
+  // Establish the human-seat map before handing the first turn to the auction winner.
+  if($('kPlayStyle').value!=='hotseat')humanSeats=new Set([0]);
+  locked=false;hotseatRevealed=$('kPlayStyle').value!=='hotseat';
+  game.waitingResult=false;game.waitingChallenge=false;game.waitingContract=false;
+  game.contract=contract;game.selectedContract=bidContract;game.auctionWinner=winner;game.turn=winner;game.leader=winner;
+  const openingCards=K.legalCards(game.hands[winner],null,{trickNo:1,isFirstPlay:true,trumpSuit:resolvedTrump,firstTrickNoCut:true});
+  if(!openingCards.length)throw new Error('برای برنده مزایده کارت شروع مجاز پیدا نشد.');
   K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump});
   game.hiddenTrump=!!hidden;game.trumpSuit=resolvedTrump;game.target=game.auctionBid.target||null;
   if(game.turn!==winner||!Array.isArray(game.trick)||game.trick.length!==0)throw new Error('انتقال نوبت از مزایده به بازی کامل نشد.');
@@ -545,14 +551,13 @@ function startActualGame(trumpSuit,hidden){
   $('kTrickCards').style.display='';
   $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(isHumanSeat(winner)?' · کارت‌های بازیکن انسانی پس از نمایش فعال می‌شوند.':' · هوش مصنوعی در حال بازی است.');
   $('kResult').classList.add('hidden');setScreen('game');
-  if($('kPlayStyle').value!=='hotseat')humanSeats=new Set([0]);
   renderGame();
   if(isHumanSeat(winner)){
    locked=false;hotseatRevealed=$('kPlayStyle').value!=='hotseat';
    $('kStatus').textContent='نوبت شروع بازی: '+playerNames[winner]+' · یکی از کارت‌های روشن و مجاز را انتخاب کن.';
    renderGame();
   }else{
-   locked=false;setTimeout(()=>{if(game&&!game.done&&game.turn===winner&&!isHumanSeat(game.turn)&&!game.trick.length)playAITurn();},120);
+   locked=false;playAITurn();
   }
  }catch(e){
   locked=true;setScreen('game');$('kStatus').textContent='خطا در شروع بازی پس از مزایده: '+(e&&e.message?e.message:'خطای ناشناخته');
