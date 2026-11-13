@@ -179,7 +179,7 @@ function renderAuction(){
  if(isHuman){
   $('kPass').disabled=forced;
   $('kPass').textContent=forced?'پاس (غیرمجاز؛ باید پیشنهاد بدهی)':'پاس';
-  $('kMalzoom').classList.toggle('hidden',obligated!==0||!!auction.highest);
+  $('kMalzoom').classList.toggle('hidden',obligated!==auction.current||!!auction.highest);
   [...$('kAuction').querySelectorAll('[data-bid]')].forEach(b=>{
    const n=b.dataset.bid==='pass'?0:Number(b.dataset.bid);
    b.disabled=b.dataset.bid!=='pass'&&n<=auction.highestRank;
@@ -242,7 +242,7 @@ function submitBid(bid){
  if(auction.passes>=5&&!auction.highest){
   const forcedPlayer=(p+1)%6;auction.current=forcedPlayer;
   auction.passes=5;
-  if(forcedPlayer!==0){const forcedBid={type:'normal',rank:1,label:'۶',target:6};submitBid(forcedBid);return;}
+  if(!isHumanSeat(forcedPlayer)){const forcedBid={type:'normal',rank:1,label:'۶',target:6};submitBid(forcedBid);return;}
  }
  auction.current=(p+1)%6;hotseatRevealed=false;
  renderAuction();renderAuctionHand();auctionTurn();
@@ -344,7 +344,7 @@ function startActualGame(trumpSuit,hidden){
   $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':('حکم اعلام‌شده: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump])):(noTrumpContracts.includes(bidContract)?'بدون حکم · '+contractName[bidContract]:'حکم این بازی: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]);
   $('kAuctionSummary').textContent+=' · قرارداد: '+(game.isMalzoom?'ملزوم':contractName[bidContract])+(resolvedTrump?' · '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]:'');
   $('kTrickCards').style.display='';
-  $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(winner===0?' · کارت‌های مجاز شما فعال‌اند.':' · هوش مصنوعی در حال بازی است.');
+  $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(isHumanSeat(winner)?' · کارت‌های بازیکن انسانی پس از نمایش فعال می‌شوند.':' · هوش مصنوعی در حال بازی است.');
   $('kResult').classList.add('hidden');setScreen('game');renderGame();
   if(!isHumanSeat(winner))playAITurn();else renderGame();
  }catch(e){
@@ -434,7 +434,7 @@ function playHumanCard(card){
  if(!game||game.done||locked||!isHumanSeat(game.turn)||!hotseatRevealed)return;
  const p=game.turn;
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
- const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||game.auctionWinner===0)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});
+ const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});
  if(!allowed.some(c=>c.id===card.id)){setStatus('این کارت طبق قانون فعلی مجاز نیست.');return;}
  if(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&lead&&!game.hands[p].some(c=>c.kind==='normal'&&c.suit===lead)){
   setStatus('حکم هنوز مخفی است. ابتدا می‌توانی درخواست اعلام حکم بدهی یا بدون درخواست کارت مجاز بازی کنی.');
@@ -497,7 +497,7 @@ function renderGame(){
   const slot=$('kPlayed'+p);slot.innerHTML='';
   const played=currentPlays.find(x=>x.player===p);
   if(played)slot.append(cardNode(played.card,true));
-  else if(p!==0&&game.hands[p].length){const back=document.createElement('div');back.className='k-card k-back';slot.append(back);}
+  else if(p!==game.turn&&game.hands[p].length){const back=document.createElement('div');back.className='k-card k-back';slot.append(back);}
  }
  $('kHand').innerHTML='';
  const p=game.turn,isHuman=isHumanSeat(p),gate=$('kHotseatGate'),hide=isHuman&&!hotseatRevealed&&!game.done;gate.classList.toggle('hidden',!!hide);if(hide){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[p];$('kHotseatText').textContent='گوشی را به '+playerNames[p]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
