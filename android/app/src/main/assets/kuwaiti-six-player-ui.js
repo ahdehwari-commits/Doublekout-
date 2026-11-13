@@ -149,7 +149,7 @@ function addStyle(){
   .k-opponent-fan .k-card.k-back{width:40px;height:60px;min-width:40px;flex:0 0 40px;margin-left:-31px;border-width:2px!important;border-radius:5px;transform:rotate(calc((var(--fan-index) - 4)*1.8deg))!important}
   .k-opponent-fan .k-card.k-back:first-child{margin-left:0}
   /* Corner seats are on the top/bottom edges: their fan baseline stays horizontal and parallel to that edge. */
-  .k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan,.k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:none!important;transform-origin:center}
+  .k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan,.k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:rotate(90deg) scale(.76)!important;transform-origin:center}
   @media(max-width:380px){
     .k-hand{min-height:108px;padding:8px 2px 18px}
     .k-hand button{flex-basis:48px;width:48px;height:72px;margin-left:-17px!important}
