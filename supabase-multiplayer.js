@@ -2,7 +2,7 @@
 'use strict';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
-var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4;
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false;
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
@@ -55,24 +55,38 @@ async function authenticate(setStage){
 }
 function showRoom(){el('onlineSetup').style.display='none';el('onlineRoom').style.display='block';el('onlineCode').textContent=roomCode;}
 function subscribe(){
+ if(rosterTimer){clearInterval(rosterTimer);rosterTimer=null;}
  if(channel){client.removeChannel(channel);channel=null;}
  channel=client.channel('doublekout-room-'+roomId)
  .on('postgres_changes',{event:'*',schema:'public',table:'room_members',filter:'room_id=eq.'+roomId},refreshRoster)
  .on('postgres_changes',{event:'*',schema:'public',table:'game_rooms',filter:'id=eq.'+roomId},refreshRoster)
- .subscribe(function(state){if(state==='SUBSCRIBED')say('اتصال زنده برقرار است. تغییرات بازیکنان همگام می‌شود.');});
+ .subscribe(function(state){
+  if(state==='SUBSCRIBED'){say('اتصال زنده برقرار است؛ همگام‌سازی پشتیبان هم فعال است.');refreshRoster();}
+  else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'||state==='CLOSED')say('اتصال زنده برقرار نشد؛ فهرست بازیکنان به‌صورت دوره‌ای به‌روزرسانی می‌شود.');
+ });
  refreshRoster();
+ rosterTimer=setInterval(refreshRoster,2000);
+ if(!window.__doubleKoutRosterFocus){
+  window.__doubleKoutRosterFocus=true;
+  window.addEventListener('focus',function(){refreshRoster();});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshRoster();});
+ }
 }
 async function refreshRoster(){
- if(!roomId||!client)return;
- var r=await client.from('room_members').select('seat,display_name,is_host,ready,user_id').eq('room_id',roomId).order('seat');
- if(r.error){say('خواندن فهرست بازیکنان: '+r.error.message);return;}
- var cap=count,rows=r.data||[],html='';
- for(var i=0;i<cap;i++){var p=rows.find(function(x){return x.seat===i;});html+='<div>'+(i+1)+'. '+(p?esc(p.display_name)+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
- el('onlineRoster').innerHTML=html;
- var allReady=rows.length===cap&&rows.every(function(x){return x.ready;});
- say(rows.length+' از '+cap+' بازیکن وارد شده‌اند. '+(allReady?'همه آماده‌اند.':'منتظر ورود و آمادگی بازیکنان دیگر...'));
- var mine=rows.find(function(x){return x.user_id===me.id;});
- el('onlineReady').textContent=mine&&mine.ready?'لغو آمادگی':'آماده‌ام';
+ if(!roomId||!client||rosterBusy)return;
+ rosterBusy=true;
+ try{
+  var r=await client.from('room_members').select('seat,display_name,is_host,ready,user_id').eq('room_id',roomId).order('seat');
+  if(r.error){say('خواندن فهرست بازیکنان: '+r.error.message);return;}
+  var cap=count,rows=r.data||[],html='';
+  for(var i=0;i<cap;i++){var p=rows.find(function(x){return x.seat===i;});html+='<div>'+(i+1)+'. '+(p?esc(p.display_name)+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
+  el('onlineRoster').innerHTML=html;
+  var allReady=rows.length===cap&&rows.every(function(x){return x.ready;});
+  say(rows.length+' از '+cap+' بازیکن وارد شده‌اند. '+(allReady?'همه آماده‌اند.':'منتظر ورود و آمادگی بازیکنان دیگر...'));
+  var mine=rows.find(function(x){return x.user_id===me.id;});
+  el('onlineReady').textContent=mine&&mine.ready?'لغو آمادگی':'آماده‌ام';
+ }catch(e){say('به‌روزرسانی فهرست بازیکنان: '+(e.message||e));}
+ finally{rosterBusy=false;}
 }
 async function createRoom(){
  var stage='آماده‌سازی';try{
@@ -99,6 +113,7 @@ async function toggleReady(){
  }catch(e){say('ثبت آمادگی انجام نشد: '+(e.message||e));}
 }
 async function leave(){
+ if(rosterTimer){clearInterval(rosterTimer);rosterTimer=null;}
  if(channel){await client.removeChannel(channel);channel=null;}
  roomId=null;roomCode='';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی. نشست مهمان روی این گوشی باقی می‌ماند.');
 }
