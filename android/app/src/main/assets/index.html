@@ -196,12 +196,12 @@ function startGame(){
  if(matchNo>1){
   G.contract='hokm';G.trump=null;G.trumpCode=null;G.waitingTrump=true;
   $('trumpPicker').classList.remove('hidden');
-  $('trickCountWrap').style.display='';
+  
   $('status').textContent='پنج کارت اول پخش شد؛ نوع قرارداد را انتخاب کن. سپس هشت کارت باقی‌مانده پخش می‌شود.';
   $('trumpBig').textContent='در انتظار انتخاب قرارداد';render();return;
  }
  G.contract='hokm';G.trump='♠';G.trumpCode='S';G.waitingTrump=false;
- $('trickCountWrap').style.display='';
+ 
  if(activeMode==='double-kout'){
   $('challengePanel').style.display='block';$('status').textContent='بازی اول با حکم ثابت پیک آغاز می‌شود؛ بازی عادی یا چالش را انتخاب کن.';render();return;
  }
@@ -229,7 +229,7 @@ function confirmTrump(){
  G.trump=suit;G.trumpCode=suit?({'♠':'S','♥':'H','♦':'D','♣':'C'})[suit]:null;
  G.hands.forEach(hand=>{G.pendingDeck.splice(0,8).forEach(c=>hand.push(c));hand.sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);});
  G.pendingDeck=[];G.initialHands=G.hands.map(hand=>hand.slice());G.cardHistory=[];G.waitingTrump=false;$('trumpPicker').classList.add('hidden');
- $('trickCountWrap').style.display=contract==='partner_middle'?'none':'';
+ 
  $('trumpBig').textContent=noTrump?'بدون حکم · '+({naras:'نرس',tak_naras:'تک نرس',saras:'سرس'})[contract]:(contract==='partner_middle'?'برگ وسط یار · '+suit:suit);
  $('trumpBig').style.color=suit&&['♥','♦'].includes(suit)?'#f17b7b':'#e7c879';
  if(activeMode==='double-kout'){
