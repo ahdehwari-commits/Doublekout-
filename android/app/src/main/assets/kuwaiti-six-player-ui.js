@@ -671,10 +671,6 @@ function renderGame(){
   b.disabled=!legal;b.append(cardNode(c));b.onclick=()=>playHumanCard(c);$('kHand').append(b);
  });
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
-  const legal=isHuman&&!game.done&&hotseatRevealed&&K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1}).some(x=>x.id===c.id);
-  b.disabled=!legal;b.append(cardNode(c));b.onclick=()=>playHumanCard(c);$('kHand').append(b);
- });
- const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
  const voidInLead=isHuman&&lead&&!game.hands[p].some(c=>c.kind==='normal'&&c.suit===lead);
  $('kAskTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&voidInLead&&game.auctionWinner!==p));
  $('kAnnounceTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&isHuman&&hotseatRevealed&&game.turn===game.auctionWinner));
