@@ -1,26 +1,32 @@
 # Supabase deployment
 
-This directory is connected to the Supabase project through the Supabase GitHub integration.
+This directory contains the database schema and migrations for the Double Kout online lobby and four-player game.
 
-## Current stage
+## Current implementation
 
-- Database migration creates rooms, member seats, private-hand storage, RLS, room creation/join RPCs, ready state, and host-only lobby start.
-- Edge Function `room-action` authenticates the caller and invokes the RLS-safe ready/start RPCs.
-- Starting a room currently moves it to `playing` with phase `engine_pending`. This is intentionally not represented as a playable card game yet: authoritative dealing, legal-move validation, private hand delivery, turn resolution, reconnect and scoring must be integrated with the existing game engines before release.
+- Migrations 001 and 002 create rooms, member seats, anonymous sign-in support, ready state, row-level security and lobby RPCs.
+- Migration 003 adds the authoritative four-seat game state, private per-seat hands, server-side legal-card validation, turn/trick resolution, AI-seat moves, Double Kout challenge resolution and scoring.
+- The browser UI can start a four-player room with at least two ready humans; unoccupied seats are filled by server-held AI hands. The host client advances AI turns through a host-only RPC.
+- Human clients can read only their own cards. Public room state contains played cards, turn, trick history and result, never opponents' hands.
+- The six-player Kuwaiti mode is not included in this online game engine yet. Local six-player play remains separate.
 
-## Supabase Dashboard steps
+## Required Supabase setup
 
-1. Enable **Anonymous Sign-Ins** in Authentication > Providers.
-2. Ensure the GitHub integration deploys migrations from the repository root (`.`).
-3. Deploy the `room-action` Edge Function from this directory. If the integration does not deploy functions automatically, deploy with the Supabase CLI after linking the project.
-4. Configure the client with the Project URL and the public publishable/anon key only.
-5. Never place the `service_role` key in the app, website, GitHub source, or chat.
+1. Keep **Anonymous Sign-Ins** enabled under Authentication > Providers.
+2. In the Supabase SQL Editor, run the migrations in order if they have not already been applied:
+   - `20261113000100_multiplayer_rooms.sql`
+   - `20261113000200_room_lobby_actions.sql`
+   - `20261113000300_authoritative_four_player_game.sql`
+3. The web app uses only the project URL and public publishable key. Never put the `service_role` key in the app, website, GitHub source, or chat.
+4. Realtime is used for lobby changes; game state also has client polling as a reconnect fallback.
 
-## RPCs
+## Game RPCs
 
 - `create_game_room(p_game_mode, p_player_count, p_display_name)`
 - `join_game_room(p_code, p_display_name)`
 - `set_room_ready(p_room_id, p_ready)`
-- `start_game_room(p_room_id)`
+- `start_room_game(p_room_id, p_start_with_present, p_trump, p_challenge_team)`
+- `play_room_card(p_room_id, p_card_id)`
+- `play_room_ai_turn(p_room_id)` — host only, and only when an AI seat owns the current turn.
 
-All RPCs require an authenticated user. Room creation/joining use database transactions; starting is restricted to the host and requires every seat to be occupied and ready.
+The SQL migration must be applied to the connected Supabase project before the new online game controls can work. The GitHub deployment alone does not apply SQL migrations to an already-created Supabase project.
