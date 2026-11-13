@@ -48,5 +48,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: DoubleKout-iPhone-PWA
-          path: DoubleKout-iPhone-PWA-0.8.12.zip
+          path: DoubleKout-iPhone-PWA-0.8.21.zip
           if-no-files-found: error
