@@ -7,8 +7,8 @@ const scriptStart=html.indexOf('<script>',engineTag);
 const scriptEnd=html.indexOf('</script>',scriptStart);
 assert.ok(engineTag>=0&&scriptStart>engineTag&&scriptEnd>scriptStart,'main game script must exist after the engines');
 new vm.Script(html.slice(scriptStart+8,scriptEnd),{filename:'web-prototype-inline.js'});
-assert.ok(html.includes("activeMode='double-kout';$('hokmContractPicker').classList.remove('hidden')"));
-assert.ok(html.includes("const selected=$('hokmContract').value;")&&html.includes("hokm_spades")&&html.includes("hokm_clubs")&&html.includes("partner_middle"));
+assert.ok(html.includes("activeMode='double-kout'")&&!html.includes("id=\"hokmContract\""),'four-player setup must not expose a separate contract/suit menu');
+assert.ok(html.includes("let selected='hokm_spades'")&&html.includes("hokm_spades")&&html.includes("hokm_clubs")&&html.includes("partner_middle"));
 assert.ok(html.includes("function beginNormalOrChallenge(challengerTeam)")&&html.includes("function confirmTrump()"),'both choice buttons must have defined handlers');
 assert.ok(html.includes("function cardRank(c)")&&html.includes("c.rank!==undefined"),'card rank adapter must accept both r and rank fields');
 assert.ok(html.includes("function winner(plays){const code=")&&html.includes("StandardHokmEngine.resolveTrick"));
@@ -42,10 +42,14 @@ for(const suit of ['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs']){
  assert.ok(html.includes('value="'+suit+'"'),'four-player Hokm must offer '+suit);
  assert.ok(sixUi.includes('value="'+suit+'"'),'six-player Hokm must offer '+suit);
 }
-assert.ok(html.includes("const contract=$('nextContract').value;")&&html.includes("const noTrump=['naras','tak_naras','saras'].includes(contract)"),'later four-player deals must allow no-trump contracts after the first five cards');
+assert.ok(html.includes("const contract=$('nextContract').value;")&&html.includes("const noTrump=['naras','tak_naras','saras'].includes(contract)")&&!html.includes("id=\"nextTrump\""),'later four-player deals must select contract and trump suit as one unified option');
 assert.ok(html.includes("value=\"naras\"")&&html.includes("value=\"tak_naras\"")&&html.includes("value=\"saras\"")&&html.includes("value=\"partner_middle\""),'later four-player contract picker must offer Naras, Tak Naras, Saras and partner-middle');
 assert.ok(html.includes("const staged=matchNo>1;"),'all later four-player contracts must deal five cards before selection');
 assert.ok(html.includes("function aiChooseFourPlayerContract(hand)")&&html.includes("const chosen=aiChooseFourPlayerContract(G.hands[starter])"),'AI hakim must choose among all supported contracts after seeing five cards');
+assert.ok(html.includes("DoubleKoutSequence.scoreSequence(G.trickWinners||[])")&&html.includes("liveResult.scores.A")&&html.includes("liveResult.scores.B"),'live DoubleKout counters must use the exact same scoring function as the final result');
+assert.ok(html.includes("globalStatsBtn")&&html.includes("function recordGlobalGame()")&&html.includes("localStorage.setItem(GLOBAL_STATS_KEY"),'four-player cumulative game statistics must be persisted and accessible from the mode menu');
+assert.ok(html.includes("exitAppBtn")&&html.includes("AndroidApp.exitApp()"),'mode menu must provide a real native Android exit action');
+assert.ok(!html.includes("nextTrumpWrap")&&!html.includes("nextTrump"),'four-player UI must not allow contract and trump suit to be selected separately');
 assert.ok(html.includes("G.contract=noTrump?contract:'hokm'")&&html.includes("G.trump=suit"),'later contract selection must set the chosen contract and clear trump for no-trump modes');
 assert.ok(sixUi.includes("const suitByContract={hokm_spades:'S',hokm_hearts:'H',hokm_diamonds:'D',hokm_clubs:'C'}"));
 assert.ok(sixUi.includes("const resolvedTrump=noTrumpContracts.includes(bidContract)?null:(game.isMalzoom?(trumpSuit||null):suitByContract[bidContract])"));
