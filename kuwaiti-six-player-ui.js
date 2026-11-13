@@ -5,7 +5,7 @@ const $=id=>document.getElementById(id);
 const suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'};
 const suitName={S:'پیک',H:'دل',D:'خشت',C:'گشنیز'};
 const contractName={hokm_spades:'پیک',hokm_hearts:'دل',hokm_diamonds:'خشت',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',hokm:'حکم',malzoom:'ملزوم'};
-const playerNames=['شما','بازیکن ۲','بازیکن ۳','بازیکن ۴','بازیکن ۵','بازیکن ۶'];
+const playerNames=['بازیکن ۱','بازیکن ۲','بازیکن ۳','بازیکن ۴','بازیکن ۵','بازیکن ۶'];
 const team=p=>K.teamOf(p);
 const fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
 let game=null,auction=null,firstGame=true,previousAuctionWinner=null,previousWinningTeam=null,humanSeats=new Set([0]),hotseatRevealed=false;
@@ -107,7 +107,7 @@ function setupMarkup(){
  <div class="k-live-tricks" id="kLiveTricks"><span>دست‌های برده تیم شما: <b id="kWonA">۰</b></span><span>دست‌های برده حریف: <b id="kWonB">۰</b></span></div>
  <div id="kStatus" class="k-status hidden">وضعیت بازی</div>
  <div class="k-actions"><button id="kAskTrump" class="hidden">درخواست اعلام حکم مخفی</button><button id="kAnnounceTrump" class="hidden">اعلام حکم</button></div>
- <h3 class="section-title">کارت‌های شما</h3><div id="kHand" class="k-hand"></div>
+ <h3 class="section-title">کارت‌های بازیکن نوبت‌دار</h3><div id="kHand" class="k-hand"></div>
  <div id="kResult" class="k-auction hidden"></div>
  <div id="kHotseatGate" class="k-auction hidden"><b id="kHotseatTitle">تحویل گوشی</b><p class="k-small" id="kHotseatText">گوشی را به بازیکن بعدی بدهید.</p><button id="kRevealHand" class="primary">کارت‌ها را نمایش بده</button></div><div class="k-actions"><button id="kNewGame" class="hidden">بازی بعدی</button><button id="kExit">بازگشت به انتخاب بازی</button></div>`;
  $('modePicker').insertAdjacentElement('afterend',s);s.insertAdjacentElement('afterend',g);
