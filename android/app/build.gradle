@@ -6,7 +6,10 @@ android {
         applicationId 'com.doublekout.app'
         minSdk 23
         targetSdk 35
-        versionCode 14
-        versionName '0.8.15'
+        versionCode 20
+        versionName '0.8.20'
     }
+}
+dependencies {
+    implementation 'com.google.zxing:core:3.5.3'
 }
