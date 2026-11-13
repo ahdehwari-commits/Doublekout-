@@ -53,6 +53,9 @@ assert.ok(html.includes("const staged=matchNo>1;"),'all later four-player contra
 assert.ok(html.includes("function aiChooseFourPlayerContract(hand)")&&html.includes("const chosen=aiChooseFourPlayerContract(G.hands[starter])"),'AI hakim must choose among all supported contracts after seeing five cards');
 assert.ok(html.includes("liveSequenceScores(G.trickWinners||[])")&&html.includes("function liveSequenceScores(winners)")&&html.includes("scores[winningTeam]+=count"),'live DoubleKout counters must use the exact same scoring function as the final result');
 assert.ok(html.includes("globalStatsBtn")&&html.includes("function recordGlobalGame()")&&html.includes("localStorage.setItem(GLOBAL_STATS_KEY"),'four-player cumulative game statistics must be persisted and accessible from the mode menu');
+assert.ok(html.includes('id="gamesWonA"')&&html.includes('id="gamesWonB"')&&html.includes("globalStats.double.wins+globalStats.hokm.wins"),'the table must show a separate persistent counter for completed games won');
+assert.ok(!html.includes('id="trickCountWrap"')&&!html.includes('id="trickCount"'),'the per-trick four-card counter must be removed');
+assert.ok(html.includes('id="centerTrick"')&&html.includes('class="opponent-fan"')&&html.includes('width:84px;height:126px'),'four-player cards must be larger, overlapping, fanned and centrally displayed');
 assert.ok(html.includes("exitAppBtn")&&html.includes("AndroidApp.exitApp()"),'mode menu must provide a real native Android exit action');
 assert.ok(!html.includes("nextTrumpWrap")&&!html.includes("nextTrump"),'four-player UI must not allow contract and trump suit to be selected separately');
 assert.ok(html.includes("G.contract=noTrump?contract:'hokm'")&&html.includes("G.trump=suit"),'later contract selection must set the chosen contract and clear trump for no-trump modes');
