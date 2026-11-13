@@ -154,7 +154,7 @@ function startGame(){
  if(matchNo>1&&previousStarter!==null){starterSelect.value=String(previousStarter);starterSelect.disabled=true;}else starterSelect.disabled=false;
  let selected=$('hokmContract').value;
  if(matchNo===1){selected='hokm_spades';$('hokmContract').value=selected;$('hokmContract').disabled=true;}
- else {$('hokmContract').disabled=false;$('nextContract').value='hokm_spades';/* suit is encoded by the selected contract */}
+ else {$('nextContract').value='hokm_spades';/* suit is encoded by the selected contract */}
  const selectedName={hokm_spades:'پیک',hokm_hearts:'دل',hokm_diamonds:'خشت',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',partner_middle:'برگ وسط یار'}[selected]||'حکم';
  dealGame(null);
  $('challengePanel').style.display='none';
@@ -387,7 +387,7 @@ $('globalStatsBtn').onclick=showGlobalStats;
 $('closeGlobalStats').onclick=()=>$('globalStatsPanel').classList.add('hidden');
 $('resetGlobalStats').onclick=()=>{if(confirm('تمام آمار ذخیره‌شده پاک شود؟')){localStorage.removeItem(GLOBAL_STATS_KEY);showGlobalStats();}};
 $('exitAppBtn').onclick=()=>{if(window.AndroidApp&&typeof window.AndroidApp.exitApp==='function'){window.AndroidApp.exitApp();return;}try{window.close();}catch(e){}$('modeMessage').textContent='برای خروج از بازی، پنجره یا برنامه را از مدیریت برنامه‌های دستگاه ببندید.';};
-$('modeDouble').onclick=()=>{audioReady();matchNo=1;previousWinner=null;previousStarter=null;activeMode='double-kout';$('hokmContractPicker').classList.remove('hidden');$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
+$('modeDouble').onclick=()=>{audioReady();matchNo=1;previousWinner=null;previousStarter=null;activeMode='double-kout';$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
 $('modeHokm').onclick=()=>{audioReady();matchNo=1;previousWinner=null;previousStarter=null;activeMode='standard-hokm';$('hokmContractPicker').classList.remove('hidden');$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');$('modeMessage').textContent='حکم چهار نفره: قرارداد را انتخاب کن.';};
 $('modeKuwaiti').onclick=()=>{audioReady();if(typeof window.openKuwaitiMode==='function')window.openKuwaitiMode();else $('modeMessage').textContent='رابط میز شش‌نفره بارگذاری نشده است؛ صفحه را یک‌بار ببند و باز کن.';};
 $('start').onclick=()=>{audioReady();shuffleSound();startGame()};$('confirmTrump').onclick=confirmTrump;$('nextContract').onchange=()=>{/* contract and suit are a single selection */};
