@@ -474,7 +474,6 @@ function cardEl(c,small=false){
  const rank=String(c.r||'');
  d.className='card '+(['♥','♦'].includes(c.s)?'red':'')+(small?' small':'');
  const corner='<span class="corner corner-top"><b>'+rank+'</b><i>'+c.s+'</i></span><span class="corner corner-bottom"><b>'+rank+'</b><i>'+c.s+'</i></span>';
-  const corner='<span class="corner corner-top"><b>'+rank+'</b><i>'+c.s+'</i></span><span class="corner corner-bottom"><b>'+rank+'</b><i>'+c.s+'</i></span>';
  let art='';
   if(['K','Q','J'].includes(rank))art=royalPortrait(rank);
  d.innerHTML=corner+(art?'<span class="royal-frame">'+art+'</span>':'<span class="suit">'+c.s+'</span>');
