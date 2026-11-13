@@ -83,7 +83,7 @@ function addStyle(){
 .k-hand button:not(:disabled) .k-card{outline:2px solid #f0d38a;transform:translateY(-5px) rotateY(-3deg);filter:saturate(1.12)}
 .k-hand button:not(:disabled):hover .k-card{transform:translateY(-17px) rotateY(0) scale(1.04);z-index:5}
 .k-opponent-fan{direction:ltr;display:flex;align-items:center;justify-content:center;height:66px;max-width:100%;overflow:visible;padding:2px}
-.k-opponent-fan .k-card.k-back{width:38px;height:58px;min-width:38px;padding:0;margin-left:-28px;border-width:2px!important;border-radius:5px;transform:rotate(calc((var(--fan-index) - 3)*3deg))}
+.k-opponent-fan .k-card.k-back{width:38px;height:58px;min-width:38px;padding:0;margin-left:-31px;border-width:2px!important;border-radius:5px;transform:rotate(calc((var(--fan-index) - 3)*3deg))}
 .k-opponent-fan .k-card.k-back:first-child{margin-left:0}
 .k-center{position:relative;min-height:175px;transform:translateZ(28px);border:1px solid #e9d49a88;background:radial-gradient(ellipse,#05291eaa,#031a1488);box-shadow:inset 0 0 22px #0009,0 9px 18px #0006}
 .k-center-cards{display:flex;align-items:center;justify-content:center;direction:ltr;min-height:95px;overflow:visible}
@@ -528,7 +528,7 @@ function renderGame(){
   $('kCount'+p).textContent=fa(game.hands[p].length)+' کارت';
   const slot=$('kPlayed'+p);slot.innerHTML='';
   const played=currentPlays.find(x=>x.player===p);
-  if(p!==game.turn&&game.hands[p].length){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=Math.min(7,game.hands[p].length);for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';back.style.setProperty('--fan-index',j);fan.append(back);}slot.append(fan);}
+  if(p!==game.turn&&game.hands[p].length){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=game.hands[p].length;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';back.style.setProperty('--fan-index',j);fan.append(back);}slot.append(fan);}
  }
  $('kHand').innerHTML='';
  const p=game.turn,isHuman=isHumanSeat(p),gate=$('kHotseatGate'),hide=isHuman&&!hotseatRevealed&&!game.done;gate.classList.toggle('hidden',!!hide);if(hide){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[p];$('kHotseatText').textContent='گوشی را به '+playerNames[p]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
