@@ -120,10 +120,17 @@ function dealGame(trump){
   G.hands[starter].forEach(c=>$('hakimPreview').append(cardEl(c,true)));
   $('trumpPicker').classList.remove('hidden');
   if(starter!==0){
+   const chosen=aiChooseFourPlayerContract(G.hands[starter]);
+   $('nextContract').value=chosen;
    const counts={'♠':0,'♥':0,'♦':0,'♣':0};G.hands[starter].forEach(c=>counts[c.s]++);
-   const suit=Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
-   $('nextTrump').value=suit;setTimeout(()=>confirmTrump(),650);
-  }else $('status').textContent='پنج کارت اول حاکم نمایش داده شد؛ اکنون حکم را انتخاب کن.';
+   $('nextTrump').value=Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
+   $('nextTrumpWrap').classList.toggle('hidden',!chosen.startsWith('hokm_'));
+   setTimeout(()=>confirmTrump(),650);
+  }else{
+   $('nextContract').value='hokm_spades';$('nextTrump').value='♠';
+   $('nextTrumpWrap').classList.remove('hidden');
+   $('status').textContent='پنج کارت اول حاکم نمایش داده شد؛ اکنون نوع قرارداد را انتخاب کن.';
+  }
  }else{
   $('trumpPicker').classList.add('hidden');render();
   if(activeMode==='double-kout'){$('challengePanel').style.display='block';$('status').textContent='حکم بازی اول پیک است؛ بازی عادی یا چالش را انتخاب کن.';}
@@ -131,20 +138,30 @@ function dealGame(trump){
  }
  updateChallengeStats();
 }
+function aiChooseFourPlayerContract(hand){
+ const suits=['♠','♥','♦','♣'],counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));
+ const power=c=>({A:5,K:4,Q:3,J:2,10:1.2,9:.5}[c.r]||0);
+ const suitScores=suits.map(s=>({s,count:counts[s],score:counts[s]*1.7+hand.filter(c=>c.s===s).reduce((n,c)=>n+power(c),0)})).sort((a,b)=>b.score-a.score);
+ const highs=hand.filter(c=>['A','K','Q'].includes(c.r)).length;
+ const twos=hand.filter(c=>c.r==='2').length;
+ const balanced=Math.max(...Object.values(counts))<=2;
+ if(highs>=4&&balanced)return 'saras';
+ if(twos>=3)return 'naras';
+ if(highs>=3&&balanced)return 'tak_naras';
+ return ({'♠':'hokm_spades','♥':'hokm_hearts','♦':'hokm_diamonds','♣':'hokm_clubs'})[suitScores[0].s];
+}
 function startGame(){
  const starterSelect=$('starter');
  if(matchNo>1&&previousStarter!==null){starterSelect.value=String(previousStarter);starterSelect.disabled=true;}else starterSelect.disabled=false;
  let selected=$('hokmContract').value;
  if(matchNo===1){selected='hokm_spades';$('hokmContract').value=selected;$('hokmContract').disabled=true;}
- else $('hokmContract').disabled=false;
+ else {$('hokmContract').disabled=false;$('nextContract').value='hokm_spades';$('nextTrump').value='♠';}
  const selectedName={hokm_spades:'پیک',hokm_hearts:'دل',hokm_diamonds:'خشت',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',partner_middle:'برگ وسط یار'}[selected]||'حکم';
  dealGame(null);
  $('challengePanel').style.display='none';
  $('trumpPicker').classList.add('hidden');
  if(matchNo>1){
   G.contract='hokm';G.trump=null;G.trumpCode=null;G.waitingTrump=true;
-  $('nextContract').value='hokm_spades';$('nextTrump').value='♠';
-  $('nextTrumpWrap').classList.remove('hidden');
   $('trumpPicker').classList.remove('hidden');
   $('trickCountWrap').style.display='';
   $('status').textContent='پنج کارت اول پخش شد؛ نوع قرارداد را انتخاب کن. سپس هشت کارت باقی‌مانده پخش می‌شود.';
