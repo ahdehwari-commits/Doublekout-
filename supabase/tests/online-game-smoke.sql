@@ -16,7 +16,7 @@ declare
 begin
   insert into auth.users(id) values(v_host),(v_guest) on conflict do nothing;
   perform set_config('request.jwt.claim.sub',v_host::text,false);
-  v_room := public.create_game_room('standard-hokm',4,'Host');
+  v_room := public.create_game_room('standard-hokm',4::smallint,'Host');
   v_room_id := (v_room->>'room_id')::uuid;
   v_code := v_room->>'code';
 
