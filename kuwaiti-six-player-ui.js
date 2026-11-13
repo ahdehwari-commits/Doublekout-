@@ -270,6 +270,7 @@ function finishAuction(){
  $('kAuction').classList.add('hidden');
  $('kAuctionSummary').classList.remove('hidden');
  $('kAuctionSummary').textContent='نتیجه مزایده · برنده: '+playerNames[win]+' · پیشنهاد نهایی: '+bid.label+' · روند: '+auction.bids.map(x=>playerNames[x.player]+': '+x.label).join(' ← ');
+ auction=null; // Auction is closed; subsequent phone handoffs belong to the active game turn.
  if(game.isMalzoom){
   game.contract='hokm';
   $('kStatus').textContent='برنده مزایده: '+playerNames[win]+' · ملزوم';
