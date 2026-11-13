@@ -159,7 +159,27 @@ function addStyle(){
     .k-opponent-fan .k-card.k-back{width:36px;height:54px;min-width:36px;flex-basis:36px;margin-left:-28px}
   }
   `;
+  s.textContent+=`
+  /* 0.8.16: larger illustrated royal portraits */
+  .k-royal-frame{inset:8px 5px 8px!important}
+  .k-royal-art{display:block;width:100%;height:100%;max-height:none!important;filter:drop-shadow(0 2px 2px #49351f55)}
+  .k-card .k-corner{z-index:6}
+  `;
   document.head.appendChild(s);
+}
+function royalPortrait(rank){
+ const p=rank==='K'?{coat:'#173e72',light:'#d9b45d',hair:'#49301f'}:rank==='Q'?{coat:'#8c2854',light:'#f0c66c',hair:'#38233b'}:{coat:'#17644e',light:'#e0b85d',hair:'#57351f'};
+ const head=rank==='K'
+  ? '<path d="M20 34Q16 14 32 13Q48 14 44 34L41 46Q32 54 23 46Z" fill="#e9b98d" stroke="#6b402d" stroke-width="1.2"/><path d="M20 34Q17 18 25 14Q36 7 44 20L43 35L39 29L35 33L30 28L24 34Z" fill="'+p.hair+'"/><path d="M22 42Q32 49 42 42L40 53Q32 61 24 53Z" fill="'+p.hair+'"/><path d="M25 37h5M35 37h5" stroke="#34251e" stroke-width="1.7" stroke-linecap="round"/><path d="M29 45Q32 47 35 45" stroke="#8d4939" fill="none" stroke-width="1"/>'
+  : rank==='Q'
+  ? '<path d="M19 34Q15 13 32 13Q49 13 45 35L43 51Q32 61 21 51Z" fill="#f0c39e" stroke="#80543b" stroke-width="1.2"/><path d="M19 39Q12 22 20 15Q30 5 42 14Q52 22 45 43L41 31L37 24L31 30L25 24L22 34Z" fill="'+p.hair+'"/><path d="M26 38h4M35 38h4" stroke="#402b29" stroke-width="1.6" stroke-linecap="round"/><path d="M29 47Q32 49 35 47" stroke="#a34c56" fill="none" stroke-width="1.2"/><path d="M23 52Q32 59 41 52" stroke="#e7bd91" stroke-width="3" fill="none"/>'
+  : '<path d="M21 34Q17 15 32 14Q47 15 43 35L41 48Q32 56 23 48Z" fill="#efc39b" stroke="#76513a" stroke-width="1.2"/><path d="M20 31Q17 16 30 12Q43 8 46 23L42 29L36 22L29 27L24 23Z" fill="'+p.hair+'"/><path d="M25 38h4M35 38h4" stroke="#34251e" stroke-width="1.6" stroke-linecap="round"/><path d="M26 45Q32 50 38 45" stroke="#8d4939" fill="none" stroke-width="1.2"/>';
+ const crown=rank==='K'
+  ? '<path d="M17 20L14 6L24 14L32 3L40 14L50 6L47 21Z" fill="#e7bf55" stroke="#78521f" stroke-width="1.8"/><circle cx="32" cy="8" r="2" fill="#b52f48"/>'
+  : rank==='Q'
+  ? '<path d="M17 20Q16 5 25 12L32 3L39 12Q48 5 47 20Z" fill="#e7bf55" stroke="#78521f" stroke-width="1.8"/><circle cx="32" cy="12" r="3" fill="#bd3c64"/><circle cx="22" cy="15" r="2" fill="#4c8bb5"/><circle cx="42" cy="15" r="2" fill="#4c8bb5"/>'
+  : '<path d="M17 22Q13 7 29 9Q42 4 48 17L45 24L34 18L24 24Z" fill="#d7b05a" stroke="#765024" stroke-width="1.8"/><path d="M39 13Q52 1 51 5Q49 18 43 23" fill="#b33e47" stroke="#76252c" stroke-width="1.2"/>';
+ return '<svg class="royal-art" viewBox="0 0 64 76" role="img" aria-label="'+({K:'شاه',Q:'بی‌بی',J:'سرباز'})[rank]+'"><defs><linearGradient id="robe'+rank+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+p.coat+'"/><stop offset="1" stop-color="#101b2c"/></linearGradient></defs><rect x="2" y="2" width="60" height="72" rx="8" fill="#f4e7c8" stroke="#a37a3c" stroke-width="1.8"/><path d="M7 70Q9 53 21 49L32 55L43 49Q55 53 57 70Z" fill="url(#robe'+rank+')" stroke="#4b3928" stroke-width="1.5"/><path d="M21 50L32 61L43 50L40 70H24Z" fill="'+p.light+'" opacity=".9"/><path d="M15 69Q18 57 24 56L32 65L40 56Q47 58 49 69" fill="none" stroke="#f6df9a" stroke-width="2"/>'+head+crown+'<path d="M28 52L32 57L36 52" fill="none" stroke="#fff0c4" stroke-width="2"/><path d="M9 9H55M9 66H55" stroke="#b48b4a" stroke-width=".8" opacity=".75"/><circle cx="12" cy="12" r="2" fill="#c9a45d"/><circle cx="52" cy="12" r="2" fill="#c9a45d"/><circle cx="12" cy="64" r="2" fill="#c9a45d"/><circle cx="52" cy="64" r="2" fill="#c9a45d"/></svg>';
 }
 function cardNode(c,small=false){
  const d=document.createElement('div');
@@ -171,7 +191,7 @@ function cardNode(c,small=false){
  }
  d.className='k-card '+(['H','D'].includes(c.suit)?'red':'');
  const rank=String(c.rank||'');
- const royal=(r)=>'<svg class="k-royal-art" viewBox="0 0 64 76" aria-hidden="true"><rect x="5" y="3" width="54" height="70" rx="7" fill="#e7d4a4" stroke="#9a7438" stroke-width="2"/><path d="M12 65V31L22 17L32 29L42 17L52 31V65Z" fill="'+(r==='K'?'#234a83':r==='Q'?'#9b3152':'#23704f')+'" stroke="#49351f" stroke-width="2"/><circle cx="32" cy="27" r="10" fill="#f0c99a" stroke="#49351f" stroke-width="1.5"/><path d="'+(r==='K'?'M20 21L18 10L25 16L32 7L39 16L46 10L44 22':r==='Q'?'M20 22Q17 7 32 9Q47 7 44 22M21 14L15 8M43 14L49 8':'M22 20Q20 7 32 9Q44 7 42 20')+'" fill="#d9b45d" stroke="#684a25" stroke-width="2"/><path d="M24 40L32 47L40 40M32 47V62" fill="none" stroke="#f4dfb4" stroke-width="3"/><text x="32" y="70" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff">'+r+'</text></svg>';
+ const royal=(r)=>royalPortrait(r);
  d.innerHTML='<span class="k-corner k-corner-top">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span><span class="k-corner k-corner-bottom">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span>'+(['K','Q','J'].includes(rank)?'<span class="k-royal-frame">'+royal(rank)+'</span>':'<span class="ksuit">'+suitGlyph[c.suit]+'</span>');
  return d;
 }
