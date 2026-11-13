@@ -63,12 +63,13 @@ assert.ok(sixUi.includes("const suitByContract={hokm_spades:'S',hokm_hearts:'H',
 assert.ok(sixUi.includes("const resolvedTrump=noTrumpContracts.includes(bidContract)?null:(game.isMalzoom?(trumpSuit||null):suitByContract[bidContract])"));
 assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\n try{"));
 assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump})"));
-assert.ok(sixUi.includes("setScreen('game');renderGame();\n  if(!isHumanSeat(winner))playAITurn();"));
+assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump})")&&sixUi.includes("const openingCards=K.legalCards(game.hands[winner],null")&&sixUi.includes("if(!isHumanSeat(winner))")&&sixUi.includes("locked=false;playAITurn();"),"auction winner must receive a validated first legal card and AI must start through the managed turn scheduler");
 assert.ok(sixUi.includes("Kuwaiti AI fallback card selected"),'AI turn must have a legal-card fallback after auction');
 assert.ok(sixUi.includes('class="joker-art"')&&sixUi.includes("M12 105")&&sixUi.includes("RED JOKER")&&sixUi.includes("BLACK JOKER"),'six-player jokers must use custom devil-and-trident card artwork');
 assert.ok(sixUi.includes('transform:rotate(-24deg) scale(.92)'),'card-back name must be smaller, gold and contained within the card');
 assert.ok(sixUi.includes("const noTrump=['naras','tak_naras','saras'].includes(contract)"));
 assert.ok(!sixUi.includes('value="partner_middle"'),'six-player partner-middle option must be removed');
+assert.ok(html.includes('challenge-thinking button:disabled{opacity:1!important')&&html.includes("classList.toggle('challenge-thinking',!!G.waitingChallenge)"),'four-player hand cards must stay fully bright but non-interactive until challenge or normal play is selected');
 assert.ok(!sixUi.includes("'partner_middle'") ,'six-player partner-middle contract must not be selectable by AI');
 assert.ok(sixUi.includes("if(bid.type==='malzoom'&&(p!==game.obligatedPlayer||auction.highest||auction.highestRank>0)"),'Malzoom is restricted to the obligor before any player bids');
 assert.ok(sixUi.includes("function aiCard(p)")&&sixUi.includes("const unseen=K.deck().filter(c=>!ownInitial.has(c.id)&&!seen.has(c.id))"),'six-player AI must infer remaining cards from its own initial hand and public played cards');
