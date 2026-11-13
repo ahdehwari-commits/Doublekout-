@@ -47,7 +47,7 @@
 </div>
 <p class="muted" id="modeMessage">حالت شش‌نفره فقط با نام «کوت کویتی» نمایش داده می‌شود.</p><div class="actions" style="margin-top:12px"><button id="globalStatsBtn" type="button">آمار کل بازی‌ها</button><button id="exitAppBtn" type="button">خروج از برنامه</button></div>
 <section class="panel hidden" id="globalStatsPanel"><h3 class="section-title">آمار کل بازی‌ها</h3><div id="globalStatsReport" class="rules"></div><div class="actions"><button id="closeGlobalStats" type="button">بستن آمار</button><button id="resetGlobalStats" type="button">پاک‌کردن آمار</button></div></section></section>
-<section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><select id="hokmContract" class="hidden" aria-hidden="true"><option value="hokm_spades" selected>پیک</option><option value="hokm_hearts">دل</option><option value="hokm_diamonds">خشت</option><option value="hokm_clubs">گشنیز</option></select><div id="hokmContractPicker" class="hidden"></div><div class="setup"><div><label>شیوه بازی</label><select id="playStyle"><option value="ai">یک نفر در برابر هوش مصنوعی</option><option value="hotseat">چهار بازیکن واقعی روی همین گوشی (تحویل نوبتی)</option><option value="online">آنلاین با چهار گوشی (اتاق اینترنتی)</option></select></div><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option><option value="hard">سخت</option><option value="expert">خیلی سخت</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><div id="onlineSetupInfo" class="status hidden">بازی آنلاین واقعی به سرور اتاق‌ها نیاز دارد. پس از اتصال سرویس آنلاین، میزبان اتاق می‌سازد و دیگران با کد وارد می‌شوند؛ تا آن زمان این گزینه شروع نمی‌شود.</div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
+<section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><select id="hokmContract" class="hidden" aria-hidden="true"><option value="hokm_spades" selected>پیک</option><option value="hokm_hearts">دل</option><option value="hokm_diamonds">خشت</option><option value="hokm_clubs">گشنیز</option></select><div id="hokmContractPicker" class="hidden"></div><div class="setup"><div><label>شیوه بازی</label><select id="playStyle"><option value="ai">یک نفر در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با چهار گوشی (اتاق اینترنتی)</option></select></div><div id="humanSeatSetup" style="grid-column:1/-1"><label>صندلی بازیکنان انسانی (صندلی‌های خالی با هوش مصنوعی پر می‌شوند)</label><div id="humanSeatChoices" class="actions"></div><p class="muted">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option><option value="hard">سخت</option><option value="expert">خیلی سخت</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><div id="onlineSetupInfo" class="status hidden">بازی آنلاین واقعی به سرور اتاق‌ها نیاز دارد. پس از اتصال سرویس آنلاین، میزبان اتاق می‌سازد و دیگران با کد وارد می‌شوند؛ تا آن زمان این گزینه شروع نمی‌شود.</div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
 <section class="panel hidden" id="game"><div id="hotseatGate" class="hidden"><div class="gate-card"><div style="font-size:42px">♠ ♥ ♦ ♣</div><h2>تحویل گوشی به بازیکن بعدی</h2><p id="hotseatGateText">گوشی را به بازیکن بعدی بدهید. مطمئن شوید نفر قبلی دیگر صفحه را نمی‌بیند؛ سپس کارت‌های خود را نمایش دهید.</p><button id="revealHotseatHand" type="button">کارت‌های من را نمایش بده</button></div></div><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">چالش موفق شما: <b id="challengeWinA">۰</b></div><div class="score">شکست چالش شما: <b id="challengeLoseA">۰</b></div><div class="score">دست: <b id="trickNo">۱</b> / ۱۳</div></div>
 <div class="k-live-tricks" style="display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:13px;font-weight:bold"><span>دست‌های برده این بازی · تیم شما: <b id="liveWonA">۰</b></span><span>تیم حریف: <b id="liveWonB">۰</b></span></div>
 <div id="challengePanel" class="status" style="display:none"><b>چالش تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چالش را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چالش فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چالش علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب قرارداد بازی بعدی</b><p class="muted">پس از دیدن پنج کارت اول، می‌توانی یکی از چهار خال حکم، نرس، تک نرس، سرس یا برگ وسط یار را انتخاب کنی. هشت کارت باقی‌مانده بعد از انتخاب پخش می‌شود.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><div><label>نوع قرارداد</label><select id="nextContract"><option value="hokm_spades">حکم پیک ♠</option><option value="hokm_hearts">حکم دل ♥</option><option value="hokm_diamonds">حکم خشت ♦</option><option value="hokm_clubs">حکم گشنیز ♣</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار</option></select></div><button id="confirmTrump">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div><div class="muted">حکم</div><div id="trumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div id="trickCountWrap"><div class="muted">کارت‌های این دست</div><div id="trickCount" style="font-size:25px">۰ / ۴</div></div><div id="trickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div></div><div class="seat east" id="seat1"><div class="name">شرق · حریف</div><div class="count" id="count1"></div><div class="played" id="played1"></div></div><div class="seat south" id="seat0"><div class="name">شما · جنوب</div><div class="count" id="count0"></div><div class="played" id="played0"></div></div></div>
@@ -59,7 +59,7 @@
 <script src="./engines/double-kout-sequence.js"></script>
 <script>
 const suits=['♠','♥','♦','♣'],ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'],rankVal=Object.fromEntries(ranks.map((r,i)=>[r,i]));
-let G=null, matchNo=1, previousWinner=null, previousStarter=null, activeMode='double-kout', playStyle='ai', hotseatRevealed=false, KuwaitiPreviewGame=null, challengeStats={winA:0,loseA:0,winB:0,loseB:0};
+let G=null, matchNo=1, previousWinner=null, previousStarter=null, activeMode='double-kout', playStyle='ai', hotseatRevealed=false, humanSeats=new Set([0]), KuwaitiPreviewGame=null, challengeStats={winA:0,loseA:0,winB:0,loseB:0};
 const $=id=>document.getElementById(id), fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]), team=p=>p%2===0?'A':'B';
 const names=['شما · جنوب','شرق · حریف','هم‌تیمی · شمال','غرب · حریف'];
 // Audio and Persian player voice. Audio starts after the first user tap (mobile browser policy).
@@ -152,6 +152,8 @@ function aiChooseFourPlayerContract(hand){
 }
 function startGame(){
  playStyle=$('playStyle').value;hotseatRevealed=false;
+ humanSeats=playStyle==='hotseat'?new Set([...document.querySelectorAll('#humanSeatChoices input:checked')].map(x=>Number(x.value))):new Set([0]);
+ if(playStyle==='hotseat'&&!humanSeats.size){$('status').textContent='برای شروع، دست‌کم یک صندلی انسانی انتخاب کن.';return;}
  if(playStyle==='online'){ $('onlineSetupInfo').classList.remove('hidden');$('onlineSetupInfo').textContent='اتصال سرور آنلاین هنوز پیکربندی نشده است؛ بازی آنلاین را فعلاً شروع نکنید. بازی محلی و هوش مصنوعی در دسترس‌اند.';return;}
  $('onlineSetupInfo').classList.add('hidden');
  const starterSelect=$('starter');
@@ -217,7 +219,7 @@ function beats(a,b,lead){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};re
 function winner(plays){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.resolveTrick(plays.map(p=>({player:p.player,card:{suit:code[cardSuit(p.card)],rank:cardRank(p.card)}})),G.trumpCode,G.contract||'hokm')}
 function play(p,card){
   if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||p!==G.turn)return;
-  if(playStyle==='hotseat'&&!hotseatRevealed)return;
+  if(playStyle==='hotseat'&&(!humanSeats.has(p)||!hotseatRevealed))return;
   try{
     let allowed=legalCards(p);
     if(!allowed.some(c=>c.id===card.id))return;
@@ -348,10 +350,10 @@ function aiChoose(p){
   return sorted[0];
 }
 function runAI(){
-  if(playStyle==='hotseat'||playStyle==='online')return;
-  if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||G.turn===0)return;
+  if(playStyle==='online')return;
+  if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||(playStyle==='hotseat'?humanSeats.has(G.turn):G.turn===0))return;
   setTimeout(()=>{
-    if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||G.turn===0)return;
+    if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||(playStyle==='hotseat'?humanSeats.has(G.turn):G.turn===0))return;
     const p=G.turn;
     try{
       let c;
@@ -391,7 +393,7 @@ function liveSequenceScores(winners){
 }
 function render(){
  if(!G)return;
- const gate=$('hotseatGate');if(gate){const hide=playStyle==='hotseat'&&!hotseatRevealed&&!G.done;gate.classList.toggle('hidden',!hide);if(hide)$('hotseatGateText').textContent='گوشی را به '+(['بازیکن جنوب','بازیکن شرق','بازیکن شمال','بازیکن غرب'][G.turn]||'بازیکن بعدی')+' بدهید. پس از اینکه نفر قبلی دیگر صفحه را نمی‌بیند، دکمه زیر را بزنید.';}
+ const gate=$('hotseatGate');if(gate){const hide=playStyle==='hotseat'&&humanSeats.has(G.turn)&&!hotseatRevealed&&!G.done;gate.classList.toggle('hidden',!hide);if(hide)$('hotseatGateText').textContent='گوشی را به '+(['بازیکن جنوب','بازیکن شرق','بازیکن شمال','بازیکن غرب'][G.turn]||'بازیکن بعدی')+' بدهید. پس از اینکه نفر قبلی دیگر صفحه را نمی‌بیند، دکمه زیر را بزنید.';}
  const liveResult=activeMode==='double-kout'&&!G.challenge?liveSequenceScores(G.trickWinners||[]):null;
  const liveA=liveResult?liveResult.A:(G.trickWinners||[]).filter(p=>team(p)==='A').length;
  const liveB=liveResult?liveResult.B:(G.trickWinners||[]).filter(p=>team(p)==='B').length;
@@ -404,12 +406,14 @@ function render(){
  }
  $('hand').innerHTML='';
  const handPlayer=playStyle==='hotseat'?G.turn:0;
- (G.hands[handPlayer]||[]).forEach(c=>{let b=document.createElement('button'),legal=(playStyle==='hotseat'?hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(handPlayer).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
+ (playStyle==='hotseat'&&!humanSeats.has(G.turn)?[]:(G.hands[handPlayer]||[])).forEach(c=>{let b=document.createElement('button'),legal=(playStyle==='hotseat'?humanSeats.has(G.turn)&&hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(handPlayer).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
  $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
  $('trickMsg').textContent=G.trickCompletePending?'در حال اعلام برنده دست…':G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
 }
-$('revealHotseatHand').onclick=()=>{if(playStyle!=='hotseat'||!G||G.done)return;hotseatRevealed=true;render();};
-$('playStyle').onchange=()=>{$('onlineSetupInfo').classList.toggle('hidden',$('playStyle').value!=='online');};
+$('revealHotseatHand').onclick=()=>{if(playStyle!=='hotseat'||!G||G.done||!humanSeats.has(G.turn))return;hotseatRevealed=true;render();};
+function renderHumanSeatChoices(){const host=$('humanSeatChoices');if(!host)return;host.innerHTML='';[['جنوب',0],['شرق',1],['شمال',2],['غرب',3]].forEach(([n,p])=>{const l=document.createElement('label');l.style.cssText='display:flex;align-items:center;gap:5px;background:#09271f;border:1px solid #477a68;border-radius:9px;padding:8px;color:#f4dfaa';const c=document.createElement('input');c.type='checkbox';c.value=String(p);c.checked=p===0;c.addEventListener('change',()=>{if(!host.querySelector("input:checked"))c.checked=true;});l.append(c,document.createTextNode(n));host.append(l);});}
+renderHumanSeatChoices();
+$('playStyle').onchange=()=>{$('onlineSetupInfo').classList.toggle('hidden',$('playStyle').value!=='online');$('humanSeatSetup').classList.toggle('hidden',$('playStyle').value!=='hotseat');};$('humanSeatSetup').classList.toggle('hidden',$('playStyle').value!=='hotseat');
 $('globalStatsBtn').onclick=showGlobalStats;
 $('closeGlobalStats').onclick=()=>$('globalStatsPanel').classList.add('hidden');
 $('resetGlobalStats').onclick=()=>{if(confirm('تمام آمار ذخیره‌شده پاک شود؟')){localStorage.removeItem(GLOBAL_STATS_KEY);showGlobalStats();}};
@@ -422,6 +426,6 @@ $('soundToggle').onclick=()=>{soundEnabled=!soundEnabled;$('soundToggle').textCo
 $('takeChallenge').onclick=()=>beginNormalOrChallenge('A');$('skipChallenge').onclick=()=>beginNormalOrChallenge(null);
 $('newGame').onclick=()=>{if(G&&G.done){matchNo++;G=null;startGame();return;}matchNo=1;previousWinner=null;previousStarter=null;G=null;$('game').classList.add('hidden');$('setup').classList.remove('hidden');$('hokmContract').disabled=false;$('starter').disabled=false;$('newGame').textContent='بازی جدید';$('start').textContent='پخش کارت و شروع بازی'};
 $('backToModes').onclick=()=>{G=null;matchNo=1;previousWinner=null;previousStarter=null;$('game').classList.add('hidden');$('setup').classList.add('hidden');$('modePicker').classList.remove('hidden');$('modeMessage').textContent='یک حالت بازی را انتخاب کن.'};
-$('sortHand').onclick=()=>{if(!G)return;G.hands[0].sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);render()};
+$('sortHand').onclick=()=>{if(!G)return;const p=playStyle==='hotseat'?G.turn:0;if(playStyle==='hotseat'&&!humanSeats.has(p))return;G.hands[p].sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);render()};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script><script src="./kuwaiti-six-player-ui.js"></script><script>if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script></body></html>
