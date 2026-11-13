@@ -92,7 +92,30 @@ function addStyle(){
 @media(max-width:520px){.k-table{min-height:440px;gap:4px;padding:6px}.k-hand button{margin-left:-57px}.k-hand button .k-card{width:74px;height:111px}.k-center-cards .k-table-played{width:53px;height:80px}.k-center{min-height:150px}}
 `;
 
- document.head.appendChild(s);
+ s.textContent+=`
+/* 0.8.13: dual-corner ranks and illustrated face cards */
+.k-card{position:relative;overflow:hidden}
+.k-corner{position:absolute;z-index:4;display:flex;flex-direction:column;align-items:center;font:900 10px/1 Georgia,serif}
+.k-corner i{font-style:normal;font-size:9px}
+.k-corner-top{top:3px;left:3px}
+.k-corner-bottom{right:3px;bottom:3px;transform:rotate(180deg)}
+.k-royal-frame{position:absolute;inset:13px 8px 12px;display:flex;align-items:center;justify-content:center}
+.k-royal-art{width:100%;height:100%;max-height:42px}
+.k-hand button{margin-left:-45px!important}
+.k-hand button:first-child{margin-left:0!important}
+.k-hand button .k-card{transform:none!important}
+@media(max-width:520px){.k-hand button{margin-left:-49px!important}}
+`;\n s.textContent+=`
+.k-auction.seat-auction-panel{position:absolute!important;z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);width:min(176px,42vw);max-width:176px;margin:0;padding:6px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#143e31f5,#061b16f8);box-shadow:0 8px 24px #000d;direction:rtl}
+.k-auction.seat-auction-panel #kAuctionTitle{display:block;font-size:10px;line-height:1.5;color:#ffe6a1;text-align:center}
+.k-auction.seat-auction-panel #kAuctionInfo,.k-auction.seat-auction-panel #kAuctionLog{display:none}
+.k-auction.seat-auction-panel .k-bids{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:5px}
+.k-auction.seat-auction-panel .k-bids button{min-width:0;padding:5px 2px;font-size:11px;border-radius:6px}
+.k-auction.seat-auction-panel #kMalzoom{margin-top:4px;padding:5px;font-size:10px}
+.k-seat{z-index:1}
+.k-seat:has(.seat-auction-panel){z-index:25}
+.k-auction.seat-auction-panel #kHumanAuctionControls{display:block}
+`;\n document.head.appendChild(s);
 }
 function cardNode(c,small=false){
  const d=document.createElement('div');
@@ -103,7 +126,9 @@ function cardNode(c,small=false){
   return d;
  }
  d.className='k-card '+(['H','D'].includes(c.suit)?'red':'');
- d.innerHTML='<span>'+c.rank+'</span><span class="ksuit">'+suitGlyph[c.suit]+'</span><span style="align-self:flex-end;font-size:9px">'+c.rank+'</span>';
+ const rank=String(c.rank||'');
+ const royal=(r)=>'<svg class="k-royal-art" viewBox="0 0 64 76" aria-hidden="true"><rect x="5" y="3" width="54" height="70" rx="7" fill="#e7d4a4" stroke="#9a7438" stroke-width="2"/><path d="M12 65V31L22 17L32 29L42 17L52 31V65Z" fill="'+(r==='K'?'#234a83':r==='Q'?'#9b3152':'#23704f')+'" stroke="#49351f" stroke-width="2"/><circle cx="32" cy="27" r="10" fill="#f0c99a" stroke="#49351f" stroke-width="1.5"/><path d="'+(r==='K'?'M20 21L18 10L25 16L32 7L39 16L46 10L44 22':r==='Q'?'M20 22Q17 7 32 9Q47 7 44 22M21 14L15 8M43 14L49 8':'M22 20Q20 7 32 9Q44 7 42 20')+'" fill="#d9b45d" stroke="#684a25" stroke-width="2"/><path d="M24 40L32 47L40 40M32 47V62" fill="none" stroke="#f4dfb4" stroke-width="3"/><text x="32" y="70" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff">'+r+'</text></svg>';
+ d.innerHTML='<span class="k-corner k-corner-top">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span><span class="k-corner k-corner-bottom">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span>'+(['K','Q','J'].includes(rank)?'<span class="k-royal-frame">'+royal(rank)+'</span>':'<span class="ksuit">'+suitGlyph[c.suit]+'</span>');
  return d;
 }
 function setStatus(msg){$('kStatus').textContent=msg;}
@@ -125,7 +150,7 @@ function setupMarkup(){
  const g=document.createElement('section');g.className='panel hidden';g.id='kuwaitiGame';
  g.innerHTML=`<h2 class="section-title">کوت کویتی · میز شش‌نفره</h2>
  <div class="k-score"><div>امتیاز تیم شما <b id="kScoreA">۰</b></div><div>امتیاز تیم حریف <b id="kScoreB">۰</b></div><div>دست <b id="kTrickNo">۱</b> از ۹</div><div>بازی‌های برده تیم شما <b id="kGamesWonA">۰</b></div><div>بازی‌های برده حریف <b id="kGamesWonB">۰</b></div></div>
- <div id="kAuction" class="k-auction hidden"><b id="kAuctionTitle">مزایده</b><div class="k-small" id="kAuctionInfo"></div><div class="k-small" id="kAuctionLog"></div>
+ <div id="kAuctionMount"></div><div id="kAuction" class="k-auction hidden"><b id="kAuctionTitle">مزایده</b><div class="k-small" id="kAuctionInfo"></div><div class="k-small" id="kAuctionLog"></div>
  <div id="kHumanAuctionControls">
  <div class="k-bids"><button data-bid="pass" id="kPass">پاس</button><button data-bid="6">۶</button><button data-bid="7">۷</button><button data-bid="8">۸</button><button data-bid="9">۹</button></div>
  <button id="kMalzoom" class="primary hidden">ملزوم</button></div></div>
@@ -185,6 +210,9 @@ function startAuction(){
 }
 function renderAuction(){
  if(!auction)return;
+ const activeSeat=document.querySelector('.k-seat[data-p="'+auction.current+'"]');
+ if(activeSeat){$('kAuction').classList.add('seat-auction-panel');activeSeat.appendChild($('kAuction'));}
+
  const isHuman=isHumanSeat(auction.current),forced=auction.passes>=5&&!auction.highest;
  $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':' · هوش مصنوعی در حال تصمیم‌گیری');
  const obligated=game.obligatedPlayer;
@@ -279,6 +307,8 @@ function submitBid(bid){
 }
 function finishAuction(){
  if(!auction||!auction.highest||!Number.isInteger(auction.highestPlayer)){setStatus('مزایده برنده مشخصی ندارد؛ بازی آغاز نشد.');return;}
+ const auctionMount=$('kAuctionMount');if(auctionMount){$('kAuction').classList.remove('seat-auction-panel');auctionMount.appendChild($('kAuction'));}
+
  const win=auction.highestPlayer,bid={...auction.highest};
  // Once the auction closes, remove every PASS/bid marker and retain only the
  // winning contract value on the winning player's seat.
