@@ -215,7 +215,7 @@ function dealGame(trump){
   }
  }else{
   $('trumpPicker').classList.add('hidden');render();
-  if(activeMode==='double-kout'){$('challengePanel').style.display='block';$('status').textContent='حکم بازی اول پیک است؛ بازی عادی یا چالش را انتخاب کن.';}
+  if(activeMode==='double-kout'){G.waitingChallenge=true;$('challengePanel').style.display='block';$('status').textContent='حکم بازی اول پیک است؛ بازی عادی یا چالش را انتخاب کن.';}
   else { $('status').textContent='حکم بازی اول پیک است؛ بازی آغاز شد.';runAI(); }
  }
  updateChallengeStats();
