@@ -1,0 +1,14 @@
+{
+  "name": "Double Kout",
+  "short_name": "Double Kout",
+  "description": "بازی دابل کوت چهار و شش نفره",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#071d18",
+  "theme_color": "#103d32",
+  "icons": [{ "src": "./IMG_3647.png", "sizes": "any", "type": "image/png", "purpose": "any maskable" }]
+}
