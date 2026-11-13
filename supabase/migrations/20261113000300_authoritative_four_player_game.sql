@@ -20,7 +20,8 @@ using (owner_user_id = auth.uid());
 create or replace function public.start_room_game(
   p_room_id uuid,
   p_start_with_present boolean default false,
-  p_trump text default 'S'
+  p_trump text default 'S',
+  p_challenge_team text default null
 ) returns jsonb
 language plpgsql security definer
 set search_path = public, pg_temp
@@ -51,6 +52,7 @@ begin
     raise exception 'online_engine_currently_supports_four_players_only';
   end if;
   if p_trump not in ('S','H','D','C') then raise exception 'invalid_trump'; end if;
+  if p_challenge_team is not null and (v_room.game_mode <> 'double-kout' or p_challenge_team not in ('A','B')) then raise exception 'invalid_challenge_team'; end if;
   select count(*),count(*) filter(where ready) into v_total,v_ready
     from public.room_members where room_id=p_room_id;
   if v_total < 2 then raise exception 'at_least_two_human_players_required'; end if;
@@ -91,7 +93,9 @@ begin
     'phase','playing','turn',0,'leader',0,'trickNo',1,'plays','[]'::jsonb,
     'trickWinners','[]'::jsonb,'trump',p_trump,'contract','hokm',
     'seatPlayers',v_names,'startedWithPresent',v_total<4,
-    'humanCount',v_total,'message','بازی آنلاین چهار نفره آغاز شد');
+    'humanCount',v_total,'challengeTeam',p_challenge_team,
+    'challengeResult',null,'scoreA',0,'scoreB',0,
+    'message','بازی آنلاین چهار نفره آغاز شد');
   update public.game_rooms set status='playing',public_state=v_state,
     revision=revision+1,updated_at=now() where id=p_room_id;
   return jsonb_build_object('room_id',p_room_id,'status','playing',
@@ -123,6 +127,12 @@ declare
   v_turn integer;
   v_next integer;
   v_done boolean := false;
+  v_winners jsonb;
+  v_challenge text;
+  v_opponent text;
+  v_fail_at integer;
+  v_score_a integer := 0;
+  v_score_b integer := 0;
   v_count integer;
   v_rank_order text[] := array['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
   v_i integer;
@@ -197,10 +207,37 @@ begin
     v_state := jsonb_set(v_state,'{leader}',to_jsonb(v_winner),true);
     v_state := jsonb_set(v_state,'{turn}',to_jsonb(v_winner),true);
     v_state := jsonb_set(v_state,'{trickNo}',to_jsonb((v_state->>'trickNo')::integer+1),true);
-    if jsonb_array_length(v_state->'trickWinners')=13 then
-      v_state := jsonb_set(v_state,'{phase}','"finished"'::jsonb,true);
+    v_winners := v_state->'trickWinners';
+    v_challenge := v_state->>'challengeTeam';
+    if v_challenge is not null then
+      v_opponent := case when v_challenge='A' then 'B' else 'A' end;
+      v_fail_at := null;
+      for v_i in 3..jsonb_array_length(v_winners)-1 loop
+        if mod((v_winners->>v_i)::integer,2)::text = case when v_opponent='A' then '0' else '1' end
+           and (v_winners->>v_i)=(v_winners->>(v_i-1)) then
+          v_fail_at := v_i+1; exit;
+        end if;
+      end loop;
+      if v_fail_at is not null then
+        v_state := jsonb_set(v_state,'{challengeResult}',jsonb_build_object('status','failed-opponent-sequence','endedAtTrick',v_fail_at),true);
+        v_done := true;
+      elsif jsonb_array_length(v_winners)=13 then
+        if (case when mod((v_winners->>12)::integer,2)=0 then 'A' else 'B' end)=v_challenge then
+          v_state := jsonb_set(v_state,'{challengeResult}',jsonb_build_object('status','success','endedAtTrick',13),true);
+        else
+          v_state := jsonb_set(v_state,'{challengeResult}',jsonb_build_object('status','failed-last-trick','endedAtTrick',13),true);
+        end if;
+        v_done := true;
+      end if;
+    elsif jsonb_array_length(v_winners)=13 then
+      for v_i in 0..12 loop
+        if mod((v_winners->>v_i)::integer,2)=0 then v_score_a:=v_score_a+1; else v_score_b:=v_score_b+1; end if;
+      end loop;
+      v_state := jsonb_set(v_state,'{scoreA}',to_jsonb(v_score_a),true);
+      v_state := jsonb_set(v_state,'{scoreB}',to_jsonb(v_score_b),true);
       v_done := true;
     end if;
+    if v_done then v_state := jsonb_set(v_state,'{phase}','"finished"'::jsonb,true); end if;
   else
     v_next := (p_seat+1)%4;
     v_state := jsonb_set(v_state,'{plays}',v_plays,true);
@@ -252,10 +289,10 @@ begin
 end;
 $$;
 
-revoke all on function public.start_room_game(uuid,boolean,text) from public;
+revoke all on function public.start_room_game(uuid,boolean,text,text) from public;
 revoke all on function public.apply_room_card(uuid,smallint,text,boolean) from public;
 revoke all on function public.play_room_card(uuid,text) from public;
 revoke all on function public.play_room_ai_turn(uuid) from public;
-grant execute on function public.start_room_game(uuid,boolean,text) to authenticated;
+grant execute on function public.start_room_game(uuid,boolean,text,text) to authenticated;
 grant execute on function public.play_room_card(uuid,text) to authenticated;
 grant execute on function public.play_room_ai_turn(uuid) to authenticated;
