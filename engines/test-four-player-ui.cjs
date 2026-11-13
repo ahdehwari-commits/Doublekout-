@@ -63,7 +63,7 @@ assert.ok(sixUi.includes("const suitByContract={hokm_spades:'S',hokm_hearts:'H',
 assert.ok(sixUi.includes("const resolvedTrump=noTrumpContracts.includes(bidContract)?null:(game.isMalzoom?(trumpSuit||null):suitByContract[bidContract])"));
 assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\n try{"));
 assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump})"));
-assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump})")&&sixUi.includes("const openingCards=K.legalCards(game.hands[winner],null")&&sixUi.includes("if(!isHumanSeat(winner))")&&sixUi.includes("locked=false;playAITurn();"),"auction winner must receive a validated first legal card and AI must start through the managed turn scheduler");
+assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump})")&&sixUi.includes("const openingCards=K.legalCards(game.hands[winner],null")&&sixUi.includes("if(isHumanSeat(winner)){")&&sixUi.includes("locked=false;playAITurn();"),"auction winner must receive a validated first legal card and AI must start through the managed turn scheduler");
 assert.ok(sixUi.includes("Kuwaiti AI fallback card selected"),'AI turn must have a legal-card fallback after auction');
 assert.ok(sixUi.includes('class="joker-art"')&&sixUi.includes("M12 105")&&sixUi.includes("RED JOKER")&&sixUi.includes("BLACK JOKER"),'six-player jokers must use custom devil-and-trident card artwork');
 assert.ok(sixUi.includes('transform:rotate(-24deg) scale(.92)'),'card-back name must be smaller, gold and contained within the card');
