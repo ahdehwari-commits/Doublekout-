@@ -8,7 +8,7 @@ function createWindow() {
   });
   win.loadFile(path.join(__dirname, '..', 'web-prototype.html'));
   win.webContents.setWindowOpenHandler(({ url }) => {
-    if (/^https?:\\/\\//i.test(url)) shell.openExternal(url);
+    if (url.startsWith('http://') || url.startsWith('https://')) shell.openExternal(url);
     return { action: 'deny' };
   });
 }
