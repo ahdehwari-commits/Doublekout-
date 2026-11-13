@@ -1,4 +1,4 @@
-name: Build Android APK # Includes four-player rule and UI regression checks
+name: Build Android APK # Rebuild current Android assets after mobile viewport fixes
 
 on:
   workflow_dispatch:
