@@ -78,7 +78,7 @@ assert.ok(sixUi.includes('id="kAuctionSummary"')&&sixUi.includes('نتیجه م�
 assert.ok(sixUi.includes('id="kWonA"')&&sixUi.includes('id="kWonB"')&&sixUi.includes('game.trickWinners.filter(p=>team(p)'), 'live won-trick counters must be displayed for both teams');
 assert.ok(sixUi.includes('const teamPlayers=previousWinningTeam===\'B\'?[1,3,5]:[0,2,4]')&&sixUi.includes('startAuction();'), 'next six-player deal must skip setup and go directly to auction');
 
-assert.ok(html.includes("$('trickCountWrap').style.display=contract==='partner_middle'?'none':''"));
+assert.ok(!html.includes('trickCountWrap')&&!html.includes('trickCount'),'the four-player per-trick four-card counter is fully removed');
 assert.ok(sixUi.includes("$('kTrickCards').style.display='';"),'six-player trick counter should remain visible');
 console.log('PASS: four/six-player all four Hokm suits, partner-middle counter, auction-to-play handoff, auction rotation and rank adapter');
 
