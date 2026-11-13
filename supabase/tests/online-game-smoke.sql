@@ -110,6 +110,39 @@ begin
     raise exception 'Double Kout challenge result is missing or invalid';
   end if;
   raise notice 'PASS: Double Kout challenge resolves with the configured sequence rules';
+  -- A third room verifies ordinary Double Kout sequence scoring totals all 13 tricks.
+  perform set_config('request.jwt.claim.sub',v_host::text,false);
+  v_room := public.create_game_room('double-kout',4::smallint,'Host');
+  v_room_id := (v_room->>'room_id')::uuid;
+  v_code := v_room->>'code';
+  perform set_config('request.jwt.claim.sub',v_guest::text,false);
+  perform public.join_game_room(v_code,'Guest');
+  perform public.set_room_ready(v_room_id,true);
+  perform set_config('request.jwt.claim.sub',v_host::text,false);
+  perform public.start_room_game(v_room_id,true,'S',null);
+  for v_step in 1..52 loop
+    select status,public_state into v_status,v_state from public.game_rooms where id=v_room_id;
+    exit when v_status='finished';
+    v_turn := (v_state->>'turn')::integer;
+    select owner_user_id,cards into v_owner,v_cards from public.room_game_hands where room_id=v_room_id and seat=v_turn;
+    if v_owner is null then
+      perform set_config('request.jwt.claim.sub',v_host::text,false);
+      perform public.play_room_ai_turn(v_room_id);
+    else
+      perform set_config('request.jwt.claim.sub',v_owner::text,false);
+      v_lead := case when jsonb_array_length(v_state->'plays')>0 then v_state->'plays'->0->'card'->>'suit' else null end;
+      select x->>'id' into v_card_id from jsonb_array_elements(v_cards) x
+       where v_lead is null or x->>'suit'=v_lead or not exists(select 1 from jsonb_array_elements(v_cards) y where y->>'suit'=v_lead)
+       order by random() limit 1;
+      perform public.play_room_card(v_room_id,v_card_id);
+    end if;
+  end loop;
+  select status,public_state into v_status,v_state from public.game_rooms where id=v_room_id;
+  if v_status <> 'finished' then raise exception 'Double Kout normal game did not finish'; end if;
+  if (v_state->>'scoreA')::integer+(v_state->>'scoreB')::integer<>13 then
+    raise exception 'Double Kout sequence score must total 13';
+  end if;
+  raise notice 'PASS: Double Kout non-challenge sequence scoring totals 13';
 
   raise notice 'PASS: room start, private hands, 2 humans + 2 AI, turn validation, legal cards, 13 tricks and final score';
 end;
