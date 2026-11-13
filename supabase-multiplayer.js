@@ -45,10 +45,11 @@ function initClient(){
  client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
  return true;
 }
-async function authenticate(){
+async function authenticate(setStage){
  if(!initClient())throw new Error('کتابخانه Supabase در دسترس نیست.');
- var got=await client.auth.getSession();session=got.data&&got.data.session;
- if(!session){var sign=await client.auth.signInAnonymously();if(sign.error)throw sign.error;session=sign.data.session;}
+ setStage('بررسی نشست ورود');
+ var got=await client.auth.getSession();if(got.error)throw got.error;session=got.data&&got.data.session;
+ if(!session){setStage('ورود ناشناس به Supabase');var sign=await client.auth.signInAnonymously();if(sign.error)throw sign.error;session=sign.data.session;}
  if(!session)throw new Error('ورود مهمان انجام نشد. ورود ناشناس را در Authentication فعال کن.');
  me=session.user;return me;
 }
@@ -74,23 +75,23 @@ async function refreshRoster(){
  el('onlineReady').textContent=mine&&mine.ready?'لغو آمادگی':'آماده‌ام';
 }
 async function createRoom(){
- try{
+ var stage='آماده‌سازی';try{
   say('در حال ورود مهمان و ساخت اتاق...');
-  await authenticate();mode=el('onlineMode').value;count=mode==='kuwaiti'?6:4;
-  var r=await client.rpc('create_game_room',{p_game_mode:mode,p_player_count:count,p_display_name:el('onlineName').value.trim()||'بازیکن'});
+  await authenticate(function(s){stage=s;});mode=el('onlineMode').value;count=mode==='kuwaiti'?6:4;
+  stage='فراخوانی create_game_room';var r=await client.rpc('create_game_room',{p_game_mode:mode,p_player_count:count,p_display_name:el('onlineName').value.trim()||'بازیکن'});
   if(r.error)throw r.error;
   roomId=r.data.room_id;roomCode=r.data.code;showRoom();subscribe();
- }catch(e){say('ساخت اتاق انجام نشد: '+(e.message||e)+'\nاگر پیام Anonymous sign-ins disabled دیدی، Authentication > Sign In / Providers > Anonymous را فعال کن.');}
+ }catch(e){say('ساخت اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
 }
 async function joinRoom(){
- try{
+ var stage='آماده‌سازی';try{
   say('در حال ورود به اتاق...');
-  await authenticate();var code=el('onlineJoinCode').value.trim().toUpperCase();
+  await authenticate(function(s){stage=s;});var code=el('onlineJoinCode').value.trim().toUpperCase();
   if(!/^[A-F0-9]{6}$/.test(code))throw new Error('کد اتاق باید شش حرف یا عدد باشد.');
-  var r=await client.rpc('join_game_room',{p_code:code,p_display_name:el('onlineName').value.trim()||'بازیکن'});
+  stage='فراخوانی join_game_room';var r=await client.rpc('join_game_room',{p_code:code,p_display_name:el('onlineName').value.trim()||'بازیکن'});
   if(r.error)throw r.error;
   roomId=r.data.room_id;roomCode=r.data.code;mode=r.data.game_mode;count=Number(r.data.player_count);showRoom();subscribe();
- }catch(e){say('ورود به اتاق انجام نشد: '+(e.message||e)+'\nاگر پیام Anonymous sign-ins disabled دیدی، ورود ناشناس را در تنظیمات Authentication فعال کن.');}
+ }catch(e){say('ورود به اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
 }
 async function toggleReady(){
  try{if(!roomId)return;say('در حال ثبت آمادگی...');var q=await client.from('room_members').select('ready').eq('room_id',roomId).eq('user_id',me.id).single();if(q.error)throw q.error;
