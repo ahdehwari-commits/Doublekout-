@@ -10,6 +10,7 @@ as $$
 declare
   v_user uuid := auth.uid();
   v_member public.room_members%rowtype;
+  v_status text;
 begin
   if v_user is null then raise exception 'authentication_required'; end if;
   select * into v_member
@@ -17,6 +18,8 @@ begin
   where room_id = p_room_id and user_id = v_user
   for update;
   if not found then raise exception 'not_a_room_member'; end if;
+  select status into v_status from public.game_rooms where id = p_room_id;
+  if v_status <> 'waiting' then raise exception 'room_not_waiting'; end if;
 
   update public.room_members
      set ready = coalesce(p_ready, false)
