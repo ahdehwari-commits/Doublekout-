@@ -54,8 +54,15 @@ jobs:
           node engines/test-browser-engine-load-order.cjs
           node engines/test-double-kout-sequence.cjs
 
-      # Keep the same debug signing key between CI builds so APK updates
-      # install over the previous version. The first build seeds this cache.
+      # Seed a fixed debug signing key once; subsequent CI builds restore it.
+      - name: Create Android signing key if absent
+        run: |
+          mkdir -p "$HOME/.android"
+          if [ ! -f "$HOME/.android/debug.keystore" ]; then
+            keytool -genkeypair -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
+      # Keep the same key between CI builds so future APK updates install in place.
       - name: Restore persistent Android debug signing key
         uses: actions/cache@v4
         with:
