@@ -624,18 +624,20 @@ async function refreshRoster(){
  if(!roomId||!client||rosterBusy)return;
  rosterBusy=true;
  try{
-  var r=await client.from('room_members').select('seat,display_name,is_host,ready,user_id').eq('room_id',roomId).order('seat');
-  if(r.error){say('خواندن فهرست بازیکنان: '+r.error.message);return;}
-  var cap=count,rows=r.data||[],html='';
-  for(var i=0;i<cap;i++){var p=rows.find(function(x){return x.seat===i;});html+='<div>'+(i+1)+'. '+(p?esc(p.display_name)+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
+  var r=await client.rpc('get_room_roster',{p_room_id:roomId});
+  if(r.error)throw r.error;
+  var rows=Array.isArray(r.data)?r.data:[],cap=count,html='';
+  for(var i=0;i<cap;i++){var p=rows.find(function(x){return Number(x.seat)===i;});html+='<div>'+(i+1)+'. '+(p?esc(p.display_name)+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
   el('onlineRoster').innerHTML=html;
-  var allReady=rows.length>=2&&rows.every(function(x){return x.ready;});
+  var allReady=rows.length>=2&&rows.every(function(x){return x.ready===true;});
   var mine=rows.find(function(x){return x.user_id===me.id;});
-  myOnlineSeat=mine?mine.seat:-1;
+  myOnlineSeat=mine?Number(mine.seat):-1;
   el('onlineReady').textContent=mine&&mine.ready?'لغو آمادگی':'آماده‌ام';
+  el('onlineReady').dataset.ready=mine&&mine.ready?'true':'false';
+  el('onlineReady').disabled=!mine;
   el('onlineStart').style.display=mine&&mine.is_host&&allReady&&mode!=='kuwaiti'?'block':'none';
   el('onlineStart').textContent=rows.length===cap?'شروع بازی چهار نفره':'شروع با '+rows.length+' بازیکن و تکمیل صندلی‌های خالی با ربات';
-  if(!allReady)say(rows.length+' از '+cap+' بازیکن وارد شده‌اند. همه بازیکنان حاضر باید آماده باشند.');
+  if(!allReady)say(rows.length+' از '+cap+' بازیکن وارد شده‌اند. وضعیت آمادگی از سرور دریافت شد.');
   await refreshOnlineGame();
  }catch(e){say('به‌روزرسانی فهرست بازیکنان: '+(e.message||e));}
  finally{rosterBusy=false;}
@@ -660,9 +662,16 @@ async function joinRoom(){
  }catch(e){say('ورود به اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
 }
 async function toggleReady(){
- try{if(!roomId)return;say('در حال ثبت آمادگی...');var q=await client.from('room_members').select('ready').eq('room_id',roomId).eq('user_id',me.id).single();if(q.error)throw q.error;
- var r=await client.rpc('set_room_ready',{p_room_id:roomId,p_ready:!q.data.ready});if(r.error)throw r.error;await refreshRoster();
- }catch(e){say('ثبت آمادگی انجام نشد: '+(e.message||e));}
+ try{
+  if(!roomId)return;
+  var b=el('onlineReady'),current=b.dataset.ready==='true',target=!current;
+  b.disabled=true;say(target?'در حال ثبت آمادگی...':'در حال لغو آمادگی...');
+  var r=await client.rpc('set_room_ready',{p_room_id:roomId,p_ready:target});
+  if(r.error)throw r.error;
+  await refreshRoster();
+  say(target?'آمادگی ثبت شد.':'آمادگی لغو شد؛ میزبان باید فهرست را به‌روزرسانی‌شده ببیند.');
+ }catch(e){say('تغییر وضعیت آمادگی انجام نشد: '+(e.message||e));}
+ finally{if(el('onlineReady'))el('onlineReady').disabled=false;}
 }
 async function startOnlineGame(){
  try{
@@ -722,10 +731,15 @@ async function refreshOnlineGame(){
  finally{gameBusy=false;}
 }
 async function leave(){
+ var leavingRoom=roomId;
  if(rosterTimer){clearInterval(rosterTimer);rosterTimer=null;}
  if(gameTimer){clearInterval(gameTimer);gameTimer=null;}
+ if(leavingRoom&&client){
+  try{var left=await client.rpc('leave_game_room',{p_room_id:leavingRoom});if(left.error)throw left.error;}
+  catch(e){say('خروج محلی انجام شد، اما حذف عضویت از اتاق انجام نشد: '+(e.message||e));}
+ }
  if(channel){await client.removeChannel(channel);channel=null;}
- roomId=null;roomCode='';myOnlineSeat=-1;lastGameRevision=-1;el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی. نشست مهمان روی این گوشی باقی می‌ماند.');
+ roomId=null;roomCode='';myOnlineSeat=-1;lastGameRevision=-1;el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
 }
 window.DoubleKoutOnline={open:open,leave:leave};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
