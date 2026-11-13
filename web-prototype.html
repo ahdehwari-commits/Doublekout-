@@ -86,6 +86,18 @@
 .card.back:after{font-size:9px!important;inset:36% 5% auto!important;height:24%!important;transform:rotate(-18deg)!important;white-space:normal!important;line-height:1.15!important}
 @media(max-width:520px){.hand button{margin-left:-52px!important}.hand button .card{width:79px;height:119px}.card .corner{font-size:12px}.card .corner i{font-size:11px}}
 
+
+/* Final fan layout: one readable hand, larger opponent backs and a legible gold signature. */
+.hand{display:flex;justify-content:center;align-items:flex-end;flex-wrap:nowrap;gap:0;overflow-x:auto;overflow-y:visible;min-height:166px;padding:22px 12px 30px;scrollbar-width:thin}
+.hand button{flex:0 0 72px;width:72px;height:108px;margin-left:-48px!important;transform-origin:50% 100%;position:relative}
+.hand button:first-child{margin-left:0!important}
+.hand button .card{width:72px;height:108px}
+.opponent-fan{height:86px;align-items:flex-end}
+.opponent-fan .card.back{width:52px;height:78px;min-width:52px;flex:0 0 52px;margin-left:-42px;border-width:2px;border-radius:6px;transform-origin:50% 100%;box-shadow:0 5px 12px #000c,inset 0 0 0 1px #fff5}
+.opponent-fan .card.back:first-child{margin-left:0}
+.card.back:after{content:"Abdolhamid\A Dehvari";white-space:pre;position:absolute;inset:35% 3% auto;height:30%;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 900 8px/1.1 Georgia,"Times New Roman",serif;letter-spacing:.05px;color:#ffe7a0;text-shadow:0 1px 2px #06172b,0 0 4px #f2c86a;transform:rotate(-18deg);padding:1px;background:#102b4b55;border:1px solid #e8cf8d66;border-radius:4px;box-sizing:border-box}
+@media(max-width:520px){.hand{min-height:154px;padding-left:7px;padding-right:7px}.hand button{flex-basis:69px;width:69px;height:104px;margin-left:-46px!important}.hand button:first-child{margin-left:0!important}.hand button .card{width:69px;height:104px}.opponent-fan{height:82px}.opponent-fan .card.back{width:50px;height:75px;min-width:50px;flex-basis:50px;margin-left:-40px}}
+
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۱۲ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
@@ -463,12 +475,12 @@ function render(){
   const seatName=$('seat'+p).querySelector('.name');if(seatName)seatName.textContent=playStyle==='hotseat'?(humanSeats.has(p)?'بازیکن انسانی':'هوش مصنوعی')+' · '+(['جنوب · هم‌تیمی','شرق · حریف','شمال · هم‌تیمی','غرب · حریف'][p]):names[p];
   $('seat'+p).classList.toggle('active',G.turn===p);$('count'+p).textContent=p===0?'کارت شما: '+fa(G.hands[p].length):fa(G.hands[p].length)+' کارت';
   let slot=$('played'+p);slot.innerHTML='';
-  if((playStyle==='hotseat'?(!humanSeats.has(p)||p!==G.turn):p!==0)&&G.hands[p].length){const fan=document.createElement('div');fan.className='opponent-fan';const n=G.hands[p].length;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='card back';back.style.setProperty('--fan-index',j);fan.append(back);}slot.append(fan);}
+  if((playStyle==='hotseat'?(!humanSeats.has(p)||p!==G.turn):p!==0)&&G.hands[p].length){const fan=document.createElement('div');fan.className='opponent-fan';const n=G.hands[p].length;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='card back';const offset=j-(n-1)/2;back.style.transform='rotate('+(offset*2.8)+'deg) translateY('+(Math.abs(offset)*1.35)+'px)';back.style.zIndex=String(10+j);fan.append(back);}slot.append(fan);}
  }
  $('hand').innerHTML='';
  const centerTrick=$('centerTrick');if(centerTrick){centerTrick.innerHTML='';G.plays.forEach((x,i)=>{const played=cardEl(x.card,true);played.classList.add('table-played');played.style.setProperty('--play-index',i);centerTrick.append(played);});}
  const handTitle=document.querySelector('#game h3.section-title');if(handTitle)handTitle.textContent=playStyle==='hotseat'?'کارت‌های بازیکن نوبت‌دار':'کارت‌های شما';
- (playStyle==='hotseat'&&!humanSeats.has(G.turn)?[]:(G.hands[handPlayer]||[])).forEach(c=>{let b=document.createElement('button'),legal=(playStyle==='hotseat'?humanSeats.has(G.turn)&&hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(handPlayer).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
+ (playStyle==='hotseat'&&!humanSeats.has(G.turn)?[]:(G.hands[handPlayer]||[])).forEach((c,i,arr)=>{let b=document.createElement('button'),offset=i-(arr.length-1)/2;b.style.transform='rotate('+(offset*3.4)+'deg) translateY('+(Math.abs(offset)*1.8)+'px)';b.style.zIndex=String(10+i);let legal=(playStyle==='hotseat'?humanSeats.has(G.turn)&&hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(handPlayer).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
  $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
  $('trickMsg').textContent=G.trickCompletePending?'در حال اعلام برنده دست…':G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
 }
