@@ -135,6 +135,7 @@ function addStyle(){
 @media(max-width:520px){.k-hand{min-height:160px;padding-left:8px;padding-right:8px}.k-hand button,.k-hand .k-auction-card{flex-basis:72px;width:72px;height:108px;margin-left:-46px!important}.k-hand button:first-child,.k-hand .k-auction-card:first-child{margin-left:0!important}.k-hand button .k-card,.k-hand .k-auction-card .k-card{width:72px;height:108px}.k-opponent-fan{height:84px}.k-opponent-fan .k-card.k-back{width:52px;height:78px;min-width:52px;flex-basis:52px;margin-left:-41px}}
 `;
  
+  s.textContent+=`
   /* 0.8.15 responsive hands: keep all nine cards inside the phone viewport. */
   .k-hand{width:100%;max-width:100%;box-sizing:border-box;justify-content:center;overflow:hidden;overflow-y:visible;padding:12px 4px 22px;min-height:122px;gap:0}
   .k-hand button{flex:0 0 56px;width:56px;height:84px;margin-left:-18px!important;perspective:none}
@@ -157,7 +158,8 @@ function addStyle(){
     .k-hand button .k-card.joker .joker-art{height:43px}
     .k-opponent-fan .k-card.k-back{width:36px;height:54px;min-width:36px;flex-basis:36px;margin-left:-28px}
   }
-document.head.appendChild(s);
+  `;
+  document.head.appendChild(s);
 }
 function cardNode(c,small=false){
  const d=document.createElement('div');
