@@ -1,4 +1,4 @@
-const CACHE='double-kout-0.8.24';
+const CACHE='double-kout-0.8.25';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./IMG_3647.png','./kuwaiti-six-player-ui.js','./supabase-multiplayer.js','./lan-multiplayer.js','./three-d-scene.js','./engines/standard-hokm/engine.js','./engines/kuwaiti-six-player/engine.js','./engines/double-kout-sequence.js'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
