@@ -166,30 +166,31 @@ function addStyle(){
   .k-card .k-corner{z-index:6}
   `;
 
-/* 0.8.17: visible own hand throughout AI play; oversized edge-clipped opponent fans. */
-.k-hand{width:100%;max-width:100%;box-sizing:border-box;justify-content:center;overflow:visible;overflow-y:visible;padding:18px 4px 26px;min-height:148px;gap:0}
-.k-hand button,.k-hand .k-auction-card{flex:0 0 68px;width:68px;height:102px;margin-left:-39px!important;position:relative;transform-origin:50% 100%}
-.k-hand button:first-child,.k-hand .k-auction-card:first-child{margin-left:0!important}
-.k-hand button .k-card,.k-hand .k-auction-card .k-card{width:68px;height:102px;min-width:68px}
-.k-hand button:disabled{opacity:1}
-.k-opponent-fan{height:108px;min-width:0;max-width:none;width:max-content;overflow:visible;justify-content:center;align-items:flex-end;padding:0;position:relative}
-.k-opponent-fan .k-card.k-back{width:64px;height:96px;min-width:64px;flex:0 0 64px;margin-left:-43px;border-width:3px!important;border-radius:8px;transform:rotate(calc((var(--fan-index) - 4)*4.2deg))!important;transform-origin:50% 100%}
-.k-opponent-fan .k-card.k-back:first-child{margin-left:0}
-.k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan{transform:translateX(12px) rotate(90deg) scale(1.12)!important;transform-origin:center}
-.k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:translateX(-12px) rotate(90deg) scale(1.12)!important;transform-origin:center}
-.k-seat[data-p="3"] .k-opponent-fan{transform:translateY(-4px) scale(1.08)!important}
-.k-seat[data-p="0"] .k-opponent-fan{transform:translateY(4px) scale(1.08)!important}
-@media(max-width:520px){
- .k-hand{min-height:142px;padding:14px 2px 24px}
- .k-hand button,.k-hand .k-auction-card{flex-basis:62px;width:62px;height:93px;margin-left:-36px!important}
- .k-hand button:first-child,.k-hand .k-auction-card:first-child{margin-left:0!important}
- .k-hand button .k-card,.k-hand .k-auction-card .k-card{width:62px;height:93px;min-width:62px}
- .k-opponent-fan{height:100px}
- .k-opponent-fan .k-card.k-back{width:60px;height:90px;min-width:60px;flex-basis:60px;margin-left:-41px}
- .k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan{transform:translateX(15px) rotate(90deg) scale(1.08)!important}
- .k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:translateX(-15px) rotate(90deg) scale(1.08)!important}
-}
-
+  s.textContent+=`
+  /* 0.8.17: visible own hand throughout AI play; oversized edge-clipped opponent fans. */
+  .k-hand{width:100%;max-width:100%;box-sizing:border-box;justify-content:center;overflow:visible;overflow-y:visible;padding:18px 4px 26px;min-height:148px;gap:0}
+  .k-hand button,.k-hand .k-auction-card{flex:0 0 68px;width:68px;height:102px;margin-left:-39px!important;position:relative;transform-origin:50% 100%}
+  .k-hand button:first-child,.k-hand .k-auction-card:first-child{margin-left:0!important}
+  .k-hand button .k-card,.k-hand .k-auction-card .k-card{width:68px;height:102px;min-width:68px}
+  .k-hand button:disabled{opacity:1}
+  .k-opponent-fan{height:108px;min-width:0;max-width:none;width:max-content;overflow:visible;justify-content:center;align-items:flex-end;padding:0;position:relative}
+  .k-opponent-fan .k-card.k-back{width:64px;height:96px;min-width:64px;flex:0 0 64px;margin-left:-43px;border-width:3px!important;border-radius:8px;transform:rotate(calc((var(--fan-index) - 4)*4.2deg))!important;transform-origin:50% 100%}
+  .k-opponent-fan .k-card.k-back:first-child{margin-left:0}
+  .k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan{transform:translateX(12px) rotate(90deg) scale(1.12)!important;transform-origin:center}
+  .k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:translateX(-12px) rotate(90deg) scale(1.12)!important;transform-origin:center}
+  .k-seat[data-p="3"] .k-opponent-fan{transform:translateY(-4px) scale(1.08)!important}
+  .k-seat[data-p="0"] .k-opponent-fan{transform:translateY(4px) scale(1.08)!important}
+  @media(max-width:520px){
+   .k-hand{min-height:142px;padding:14px 2px 24px}
+   .k-hand button,.k-hand .k-auction-card{flex-basis:62px;width:62px;height:93px;margin-left:-36px!important}
+   .k-hand button:first-child,.k-hand .k-auction-card:first-child{margin-left:0!important}
+   .k-hand button .k-card,.k-hand .k-auction-card .k-card{width:62px;height:93px;min-width:62px}
+   .k-opponent-fan{height:100px}
+   .k-opponent-fan .k-card.k-back{width:60px;height:90px;min-width:60px;flex-basis:60px;margin-left:-41px}
+   .k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan{transform:translateX(15px) rotate(90deg) scale(1.08)!important}
+   .k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:translateX(-15px) rotate(90deg) scale(1.08)!important}
+  }
+  `;
   document.head.appendChild(s);
 }
 function royalPortrait(rank){
