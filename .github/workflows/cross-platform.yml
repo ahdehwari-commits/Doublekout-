@@ -1,0 +1,51 @@
+name: Build Windows and iPhone web app
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "web-prototype.html"
+      - "kuwaiti-six-player-ui.js"
+      - "three-d-scene.js"
+      - "engines/**"
+      - "desktop/**"
+      - "package.json"
+      - "manifest.webmanifest"
+      - "sw.js"
+      - ".github/workflows/cross-platform.yml"
+jobs:
+  windows-exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build portable Windows EXE
+        run: |
+          npm install --no-audit --no-fund
+          npm run dist:win
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DoubleKout-Windows-EXE
+          path: dist-desktop/*.exe
+          if-no-files-found: error
+  iphone-pwa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble iPhone installable web app
+        run: |
+          mkdir -p dist-pwa/engines/standard-hokm dist-pwa/engines/kuwaiti-six-player
+          cp web-prototype.html dist-pwa/index.html
+          cp kuwaiti-six-player-ui.js three-d-scene.js IMG_3647.png manifest.webmanifest sw.js dist-pwa/
+          cp engines/standard-hokm/engine.js dist-pwa/engines/standard-hokm/
+          cp engines/kuwaiti-six-player/engine.js dist-pwa/engines/kuwaiti-six-player/
+          cp engines/double-kout-sequence.js dist-pwa/engines/
+          cd dist-pwa
+          zip -r ../DoubleKout-iPhone-PWA-0.8.10.zip .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DoubleKout-iPhone-PWA
+          path: DoubleKout-iPhone-PWA-0.8.10.zip
+          if-no-files-found: error
