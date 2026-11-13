@@ -124,7 +124,7 @@
 .royal-frame{inset:8px 5px 8px!important}
 .royal-art{display:block;width:100%;height:100%;max-height:none!important;filter:drop-shadow(0 2px 2px #49351f55)}
 .card .corner{z-index:6}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۱۵ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۲۸ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
 <button class="mode-card" id="modeDouble"><strong>♠ میز چهار نفره</strong><span>دابل کوت توالی · نسخه قابل‌بازی</span></button>
@@ -133,7 +133,7 @@
 </div>
 <p class="muted" id="modeMessage">حالت شش‌نفره فقط با نام «کوت کویتی» نمایش داده می‌شود.</p><div class="actions" style="margin-top:12px"><button id="globalStatsBtn" type="button">آمار کل بازی‌ها</button><button id="exitAppBtn" type="button">خروج از برنامه</button></div>
 <section class="panel hidden" id="globalStatsPanel"><h3 class="section-title">آمار کل بازی‌ها</h3><div id="globalStatsReport" class="rules"></div><div class="actions"><button id="closeGlobalStats" type="button">بستن آمار</button><button id="resetGlobalStats" type="button">پاک‌کردن آمار</button></div></section></section>
-<section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><select id="hokmContract" class="hidden" aria-hidden="true"><option value="hokm_spades" selected>پیک</option><option value="hokm_hearts">دل</option><option value="hokm_diamonds">خشت</option><option value="hokm_clubs">گشنیز</option></select><div id="hokmContractPicker" class="hidden"></div><div class="setup"><div><label>شیوه بازی</label><select id="playStyle"><option value="ai">یک نفر در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با چهار گوشی (اتاق اینترنتی)</option></select></div><div id="humanSeatSetup" style="grid-column:1/-1"><label>صندلی بازیکنان انسانی (صندلی‌های خالی با هوش مصنوعی پر می‌شوند)</label><div id="humanSeatChoices" class="actions"></div><p class="muted">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option><option value="hard">سخت</option><option value="expert">خیلی سخت</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><div id="onlineSetupInfo" class="status hidden">بازی آنلاین واقعی به سرور اتاق‌ها نیاز دارد. پس از اتصال سرویس آنلاین، میزبان اتاق می‌سازد و دیگران با کد وارد می‌شوند؛ تا آن زمان این گزینه شروع نمی‌شود.</div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
+<section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><select id="hokmContract" class="hidden" aria-hidden="true"><option value="hokm_spades" selected>پیک</option><option value="hokm_hearts">دل</option><option value="hokm_diamonds">خشت</option><option value="hokm_clubs">گشنیز</option></select><div id="hokmContractPicker" class="hidden"></div><div class="setup"><div><label>شیوه بازی</label><select id="playStyle"><option value="ai">یک نفر در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با چهار گوشی (اتاق اینترنتی)</option></select></div><div id="humanSeatSetup" style="grid-column:1/-1"><label>صندلی بازیکنان انسانی (صندلی‌های خالی با هوش مصنوعی پر می‌شوند)</label><div id="humanSeatChoices" class="actions"></div><p class="muted">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option><option value="hard">سخت</option><option value="expert">خیلی سخت</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><div id="onlineSetupInfo" class="status hidden">برای بازی آنلاین، ابتدا اتاق بساز یا با کد وارد اتاق بازیکن دیگری شو. پنجره اتاق آنلاین با انتخاب این گزینه باز می‌شود.</div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
 <section class="panel hidden" id="game"><div id="hotseatGate" class="hidden"><div class="gate-card"><div style="font-size:42px">♠ ♥ ♦ ♣</div><h2>تحویل گوشی به بازیکن بعدی</h2><p id="hotseatGateText">گوشی را به بازیکن بعدی بدهید. مطمئن شوید نفر قبلی دیگر صفحه را نمی‌بیند؛ سپس کارت‌های خود را نمایش دهید.</p><button id="revealHotseatHand" type="button">کارت‌های من را نمایش بده</button></div></div><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">بازی‌های برده تیم شما: <b id="gamesWonA">۰</b></div><div class="score">بازی‌های برده تیم حریف: <b id="gamesWonB">۰</b></div><div class="score">دست: <b id="trickNo">۱</b> / ۱۳</div></div>
 <div class="k-live-tricks" style="display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:13px;font-weight:bold"><span>دست‌های برده این بازی · تیم شما: <b id="liveWonA">۰</b></span><span>تیم حریف: <b id="liveWonB">۰</b></span></div>
 <div id="challengePanel" class="status" style="display:none"><b>چالش تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چالش را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چالش فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چالش علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب قرارداد بازی بعدی</b><p class="muted">پس از دیدن پنج کارت اول، می‌توانی یکی از چهار خال حکم، نرس، تک نرس، سرس یا برگ وسط یار را انتخاب کنی. هشت کارت باقی‌مانده بعد از انتخاب پخش می‌شود.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><div><label>نوع قرارداد</label><select id="nextContract"><option value="hokm_spades">حکم پیک ♠</option><option value="hokm_hearts">حکم دل ♥</option><option value="hokm_diamonds">حکم خشت ♦</option><option value="hokm_clubs">حکم گشنیز ♣</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار</option></select></div><button id="confirmTrump">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div><div class="muted">حکم</div><div id="trumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div id="trickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div><div id="centerTrick" class="center-trick"></div></div><div class="seat east" id="seat1"><div class="name">شرق · حریف</div><div class="count" id="count1"></div><div class="played" id="played1"></div></div><div class="seat south" id="seat0"><div class="name">شما · جنوب</div><div class="count" id="count0"></div><div class="played" id="played0"></div></div></div>
@@ -143,6 +143,7 @@
 <script src="./engines/standard-hokm/engine.js"></script>
 <script src="./engines/kuwaiti-six-player/engine.js"></script>
 <script src="./engines/double-kout-sequence.js"></script>
+<script src="./engines/double-kout-game.js"></script>
 <script>
 const suits=['♠','♥','♦','♣'],ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'],rankVal=Object.fromEntries(ranks.map((r,i)=>[r,i]));
 let G=null, matchNo=1, previousWinner=null, previousStarter=null, activeMode='double-kout', playStyle='ai', hotseatRevealed=false, humanSeats=new Set([0]), KuwaitiPreviewGame=null, challengeStats={winA:0,loseA:0,winB:0,loseB:0};
@@ -240,7 +241,7 @@ function startGame(){
  playStyle=$('playStyle').value;hotseatRevealed=false;
  humanSeats=playStyle==='hotseat'?new Set([...document.querySelectorAll('#humanSeatChoices input:checked')].map(x=>Number(x.value))):new Set([0]);
  if(playStyle==='hotseat'&&!humanSeats.size){$('status').textContent='برای شروع، دست‌کم یک صندلی انسانی انتخاب کن.';return;}
- if(playStyle==='online'){ $('onlineSetupInfo').classList.remove('hidden');$('onlineSetupInfo').textContent='اتصال سرور آنلاین هنوز پیکربندی نشده است؛ بازی آنلاین را فعلاً شروع نکنید. بازی محلی و هوش مصنوعی در دسترس‌اند.';return;}
+ if(playStyle==='online'){ if(window.DoubleKoutOnline&&typeof window.DoubleKoutOnline.open==='function'){window.DoubleKoutOnline.open();}else{$('onlineSetupInfo').classList.remove('hidden');$('onlineSetupInfo').textContent='ماژول اتاق آنلاین بارگذاری نشده است؛ صفحه را تازه‌سازی کن.';}return;}
  $('onlineSetupInfo').classList.add('hidden');
  const starterSelect=$('starter');
  if(matchNo>1&&previousStarter!==null){starterSelect.value=String(previousStarter);starterSelect.disabled=true;}else starterSelect.disabled=false;
@@ -527,7 +528,7 @@ function render(){
 $('revealHotseatHand').onclick=()=>{if(playStyle!=='hotseat'||!G||G.done||!humanSeats.has(G.turn))return;hotseatRevealed=true;render();};
 function renderHumanSeatChoices(){const host=$('humanSeatChoices');if(!host)return;host.innerHTML='';[['جنوب',0],['شرق',1],['شمال',2],['غرب',3]].forEach(([n,p])=>{const l=document.createElement('label');l.style.cssText='display:flex;align-items:center;gap:5px;background:#09271f;border:1px solid #477a68;border-radius:9px;padding:8px;color:#f4dfaa';const c=document.createElement('input');c.type='checkbox';c.value=String(p);c.checked=p===0;c.addEventListener('change',()=>{if(!host.querySelector("input:checked"))c.checked=true;});l.append(c,document.createTextNode(n));host.append(l);});}
 renderHumanSeatChoices();
-$('playStyle').onchange=()=>{$('onlineSetupInfo').classList.toggle('hidden',$('playStyle').value!=='online');$('humanSeatSetup').classList.toggle('hidden',$('playStyle').value!=='hotseat');};$('humanSeatSetup').classList.toggle('hidden',$('playStyle').value!=='hotseat');
+$('playStyle').onchange=()=>{const online=$('playStyle').value==='online';$('onlineSetupInfo').classList.toggle('hidden',!online);$('humanSeatSetup').classList.toggle('hidden',$('playStyle').value!=='hotseat');if(online){if(window.DoubleKoutOnline&&typeof window.DoubleKoutOnline.open==='function'){window.DoubleKoutOnline.open();}else{$('onlineSetupInfo').textContent='ماژول اتاق آنلاین بارگذاری نشده است؛ صفحه را تازه‌سازی کن.';}}};$('humanSeatSetup').classList.toggle('hidden',$('playStyle').value!=='hotseat');
 $('globalStatsBtn').onclick=showGlobalStats;
 $('closeGlobalStats').onclick=()=>$('globalStatsPanel').classList.add('hidden');
 $('resetGlobalStats').onclick=()=>{if(confirm('تمام آمار ذخیره‌شده پاک شود؟')){localStorage.removeItem(GLOBAL_STATS_KEY);showGlobalStats();}};
@@ -542,4 +543,128 @@ $('newGame').onclick=()=>{if(G&&G.done){matchNo++;G=null;startGame();return;}mat
 $('backToModes').onclick=()=>{G=null;matchNo=1;previousWinner=null;previousStarter=null;$('game').classList.add('hidden');$('setup').classList.add('hidden');$('modePicker').classList.remove('hidden');$('modeMessage').textContent='یک حالت بازی را انتخاب کن.'};
 $('sortHand').onclick=()=>{if(!G)return;const p=playStyle==='hotseat'?G.turn:0;if(playStyle==='hotseat'&&!humanSeats.has(p))return;G.hands[p].sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);render()};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script><script src="./kuwaiti-six-player-ui.js"></script><script>if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script><script src="./lan-multiplayer.js"></script></body></html>
+</script><script src="./kuwaiti-six-player-ui.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+(function(){
+'use strict';
+var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
+var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false;
+function el(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
+function ensureUI(){
+ if(el('onlineButton'))return;
+ var grid=document.querySelector('#modePicker .mode-grid');if(!grid)return;
+ var b=document.createElement('button');b.id='onlineButton';b.className='mode-card';b.innerHTML='<strong>🌐 بازی آنلاین چندگوشی</strong><span>ساخت اتاق، ورود با کد و آمادگی بازیکنان از گوشی‌های مختلف</span>';b.onclick=open;grid.appendChild(b);
+ var style=document.createElement('style');style.textContent=
+ '#onlineOverlay{position:fixed;inset:0;z-index:100000;background:#03140ff5;display:none;align-items:center;justify-content:center;padding:14px;direction:rtl;font-family:Tahoma,Arial,sans-serif}'+
+ '#onlineOverlay.open{display:flex}#onlinePanel{width:min(560px,100%);max-height:92vh;overflow:auto;background:linear-gradient(145deg,#164333,#071d17);border:2px solid #d7b66d;border-radius:20px;padding:16px;color:#fff;box-shadow:0 20px 55px #000c}'+
+ '#onlinePanel h2{color:#f4d58b;margin:0 0 8px}#onlinePanel p{font-size:12px;line-height:1.9;color:#d1e1d8}'+
+ '#onlinePanel label{display:block;font-size:12px;color:#d8e7de;margin:10px 0 4px}'+
+ '#onlinePanel input,#onlinePanel select{width:100%;padding:11px;border-radius:9px;border:1px solid #7b9d8b;background:#f7f2e5;color:#13251d;font:inherit}'+
+ '#onlinePanel button{padding:10px 12px;border-radius:10px;border:1px solid #e6ce92;background:linear-gradient(145deg,#f5dfaa,#bd9144);color:#211808;font-weight:bold;font:inherit;cursor:pointer}'+
+ '#onlinePanel button.secondary{background:#193b30;color:#f5e8c4;border-color:#688d7d}'+
+ '#onlinePanel button:disabled{opacity:.45;cursor:not-allowed}#onlinePanel .onrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}#onlinePanel .onrow>*{flex:1;min-width:120px}'+
+ '#onlineStatus{background:#071b15;border-radius:9px;padding:10px;font-size:12px;line-height:1.9;color:#f3dfaa;margin-top:10px;white-space:pre-wrap}'+
+ '#onlineCode{direction:ltr;text-align:center;font-size:27px;letter-spacing:5px;color:#ffe09a;padding:12px;border:1px dashed #c9a65f;border-radius:10px;margin:10px 0}'+
+ '#onlineRoster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}#onlineRoster div{background:#0b2a20;border:1px solid #537e6a;border-radius:9px;padding:9px;font-size:12px}';
+ document.head.appendChild(style);
+ var root=document.createElement('div');root.id='onlineOverlay';root.innerHTML=
+ '<section id="onlinePanel"><button id="onlineClose" class="secondary" style="float:left">بستن</button><h2>اتاق آنلاین دابل کوت</h2>'+
+ '<p>بازیکنان با اینترنت و گوشی‌های جداگانه وارد یک اتاق می‌شوند. در این مرحله ساخت اتاق، ورود با کد و وضعیت آمادگی فعال است؛ اجرای خود بازی آنلاین هنوز در حال تکمیل است.</p>'+
+ '<div id="onlineSetup"><label>نوع بازی</label><select id="onlineMode"><option value="double-kout">دابل کوت توالی · چهار نفره</option><option value="standard-hokm">حکم معمولی · چهار نفره</option><option value="kuwaiti">کوت کویتی · شش نفره</option></select>'+
+ '<label>نام نمایشی</label><input id="onlineName" maxlength="24" value="بازیکن">'+
+ '<div class="onrow"><button id="onlineCreate">ساخت اتاق جدید</button><button id="onlineShowJoin" class="secondary">ورود با کد</button></div>'+
+ '<div id="onlineJoinBox" style="display:none"><label>کد اتاق</label><input id="onlineJoinCode" maxlength="6" placeholder="مثلاً A1B2C3" style="text-transform:uppercase;direction:ltr;text-align:center"><button id="onlineJoin" style="width:100%;margin-top:8px">ورود به اتاق</button></div></div>'+
+ '<div id="onlineRoom" style="display:none"><div id="onlineCode"></div><div id="onlineRoster"></div><div class="onrow"><button id="onlineReady">آماده‌ام</button><button id="onlineLeave" class="secondary">خروج از اتاق</button></div></div>'+
+ '<div id="onlineStatus">برای شروع، ساخت اتاق یا ورود با کد را انتخاب کن.</div></section>';
+ document.body.appendChild(root);
+ el('onlineClose').onclick=close;el('onlineCreate').onclick=createRoom;el('onlineShowJoin').onclick=function(){el('onlineJoinBox').style.display='block';};
+ el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineLeave').onclick=leave;
+ root.addEventListener('click',function(e){if(e.target===root)close();});
+}
+function open(preselect){ensureUI();if(preselect&&el('onlineMode'))el('onlineMode').value=preselect;el('onlineOverlay').classList.add('open');}
+function close(){if(el('onlineOverlay'))el('onlineOverlay').classList.remove('open');}
+function initClient(){
+ if(client)return true;
+ if(!window.supabase||!window.supabase.createClient){say('کتابخانه اتصال بارگذاری نشد. صفحه را تازه‌سازی کن.');return false;}
+ client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ return true;
+}
+async function authenticate(setStage){
+ if(!initClient())throw new Error('کتابخانه Supabase در دسترس نیست.');
+ setStage('بررسی نشست ورود');
+ var got=await client.auth.getSession();if(got.error)throw got.error;session=got.data&&got.data.session;
+ if(!session){setStage('ورود ناشناس به Supabase');var sign=await client.auth.signInAnonymously();if(sign.error)throw sign.error;session=sign.data.session;}
+ if(!session)throw new Error('ورود مهمان انجام نشد. ورود ناشناس را در Authentication فعال کن.');
+ me=session.user;return me;
+}
+function showRoom(){el('onlineSetup').style.display='none';el('onlineRoom').style.display='block';el('onlineCode').textContent=roomCode;}
+function subscribe(){
+ if(rosterTimer){clearInterval(rosterTimer);rosterTimer=null;}
+ if(channel){client.removeChannel(channel);channel=null;}
+ channel=client.channel('doublekout-room-'+roomId)
+ .on('postgres_changes',{event:'*',schema:'public',table:'room_members',filter:'room_id=eq.'+roomId},refreshRoster)
+ .on('postgres_changes',{event:'*',schema:'public',table:'game_rooms',filter:'id=eq.'+roomId},refreshRoster)
+ .subscribe(function(state){
+  if(state==='SUBSCRIBED'){say('اتصال زنده برقرار است؛ همگام‌سازی پشتیبان هم فعال است.');refreshRoster();}
+  else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'||state==='CLOSED')say('اتصال زنده برقرار نشد؛ فهرست بازیکنان به‌صورت دوره‌ای به‌روزرسانی می‌شود.');
+ });
+ refreshRoster();
+ rosterTimer=setInterval(refreshRoster,2000);
+ if(!window.__doubleKoutRosterFocus){
+  window.__doubleKoutRosterFocus=true;
+  window.addEventListener('focus',function(){refreshRoster();});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshRoster();});
+ }
+}
+async function refreshRoster(){
+ if(!roomId||!client||rosterBusy)return;
+ rosterBusy=true;
+ try{
+  var r=await client.from('room_members').select('seat,display_name,is_host,ready,user_id').eq('room_id',roomId).order('seat');
+  if(r.error){say('خواندن فهرست بازیکنان: '+r.error.message);return;}
+  var cap=count,rows=r.data||[],html='';
+  for(var i=0;i<cap;i++){var p=rows.find(function(x){return x.seat===i;});html+='<div>'+(i+1)+'. '+(p?esc(p.display_name)+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
+  el('onlineRoster').innerHTML=html;
+  var allReady=rows.length===cap&&rows.every(function(x){return x.ready;});
+  say(rows.length+' از '+cap+' بازیکن وارد شده‌اند. '+(allReady?'همه آماده‌اند.':'منتظر ورود و آمادگی بازیکنان دیگر...'));
+  var mine=rows.find(function(x){return x.user_id===me.id;});
+  el('onlineReady').textContent=mine&&mine.ready?'لغو آمادگی':'آماده‌ام';
+ }catch(e){say('به‌روزرسانی فهرست بازیکنان: '+(e.message||e));}
+ finally{rosterBusy=false;}
+}
+async function createRoom(){
+ var stage='آماده‌سازی';try{
+  say('در حال ورود مهمان و ساخت اتاق...');
+  await authenticate(function(s){stage=s;});mode=el('onlineMode').value;count=mode==='kuwaiti'?6:4;
+  stage='فراخوانی create_game_room';var r=await client.rpc('create_game_room',{p_game_mode:mode,p_player_count:count,p_display_name:el('onlineName').value.trim()||'بازیکن'});
+  if(r.error)throw r.error;
+  roomId=r.data.room_id;roomCode=r.data.code;showRoom();subscribe();
+ }catch(e){say('ساخت اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
+}
+async function joinRoom(){
+ var stage='آماده‌سازی';try{
+  say('در حال ورود به اتاق...');
+  await authenticate(function(s){stage=s;});var code=el('onlineJoinCode').value.trim().toUpperCase();
+  if(!/^[A-F0-9]{6}$/.test(code))throw new Error('کد اتاق باید شش حرف یا عدد باشد.');
+  stage='فراخوانی join_game_room';var r=await client.rpc('join_game_room',{p_code:code,p_display_name:el('onlineName').value.trim()||'بازیکن'});
+  if(r.error)throw r.error;
+  roomId=r.data.room_id;roomCode=r.data.code;mode=r.data.game_mode;count=Number(r.data.player_count);showRoom();subscribe();
+ }catch(e){say('ورود به اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
+}
+async function toggleReady(){
+ try{if(!roomId)return;say('در حال ثبت آمادگی...');var q=await client.from('room_members').select('ready').eq('room_id',roomId).eq('user_id',me.id).single();if(q.error)throw q.error;
+ var r=await client.rpc('set_room_ready',{p_room_id:roomId,p_ready:!q.data.ready});if(r.error)throw r.error;await refreshRoster();
+ }catch(e){say('ثبت آمادگی انجام نشد: '+(e.message||e));}
+}
+async function leave(){
+ if(rosterTimer){clearInterval(rosterTimer);rosterTimer=null;}
+ if(channel){await client.removeChannel(channel);channel=null;}
+ roomId=null;roomCode='';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی. نشست مهمان روی این گوشی باقی می‌ماند.');
+}
+window.DoubleKoutOnline={open:open,leave:leave};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
+})();
+
+</script><script>if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script><script src="./lan-multiplayer.js"></script></body></html>
