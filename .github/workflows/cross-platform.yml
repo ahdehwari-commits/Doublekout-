@@ -36,6 +36,38 @@ jobs:
           name: DoubleKout-Windows-EXE
           path: dist-desktop/*.exe
           if-no-files-found: error
+
+  supabase-online-game:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start isolated PostgreSQL with logical replication
+        run: |
+          docker run -d --name doublekout-pg -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16 -c wal_level=logical
+          for i in {1..40}; do
+            docker exec doublekout-pg pg_isready -U postgres && break
+            sleep 1
+          done
+      - name: Prepare minimal Supabase auth schema
+        run: |
+          docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE anon NOLOGIN;
+          CREATE ROLE authenticated NOLOGIN;
+          CREATE SCHEMA auth;
+          CREATE TABLE auth.users(id uuid PRIMARY KEY);
+          CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $
+            SELECT nullif(current_setting('request.jwt.claim.sub', true), '')::uuid
+          $;
+          CREATE PUBLICATION supabase_realtime;
+          SQL
+      - name: Apply Supabase migrations in order
+        run: |
+          for file in supabase/migrations/20261113000100_multiplayer_rooms.sql supabase/migrations/20261113000200_room_lobby_actions.sql supabase/migrations/20261113000300_authoritative_four_player_game.sql; do
+            docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < "$file"
+          done
+      - name: Play a complete four-seat game with two humans and two AI seats
+        run: docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/online-game-smoke.sql
+
   iphone-pwa:
     runs-on: ubuntu-latest
     steps:
