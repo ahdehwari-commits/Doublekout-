@@ -61,7 +61,7 @@ jobs:
           SQL
       - name: Apply Supabase migrations in order
         run: |
-          for file in supabase/migrations/20261113000100_multiplayer_rooms.sql supabase/migrations/20261113000200_room_lobby_actions.sql supabase/migrations/20261113000300_authoritative_four_player_game.sql; do
+          for file in supabase/migrations/20261113000100_multiplayer_rooms.sql supabase/migrations/20261113000200_room_lobby_actions.sql supabase/migrations/20261113000300_authoritative_four_player_game.sql supabase/migrations/20261114000400_reliable_room_lobby.sql; do
             docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < "$file"
           done
       - name: Play a complete four-seat game with two humans and two AI seats
