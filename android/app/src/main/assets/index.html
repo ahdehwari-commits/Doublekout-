@@ -366,11 +366,28 @@ function runAI(){
   },550)
 }
 function cardEl(c,small=false){let d=document.createElement('div');d.className='card '+(['♥','♦'].includes(c.s)?'red':'')+(small?' small':'');d.innerHTML=`<span>${c.r}</span><span class="suit">${c.s}</span><span style="align-self:flex-end;font-size:12px">${c.r}</span>`;return d}
+function liveSequenceScores(winners){
+ const scores={A:0,B:0};let start=0,searchFrom=3;
+ while(start<winners.length){
+  let close=-1;
+  for(let i=searchFrom;i<winners.length;i++){if(winners[i]===winners[i-1]){close=i;break;}}
+  if(close>=0){
+   const winningTeam=team(winners[close]),count=close-start+1;scores[winningTeam]+=count;
+   start=close+1;searchFrom=start+1;
+  }else{
+   const pending=winners.slice(start);
+   if(winners.length===13){const winnerTeam=team(winners[12]);scores[winnerTeam]+=13-start;}
+   else{pending.forEach(p=>scores[team(p)]++);}
+   break;
+  }
+ }
+ return scores;
+}
 function render(){
  if(!G)return;
- const liveResult=activeMode==='double-kout'&&!G.challenge?window.DoubleKoutSequence.scoreSequence(G.trickWinners||[]):null;
- const liveA=liveResult?liveResult.scores.A:(G.trickWinners||[]).filter(p=>team(p)==='A').length;
- const liveB=liveResult?liveResult.scores.B:(G.trickWinners||[]).filter(p=>team(p)==='B').length;
+ const liveResult=activeMode==='double-kout'&&!G.challenge?liveSequenceScores(G.trickWinners||[]):null;
+ const liveA=liveResult?liveResult.A:(G.trickWinners||[]).filter(p=>team(p)==='A').length;
+ const liveB=liveResult?liveResult.B:(G.trickWinners||[]).filter(p=>team(p)==='B').length;
  $('liveWonA').textContent=fa(liveA);$('liveWonB').textContent=fa(liveB);
  $('scoreA').textContent=fa(G.scoreA);$('scoreB').textContent=fa(G.scoreB);$('trickNo').textContent=fa(Math.min(G.trickNo,13));$('trickCount').textContent=activeMode==='standard-hokm'&&$('hokmContract').value==='partner_middle'?'':fa(G.plays.length)+' / ۴';$('trickCountWrap').style.display=$('hokmContract').value==='partner_middle'?'none':'';
  for(let p=0;p<4;p++){
