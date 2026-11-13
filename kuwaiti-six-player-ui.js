@@ -712,9 +712,11 @@ function renderGame(){
   b.disabled=!legal;b.append(cardNode(c));b.onclick=()=>playHumanCard(c);$('kHand').append(b);
  });
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
- const voidInLead=isHuman&&lead&&!game.hands[p].some(c=>c.kind==='normal'&&c.suit===lead);
- $('kAskTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&voidInLead&&game.auctionWinner!==p));
- $('kAnnounceTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&isHuman&&hotseatRevealed&&game.turn===game.auctionWinner));
+ const currentPlayer=game.turn;
+ const currentIsHuman=isHumanSeat(currentPlayer);
+ const voidInLead=currentIsHuman&&!!lead&&!game.hands[currentPlayer].some(c=>c.kind==='normal'&&c.suit===lead);
+ $('kAskTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&voidInLead&&game.auctionWinner!==currentPlayer));
+ $('kAnnounceTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&currentIsHuman&&hotseatRevealed&&currentPlayer===game.auctionWinner));
 }
 function finishGame(){
  game.done=true;locked=true;$('kHotseatGate').classList.add('hidden');
