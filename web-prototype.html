@@ -240,7 +240,7 @@ function startGame(){
  playStyle=$('playStyle').value;hotseatRevealed=false;
  humanSeats=playStyle==='hotseat'?new Set([...document.querySelectorAll('#humanSeatChoices input:checked')].map(x=>Number(x.value))):new Set([0]);
  if(playStyle==='hotseat'&&!humanSeats.size){$('status').textContent='برای شروع، دست‌کم یک صندلی انسانی انتخاب کن.';return;}
- if(playStyle==='online'){ $('onlineSetupInfo').classList.remove('hidden');$('onlineSetupInfo').textContent='اتصال سرور آنلاین هنوز پیکربندی نشده است؛ بازی آنلاین را فعلاً شروع نکنید. بازی محلی و هوش مصنوعی در دسترس‌اند.';return;}
+ if(playStyle==='online'){ if(window.DoubleKoutOnline&&typeof window.DoubleKoutOnline.open==='function'){window.DoubleKoutOnline.open();}else{$('onlineSetupInfo').classList.remove('hidden');$('onlineSetupInfo').textContent='ماژول اتاق آنلاین بارگذاری نشده است؛ صفحه را تازه‌سازی کن.';}return;}
  $('onlineSetupInfo').classList.add('hidden');
  const starterSelect=$('starter');
  if(matchNo>1&&previousStarter!==null){starterSelect.value=String(previousStarter);starterSelect.disabled=true;}else starterSelect.disabled=false;
