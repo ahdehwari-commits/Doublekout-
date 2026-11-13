@@ -1,0 +1,45 @@
+name: Deploy iPhone web app to GitHub Pages
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web-prototype.html"
+      - "kuwaiti-six-player-ui.js"
+      - "lan-multiplayer.js"
+      - "three-d-scene.js"
+      - "engines/**"
+      - "IMG_3647.png"
+      - "manifest.webmanifest"
+      - "sw.js"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Assemble web app
+        run: |
+          mkdir -p dist/engines/standard-hokm dist/engines/kuwaiti-six-player
+          cp web-prototype.html dist/index.html
+          cp kuwaiti-six-player-ui.js lan-multiplayer.js three-d-scene.js IMG_3647.png manifest.webmanifest sw.js dist/
+          cp engines/standard-hokm/engine.js dist/engines/standard-hokm/
+          cp engines/kuwaiti-six-player/engine.js dist/engines/kuwaiti-six-player/
+          cp engines/double-kout-sequence.js dist/engines/
+          touch dist/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
