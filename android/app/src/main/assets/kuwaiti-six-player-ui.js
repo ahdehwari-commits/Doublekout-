@@ -158,6 +158,24 @@ function addStyle(){
     .k-hand button .k-card.joker .joker-art{height:43px}
     .k-opponent-fan .k-card.k-back{width:36px;height:54px;min-width:36px;flex-basis:36px;margin-left:-28px}
   }
+/* 0.8.18: six-player-only corner seating and wide radial opponent fans. */
+.k-table{position:relative!important;display:block!important;min-height:620px!important;padding:0!important;overflow:visible!important}
+.k-table>.k-center{position:absolute!important;left:29%!important;right:29%!important;top:34%!important;bottom:34%!important;min-height:0!important;z-index:2}
+.k-table>.k-seat{position:absolute!important;width:29%!important;min-height:118px;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:5px 2px!important;z-index:3}
+.k-table>.k-seat[data-p="3"]{top:1%!important;left:35.5%!important;right:auto!important;bottom:auto!important}
+.k-table>.k-seat[data-p="2"]{top:17%!important;right:1%!important;left:auto!important;bottom:auto!important}
+.k-table>.k-seat[data-p="1"]{bottom:17%!important;right:1%!important;left:auto!important;top:auto!important}
+.k-table>.k-seat[data-p="0"]{bottom:1%!important;left:35.5%!important;right:auto!important;top:auto!important}
+.k-table>.k-seat[data-p="5"]{bottom:17%!important;left:1%!important;right:auto!important;top:auto!important}
+.k-table>.k-seat[data-p="4"]{top:17%!important;left:1%!important;right:auto!important;bottom:auto!important}
+.k-seat .k-opponent-fan{height:110px!important;width:100%!important;max-width:none!important;justify-content:center!important;overflow:visible!important;transform:none!important;position:relative;left:auto;right:auto}
+.k-seat .k-opponent-fan .k-card.k-back{width:68px!important;height:102px!important;min-width:68px!important;flex:0 0 68px!important;margin-left:-48px!important;transform-origin:50% 100%!important}
+.k-seat .k-opponent-fan .k-card.k-back:first-child{margin-left:0!important}
+.k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:rotate(24deg) translate(-10px,8px) scale(1.12)!important}
+.k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan{transform:rotate(-24deg) translate(10px,8px) scale(1.12)!important}
+.k-seat[data-p="3"] .k-opponent-fan{transform:rotate(0deg) translateY(-5px) scale(1.12)!important}
+@media(max-width:520px){.k-table{min-height:600px!important}.k-table>.k-center{left:28%!important;right:28%!important;top:35%!important;bottom:35%!important}.k-table>.k-seat{width:31%!important;min-height:112px}.k-seat .k-opponent-fan{height:104px!important}.k-seat .k-opponent-fan .k-card.k-back{width:66px!important;height:99px!important;min-width:66px!important;flex-basis:66px!important;margin-left:-49px!important}}
+
   `;
   s.textContent+=`
   /* 0.8.16: larger illustrated royal portraits */
@@ -192,24 +210,7 @@ function addStyle(){
   }
   `;
   
-/* 0.8.18: six-player-only corner seating and wide radial opponent fans. */
-.k-table{position:relative!important;display:block!important;min-height:620px!important;padding:0!important;overflow:visible!important}
-.k-table>.k-center{position:absolute!important;left:29%!important;right:29%!important;top:34%!important;bottom:34%!important;min-height:0!important;z-index:2}
-.k-table>.k-seat{position:absolute!important;width:29%!important;min-height:118px;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:5px 2px!important;z-index:3}
-.k-table>.k-seat[data-p="3"]{top:1%!important;left:35.5%!important;right:auto!important;bottom:auto!important}
-.k-table>.k-seat[data-p="2"]{top:17%!important;right:1%!important;left:auto!important;bottom:auto!important}
-.k-table>.k-seat[data-p="1"]{bottom:17%!important;right:1%!important;left:auto!important;top:auto!important}
-.k-table>.k-seat[data-p="0"]{bottom:1%!important;left:35.5%!important;right:auto!important;top:auto!important}
-.k-table>.k-seat[data-p="5"]{bottom:17%!important;left:1%!important;right:auto!important;top:auto!important}
-.k-table>.k-seat[data-p="4"]{top:17%!important;left:1%!important;right:auto!important;bottom:auto!important}
-.k-seat .k-opponent-fan{height:110px!important;width:100%!important;max-width:none!important;justify-content:center!important;overflow:visible!important;transform:none!important;position:relative;left:auto;right:auto}
-.k-seat .k-opponent-fan .k-card.k-back{width:68px!important;height:102px!important;min-width:68px!important;flex:0 0 68px!important;margin-left:-48px!important;transform-origin:50% 100%!important}
-.k-seat .k-opponent-fan .k-card.k-back:first-child{margin-left:0!important}
-.k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:rotate(24deg) translate(-10px,8px) scale(1.12)!important}
-.k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan{transform:rotate(-24deg) translate(10px,8px) scale(1.12)!important}
-.k-seat[data-p="3"] .k-opponent-fan{transform:rotate(0deg) translateY(-5px) scale(1.12)!important}
-@media(max-width:520px){.k-table{min-height:600px!important}.k-table>.k-center{left:28%!important;right:28%!important;top:35%!important;bottom:35%!important}.k-table>.k-seat{width:31%!important;min-height:112px}.k-seat .k-opponent-fan{height:104px!important}.k-seat .k-opponent-fan .k-card.k-back{width:66px!important;height:99px!important;min-width:66px!important;flex-basis:66px!important;margin-left:-49px!important}}
-\ndocument.head.appendChild(s);
+document.head.appendChild(s);
 }
 function royalPortrait(rank){
  const p=rank==='K'?{coat:'#173e72',light:'#d9b45d',hair:'#49301f'}:rank==='Q'?{coat:'#8c2854',light:'#f0c66c',hair:'#38233b'}:{coat:'#17644e',light:'#e0b85d',hair:'#57351f'};
