@@ -24,6 +24,8 @@ jobs:
           node-version: "20"
       - name: Test four-player shared game engine
         run: node engines/test-double-kout-game.cjs
+      - name: Check embedded browser JavaScript
+        run: node scripts/check-inline-js.cjs web-prototype.html
       - name: Build portable Windows EXE
         run: |
           npm install --no-audit --no-fund
