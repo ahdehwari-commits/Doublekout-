@@ -1,0 +1,21 @@
+{
+  "name": "double-kout-desktop",
+  "version": "0.8.10",
+  "private": true,
+  "description": "Double Kout card game desktop build",
+  "main": "desktop/main.cjs",
+  "scripts": { "dist:win": "electron-builder --win portable --x64" },
+  "devDependencies": { "electron": "31.7.7", "electron-builder": "25.1.8" },
+  "build": {
+    "appId": "com.doublekout.desktop",
+    "productName": "Double Kout",
+    "directories": { "output": "dist-desktop" },
+    "files": [
+      "desktop/**/*", "web-prototype.html", "kuwaiti-six-player-ui.js",
+      "three-d-scene.js", "IMG_3647.png", "engines/**/*"
+    ],
+    "asar": true,
+    "win": { "target": [{ "target": "portable", "arch": ["x64"] }] },
+    "artifactName": "DoubleKout-0.8.10-Windows.\u0024{ext}"
+  }
+}
