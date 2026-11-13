@@ -7,6 +7,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings;
+import android.webkit.JavascriptInterface;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
@@ -35,6 +36,7 @@ public class MainActivity extends Activity {
         settings.setMediaPlaybackRequiresUserGesture(true);
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(new WebChromeClient());
+        webView.addJavascriptInterface(new Object() { @JavascriptInterface public void exitApp() { runOnUiThread(() -> finishAndRemoveTask()); } }, "AndroidApp");
         root.addView(webView, new FrameLayout.LayoutParams(
             LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
