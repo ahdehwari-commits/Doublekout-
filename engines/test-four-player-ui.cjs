@@ -16,7 +16,7 @@ assert.ok(html.includes("function winner(plays){const code=")&&html.includes("St
 assert.ok(html.includes("G.trickCompletePending||G.plays.length>=4"));
 assert.ok(html.includes("G.trickCompletePending=true;G.turn=null"));
 assert.ok(html.includes("G.resolvingTrick=true;G.trickCompletePending=false"));
-assert.ok(html.includes("const handPlayer=playStyle==='hotseat'?G.turn:0")&&html.includes("playStyle==='hotseat'&&!hotseatRevealed"),'hotseat must reveal only the current player's hand after an explicit pass-phone confirmation');
+assert.ok(html.includes("const handPlayer=playStyle==='hotseat'?G.turn:0")&&html.includes("playStyle==='hotseat'&&!hotseatRevealed"),'hotseat must reveal only the current player hand after an explicit pass-phone confirmation');
 assert.ok(html.includes("if(playStyle==='hotseat'||playStyle==='online')return"),'AI must not play cards in local hotseat or online mode');
 assert.ok(html.includes('id="playStyle"')&&html.includes('value="hotseat"')&&html.includes('value="online"'),'four-player setup must offer AI, private pass-and-play, and online play styles');
 assert.ok(html.includes("G.turn=(p+1)%4;hotseatRevealed=false;render();runAI()"),'the next local player must receive a privacy screen after each card');
