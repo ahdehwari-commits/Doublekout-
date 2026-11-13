@@ -8,7 +8,7 @@ const scriptEnd=html.indexOf('</script>',scriptStart);
 assert.ok(engineTag>=0&&scriptStart>engineTag&&scriptEnd>scriptStart,'main game script must exist after the engines');
 new vm.Script(html.slice(scriptStart+8,scriptEnd),{filename:'web-prototype-inline.js'});
 assert.ok(html.includes("activeMode='double-kout'")&&!html.includes("id=\"hokmContract\""),'four-player setup must not expose a separate contract/suit menu');
-assert.ok(html.includes("let selected='hokm_spades'")&&html.includes("hokm_spades")&&html.includes("hokm_clubs")&&html.includes("partner_middle"));
+assert.ok(html.includes("value=\"hokm_spades\"")&&html.includes("value=\"hokm_clubs\"")&&html.includes("value=\"partner_middle\""));
 assert.ok(html.includes("function beginNormalOrChallenge(challengerTeam)")&&html.includes("function confirmTrump()"),'both choice buttons must have defined handlers');
 assert.ok(html.includes("function cardRank(c)")&&html.includes("c.rank!==undefined"),'card rank adapter must accept both r and rank fields');
 assert.ok(html.includes("function winner(plays){const code=")&&html.includes("StandardHokmEngine.resolveTrick"));
