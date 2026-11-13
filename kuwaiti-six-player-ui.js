@@ -195,6 +195,10 @@ function addStyle(){
   .k-seat .k-opponent-fan .k-back:after{font-size:6px!important;transform:rotate(180deg)!important}
   @media(max-width:520px){.k-seat .k-opponent-fan{height:96px!important}.k-seat .k-opponent-fan .k-card.k-back{width:58px!important;height:87px!important;min-width:58px!important;flex-basis:58px!important;margin-left:-51px!important}}
 
+  /* 0.8.20: bright, non-clickable hand while choosing the contract/challenge. */
+  #kHand.k-contract-thinking{opacity:1!important;filter:none!important;pointer-events:none!important}
+  #kHand.k-contract-thinking .k-auction-card,#kHand.k-contract-thinking .k-card{opacity:1!important;filter:none!important;pointer-events:none!important}
+  #kHand.k-contract-thinking .k-card{box-shadow:0 9px 16px #0009,0 0 0 1px #f4d98f!important}
   /* 0.8.17: visible own hand throughout AI play; oversized edge-clipped opponent fans. */
   .k-hand{width:100%;max-width:100%;box-sizing:border-box;justify-content:center;overflow:visible;overflow-y:visible;padding:18px 4px 26px;min-height:148px;gap:0}
   .k-hand button,.k-hand .k-auction-card{flex:0 0 68px;width:68px;height:102px;margin-left:-39px!important;position:relative;transform-origin:50% 100%}
@@ -473,6 +477,7 @@ function finishAuction(){
  }
  if(isHumanSeat(win)){
   $('kContractSetup').classList.remove('hidden');
+  renderContractChoiceHand(win);
   $('kContract').value='hokm_spades';
   $('kTrumpDisplay').textContent='منتظر انتخاب قرارداد';
   setStatus('مزایده را بردی؛ اکنون نوع قرارداد و خال حکم را انتخاب کن.');
@@ -495,6 +500,11 @@ function aiChooseContract(p){
  if(best.count>=5&&best.score>=12)return ({S:'hokm_spades',H:'hokm_hearts',D:'hokm_diamonds',C:'hokm_clubs'})[best.s];
  if(h.filter(c=>c.kind==='normal'&&c.rank==='2').length>=3)return 'naras';
  return 'tak_naras';
+}
+function renderContractChoiceHand(player){
+ if(!game||!game.hands||!Number.isInteger(player))return;
+ const host=$('kHand');host.innerHTML='';host.classList.add('k-contract-thinking');
+ game.hands[player].forEach((card,i,arr)=>{const el=document.createElement('div');el.className='k-auction-card';const offset=i-(arr.length-1)/2;el.style.transform='rotate('+(offset*4.2)+'deg) translateY('+(Math.abs(offset)*2)+'px)';el.style.zIndex=String(10+i);el.style.opacity='1';el.style.filter='none';el.style.pointerEvents='none';el.append(cardNode(card));host.append(el);});
 }
 function beginWinningContract(contract){
  game.auctionBid.contract=contract;game.selectedContract=contract;
@@ -529,13 +539,21 @@ function startActualGame(trumpSuit,hidden){
   K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump});
   game.hiddenTrump=!!hidden;game.trumpSuit=resolvedTrump;game.target=game.auctionBid.target||null;
   if(game.turn!==winner||!Array.isArray(game.trick)||game.trick.length!==0)throw new Error('انتقال نوبت از مزایده به بازی کامل نشد.');
-  $('kMalzoomSetup').classList.add('hidden');$('kAuction').classList.add('hidden');
+  $('kMalzoomSetup').classList.add('hidden');$('kAuction').classList.add('hidden');$('kHand').classList.remove('k-contract-thinking');
   $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':('حکم اعلام‌شده: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump])):(noTrumpContracts.includes(bidContract)?'بدون حکم · '+contractName[bidContract]:'حکم این بازی: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]);
   $('kAuctionSummary').textContent+=' · قرارداد: '+(game.isMalzoom?'ملزوم':contractName[bidContract])+(resolvedTrump?' · '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]:'');
   $('kTrickCards').style.display='';
   $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(isHumanSeat(winner)?' · کارت‌های بازیکن انسانی پس از نمایش فعال می‌شوند.':' · هوش مصنوعی در حال بازی است.');
-  $('kResult').classList.add('hidden');setScreen('game');renderGame();
-  if(!isHumanSeat(winner))playAITurn();else renderGame();
+  $('kResult').classList.add('hidden');setScreen('game');
+  if($('kPlayStyle').value!=='hotseat')humanSeats=new Set([0]);
+  renderGame();
+  if(isHumanSeat(winner)){
+   locked=false;hotseatRevealed=$('kPlayStyle').value!=='hotseat';
+   $('kStatus').textContent='نوبت شروع بازی: '+playerNames[winner]+' · یکی از کارت‌های روشن و مجاز را انتخاب کن.';
+   renderGame();
+  }else{
+   locked=false;setTimeout(()=>{if(game&&!game.done&&game.turn===winner&&!isHumanSeat(game.turn)&&!game.trick.length)playAITurn();},120);
+  }
  }catch(e){
   locked=true;setScreen('game');$('kStatus').textContent='خطا در شروع بازی پس از مزایده: '+(e&&e.message?e.message:'خطای ناشناخته');
   console.error('Kuwaiti auction-to-play transition failed',e);
