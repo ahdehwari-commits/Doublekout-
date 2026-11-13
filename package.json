@@ -16,6 +16,5 @@
     ],
     "asar": true,
     "win": { "target": [{ "target": "portable", "arch": ["x64"] }] },
-    "artifactName": "DoubleKout-0.8.10-Windows.\u0024{ext}"
   }
 }
