@@ -10,6 +10,7 @@ on:
       - "three-d-scene.js"
       - "engines/**"
       - "scripts/**"
+      - "supabase/**"
       - "desktop/**"
       - "package.json"
       - "manifest.webmanifest"
