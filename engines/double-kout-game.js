@@ -1,4 +1,4 @@
-(function(root){
+const DoubleKoutGameEngine=(function(root){
 'use strict';
 function engineRef(){const e=root.StandardHokmEngine||(typeof require==='function'?require('./standard-hokm/engine'):null);if(!e)throw new Error('StandardHokmEngine must be loaded first');return e;}
 const teamOf=p=>p%2===0?'A':'B';
