@@ -219,7 +219,7 @@ function beats(a,b,lead){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};re
 function winner(plays){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.resolveTrick(plays.map(p=>({player:p.player,card:{suit:code[cardSuit(p.card)],rank:cardRank(p.card)}})),G.trumpCode,G.contract||'hokm')}
 function play(p,card){
   if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||p!==G.turn)return;
-  if(playStyle==='hotseat'&&(!humanSeats.has(p)||!hotseatRevealed))return;
+  if(playStyle==='hotseat'&&humanSeats.has(p)&&!hotseatRevealed)return;
   try{
     let allowed=legalCards(p);
     if(!allowed.some(c=>c.id===card.id))return;
@@ -400,12 +400,14 @@ function render(){
  $('liveWonA').textContent=fa(liveA);$('liveWonB').textContent=fa(liveB);
  $('scoreA').textContent=fa(G.scoreA);$('scoreB').textContent=fa(G.scoreB);$('trickNo').textContent=fa(Math.min(G.trickNo,13));$('trickCount').textContent=activeMode==='standard-hokm'&&$('hokmContract').value==='partner_middle'?'':fa(G.plays.length)+' / ۴';$('trickCountWrap').style.display=$('hokmContract').value==='partner_middle'?'none':'';
  for(let p=0;p<4;p++){
+  const seatName=$('seat'+p).querySelector('.name');if(seatName)seatName.textContent=playStyle==='hotseat'?(humanSeats.has(p)?'بازیکن انسانی':'هوش مصنوعی')+' · '+(['جنوب · هم‌تیمی','شرق · حریف','شمال · هم‌تیمی','غرب · حریف'][p]):names[p];
   $('seat'+p).classList.toggle('active',G.turn===p);$('count'+p).textContent=p===0?'کارت شما: '+fa(G.hands[p].length):fa(G.hands[p].length)+' کارت';
   let slot=$('played'+p);slot.innerHTML='';let x=G.plays.find(v=>v.player===p);
   if(x)slot.append(cardEl(x.card,true));else if(p!==0&&G.hands[p].length){let back=document.createElement('div');back.className='card back small';slot.append(back)}
  }
  $('hand').innerHTML='';
  const handPlayer=playStyle==='hotseat'?G.turn:0;
+ const handTitle=document.querySelector('#game h3.section-title');if(handTitle)handTitle.textContent=playStyle==='hotseat'?'کارت‌های بازیکن نوبت‌دار':'کارت‌های شما';
  (playStyle==='hotseat'&&!humanSeats.has(G.turn)?[]:(G.hands[handPlayer]||[])).forEach(c=>{let b=document.createElement('button'),legal=(playStyle==='hotseat'?humanSeats.has(G.turn)&&hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(handPlayer).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
  $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
  $('trickMsg').textContent=G.trickCompletePending?'در حال اعلام برنده دست…':G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
