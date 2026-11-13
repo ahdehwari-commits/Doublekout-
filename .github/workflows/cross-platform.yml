@@ -43,9 +43,9 @@ jobs:
           cp engines/kuwaiti-six-player/engine.js dist-pwa/engines/kuwaiti-six-player/
           cp engines/double-kout-sequence.js dist-pwa/engines/
           cd dist-pwa
-          zip -r ../DoubleKout-iPhone-PWA-0.8.10.zip .
+          zip -r ../DoubleKout-iPhone-PWA-0.8.11.zip .
       - uses: actions/upload-artifact@v4
         with:
           name: DoubleKout-iPhone-PWA
-          path: DoubleKout-iPhone-PWA-0.8.10.zip
+          path: DoubleKout-iPhone-PWA-0.8.11.zip
           if-no-files-found: error
