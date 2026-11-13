@@ -185,6 +185,16 @@ function addStyle(){
   `;
 
   s.textContent+=`
+  /* 0.8.19: compact, overlapping 3D fans, curved inward toward each seat. */
+  .k-seat .k-opponent-fan{display:flex!important;align-items:center!important;justify-content:center!important;gap:0!important;width:100%!important;max-width:none!important;height:104px!important;overflow:visible!important;perspective:850px!important;transform-style:preserve-3d!important;filter:drop-shadow(0 10px 7px #0008)}
+  .k-seat .k-opponent-fan .k-card.k-back{width:62px!important;height:93px!important;min-width:62px!important;flex:0 0 62px!important;margin-left:-54px!important;border-radius:9px!important;border-width:3px!important;box-shadow:0 12px 18px #000b,inset 0 0 0 1px #fff6!important;backface-visibility:hidden;transition:transform .2s ease}
+  .k-seat .k-opponent-fan .k-card.k-back:first-child{margin-left:0!important}
+  .k-seat[data-p="3"] .k-opponent-fan,.k-seat[data-p="0"] .k-opponent-fan{transform:rotateX(10deg) translateZ(18px)!important}
+  .k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan{transform:rotateY(-13deg) rotateZ(-5deg) translateZ(20px)!important}
+  .k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:rotateY(13deg) rotateZ(5deg) translateZ(20px)!important}
+  .k-seat .k-opponent-fan .k-back:after{font-size:6px!important;transform:rotate(180deg)!important}
+  @media(max-width:520px){.k-seat .k-opponent-fan{height:96px!important}.k-seat .k-opponent-fan .k-card.k-back{width:58px!important;height:87px!important;min-width:58px!important;flex-basis:58px!important;margin-left:-51px!important}}
+
   /* 0.8.17: visible own hand throughout AI play; oversized edge-clipped opponent fans. */
   .k-hand{width:100%;max-width:100%;box-sizing:border-box;justify-content:center;overflow:visible;overflow-y:visible;padding:18px 4px 26px;min-height:148px;gap:0}
   .k-hand button,.k-hand .k-auction-card{flex:0 0 68px;width:68px;height:102px;margin-left:-39px!important;position:relative;transform-origin:50% 100%}
@@ -277,7 +287,7 @@ function setupMarkup(){
  $('modePicker').insertAdjacentElement('afterend',s);s.insertAdjacentElement('afterend',g);
 }
 function renderHumanSeatChoices(){const host=$('kHumanSeatChoices');if(!host)return;host.innerHTML='';for(let p=0;p<6;p++){const l=document.createElement('label');l.style.cssText='display:flex;align-items:center;gap:5px;background:#09271f;border:1px solid #477a68;border-radius:9px;padding:7px;color:#f4dfaa;font-size:11px';const c=document.createElement('input');c.type='checkbox';c.value=String(p);c.checked=p===0;c.addEventListener('change',()=>{if(!host.querySelector('input:checked'))c.checked=true;});l.append(c,document.createTextNode('صندلی '+fa(p+1)));host.append(l);}}
-function isHumanSeat(p){return humanSeats.has(p);}
+function isHumanSeat(p){return $('kPlayStyle')&&$('kPlayStyle').value!=='hotseat'?p===0:humanSeats.has(p);}
 function revealCurrentHuman(){hotseatRevealed=true;$('kHotseatGate').classList.add('hidden');if(auction){renderAuction();renderAuctionHand();}else renderGame();}
 function resetSetup(){
  if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
@@ -514,7 +524,8 @@ function startActualGame(trumpSuit,hidden){
   const resolvedTrump=noTrumpContracts.includes(bidContract)?null:(game.isMalzoom?(trumpSuit||null):suitByContract[bidContract]);
   if(noTrumpContracts.includes(bidContract)&&(trumpSuit||hidden))throw new Error('قرارداد بدون حکم نباید خال حکم یا حکم مخفی داشته باشد.');
   if(!game.isMalzoom&&resolvedTrump!==null&&trumpSuit&&trumpSuit!==resolvedTrump)throw new Error('خال حکم با قرارداد برنده مزایده مغایرت دارد.');
-  locked=false;game.contract=contract;game.selectedContract=bidContract;game.turn=winner;game.leader=winner;
+  if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
+  locked=false;hotseatRevealed=$('kPlayStyle').value!=='hotseat';game.waitingResult=false;game.contract=contract;game.selectedContract=bidContract;game.turn=winner;game.leader=winner;
   K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump});
   game.hiddenTrump=!!hidden;game.trumpSuit=resolvedTrump;game.target=game.auctionBid.target||null;
   if(game.turn!==winner||!Array.isArray(game.trick)||game.trick.length!==0)throw new Error('انتقال نوبت از مزایده به بازی کامل نشد.');
@@ -681,7 +692,7 @@ function renderGame(){
   $('kCount'+p).textContent=fa(game.hands[p].length)+' کارت';
   const slot=$('kPlayed'+p);slot.innerHTML='';
   const played=currentPlays.find(x=>x.player===p);
-  if(p!==game.turn&&game.hands[p].length&&!($('kPlayStyle').value!=='hotseat'&&p===0)){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=game.hands[p].length;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';const offset=j-(n-1)/2;back.style.setProperty('--fan-index',String(j));back.style.setProperty('--fan-count',String(n));back.style.zIndex=String(10+j);fan.append(back);}slot.append(fan);}
+  if(p!==game.turn&&game.hands[p].length&&!($('kPlayStyle').value!=='hotseat'&&p===0)){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=game.hands[p].length;const side=p===1||p===2||p===4||p===5;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';const offset=j-(n-1)/2;back.style.setProperty('--fan-index',String(j));back.style.setProperty('--fan-count',String(n));back.style.zIndex=String(10+j);const toward=side?Math.abs(offset)*1.25:-Math.abs(offset)*1.25;const angle=offset*(side?5.2:6.2);back.style.transform='translateY('+toward+'px) rotate('+angle+'deg) translateZ('+(Math.max(0,5-Math.abs(offset))*2)+'px)';back.style.marginLeft=j===0?'0':'-54px';back.style.width='62px';back.style.height='93px';back.style.minWidth='62px';back.style.flex='0 0 62px';back.style.transformOrigin='50% 100%';back.style.boxShadow='0 12px 18px #000b, inset 0 0 0 1px #fff6';fan.append(back);}slot.append(fan);}
  }
  $('kHand').innerHTML='';
  const turnPlayer=game.turn;
