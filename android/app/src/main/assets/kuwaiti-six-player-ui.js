@@ -61,9 +61,7 @@ function addStyle(){
  .k-small{font-size:11px;color:#c4d5cd;line-height:1.8}
  .k-select{width:100%;background:#f7f1df;color:#17251f;border-radius:10px;padding:10px;margin:5px 0}
  @media(max-width:520px){.k-card{width:34px;height:49px}.k-table{gap:4px;padding:5px;grid-template-rows:auto minmax(100px,auto) auto}.k-seat{padding:5px 2px}.k-seat .k-name{font-size:10px}.k-center{min-height:100px}.k-intro{grid-template-columns:1fr 1fr 1fr}.k-auction .k-bids{grid-template-columns:repeat(2,1fr)}}
- `;
-
-/* Enlarged premium cards, fanned hands and central 3D trick pile */
+ /* Enlarged premium cards, fanned hands and central 3D trick pile */
 .k-table{min-height:490px;transform:perspective(1100px) rotateX(4deg);transform-style:preserve-3d;background:radial-gradient(ellipse at 50% 48%,#23815c,#0b4935 65%,#04291f);box-shadow:inset 0 0 0 3px #ffe7a355,inset 0 -28px 55px #001b14bb,0 28px 48px #000c}
 .k-seat{transform:translateZ(20px);box-shadow:0 12px 20px #0009,inset 0 1px 0 #ffffff33}
 .k-played{min-height:72px;overflow:visible}
@@ -92,6 +90,7 @@ function addStyle(){
 .k-center-cards .k-table-played{width:65px;height:96px;margin-left:-23px;box-shadow:0 13px 22px #000b,inset 2px 2px 3px #fff;transform:rotate(calc((var(--play-index) - 2.5)*7deg)) translateY(0)}
 .k-center-cards .k-table-played:first-child{margin-left:0}
 @media(max-width:520px){.k-table{min-height:440px;gap:4px;padding:6px}.k-hand button{margin-left:-57px}.k-hand button .k-card{width:74px;height:111px}.k-center-cards .k-table-played{width:53px;height:80px}.k-center{min-height:150px}}
+`;
 
  document.head.appendChild(s);
 }
