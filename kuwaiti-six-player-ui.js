@@ -134,7 +134,30 @@ function addStyle(){
 .k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan,.k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:rotate(90deg) scale(.92);transform-origin:center}
 @media(max-width:520px){.k-hand{min-height:160px;padding-left:8px;padding-right:8px}.k-hand button,.k-hand .k-auction-card{flex-basis:72px;width:72px;height:108px;margin-left:-46px!important}.k-hand button:first-child,.k-hand .k-auction-card:first-child{margin-left:0!important}.k-hand button .k-card,.k-hand .k-auction-card .k-card{width:72px;height:108px}.k-opponent-fan{height:84px}.k-opponent-fan .k-card.k-back{width:52px;height:78px;min-width:52px;flex-basis:52px;margin-left:-41px}}
 `;
- document.head.appendChild(s);
+ 
+  /* 0.8.15 responsive hands: keep all nine cards inside the phone viewport. */
+  .k-hand{width:100%;max-width:100%;box-sizing:border-box;justify-content:center;overflow:hidden;overflow-y:visible;padding:12px 4px 22px;min-height:122px;gap:0}
+  .k-hand button{flex:0 0 56px;width:56px;height:84px;margin-left:-18px!important;perspective:none}
+  .k-hand button:first-child{margin-left:0!important}
+  .k-hand button .k-card,.k-hand button .k-card.joker{width:56px;height:84px;min-width:56px;box-sizing:border-box;padding:4px;border-radius:8px;font-size:17px}
+  .k-hand button .k-card .ksuit{font-size:25px}
+  .k-hand button .k-card.joker .joker-title{font-size:7px}
+  .k-hand button .k-card.joker .joker-art{height:52px}
+  .k-hand button .k-card.joker .joker-caption{font-size:5px}
+  .k-opponent-fan{height:66px;max-width:100%;min-width:0;overflow:visible;justify-content:center;transform:none!important}
+  .k-opponent-fan .k-card.k-back{width:40px;height:60px;min-width:40px;flex:0 0 40px;margin-left:-31px;border-width:2px!important;border-radius:5px;transform:rotate(calc((var(--fan-index) - 4)*1.8deg))!important}
+  .k-opponent-fan .k-card.k-back:first-child{margin-left:0}
+  /* Corner seats are on the top/bottom edges: their fan baseline stays horizontal and parallel to that edge. */
+  .k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan,.k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:none!important;transform-origin:center}
+  @media(max-width:380px){
+    .k-hand{min-height:108px;padding:8px 2px 18px}
+    .k-hand button{flex-basis:48px;width:48px;height:72px;margin-left:-17px!important}
+    .k-hand button .k-card,.k-hand button .k-card.joker{width:48px;height:72px;min-width:48px;padding:3px;font-size:15px}
+    .k-hand button .k-card .ksuit{font-size:21px}
+    .k-hand button .k-card.joker .joker-art{height:43px}
+    .k-opponent-fan .k-card.k-back{width:36px;height:54px;min-width:36px;flex-basis:36px;margin-left:-28px}
+  }
+document.head.appendChild(s);
 }
 function cardNode(c,small=false){
  const d=document.createElement('div');
@@ -580,7 +603,7 @@ function renderGame(){
   $('kCount'+p).textContent=fa(game.hands[p].length)+' کارت';
   const slot=$('kPlayed'+p);slot.innerHTML='';
   const played=currentPlays.find(x=>x.player===p);
-  if(p!==game.turn&&game.hands[p].length){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=game.hands[p].length;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';const offset=j-(n-1)/2;back.style.transform='rotate('+(offset*3.2)+'deg) translateY('+(Math.abs(offset)*1.5)+'px)';back.style.zIndex=String(10+j);fan.append(back);}slot.append(fan);}
+  if(p!==game.turn&&game.hands[p].length){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=game.hands[p].length;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';const offset=j-(n-1)/2;back.style.setProperty('--fan-index',String(j));back.style.setProperty('--fan-count',String(n));back.style.zIndex=String(10+j);fan.append(back);}slot.append(fan);}
  }
  $('kHand').innerHTML='';
  const p=game.turn,isHuman=isHumanSeat(p),gate=$('kHotseatGate'),hide=isHuman&&!hotseatRevealed&&!game.done;gate.classList.toggle('hidden',!!hide);if(hide){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[p];$('kHotseatText').textContent='گوشی را به '+playerNames[p]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
