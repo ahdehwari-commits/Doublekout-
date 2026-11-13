@@ -582,7 +582,7 @@ function ensureUI(){
  el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineLeave').onclick=leave;
  root.addEventListener('click',function(e){if(e.target===root)close();});
 }
-function open(){ensureUI();el('onlineOverlay').classList.add('open');}
+function open(preselect){ensureUI();if(preselect&&el('onlineMode'))el('onlineMode').value=preselect;el('onlineOverlay').classList.add('open');}
 function close(){if(el('onlineOverlay'))el('onlineOverlay').classList.remove('open');}
 function initClient(){
  if(client)return true;
