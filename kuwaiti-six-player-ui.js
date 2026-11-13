@@ -165,6 +165,31 @@ function addStyle(){
   .k-royal-art{display:block;width:100%;height:100%;max-height:none!important;filter:drop-shadow(0 2px 2px #49351f55)}
   .k-card .k-corner{z-index:6}
   `;
+
+/* 0.8.17: visible own hand throughout AI play; oversized edge-clipped opponent fans. */
+.k-hand{width:100%;max-width:100%;box-sizing:border-box;justify-content:center;overflow:visible;overflow-y:visible;padding:18px 4px 26px;min-height:148px;gap:0}
+.k-hand button,.k-hand .k-auction-card{flex:0 0 68px;width:68px;height:102px;margin-left:-39px!important;position:relative;transform-origin:50% 100%}
+.k-hand button:first-child,.k-hand .k-auction-card:first-child{margin-left:0!important}
+.k-hand button .k-card,.k-hand .k-auction-card .k-card{width:68px;height:102px;min-width:68px}
+.k-hand button:disabled{opacity:1}
+.k-opponent-fan{height:108px;min-width:0;max-width:none;width:max-content;overflow:visible;justify-content:center;align-items:flex-end;padding:0;position:relative}
+.k-opponent-fan .k-card.k-back{width:64px;height:96px;min-width:64px;flex:0 0 64px;margin-left:-43px;border-width:3px!important;border-radius:8px;transform:rotate(calc((var(--fan-index) - 4)*4.2deg))!important;transform-origin:50% 100%}
+.k-opponent-fan .k-card.k-back:first-child{margin-left:0}
+.k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan{transform:translateX(12px) rotate(90deg) scale(1.12)!important;transform-origin:center}
+.k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:translateX(-12px) rotate(90deg) scale(1.12)!important;transform-origin:center}
+.k-seat[data-p="3"] .k-opponent-fan{transform:translateY(-4px) scale(1.08)!important}
+.k-seat[data-p="0"] .k-opponent-fan{transform:translateY(4px) scale(1.08)!important}
+@media(max-width:520px){
+ .k-hand{min-height:142px;padding:14px 2px 24px}
+ .k-hand button,.k-hand .k-auction-card{flex-basis:62px;width:62px;height:93px;margin-left:-36px!important}
+ .k-hand button:first-child,.k-hand .k-auction-card:first-child{margin-left:0!important}
+ .k-hand button .k-card,.k-hand .k-auction-card .k-card{width:62px;height:93px;min-width:62px}
+ .k-opponent-fan{height:100px}
+ .k-opponent-fan .k-card.k-back{width:60px;height:90px;min-width:60px;flex-basis:60px;margin-left:-41px}
+ .k-seat[data-p="1"] .k-opponent-fan,.k-seat[data-p="2"] .k-opponent-fan{transform:translateX(15px) rotate(90deg) scale(1.08)!important}
+ .k-seat[data-p="4"] .k-opponent-fan,.k-seat[data-p="5"] .k-opponent-fan{transform:translateX(-15px) rotate(90deg) scale(1.08)!important}
+}
+
   document.head.appendChild(s);
 }
 function royalPortrait(rank){
@@ -628,13 +653,23 @@ function renderGame(){
   if(p!==game.turn&&game.hands[p].length){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=game.hands[p].length;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';const offset=j-(n-1)/2;back.style.setProperty('--fan-index',String(j));back.style.setProperty('--fan-count',String(n));back.style.zIndex=String(10+j);fan.append(back);}slot.append(fan);}
  }
  $('kHand').innerHTML='';
- const p=game.turn,isHuman=isHumanSeat(p),gate=$('kHotseatGate'),hide=isHuman&&!hotseatRevealed&&!game.done;gate.classList.toggle('hidden',!!hide);if(hide){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[p];$('kHotseatText').textContent='گوشی را به '+playerNames[p]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
- if(isHuman&&hotseatRevealed)game.hands[p].forEach((c,i,arr)=>{
+ const turnPlayer=game.turn;
+ const displayPlayer=$('kPlayStyle').value==='hotseat'?turnPlayer:0;
+ const isTurnHuman=isHumanSeat(turnPlayer),displayHuman=isHumanSeat(displayPlayer),gate=$('kHotseatGate');
+ const hideGate=$('kPlayStyle').value==='hotseat'&&isTurnHuman&&!hotseatRevealed&&!game.done;
+ gate.classList.toggle('hidden',!hideGate);
+ if(hideGate){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[turnPlayer];$('kHotseatText').textContent='گوشی را به '+playerNames[turnPlayer]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
+ const canRevealHand=displayHuman&&($('kPlayStyle').value!=='hotseat'||(displayPlayer===turnPlayer&&hotseatRevealed));
+ if(canRevealHand)game.hands[displayPlayer].forEach((c,i,arr)=>{
   const b=document.createElement('button');
   const offset=i-(arr.length-1)/2;
-  b.style.transform='rotate('+(offset*4)+'deg) translateY('+(Math.abs(offset)*2.1)+'px)';
+  b.style.transform='rotate('+(offset*4.8)+'deg) translateY('+(Math.abs(offset)*2.4)+'px)';
   b.style.zIndex=String(10+i);
   const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
+  const legal=displayPlayer===turnPlayer&&isTurnHuman&&!game.done&&($('kPlayStyle').value!=='hotseat'||hotseatRevealed)&&K.legalCards(game.hands[displayPlayer],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||displayPlayer===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1}).some(x=>x.id===c.id);
+  b.disabled=!legal;b.append(cardNode(c));b.onclick=()=>playHumanCard(c);$('kHand').append(b);
+ });
+ const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
   const legal=isHuman&&!game.done&&hotseatRevealed&&K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1}).some(x=>x.id===c.id);
   b.disabled=!legal;b.append(cardNode(c));b.onclick=()=>playHumanCard(c);$('kHand').append(b);
  });
