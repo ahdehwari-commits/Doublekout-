@@ -5,10 +5,10 @@ const $=id=>document.getElementById(id);
 const suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'};
 const suitName={S:'پیک',H:'دل',D:'خشت',C:'گشنیز'};
 const contractName={hokm_spades:'پیک',hokm_hearts:'دل',hokm_diamonds:'خشت',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',hokm:'حکم',malzoom:'ملزوم'};
-const playerNames=['شما','بازیکن ۲','بازیکن ۳','بازیکن ۴','بازیکن ۵','بازیکن ۶'];
+const playerNames=['بازیکن ۱','بازیکن ۲','بازیکن ۳','بازیکن ۴','بازیکن ۵','بازیکن ۶'];
 const team=p=>K.teamOf(p);
 const fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
-let game=null,auction=null,firstGame=true,previousAuctionWinner=null,previousWinningTeam=null;
+let game=null,auction=null,firstGame=true,previousAuctionWinner=null,previousWinningTeam=null,humanSeats=new Set([0]),hotseatRevealed=false;
 let points={A:0,B:0},trickView=[],locked=false,aiTimer=null,matchLimit=54,playedTricks=0;
 function addStyle(){
  const s=document.createElement('style');
@@ -87,7 +87,7 @@ function setupMarkup(){
  const s=document.createElement('section');s.className='panel hidden';s.id='kuwaitiSetup';
  s.innerHTML=`<h2 class="section-title">آماده‌سازی کوت کویتی · شش نفره</h2>
  <div class="k-intro"><div>۶ بازیکن</div><div>۵۴ کارت · ۹ کارت برای هر نفر</div><div>۹ دست در هر بازی</div></div>
- <label>پایان مسابقه پس از چند دست؟</label><select class="k-select" id="kMatchLimit"><option value="54">۵۴ دست</option><option value="108">۱۰۸ دست</option></select>
+ <label>شیوه بازی</label><select class="k-select" id="kPlayStyle"><option value="ai">یک بازیکن انسانی در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option></select><div id="kHumanSeatSetup"><label>انتخاب صندلی بازیکنان انسانی؛ صندلی‌های خالی با هوش مصنوعی پر می‌شوند</label><div id="kHumanSeatChoices" class="k-actions"></div><p class="k-small">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><label>پایان مسابقه پس از چند دست؟</label><select class="k-select" id="kMatchLimit"><option value="54">۵۴ دست</option><option value="108">۱۰۸ دست</option></select>
  <div class="k-small" id="kMatchProgress">۰ از ۵۴ دست انجام شده</div>
  <div id="kNextPicker" class="hidden"><label>انتخاب نفر اول مزایده توسط تیم برنده بازی قبل</label><select class="k-select" id="kFirstAuction"><option value="0">بازیکن ۱</option><option value="2">بازیکن ۳</option><option value="4">بازیکن ۵</option></select></div>
  <p class="k-small">در بازی اول دارنده ۲ خاج نفر اول مزایده است. در بازی‌های بعدی تیم برنده بازی قبل نفر اول مزایده را انتخاب می‌کند و بازیکن نشسته قبل از برنده مزایده قبلی، ملزوم‌کننده است.</p>
@@ -107,19 +107,23 @@ function setupMarkup(){
  <div class="k-live-tricks" id="kLiveTricks"><span>دست‌های برده تیم شما: <b id="kWonA">۰</b></span><span>دست‌های برده حریف: <b id="kWonB">۰</b></span></div>
  <div id="kStatus" class="k-status hidden">وضعیت بازی</div>
  <div class="k-actions"><button id="kAskTrump" class="hidden">درخواست اعلام حکم مخفی</button><button id="kAnnounceTrump" class="hidden">اعلام حکم</button></div>
- <h3 class="section-title">کارت‌های شما</h3><div id="kHand" class="k-hand"></div>
+ <h3 class="section-title">کارت‌های بازیکن نوبت‌دار</h3><div id="kHand" class="k-hand"></div>
  <div id="kResult" class="k-auction hidden"></div>
- <div class="k-actions"><button id="kNewGame" class="hidden">بازی بعدی</button><button id="kExit">بازگشت به انتخاب بازی</button></div>`;
+ <div id="kHotseatGate" class="k-auction hidden"><b id="kHotseatTitle">تحویل گوشی</b><p class="k-small" id="kHotseatText">گوشی را به بازیکن بعدی بدهید.</p><button id="kRevealHand" class="primary">کارت‌ها را نمایش بده</button></div><div class="k-actions"><button id="kNewGame" class="hidden">بازی بعدی</button><button id="kExit">بازگشت به انتخاب بازی</button></div>`;
  $('modePicker').insertAdjacentElement('afterend',s);s.insertAdjacentElement('afterend',g);
 }
+function renderHumanSeatChoices(){const host=$('kHumanSeatChoices');if(!host)return;host.innerHTML='';for(let p=0;p<6;p++){const l=document.createElement('label');l.style.cssText='display:flex;align-items:center;gap:5px;background:#09271f;border:1px solid #477a68;border-radius:9px;padding:7px;color:#f4dfaa;font-size:11px';const c=document.createElement('input');c.type='checkbox';c.value=String(p);c.checked=p===0;c.addEventListener('change',()=>{if(!host.querySelector('input:checked'))c.checked=true;});l.append(c,document.createTextNode('صندلی '+fa(p+1)));host.append(l);}}
+function isHumanSeat(p){return humanSeats.has(p);}
+function revealCurrentHuman(){hotseatRevealed=true;$('kHotseatGate').classList.add('hidden');if(auction){renderAuction();renderAuctionHand();}else renderGame();}
 function resetSetup(){
  if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
- game=null;auction=null;locked=false;trickView=[];
+ game=null;auction=null;locked=false;trickView=[];hotseatRevealed=false;$('kHotseatGate')?.classList.add('hidden');
  $('kAuction').classList.add('hidden');$('kAuctionSummary').classList.add('hidden');$('kContractSetup').classList.add('hidden');$('kMalzoomSetup').classList.add('hidden');$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');
  $('kHand').innerHTML='';$('kTrumpDisplay').textContent='بدون حکم';$('kTrickCards').textContent='کارت‌های این دست: ۰ از ۶';$('kTurn').textContent='در انتظار مزایده';$('kStatus').textContent='میز پاک و آماده بازی جدید است.';
  for(let p=0;p<6;p++){$('kPlayed'+p).innerHTML='';$('kCount'+p).textContent='۹ کارت';$('kSeat'+p)?.classList?.remove('active');}
  if(firstGame){playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;}
  $('kMatchProgress').textContent=fa(playedTricks)+' از '+fa(matchLimit)+' دست انجام شده';
+ renderHumanSeatChoices();$('kHumanSeatSetup').classList.toggle('hidden',$('kPlayStyle').value!=='hotseat');
  setScreen('setup');
  if(firstGame){$('kNextPicker').classList.add('hidden');}
  else{
@@ -130,6 +134,8 @@ function resetSetup(){
  }
 }
 function startAuction(){
+ humanSeats=$('kPlayStyle').value==='hotseat'?new Set([...document.querySelectorAll('#kHumanSeatChoices input:checked')].map(x=>Number(x.value))):new Set([0]);hotseatRevealed=false;
+ if(!humanSeats.size){setStatus('دست‌کم یک صندلی انسانی انتخاب کن.');return;}
  if(playedTricks>=matchLimit){setStatus('مسابقه به پایان رسیده است.');return;}
  locked=false;
  // Clear every visual trace from the previous deal before dealing a fresh 54-card deck.
@@ -149,7 +155,7 @@ function startAuction(){
 }
 function renderAuction(){
  if(!auction)return;
- const isHuman=auction.current===0,forced=auction.passes>=5&&!auction.highest;
+ const isHuman=isHumanSeat(auction.current),forced=auction.passes>=5&&!auction.highest;
  $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':' · هوش مصنوعی در حال تصمیم‌گیری');
  const obligated=game.obligatedPlayer;
  $('kAuctionInfo').textContent='ملزوم‌کننده: '+(obligated===null?'نامشخص':playerNames[obligated])+' · بالاترین پیشنهاد: '+(auction.highest?playerNames[auction.highestPlayer]+' · '+auction.highest.label:'هنوز پیشنهادی ثبت نشده')+' · پاس‌های پیاپی: '+auction.passes+' از ۵';
@@ -168,11 +174,12 @@ function renderAuction(){
   }
  });
  $('kAuction').classList.remove('hidden');
- $('kHumanAuctionControls').classList.toggle('hidden',!isHuman);
+ $('kHumanAuctionControls').classList.toggle('hidden',!isHuman||!hotseatRevealed);
+ const gate=$('kHotseatGate');if(isHuman&&!hotseatRevealed){gate.classList.remove('hidden');$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[auction.current];$('kHotseatText').textContent='گوشی را به '+playerNames[auction.current]+' بدهید؛ سپس کارت‌های مزایده را نمایش دهید.';}else if(!isHuman)gate.classList.add('hidden');
  if(isHuman){
   $('kPass').disabled=forced;
   $('kPass').textContent=forced?'پاس (غیرمجاز؛ باید پیشنهاد بدهی)':'پاس';
-  $('kMalzoom').classList.toggle('hidden',obligated!==0||!!auction.highest);
+  $('kMalzoom').classList.toggle('hidden',obligated!==auction.current||!!auction.highest);
   [...$('kAuction').querySelectorAll('[data-bid]')].forEach(b=>{
    const n=b.dataset.bid==='pass'?0:Number(b.dataset.bid);
    b.disabled=b.dataset.bid!=='pass'&&n<=auction.highestRank;
@@ -181,9 +188,11 @@ function renderAuction(){
  renderAuctionHand();
 }
 function renderAuctionHand(){
- if(!game||!game.hands||!game.hands[0])return;
- $('kHand').innerHTML='';
- game.hands[0].forEach(c=>{
+ if(!game||!game.hands)return;
+ $('kHand').innerHTML='';const p=auction?auction.current:game.turn;
+ const gate=$('kHotseatGate'),hide=isHumanSeat(p)&&!hotseatRevealed;gate.classList.toggle('hidden',!!hide);if(hide){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[p];$('kHotseatText').textContent='گوشی را به '+playerNames[p]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
+ if(!isHumanSeat(p)||hide)return;
+ game.hands[p].forEach(c=>{
   const card=document.createElement('div');
   card.className='k-auction-card';
   card.append(cardNode(c));
@@ -233,10 +242,10 @@ function submitBid(bid){
  if(auction.passes>=5&&!auction.highest){
   const forcedPlayer=(p+1)%6;auction.current=forcedPlayer;
   auction.passes=5;
-  if(forcedPlayer!==0){const forcedBid={type:'normal',rank:1,label:'۶',target:6};submitBid(forcedBid);return;}
+  if(!isHumanSeat(forcedPlayer)){const forcedBid={type:'normal',rank:1,label:'۶',target:6};submitBid(forcedBid);return;}
  }
- auction.current=(p+1)%6;
- renderAuction();auctionTurn();
+ auction.current=(p+1)%6;hotseatRevealed=false;
+ renderAuction();renderAuctionHand();auctionTurn();
 }
 function finishAuction(){
  if(!auction||!auction.highest||!Number.isInteger(auction.highestPlayer)){setStatus('مزایده برنده مشخصی ندارد؛ بازی آغاز نشد.');return;}
@@ -261,10 +270,11 @@ function finishAuction(){
  $('kAuction').classList.add('hidden');
  $('kAuctionSummary').classList.remove('hidden');
  $('kAuctionSummary').textContent='نتیجه مزایده · برنده: '+playerNames[win]+' · پیشنهاد نهایی: '+bid.label+' · روند: '+auction.bids.map(x=>playerNames[x.player]+': '+x.label).join(' ← ');
+ auction=null; // Auction is closed; subsequent phone handoffs belong to the active game turn.
  if(game.isMalzoom){
   game.contract='hokm';
   $('kStatus').textContent='برنده مزایده: '+playerNames[win]+' · ملزوم';
-  if(win===0){
+  if(isHumanSeat(win)){
    $('kMalzoomSetup').classList.remove('hidden');$('kTrumpDisplay').textContent='انتخاب حکم ملزوم';
    setStatus('خال حکم ملزوم را انتخاب کن و مشخص کن مخفی بماند یا اعلام شود.');
   }else{
@@ -274,7 +284,7 @@ function finishAuction(){
   }
   return;
  }
- if(win===0){
+ if(isHumanSeat(win)){
   $('kContractSetup').classList.remove('hidden');
   $('kContract').value='hokm_spades';
   $('kTrumpDisplay').textContent='منتظر انتخاب قرارداد';
@@ -309,7 +319,7 @@ function beginWinningContract(contract){
  startActualGame(trumpSuit,false);
 }
 function confirmWinningContract(){
- if(!game||!game.auctionBid||game.auctionWinner!==0)return;
+ if(!game||!game.auctionBid||!isHumanSeat(game.auctionWinner))return;
  beginWinningContract($('kContract').value);
 }
 function startActualGame(trumpSuit,hidden){
@@ -335,9 +345,9 @@ function startActualGame(trumpSuit,hidden){
   $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':('حکم اعلام‌شده: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump])):(noTrumpContracts.includes(bidContract)?'بدون حکم · '+contractName[bidContract]:'حکم این بازی: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]);
   $('kAuctionSummary').textContent+=' · قرارداد: '+(game.isMalzoom?'ملزوم':contractName[bidContract])+(resolvedTrump?' · '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]:'');
   $('kTrickCards').style.display='';
-  $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(winner===0?' · کارت‌های مجاز شما فعال‌اند.':' · هوش مصنوعی در حال بازی است.');
+  $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(isHumanSeat(winner)?' · کارت‌های بازیکن انسانی پس از نمایش فعال می‌شوند.':' · هوش مصنوعی در حال بازی است.');
   $('kResult').classList.add('hidden');setScreen('game');renderGame();
-  if(winner!==0)playAITurn();
+  if(!isHumanSeat(winner))playAITurn();else renderGame();
  }catch(e){
   locked=true;setScreen('game');$('kStatus').textContent='خطا در شروع بازی پس از مزایده: '+(e&&e.message?e.message:'خطای ناشناخته');
   console.error('Kuwaiti auction-to-play transition failed',e);
@@ -345,7 +355,7 @@ function startActualGame(trumpSuit,hidden){
 }
 function auctionTurn(){
  if(!auction)return;
- if(auction.current===0){renderAuction();return;}
+ if(isHumanSeat(auction.current)){renderAuction();renderAuctionHand();return;}
  const p=auction.current;
  setTimeout(()=>{
   if(!auction||auction.current!==p)return;
@@ -422,14 +432,15 @@ function aiCard(p){
  return scores[0].card;
 }
 function playHumanCard(card){
- if(!game||game.done||locked||game.turn!==0)return;
+ if(!game||game.done||locked||!isHumanSeat(game.turn)||!hotseatRevealed)return;
+ const p=game.turn;
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
- const allowed=K.legalCards(game.hands[0],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||game.auctionWinner===0)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});
+ const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});
  if(!allowed.some(c=>c.id===card.id)){setStatus('این کارت طبق قانون فعلی مجاز نیست.');return;}
- if(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&lead&&!game.hands[0].some(c=>c.kind==='normal'&&c.suit===lead)){
+ if(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&lead&&!game.hands[p].some(c=>c.kind==='normal'&&c.suit===lead)){
   setStatus('حکم هنوز مخفی است. ابتدا می‌توانی درخواست اعلام حکم بدهی یا بدون درخواست کارت مجاز بازی کنی.');
  }
- playOne(0,card);
+ hotseatRevealed=false;playOne(p,card);
 }
 function playOne(p,card){
  if(!game||game.done)return;
@@ -447,10 +458,10 @@ function playOne(p,card){
 }
 function cardLabel(c){return c.kind==='joker'?(c.color==='red'?'جوکر قرمز':'جوکر مشکی'):c.rank+' '+suitGlyph[c.suit];}
 function playAITurn(){
- if(!game||game.done||game.turn===0||locked||game.waitingResult)return;
+ if(!game||game.done||isHumanSeat(game.turn)||locked||game.waitingResult)return;
  const p=game.turn;
  setTimeout(()=>{
-  if(!game||game.done||game.turn!==p)return;
+  if(!game||game.done||game.turn!==p||isHumanSeat(game.turn))return;
   try{
    const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
    if(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&p!==game.auctionWinner&&lead&&!game.hands[p].some(c=>c.kind==='normal'&&c.suit===lead)){
@@ -487,22 +498,23 @@ function renderGame(){
   const slot=$('kPlayed'+p);slot.innerHTML='';
   const played=currentPlays.find(x=>x.player===p);
   if(played)slot.append(cardNode(played.card,true));
-  else if(p!==0&&game.hands[p].length){const back=document.createElement('div');back.className='k-card k-back';slot.append(back);}
+  else if(p!==game.turn&&game.hands[p].length){const back=document.createElement('div');back.className='k-card k-back';slot.append(back);}
  }
  $('kHand').innerHTML='';
- game.hands[0].forEach(c=>{
+ const p=game.turn,isHuman=isHumanSeat(p),gate=$('kHotseatGate'),hide=isHuman&&!hotseatRevealed&&!game.done;gate.classList.toggle('hidden',!!hide);if(hide){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[p];$('kHotseatText').textContent='گوشی را به '+playerNames[p]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
+ if(isHuman&&hotseatRevealed)game.hands[p].forEach(c=>{
   const b=document.createElement('button');
   const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
-  const legal=game.turn===0&&!game.done&&K.legalCards(game.hands[0],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||game.auctionWinner===0)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1}).some(x=>x.id===c.id);
+  const legal=isHuman&&!game.done&&hotseatRevealed&&K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||game.auctionWinner===0)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1}).some(x=>x.id===c.id);
   b.disabled=!legal;b.append(cardNode(c));b.onclick=()=>playHumanCard(c);$('kHand').append(b);
  });
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
- const voidInLead=game.turn===0&&lead&&!game.hands[0].some(c=>c.kind==='normal'&&c.suit===lead);
- $('kAskTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&voidInLead&&game.auctionWinner!==0));
- $('kAnnounceTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&game.turn===0&&game.auctionWinner===0));
+ const voidInLead=isHuman&&lead&&!game.hands[p].some(c=>c.kind==='normal'&&c.suit===lead);
+ $('kAskTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&voidInLead&&game.auctionWinner!==p));
+ $('kAnnounceTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&isHuman&&hotseatRevealed&&game.turn===game.auctionWinner));
 }
 function finishGame(){
- game.done=true;locked=true;
+ game.done=true;locked=true;$('kHotseatGate').classList.add('hidden');
  const bidderTeam=team(game.auctionWinner),won=game.trickWinners.filter(p=>team(p)===bidderTeam).length;
  let resultText='',score=0;
  if(game.isMalzoom){
@@ -536,6 +548,7 @@ function applyScore(success,won,bidderTeam,provided){
  renderGame();
 }
 function startNewMatch(){
+ hotseatRevealed=false;
  if(playedTricks>=matchLimit){firstGame=true;previousAuctionWinner=null;previousWinningTeam=null;points={A:0,B:0};playedTricks=0;resetSetup();return;}
  locked=false;
  const teamPlayers=previousWinningTeam==='B'?[1,3,5]:[0,2,4];
@@ -546,6 +559,8 @@ function startNewMatch(){
  startAuction();
 }
 function bind(){
+ $('kPlayStyle').onchange=()=>{$('kHumanSeatSetup').classList.toggle('hidden',$('kPlayStyle').value!=='hotseat');};
+ $('kRevealHand').onclick=()=>{if((auction&&isHumanSeat(auction.current))||(game&&isHumanSeat(game.turn)))revealCurrentHuman();};
  $('modeKuwaiti').onclick=()=>{try{if(window.audioReady)audioReady();if(!initialized&&!init())throw new Error('راه‌اندازی میز کامل نشد');resetSetup();}catch(e){$('modeMessage').textContent='خطا در باز کردن میز شش‌نفره: '+(e&&e.message?e.message:'خطای ناشناخته');console.error(e);}};
  $('kStartAuction').onclick=()=>{if(firstGame){points={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;}startAuction();};
  $('kBackModes').onclick=()=>setScreen('modes');
@@ -560,8 +575,8 @@ function bind(){
  $('kMalzoom').onclick=()=>submitBid({type:'malzoom',rank:1,label:'ملزوم'});
  $('kConfirmContract').onclick=confirmWinningContract;
  $('kConfirmMalzoom').onclick=()=>startActualGame($('kTrumpSuit').value,$('kHideTrump').checked);
- $('kAskTrump').onclick=()=>{if(game){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم مخفی اعلام شد.');renderGame();}};
- $('kAnnounceTrump').onclick=()=>{if(game){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم اعلام شد.');renderGame();}};
+ $('kAskTrump').onclick=()=>{if(game&&isHumanSeat(game.turn)&&hotseatRevealed){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم مخفی اعلام شد.');renderGame();}};
+ $('kAnnounceTrump').onclick=()=>{if(game&&isHumanSeat(game.turn)&&hotseatRevealed){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم اعلام شد.');renderGame();}};
 }
 let initialized=false,engineLoading=false;
 function loadEngine(){
