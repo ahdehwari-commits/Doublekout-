@@ -46,29 +46,36 @@ alter table public.private_hands enable row level security;
 
 grant select on public.game_rooms, public.room_members, public.private_hands to authenticated;
 
+create or replace function public.is_room_member(p_room_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select exists (
+    select 1 from public.room_members m
+    where m.room_id = p_room_id and m.user_id = auth.uid()
+  );
+$$;
+
+revoke all on function public.is_room_member(uuid) from public;
+grant execute on function public.is_room_member(uuid) to authenticated;
+
 drop policy if exists "members can read their room" on public.game_rooms;
 create policy "members can read their room"
 on public.game_rooms for select to authenticated
-using (exists (
-  select 1 from public.room_members m
-  where m.room_id = game_rooms.id and m.user_id = auth.uid()
-));
+using (public.is_room_member(id));
 
 drop policy if exists "members can read room roster" on public.room_members;
 create policy "members can read room roster"
 on public.room_members for select to authenticated
-using (exists (
-  select 1 from public.room_members mine
-  where mine.room_id = room_members.room_id and mine.user_id = auth.uid()
-));
+using (public.is_room_member(room_id));
 
 drop policy if exists "players can read only their own hand" on public.private_hands;
 create policy "players can read only their own hand"
 on public.private_hands for select to authenticated
-using (user_id = auth.uid() and exists (
-  select 1 from public.room_members m
-  where m.room_id = private_hands.room_id and m.user_id = auth.uid()
-));
+using (user_id = auth.uid() and public.is_room_member(room_id));
 
 -- Clients cannot directly write room state, seats, or hands. A trusted Edge
 -- Function (service role kept server-side) will validate and apply game actions.
