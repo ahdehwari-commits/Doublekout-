@@ -105,7 +105,8 @@ function addStyle(){
 .k-hand button:first-child{margin-left:0!important}
 .k-hand button .k-card{transform:none!important}
 @media(max-width:520px){.k-hand button{margin-left:-49px!important}}
-`;\n s.textContent+=`
+`;
+ s.textContent+=`
 .k-auction.seat-auction-panel{position:absolute!important;z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);width:min(176px,42vw);max-width:176px;margin:0;padding:6px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#143e31f5,#061b16f8);box-shadow:0 8px 24px #000d;direction:rtl}
 .k-auction.seat-auction-panel #kAuctionTitle{display:block;font-size:10px;line-height:1.5;color:#ffe6a1;text-align:center}
 .k-auction.seat-auction-panel #kAuctionInfo,.k-auction.seat-auction-panel #kAuctionLog{display:none}
@@ -115,7 +116,8 @@ function addStyle(){
 .k-seat{z-index:1}
 .k-seat:has(.seat-auction-panel){z-index:25}
 .k-auction.seat-auction-panel #kHumanAuctionControls{display:block}
-`;\n document.head.appendChild(s);
+`;
+ document.head.appendChild(s);
 }
 function cardNode(c,small=false){
  const d=document.createElement('div');
