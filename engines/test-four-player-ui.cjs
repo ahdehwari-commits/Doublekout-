@@ -42,7 +42,11 @@ for(const suit of ['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs']){
  assert.ok(html.includes('value="'+suit+'"'),'four-player Hokm must offer '+suit);
  assert.ok(sixUi.includes('value="'+suit+'"'),'six-player Hokm must offer '+suit);
 }
-assert.ok(html.includes("G.trump=({'hokm_spades':'♠','hokm_hearts':'♥','hokm_diamonds':'♦','hokm_clubs':'♣'})[selected]"));
+assert.ok(html.includes("const contract=$('nextContract').value;")&&html.includes("const noTrump=['naras','tak_naras','saras'].includes(contract)"),'later four-player deals must allow no-trump contracts after the first five cards');
+assert.ok(html.includes("value=\"naras\"")&&html.includes("value=\"tak_naras\"")&&html.includes("value=\"saras\"")&&html.includes("value=\"partner_middle\""),'later four-player contract picker must offer Naras, Tak Naras, Saras and partner-middle');
+assert.ok(html.includes("const staged=matchNo>1;"),'all later four-player contracts must deal five cards before selection');
+assert.ok(html.includes("function aiChooseFourPlayerContract(hand)")&&html.includes("const chosen=aiChooseFourPlayerContract(G.hands[starter])"),'AI hakim must choose among all supported contracts after seeing five cards');
+assert.ok(html.includes("G.contract=noTrump?contract:'hokm'")&&html.includes("G.trump=suit"),'later contract selection must set the chosen contract and clear trump for no-trump modes');
 assert.ok(sixUi.includes("const suitByContract={hokm_spades:'S',hokm_hearts:'H',hokm_diamonds:'D',hokm_clubs:'C'}"));
 assert.ok(sixUi.includes("const resolvedTrump=noTrumpContracts.includes(bidContract)?null:(game.isMalzoom?(trumpSuit||null):suitByContract[bidContract])"));
 assert.ok(sixUi.includes("function startActualGame(trumpSuit,hidden){\n try{"));
@@ -113,3 +117,7 @@ assert.ok(!sixUi.includes("playerNames[p]+' کارت '+cardLabel(card)+' را ب
 assert.ok(html.includes("matchNo=1;previousWinner=null;previousStarter=null;activeMode='double-kout'"),'starting four-player DoubleKout must reset the series and fixed first game');
 assert.ok(html.includes("matchNo=1;previousWinner=null;previousStarter=null;activeMode='standard-hokm'"),'starting four-player Standard Hokm must reset the series and fixed first game');
 assert.ok(html.includes("if(matchNo===1){G.trump='♠';G.trumpCode='S';G.waitingTrump=false;}"),'first four-player game must lock trump to spades');
+
+assert.ok(sixUi.includes("const win=auction.highestPlayer,bid={...auction.highest}")&&sixUi.includes("winningSeat.classList.add('auction-winner')"),'after auction only the winner should retain a seat marker');
+assert.ok(sixUi.includes("el.querySelector('.k-bid-chip')?.remove()")&&sixUi.includes("chip.className='k-bid-chip winner'"),'all pass markers must be removed when the auction ends');
+assert.ok(sixUi.includes("chip.textContent=bid.type==='malzoom'?'M':fa(bid.target||bid.label||'')"),'winning seat must show only the winning trick target');
