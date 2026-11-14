@@ -80,7 +80,7 @@ jobs:
           cp engines/kuwaiti-six-player/engine.js dist-pwa/engines/kuwaiti-six-player/
           cp engines/double-kout-sequence.js engines/double-kout-game.js dist-pwa/engines/
           cd dist-pwa
-          zip -r ../DoubleKout-iPhone-PWA-0.8.21.zip .
+          zip -r ../DoubleKout-iPhone-PWA-0.8.22.zip .
       - uses: actions/upload-artifact@v4
         with:
           name: DoubleKout-iPhone-PWA
