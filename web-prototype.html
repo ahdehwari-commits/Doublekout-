@@ -548,7 +548,7 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 'use strict';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
-var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,onlineChallengeDeadline=0,onlineChallengeExpired=false;
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastOnlineHandSignature='',onlineChallengeDeadline=0,onlineChallengeExpired=false;
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
@@ -805,7 +805,15 @@ async function refreshOnlineGame(startPayload){
   if(q.data.status!=='playing'&&q.data.status!=='finished'){showRoom();el('onlineGame').style.display='none';say('اتاق باز است؛ منتظر شروع میزبان هستیم · وضعیت سرور: '+q.data.status);return;}
   showRoom();
   var state=q.data.public_state||{},revision=Number(q.data.revision||0);
-  if(revision===lastGameRevision){
+  // Always re-read the private hand, even when the public room revision is unchanged.
+  // A hand update can arrive before/after its room notification; compare its signature
+  // so cards already played never remain as tappable stale cards on screen.
+  var mine=await client.from('room_game_hands').select('seat,cards').eq('room_id',roomId).eq('owner_user_id',me.id).maybeSingle();
+  if(mine.error)throw mine.error;
+  if(mine.data&&Number.isInteger(Number(mine.data.seat)))myOnlineSeat=Number(mine.data.seat);
+  var hand=mine.data&&mine.data.cards||[];
+  var handSignature=JSON.stringify(hand);
+  if(revision===lastGameRevision&&handSignature===lastOnlineHandSignature){
    // Re-check server-side turn automation even when the game revision is unchanged.
    // Otherwise a timeout checked once before its deadline is never checked again.
    if(q.data.status==='playing'&&!((q.data.public_state||{}).phase==='challenge_decision')&&!aiBusy){
@@ -828,10 +836,7 @@ async function refreshOnlineGame(startPayload){
    return;
   }
   el('onlineGame').style.display='block';
-  var mine=await client.from('room_game_hands').select('seat,cards').eq('room_id',roomId).eq('owner_user_id',me.id).maybeSingle();
-  if(mine.error)throw mine.error;
-  // The private-hand query is authoritative for this device's seat. Do not wait for the slower lobby roster poll.
-  if(mine.data&&Number.isInteger(Number(mine.data.seat)))myOnlineSeat=Number(mine.data.seat);
+  // The private hand was fetched before the revision fast-path above.
   var players=state.seatPlayers||{},names=[0,1,2,3].map(function(i){return players[String(i)]&&players[String(i)].name||('بازیکن '+(i+1));});
   var turn=Number(state.turn||0),finished=state.phase==='finished',decisionPending=state.phase==='challenge_decision';
   var challengeDeadlines=state.challengeDeadlines||{},myDeadline=Number(challengeDeadlines[String(myOnlineSeat)]||0),isMyChallengeTurn=decisionPending&&myOnlineSeat>=0&&myDeadline>0&&!(state.challengePassed||[]).includes(myOnlineSeat);
@@ -889,7 +894,6 @@ async function refreshOnlineGame(startPayload){
   el('onlineTrickMsg').textContent=decisionPending?'در حال انتخاب چالش':('نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳');
   el('onlineTrumpBig').textContent=suitGlyph[state.trump||'S']||'♠';
   el('onlineScore').textContent='تیم صندلی‌های ۱ و ۳: '+(state.scoreA||0)+' · تیم صندلی‌های ۲ و ۴: '+(state.scoreB||0)+' · دست‌های برده‌شده: '+(state.trickWinners||[]).length;
-  var hand=mine.data&&mine.data.cards||[];
   el('onlineHand').innerHTML='';
   el('onlineHandTitle').textContent='کارت‌های شما · '+hand.length+' کارت';
   hand.forEach(function(c,i){
@@ -899,15 +903,17 @@ async function refreshOnlineGame(startPayload){
    el('onlineHand').appendChild(b);
   });
   lastGameRevision=revision;
+  lastOnlineHandSignature=handSignature;
   if(!finished&&myOnlineSeat===-1)myOnlineSeat=-1;
   if(!finished&&!decisionPending&&me.id&&!aiBusy){
    var hostQ=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).single();
    if(!hostQ.error&&hostQ.data.is_host){
     if(players[String(turn)]&&players[String(turn)].human===false){
-     aiBusy=true;try{var ai=await client.rpc('play_room_ai_turn',{p_room_id:roomId});if(ai.error)throw ai.error;}catch(e){say('نوبت ربات: '+(e.message||e));}finally{aiBusy=false;}
+     aiBusy=true;try{var ai=await client.rpc('play_room_ai_turn',{p_room_id:roomId});if(ai.error)throw ai.error;setTimeout(refreshOnlineGame,150);}catch(e){say('نوبت ربات: '+(e.message||e));}finally{aiBusy=false;}
     }else{
      var timeout=await client.rpc('advance_room_turn_timeout',{p_room_id:roomId});
      if(timeout.error&&timeout.error.message!=='time_remaining')say('بررسی پایان زمان نوبت: '+timeout.error.message);
+     else if(timeout.data&&timeout.data.state)setTimeout(refreshOnlineGame,150);
     }
    }
   }
@@ -928,7 +934,7 @@ async function leave(){
   catch(e){say('خروج محلی انجام شد، اما حذف عضویت از اتاق انجام نشد: '+(e.message||e));}
  }
  if(channel){await client.removeChannel(channel);channel=null;}
- roomId=null;roomCode='';myOnlineSeat=-1;lastGameRevision=-1;el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
+ roomId=null;roomCode='';myOnlineSeat=-1;lastGameRevision=-1;lastOnlineHandSignature='';el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
 }
 window.DoubleKoutOnline={open:open,leave:leave};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
