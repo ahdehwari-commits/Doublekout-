@@ -7,7 +7,7 @@ android {
         minSdk 23
         targetSdk 35
         versionCode 22
-        versionName '0.8.21'
+        versionName '0.8.22'
     }
 }
 dependencies {
