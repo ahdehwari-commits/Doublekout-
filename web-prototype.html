@@ -789,7 +789,6 @@ async function refreshOnlineGame(startPayload){
     for(var k=0;k<Math.min(left,13);k++){var back=document.createElement('div');back.className='card back';back.style.zIndex=String(k+1);fan.appendChild(back);}
     slot.appendChild(fan);
    }
-   if(playBySeat[seat]){var playedCard=cardEl(visualCard(playBySeat[seat].card),true);playedCard.classList.add('table-played');playedCard.style.setProperty('--play-index',Number(playBySeat[seat].seat));slot.appendChild(playedCard);}
   });
   el('onlineTrick').innerHTML='';
   (state.plays||[]).forEach(function(p,i){var played=cardEl(visualCard(p.card),true);played.classList.add('table-played');played.style.setProperty('--play-index',i);el('onlineTrick').appendChild(played);});
