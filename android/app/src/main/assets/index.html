@@ -825,7 +825,9 @@ async function refreshOnlineGame(startPayload){
    if(q.data.status==='playing'&&!((q.data.public_state||{}).phase==='challenge_decision')&&!aiBusy){
     var sameState=q.data.public_state||{},sameTurn=Number(sameState.turn||0);
     var sameHost=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
-    if(!sameHost.error&&sameHost.data&&sameHost.data.is_host){
+    if(sameHost.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+sameHost.error.message);
+    if(!sameHost.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
+    if(sameHost.data.is_host){
      if(sameState.seatPlayers&&sameState.seatPlayers[String(sameTurn)]&&sameState.seatPlayers[String(sameTurn)].human===false){
       aiBusy=true;try{var retryAi=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(retryAi.error)throw retryAi.error;setTimeout(refreshOnlineGame,150);}catch(e){say('اجرای خودکار ربات دوباره تلاش می‌شود: '+(e.message||e));}finally{aiBusy=false;}
      }else{
@@ -912,8 +914,10 @@ async function refreshOnlineGame(startPayload){
   lastOnlineHandSignature=handSignature;
   if(!finished&&myOnlineSeat===-1)myOnlineSeat=-1;
   if(!finished&&!decisionPending&&me.id&&!aiBusy){
-   var hostQ=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).single();
-   if(!hostQ.error&&hostQ.data.is_host){
+   var hostQ=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
+   if(hostQ.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+hostQ.error.message);
+   if(!hostQ.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
+   if(hostQ.data.is_host){
     if(players[String(turn)]&&players[String(turn)].human===false){
      aiBusy=true;try{var ai=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(ai.error)throw ai.error;setTimeout(refreshOnlineGame,150);}catch(e){say('نوبت ربات: '+(e.message||e));}finally{aiBusy=false;}
     }else{
