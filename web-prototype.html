@@ -723,9 +723,30 @@ async function startOnlineGame(){
  finally{if(el('onlineStart'))el('onlineStart').disabled=false;}
 }
 async function submitOnlineChallengeChoice(choice){
- try{if(!roomId)return;el('onlineChooseNormal').disabled=true;el('onlineChooseChallenge').disabled=true;el('onlineChallengeExtend').disabled=true;say(choice==='challenge'?'در حال ثبت اعلام چالش...':'در حال ثبت عبور از چالش...');var r=await client.rpc('submit_room_challenge_choice',{p_room_id:roomId,p_choice:choice});if(r.error)throw r.error;await refreshOnlineGame();}
- catch(e){say('ثبت انتخاب انجام نشد: '+(e.message||e));}
- finally{if(el('onlineChooseNormal'))el('onlineChooseNormal').disabled=false;if(el('onlineChooseChallenge'))el('onlineChooseChallenge').disabled=false;if(el('onlineChallengeExtend'))el('onlineChallengeExtend').disabled=false;}
+ if(!roomId||!client)return;
+ var normal=el('onlineChooseNormal'),challenge=el('onlineChooseChallenge'),extend=el('onlineChallengeExtend');
+ try{
+  normal.disabled=true;challenge.disabled=true;extend.disabled=true;
+  say(choice==='challenge'?'در حال ثبت اعلام چالش...':'در حال ثبت عبور از چالش...');
+  var timer,request=client.rpc('submit_room_challenge_choice',{p_room_id:roomId,p_choice:choice});
+  var r=await Promise.race([request,new Promise(function(_,reject){timer=setTimeout(function(){reject(new Error('server_response_timeout'));},12000);})]);
+  clearTimeout(timer);
+  if(r.error)throw r.error;
+  await refreshOnlineGame();
+ }catch(e){
+  if(e&&e.message==='server_response_timeout'){
+   try{
+    var snap=await client.rpc('get_room_snapshot',{p_room_id:roomId});
+    if(!snap.error&&snap.data&&snap.data.public_state){
+     var passed=snap.data.public_state.challengePassed||[];
+     if(passed.includes(Number(myOnlineSeat))){await refreshOnlineGame();say('عبور از چالش در سرور ثبت شده است.');}
+     else{say('سرور هنوز پاسخ ثبت انتخاب را نداده؛ وضعیت اتاق به‌روزرسانی شد. دوباره انتخاب نکن و چند لحظه صبر کن.');await refreshOnlineGame();}
+    }else say('پاسخ سرور دریافت نشد؛ اتصال اینترنت را بررسی و اتاق را تازه‌سازی کن.');
+   }catch(checkError){say('پاسخ سرور دریافت نشد؛ اتصال اینترنت را بررسی و اتاق را تازه‌سازی کن.');}
+  }else say('ثبت انتخاب انجام نشد: '+(e.message||e));
+ }finally{
+  if(normal)normal.disabled=false;if(challenge)challenge.disabled=false;if(extend)extend.disabled=false;
+ }
 }
 async function extendOnlineChallengeTime(){
  try{el('onlineChallengeExtend').disabled=true;var r=await client.rpc('extend_room_challenge_time',{p_room_id:roomId});if(r.error)throw r.error;say('۱۵ ثانیه زمان اضافه شد.');await refreshOnlineGame();}
