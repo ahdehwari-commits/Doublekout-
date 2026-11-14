@@ -1,4 +1,4 @@
-name: Build Android APK # Rebuild current Android assets after mobile viewport fixes
+name: Build Android APK # Rebuild synced online-enabled Android assets
 
 on:
   workflow_dispatch:
