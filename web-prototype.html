@@ -783,7 +783,25 @@ async function refreshOnlineGame(startPayload){
   if(q.data.status!=='playing'&&q.data.status!=='finished'){showRoom();el('onlineGame').style.display='none';say('اتاق باز است؛ منتظر شروع میزبان هستیم · وضعیت سرور: '+q.data.status);return;}
   showRoom();
   var state=q.data.public_state||{},revision=Number(q.data.revision||0);
-  if(revision===lastGameRevision)return;
+  if(revision===lastGameRevision){
+   // Re-check server-side turn automation even when the game revision is unchanged.
+   // Otherwise a timeout checked once before its deadline is never checked again.
+   if(q.data.status==='playing'&&!((q.data.public_state||{}).phase==='challenge_decision')&&!aiBusy){
+    var sameState=q.data.public_state||{},sameTurn=Number(sameState.turn||0);
+    var sameHost=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
+    if(!sameHost.error&&sameHost.data&&sameHost.data.is_host){
+     if(sameState.seatPlayers&&sameState.seatPlayers[String(sameTurn)]&&sameState.seatPlayers[String(sameTurn)].human===false){
+      aiBusy=true;try{var retryAi=await client.rpc('play_room_ai_turn',{p_room_id:roomId});if(retryAi.error)throw retryAi.error;setTimeout(refreshOnlineGame,150);}catch(e){say('اجرای خودکار ربات دوباره تلاش می‌شود: '+(e.message||e));}finally{aiBusy=false;}
+     }else{
+      var sameDeadline=Number(sameState.turnDeadline||0);
+      if(sameDeadline>0&&Date.now()/1000>=sameDeadline){
+       try{var retryTimeout=await client.rpc('advance_room_turn_timeout',{p_room_id:roomId});if(retryTimeout.error)throw retryTimeout.error;if(retryTimeout.data&&retryTimeout.data.advanced!==false)setTimeout(refreshOnlineGame,150);}catch(e){say('پایان زمان؛ تلاش برای انداختن کارت خودکار: '+(e.message||e));}
+      }
+     }
+    }
+   }
+   return;
+  }
   el('onlineGame').style.display='block';
   var mine=await client.from('room_game_hands').select('seat,cards').eq('room_id',roomId).eq('owner_user_id',me.id).maybeSingle();
   if(mine.error)throw mine.error;
