@@ -13,6 +13,8 @@ declare
   v_card_id text;
   v_lead text;
   v_step integer;
+  v_before_count integer;
+  v_timeout_result jsonb;
 begin
   insert into auth.users(id) values(v_host),(v_guest) on conflict do nothing;
   perform set_config('request.jwt.claim.sub',v_host::text,false);
@@ -157,6 +159,44 @@ begin
   end if;
   raise notice 'PASS: Double Kout non-challenge sequence scoring totals 13';
 
-  raise notice 'PASS: room start, private hands, 2 humans + 2 AI, turn validation, legal cards, 13 tricks and final score';
+  -- A fourth room verifies that an expired HUMAN turn is automatically played
+  -- by the host timeout worker using the latest migration's AI fallback path.
+  perform set_config('request.jwt.claim.sub',v_host::text,false);
+  v_room := public.create_game_room('double-kout',4::smallint,'Host');
+  v_room_id := (v_room->>'room_id')::uuid;
+  v_code := v_room->>'code';
+  perform set_config('request.jwt.claim.sub',v_guest::text,false);
+  perform public.join_game_room(v_code,'Guest');
+  perform public.set_room_ready(v_room_id,true);
+  perform set_config('request.jwt.claim.sub',v_host::text,false);
+  perform public.start_room_game(v_room_id,true,'S',null);
+
+  select jsonb_array_length(cards) into v_before_count
+    from public.room_game_hands where room_id=v_room_id and seat=0;
+  update public.game_rooms
+     set public_state=jsonb_set(public_state,'{turnDeadline}',
+       to_jsonb(extract(epoch from clock_timestamp())-1),true),
+         revision=revision+1,updated_at=now()
+   where id=v_room_id;
+  v_timeout_result := public.advance_room_turn_timeout(v_room_id);
+
+  select status,public_state into v_status,v_state
+    from public.game_rooms where id=v_room_id;
+  if v_timeout_result->'state' is null then
+    raise exception 'expired human turn timeout did not return an advanced state: %',v_timeout_result;
+  end if;
+  if jsonb_array_length(v_state->'plays')<>1 then
+    raise exception 'expired human turn must place exactly one card on the table';
+  end if;
+  if (v_state->>'turn')::integer<>1 then
+    raise exception 'expired human turn must advance to the next seat';
+  end if;
+  if (select jsonb_array_length(cards) from public.room_game_hands
+       where room_id=v_room_id and seat=0)<>v_before_count-1 then
+    raise exception 'expired human turn must remove one card from the human hand';
+  end if;
+  raise notice 'PASS: expired human turn is auto-played, removed from hand, and advances turn';
+
+  raise notice 'PASS: room start, private hands, 2 humans + 2 AI, turn validation, legal cards, 13 tricks, final score and human timeout fallback';
 end;
 $$;
