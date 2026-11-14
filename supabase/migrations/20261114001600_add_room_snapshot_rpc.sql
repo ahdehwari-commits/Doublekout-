@@ -43,3 +43,6 @@ $$;
 
 revoke all on function public.get_room_snapshot(uuid) from public;
 grant execute on function public.get_room_snapshot(uuid) to authenticated;
+
+-- Ask PostgREST to refresh its function/schema cache immediately.
+notify pgrst, 'reload schema';
