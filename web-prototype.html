@@ -124,7 +124,7 @@
 .royal-frame{inset:8px 5px 8px!important}
 .royal-art{display:block;width:100%;height:100%;max-height:none!important;filter:drop-shadow(0 2px 2px #49351f55)}
 .card .corner{z-index:6}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۳۳ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۴۱ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
 <button class="mode-card" id="modeDouble"><strong>♠ میز چهار نفره</strong><span>دابل کوت توالی · نسخه قابل‌بازی</span></button>
@@ -739,6 +739,7 @@ function renderOnlineChallengeClock(){
  var node=el('onlineChallengeClock');if(!node||!onlineChallengeDeadline)return;
  var left=Math.max(0,Math.ceil(onlineChallengeDeadline-Date.now()/1000));
  node.textContent=left+' ثانیه';node.style.color=left<=3?'#ff7777':'#ffe39a';
+ if(left<=0){el('onlineChooseNormal').disabled=true;el('onlineChooseChallenge').disabled=true;el('onlineChallengeExtend').disabled=true;}
  if(left<=0&&!onlineChallengeExpired){onlineChallengeExpired=true;expireOnlineChallengeTurn(myOnlineSeat);}
  checkExpiredChallengeSeats();
 }
@@ -780,7 +781,7 @@ async function refreshOnlineGame(startPayload){
   var players=state.seatPlayers||{},names=[0,1,2,3].map(function(i){return players[String(i)]&&players[String(i)].name||('بازیکن '+(i+1));});
   var turn=Number(state.turn||0),finished=state.phase==='finished',decisionPending=state.phase==='challenge_decision';
   var challengeDeadlines=state.challengeDeadlines||{},myDeadline=Number(challengeDeadlines[String(myOnlineSeat)]||0),isMyChallengeTurn=decisionPending&&myOnlineSeat>=0&&myDeadline>0&&!(state.challengePassed||[]).includes(myOnlineSeat);
-  onlineChallengeDeadline=decisionPending?myDeadline:0;onlineChallengeExpired=false;
+  onlineChallengeDeadline=decisionPending&&isMyChallengeTurn?myDeadline:0;onlineChallengeExpired=false;
   window.__doubleKoutChallengeDeadlines=challengeDeadlines;window.__doubleKoutChallengePassed=state.challengePassed||[];
   var result=state.challengeResult;
   var status=decisionPending?'فرصت انتخاب چالش برای همه بازیکنان هم‌زمان فعال است':'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳ · حکم پیک';
