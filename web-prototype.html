@@ -548,7 +548,7 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 'use strict';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
-var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusy=false,myOnlineSeat=-1,lastGameRevision=-1;
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,onlineChallengeDeadline=0,onlineChallengeExpired=false;
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
@@ -569,11 +569,13 @@ function ensureUI(){
  '#onlineCode{direction:ltr;text-align:center;font-size:27px;letter-spacing:5px;color:#ffe09a;padding:12px;border:1px dashed #c9a65f;border-radius:10px;margin:10px 0}'+
  '#onlineRoster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}#onlineRoster div{background:#0b2a20;border:1px solid #537e6a;border-radius:9px;padding:9px;font-size:12px}'+
  '#onlineTable .center{grid-column:2;grid-row:2;min-height:165px}#onlineTable .seat{padding:5px}#onlineTable .played{min-height:58px}'+
- '#onlinePanel #onlineHand button{padding:0!important;background:none!important;border:0!important;flex:0 0 44px;width:44px;height:66px;margin-left:-18px!important}'+
- '#onlinePanel #onlineHand button:first-child{margin-left:0!important}#onlinePanel #onlineHand button .card{width:44px;height:66px;padding:3px;font-size:15px}'+
- '#onlinePanel #onlineHand button:disabled{opacity:.42}#onlinePanel #onlineHand button:not(:disabled) .card{border:2px solid #e7c879}'+
+ '#onlinePanel #onlineHand{display:flex;flex-wrap:nowrap;align-items:flex-end;justify-content:center;direction:ltr;gap:0;overflow-x:auto;overflow-y:visible;min-height:128px;padding:18px 8px 24px;scrollbar-width:thin}'+
+ '#onlinePanel #onlineHand button{padding:0!important;background:none!important;border:0!important;flex:0 0 58px;width:58px;height:88px;margin-left:-33px!important;position:relative;transform-origin:50% 100%;opacity:1!important}'+
+ '#onlinePanel #onlineHand button:first-child{margin-left:0!important}#onlinePanel #onlineHand button .card{width:58px;height:88px;padding:4px;font-size:17px}'+
+ '#onlinePanel #onlineHand button:disabled{opacity:1!important;filter:none!important;cursor:default}#onlinePanel #onlineHand button:disabled .card{opacity:1!important;filter:none!important}#onlinePanel #onlineHand button:not(:disabled) .card{border:2px solid #e7c879}'+
+ '#onlinePanel #onlineHand button:not(:disabled):hover{transform:translateY(-12px) scale(1.04)!important;z-index:50!important}'+
  '#onlineTable .center-trick .table-played{width:54px;height:80px;font-size:17px;margin-left:-23px}'+
- '@media(max-width:520px){#onlineTable{min-height:320px;padding:7px;gap:5px}#onlineTable .center{min-height:140px}#onlinePanel #onlineHand{min-height:120px;overflow-x:auto;justify-content:flex-start;padding:12px 8px 22px}#onlinePanel #onlineHand button{flex-basis:58px;width:58px;height:88px;margin-left:-35px!important}#onlinePanel #onlineHand button:first-child{margin-left:0!important}#onlinePanel #onlineHand button .card{width:58px;height:88px}#onlineTable .center-trick .table-played{width:45px;height:67px;margin-left:-19px}}';
+ '@media(max-width:520px){#onlineTable{min-height:320px;padding:7px;gap:5px}#onlineTable .center{min-height:140px}#onlinePanel #onlineHand{min-height:120px;overflow-x:auto;justify-content:center;padding:12px 8px 22px}#onlinePanel #onlineHand button{flex-basis:56px;width:56px;height:84px;margin-left:-32px!important}#onlinePanel #onlineHand button:first-child{margin-left:0!important}#onlinePanel #onlineHand button .card{width:56px;height:84px}#onlineTable .center-trick .table-played{width:45px;height:67px;margin-left:-19px}}';
  document.head.appendChild(style);
  var root=document.createElement('div');root.id='onlineOverlay';root.innerHTML=
  '<section id="onlinePanel"><button id="onlineClose" class="secondary" style="float:left">بستن</button><h2>اتاق آنلاین دابل کوت</h2>'+
@@ -631,15 +633,15 @@ function subscribe(){
  if(channel){client.removeChannel(channel);channel=null;}
  channel=client.channel('doublekout-room-'+roomId)
  .on('postgres_changes',{event:'*',schema:'public',table:'room_members',filter:'room_id=eq.'+roomId},refreshRoster)
- .on('postgres_changes',{event:'*',schema:'public',table:'game_rooms',filter:'id=eq.'+roomId},refreshRoster)
+ .on('postgres_changes',{event:'*',schema:'public',table:'game_rooms',filter:'id=eq.'+roomId},function(){refreshOnlineGame();})
  .subscribe(function(state){
-  if(state==='SUBSCRIBED'){say('اتصال زنده برقرار است؛ همگام‌سازی پشتیبان هم فعال است.');refreshRoster();}
+  if(state==='SUBSCRIBED'){say('اتصال زنده برقرار است.');refreshRoster();refreshOnlineGame();}
   else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'||state==='CLOSED')say('اتصال زنده برقرار نشد؛ فهرست بازیکنان به‌صورت دوره‌ای به‌روزرسانی می‌شود.');
  });
  refreshRoster();
- rosterTimer=setInterval(refreshRoster,2000);
+ rosterTimer=setInterval(refreshRoster,5000);
  if(gameTimer)clearInterval(gameTimer);
- gameTimer=setInterval(refreshOnlineGame,1400);
+ gameTimer=setInterval(refreshOnlineGame,3000);
  if(!window.__doubleKoutRosterFocus){
   window.__doubleKoutRosterFocus=true;
   window.addEventListener('focus',function(){refreshRoster();});
@@ -665,7 +667,6 @@ async function refreshRoster(){
   el('onlineStart').style.display=mine&&mine.is_host&&allReady&&mode!=='kuwaiti'?'block':'none';
   el('onlineStart').textContent=rows.length===cap?'شروع بازی چهار نفره':'شروع با '+rows.length+' بازیکن و تکمیل صندلی‌های خالی با ربات';
   if(!allReady)say(rows.length+' از '+cap+' بازیکن وارد شده‌اند. وضعیت آمادگی از سرور دریافت شد.');
-  await refreshOnlineGame();
  }catch(e){say('به‌روزرسانی فهرست بازیکنان: '+(e.message||e));}
  finally{rosterBusy=false;if(rosterRefreshQueued){rosterRefreshQueued=false;Promise.resolve().then(refreshRoster);}}
 }
@@ -723,11 +724,25 @@ async function extendOnlineChallengeTime(){
  catch(e){say('افزایش زمان انجام نشد: '+(e.message||e));if(el('onlineChallengeExtend'))el('onlineChallengeExtend').disabled=false;}
 }
 async function expireOnlineChallengeTurn(seat){
- if(challengeExpiryBusy||!roomId)return;challengeExpiryBusy=true;
- try{await client.rpc('expire_room_challenge_turn',{p_room_id:roomId,p_expected_seat:seat});}
+ if(!roomId||challengeExpiryBusySeats[seat])return;challengeExpiryBusySeats[seat]=true;
+ try{var r=await client.rpc('expire_room_challenge_turn',{p_room_id:roomId,p_expected_seat:seat});if(r.error)throw r.error;if(r.data&&r.data.expired)refreshOnlineGame();}
  catch(e){/* another device may already have advanced the turn */}
- finally{challengeExpiryBusy=false;}
+ finally{delete challengeExpiryBusySeats[seat];}
 }
+function checkExpiredChallengeSeats(){
+ if(!roomId||!client||!el('onlineDecision')||el('onlineDecision').style.display==='none')return;
+ // Any connected room member may advance expired seats, so a disconnected player cannot freeze the decision phase.
+ var deadlines=window.__doubleKoutChallengeDeadlines||{},passed=window.__doubleKoutChallengePassed||[],now=Date.now()/1000;
+ Object.keys(deadlines).forEach(function(key){var seat=Number(key);if(Number(deadlines[key])>0&&Number(deadlines[key])<=now&&!passed.includes(seat))expireOnlineChallengeTurn(seat);});
+}
+function renderOnlineChallengeClock(){
+ var node=el('onlineChallengeClock');if(!node||!onlineChallengeDeadline)return;
+ var left=Math.max(0,Math.ceil(onlineChallengeDeadline-Date.now()/1000));
+ node.textContent=left+' ثانیه';node.style.color=left<=3?'#ff7777':'#ffe39a';
+ if(left<=0&&!onlineChallengeExpired){onlineChallengeExpired=true;expireOnlineChallengeTurn(myOnlineSeat);}
+ checkExpiredChallengeSeats();
+}
+setInterval(renderOnlineChallengeClock,200);
 var onlineTurnDeadline=0,onlineTurnTimerHandle=null,lastTurnBeep=-1,turnAudio=null;
 function unlockTurnAudio(){try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;if(!turnAudio)turnAudio=new AC();if(turnAudio.state==='suspended')turnAudio.resume();}catch(e){}}
 document.addEventListener('pointerdown',unlockTurnAudio,{passive:true});
@@ -752,19 +767,21 @@ async function refreshOnlineGame(startPayload){
  if(gameBusy){gameRefreshQueued=true;if(startPayload)gameStartSnapshot=startPayload;return;}
  gameBusy=true;
  try{
-  say('در حال دریافت وضعیت میز از سرور...');
   var q;
   if(startPayload&&startPayload.status==='playing')q={data:{status:startPayload.status,public_state:startPayload.state,revision:startPayload.revision},error:null};
   else q=await client.from('game_rooms').select('status,public_state,revision').eq('id',roomId).single();
   if(q.error)throw q.error;
   if(q.data.status!=='playing'&&q.data.status!=='finished'){say('وضعیت اتاق در سرور هنوز «'+q.data.status+'» است؛ میز تا شروع قطعی بازی نمایش داده نمی‌شود.');return;}
   var state=q.data.public_state||{},revision=Number(q.data.revision||0);
+  if(revision===lastGameRevision)return;
   el('onlineGame').style.display='block';
   var mine=await client.from('room_game_hands').select('seat,cards').eq('room_id',roomId).eq('owner_user_id',me.id).maybeSingle();
   if(mine.error)throw mine.error;
   var players=state.seatPlayers||{},names=[0,1,2,3].map(function(i){return players[String(i)]&&players[String(i)].name||('بازیکن '+(i+1));});
   var turn=Number(state.turn||0),finished=state.phase==='finished',decisionPending=state.phase==='challenge_decision';
   var challengeDeadlines=state.challengeDeadlines||{},myDeadline=Number(challengeDeadlines[String(myOnlineSeat)]||0),isMyChallengeTurn=decisionPending&&myOnlineSeat>=0&&myDeadline>0&&!(state.challengePassed||[]).includes(myOnlineSeat);
+  onlineChallengeDeadline=decisionPending?myDeadline:0;onlineChallengeExpired=false;
+  window.__doubleKoutChallengeDeadlines=challengeDeadlines;window.__doubleKoutChallengePassed=state.challengePassed||[];
   var result=state.challengeResult;
   var status=decisionPending?'فرصت انتخاب چالش برای همه بازیکنان هم‌زمان فعال است':'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳ · حکم پیک';
   if(state.challengeTeam){var myTeam=(myOnlineSeat%2===0?'A':'B');status+=(state.challengeTeam===myTeam?' · بازیکن هم‌تیمی وارد چالش شد':' · حریف علیه شما اعلام چالش کرد');}
@@ -810,8 +827,8 @@ async function refreshOnlineGame(startPayload){
   var hand=mine.data&&mine.data.cards||[];
   el('onlineHand').innerHTML='';
   el('onlineHandTitle').textContent='کارت‌های شما · '+hand.length+' کارت';
-  hand.forEach(function(c){
-   var b=document.createElement('button');b.type='button';b.appendChild(cardEl(visualCard(c)));
+  hand.forEach(function(c,i){
+   var b=document.createElement('button'),fanOffset=i-(hand.length-1)/2;b.type='button';b.style.transform='rotate('+(fanOffset*1.15)+'deg) translateY('+(Math.abs(fanOffset)*1.15)+'px)';b.style.zIndex=String(i+1);b.appendChild(cardEl(visualCard(c)));
    b.disabled=finished||decisionPending||turn!==myOnlineSeat;
    b.onclick=async function(){b.disabled=true;try{var played=await client.rpc('play_room_card',{p_room_id:roomId,p_card_id:c.id});if(played.error)throw played.error;await refreshOnlineGame();}catch(e){say('اجرای کارت ناموفق بود: '+(e.message||e));}};
    el('onlineHand').appendChild(b);
