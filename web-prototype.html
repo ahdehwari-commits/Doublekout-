@@ -548,7 +548,7 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 'use strict';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
-var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,gameTimer=null,gameBusy=false,gameRefreshQueued=false,aiBusy=false,challengeExpiryBusy=false,myOnlineSeat=-1,lastGameRevision=-1;
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusy=false,myOnlineSeat=-1,lastGameRevision=-1;
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
@@ -683,8 +683,7 @@ async function startOnlineGame(){
   el('onlineGame').style.display='block';
   el('onlineStart').style.display='none';
   say('کارت‌ها پخش شد؛ در حال بارگذاری میز و دست بازیکنان...');
-  gameRefreshQueued=true;
-  await refreshOnlineGame();
+  await refreshOnlineGame(r.data);
  }catch(e){say('شروع بازی انجام نشد: '+(e.message||e));}
  finally{if(el('onlineStart'))el('onlineStart').disabled=false;}
 }
@@ -722,14 +721,17 @@ function cardText(c){
  var rank=({A:'A',K:'K',Q:'Q',J:'J'})[c.rank]||c.rank;
  return rank+suit;
 }
-async function refreshOnlineGame(){
+async function refreshOnlineGame(startPayload){
  if(!roomId||!client)return;
- if(gameBusy){gameRefreshQueued=true;return;}
+ if(gameBusy){gameRefreshQueued=true;if(startPayload)gameStartSnapshot=startPayload;return;}
  gameBusy=true;
  try{
-  var q=await client.from('game_rooms').select('status,public_state,revision').eq('id',roomId).single();
+  say('در حال دریافت وضعیت میز از سرور...');
+  var q;
+  if(startPayload&&startPayload.status==='playing')q={data:{status:startPayload.status,public_state:startPayload.state,revision:startPayload.revision},error:null};
+  else q=await client.from('game_rooms').select('status,public_state,revision').eq('id',roomId).single();
   if(q.error)throw q.error;
-  if(q.data.status!=='playing'&&q.data.status!=='finished')return;
+  if(q.data.status!=='playing'&&q.data.status!=='finished'){say('وضعیت اتاق در سرور هنوز «'+q.data.status+'» است؛ میز تا شروع قطعی بازی نمایش داده نمی‌شود.');return;}
   var state=q.data.public_state||{},revision=Number(q.data.revision||0);
   el('onlineGame').style.display='block';
   var mine=await client.from('room_game_hands').select('seat,cards').eq('room_id',roomId).eq('owner_user_id',me.id).maybeSingle();
@@ -785,7 +787,8 @@ async function refreshOnlineGame(){
  }catch(e){say('همگام‌سازی بازی: '+(e.message||e));}
  finally{
   gameBusy=false;
-  if(gameRefreshQueued){gameRefreshQueued=false;Promise.resolve().then(refreshOnlineGame);}
+  if(gameStartSnapshot){var snapshot=gameStartSnapshot;gameStartSnapshot=null;gameRefreshQueued=false;Promise.resolve().then(function(){refreshOnlineGame(snapshot);});}
+  else if(gameRefreshQueued){gameRefreshQueued=false;Promise.resolve().then(refreshOnlineGame);}
  }
 }
 async function leave(){
