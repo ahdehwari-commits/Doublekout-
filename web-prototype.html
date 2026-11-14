@@ -680,7 +680,10 @@ async function startOnlineGame(){
   el('onlineStart').disabled=true;say('در حال آماده‌سازی کارت‌ها و صندلی‌های ربات...');
   var r=await client.rpc('start_room_game',{p_room_id:roomId,p_start_with_present:true,p_trump:'S',p_challenge_team:null});
   if(r.error)throw r.error;
-  say('کارت‌ها پخش شد؛ هر بازیکن دست خودش را می‌بیند. بعد از بررسی کارت‌ها، میزبان نوع بازی را انتخاب می‌کند.');
+  el('onlineGame').style.display='block';
+  el('onlineStart').style.display='none';
+  say('کارت‌ها پخش شد؛ در حال بارگذاری میز و دست بازیکنان...');
+  gameRefreshQueued=true;
   await refreshOnlineGame();
  }catch(e){say('شروع بازی انجام نشد: '+(e.message||e));}
  finally{if(el('onlineStart'))el('onlineStart').disabled=false;}
@@ -720,7 +723,8 @@ function cardText(c){
  return rank+suit;
 }
 async function refreshOnlineGame(){
- if(!roomId||!client||gameBusy)return;
+ if(!roomId||!client)return;
+ if(gameBusy){gameRefreshQueued=true;return;}
  gameBusy=true;
  try{
   var q=await client.from('game_rooms').select('status,public_state,revision').eq('id',roomId).single();
@@ -779,7 +783,10 @@ async function refreshOnlineGame(){
   }
   if(finished)say('بازی پایان یافت. '+status);
  }catch(e){say('همگام‌سازی بازی: '+(e.message||e));}
- finally{gameBusy=false;}
+ finally{
+  gameBusy=false;
+  if(gameRefreshQueued){gameRefreshQueued=false;Promise.resolve().then(refreshOnlineGame);}
+ }
 }
 async function leave(){
  var leavingRoom=roomId;
