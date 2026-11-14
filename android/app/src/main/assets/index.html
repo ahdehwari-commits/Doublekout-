@@ -552,6 +552,12 @@ var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
+function onlineRequest(promise,label,limit){
+ var timer;
+ return Promise.race([promise,new Promise(function(_,reject){
+  timer=setTimeout(function(){reject(new Error('online_request_timeout: '+label));},limit||12000);
+ })]).finally(function(){if(timer)clearTimeout(timer);});
+}
 function ensureUI(){
  if(el('onlineButton'))return;
  var grid=document.querySelector('#modePicker .mode-grid');if(!grid)return;
@@ -821,12 +827,12 @@ async function refreshOnlineGame(startPayload){
     var sameHost=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
     if(!sameHost.error&&sameHost.data&&sameHost.data.is_host){
      if(sameState.seatPlayers&&sameState.seatPlayers[String(sameTurn)]&&sameState.seatPlayers[String(sameTurn)].human===false){
-      aiBusy=true;try{var retryAi=await client.rpc('play_room_ai_turn',{p_room_id:roomId});if(retryAi.error)throw retryAi.error;setTimeout(refreshOnlineGame,150);}catch(e){say('اجرای خودکار ربات دوباره تلاش می‌شود: '+(e.message||e));}finally{aiBusy=false;}
+      aiBusy=true;try{var retryAi=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(retryAi.error)throw retryAi.error;setTimeout(refreshOnlineGame,150);}catch(e){say('اجرای خودکار ربات دوباره تلاش می‌شود: '+(e.message||e));}finally{aiBusy=false;}
      }else{
       // Let PostgreSQL decide whether the deadline has passed. Never gate this
       // RPC on the phone clock: device clock skew can leave an expired turn stuck.
       try{
-       var retryTimeout=await client.rpc('advance_room_turn_timeout',{p_room_id:roomId});
+       var retryTimeout=await onlineRequest(client.rpc('advance_room_turn_timeout',{p_room_id:roomId}),'اجرای خودکار پس از پایان نوبت',12000);
        if(retryTimeout.error)throw retryTimeout.error;
        if(retryTimeout.data&&retryTimeout.data.state)setTimeout(refreshOnlineGame,150);
       }catch(e){say('خطای اجرای خودکار پس از پایان نوبت: '+(e.message||e));}
@@ -899,7 +905,7 @@ async function refreshOnlineGame(startPayload){
   hand.forEach(function(c,i){
    var b=document.createElement('button'),fanOffset=i-(hand.length-1)/2;b.type='button';b.style.transform='rotate('+(fanOffset*4.2)+'deg) translateY('+(Math.abs(fanOffset)*1.45)+'px)';b.style.zIndex=String(i+1);b.appendChild(cardEl(visualCard(c)));
    b.disabled=finished||decisionPending||turn!==myOnlineSeat;
-   b.onclick=async function(){b.disabled=true;try{var played=await client.rpc('play_room_card',{p_room_id:roomId,p_card_id:c.id});if(played.error)throw played.error;await refreshOnlineGame();}catch(e){var msg=String(e&&e.message||e);lastGameRevision=-1;try{await refreshOnlineGame();}catch(refreshError){}if(/turn_time_expired|card_not_in_hand|card no(t)? in hand/i.test(msg)){say('مهلت این نوبت تمام شده یا کارت قبلاً ثبت شده بود؛ وضعیت دست از سرور تازه شد.');}else{say('اجرای کارت ناموفق بود: '+msg);}}};
+   b.onclick=async function(){if(b.disabled)return;b.disabled=true;say('در حال ثبت کارت روی میز...');try{var played=await onlineRequest(client.rpc('play_room_card',{p_room_id:roomId,p_card_id:c.id}),'ثبت کارت روی میز',12000);if(played.error)throw played.error;lastGameRevision=-1;await refreshOnlineGame();say('');}catch(e){var msg=String(e&&e.message||e);lastGameRevision=-1;try{await refreshOnlineGame();}catch(refreshError){}if(/turn_time_expired|card_not_in_hand|card no(t)? in hand/i.test(msg)){say('مهلت این نوبت تمام شده یا کارت قبلاً ثبت شده بود؛ وضعیت دست از سرور تازه شد.');}else if(/online_request_timeout/.test(msg)){say('پاسخ سرور برای ثبت کارت دیر رسید؛ وضعیت دست دوباره از سرور خوانده شد. اگر کارت ثبت شده باشد، از دست حذف می‌شود.');}else{say('اجرای کارت ناموفق بود: '+msg);}}};
    el('onlineHand').appendChild(b);
   });
   lastGameRevision=revision;
@@ -909,9 +915,9 @@ async function refreshOnlineGame(startPayload){
    var hostQ=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).single();
    if(!hostQ.error&&hostQ.data.is_host){
     if(players[String(turn)]&&players[String(turn)].human===false){
-     aiBusy=true;try{var ai=await client.rpc('play_room_ai_turn',{p_room_id:roomId});if(ai.error)throw ai.error;setTimeout(refreshOnlineGame,150);}catch(e){say('نوبت ربات: '+(e.message||e));}finally{aiBusy=false;}
+     aiBusy=true;try{var ai=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(ai.error)throw ai.error;setTimeout(refreshOnlineGame,150);}catch(e){say('نوبت ربات: '+(e.message||e));}finally{aiBusy=false;}
     }else{
-     var timeout=await client.rpc('advance_room_turn_timeout',{p_room_id:roomId});
+     var timeout=await onlineRequest(client.rpc('advance_room_turn_timeout',{p_room_id:roomId}),'اجرای خودکار پس از پایان نوبت',12000);
      if(timeout.error&&timeout.error.message!=='time_remaining')say('بررسی پایان زمان نوبت: '+timeout.error.message);
      else if(timeout.data&&timeout.data.state)setTimeout(refreshOnlineGame,150);
     }
