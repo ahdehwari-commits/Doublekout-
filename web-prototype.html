@@ -124,7 +124,7 @@
 .royal-frame{inset:8px 5px 8px!important}
 .royal-art{display:block;width:100%;height:100%;max-height:none!important;filter:drop-shadow(0 2px 2px #49351f55)}
 .card .corner{z-index:6}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۳۲ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۳۳ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
 <button class="mode-card" id="modeDouble"><strong>♠ میز چهار نفره</strong><span>دابل کوت توالی · نسخه قابل‌بازی</span></button>
@@ -548,7 +548,7 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 'use strict';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
-var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,gameTimer=null,gameBusy=false,aiBusy=false,myOnlineSeat=-1,lastGameRevision=-1;
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,gameTimer=null,gameBusy=false,aiBusy=false,challengeExpiryBusy=false,myOnlineSeat=-1,lastGameRevision=-1;
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
@@ -576,11 +576,11 @@ function ensureUI(){
  '<label>نام نمایشی</label><input id="onlineName" maxlength="24" value="بازیکن">'+
  '<div class="onrow"><button id="onlineCreate">ساخت اتاق جدید</button><button id="onlineShowJoin" class="secondary">ورود با کد</button></div>'+
  '<div id="onlineJoinBox" style="display:none"><label>کد اتاق</label><input id="onlineJoinCode" maxlength="6" placeholder="مثلاً A1B2C3" style="text-transform:uppercase;direction:ltr;text-align:center"><button id="onlineJoin" style="width:100%;margin-top:8px">ورود به اتاق</button></div></div>'+
- '<div id="onlineRoom" style="display:none"><div id="onlineCode"></div><div id="onlineRoster"></div><div class="onrow"><button id="onlineReady">آماده‌ام</button><button id="onlineStart" style="display:none">شروع با بازیکنان حاضر</button><button id="onlineLeave" class="secondary">خروج از اتاق</button></div><div id="onlineGame" style="display:none;background:#061b15;border:1px solid #648a73;border-radius:12px;padding:12px;margin-top:12px"><h3 style="margin:0 0 8px;color:#f4d58b">میز آنلاین</h3><div id="onlineGameStatus" style="font-size:12px;line-height:1.8"></div><div id="onlineDecision" style="display:none;background:#123b2d;border:1px solid #d7b66d;border-radius:10px;padding:10px;margin:10px 0"><b style="color:#f4d58b">کارت‌ها را بررسی کن؛ بازی عادی یا چالش؟</b><p id="onlineDecisionHint" style="font-size:12px;line-height:1.8">بعد از دیدن دست، میزبان نوع بازی را انتخاب می‌کند.</p><label>تیم اعلام‌کننده چالش</label><select id="onlineChallengeTeam"><option value="A">تیم صندلی‌های ۱ و ۳</option><option value="B">تیم صندلی‌های ۲ و ۴</option></select><div class="onrow"><button id="onlineChooseNormal">بازی عادی</button><button id="onlineChooseChallenge">اعلام چالش</button></div></div><div id="onlineTrick" style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap;min-height:60px;margin:12px 0"></div><div id="onlineHand" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap"></div><div id="onlineScore" style="font-size:12px;text-align:center;margin-top:10px"></div></div></div>'+
+ '<div id="onlineRoom" style="display:none"><div id="onlineCode"></div><div id="onlineRoster"></div><div class="onrow"><button id="onlineReady">آماده‌ام</button><button id="onlineStart" style="display:none">شروع با بازیکنان حاضر</button><button id="onlineLeave" class="secondary">خروج از اتاق</button></div><div id="onlineGame" style="display:none;background:#061b15;border:1px solid #648a73;border-radius:12px;padding:12px;margin-top:12px"><h3 style="margin:0 0 8px;color:#f4d58b">میز آنلاین</h3><div id="onlineGameStatus" style="font-size:12px;line-height:1.8"></div><div id="onlineDecision" style="display:none;background:#123b2d;border:1px solid #d7b66d;border-radius:10px;padding:10px;margin:10px 0"><b style="color:#f4d58b">نوبت انتخاب چالش بین بازیکنان</b><p id="onlineDecisionHint" style="font-size:13px;line-height:1.9"></p><div id="onlineChallengeClock" style="font-size:22px;font-weight:bold;color:#ffe39a;text-align:center;margin:6px">۷</div><div class="onrow"><button id="onlineChooseChallenge">اعلام چالش</button><button id="onlineChooseNormal">عبور / بازی عادی</button></div><button id="onlineChallengeExtend" style="width:100%;margin-top:8px;background:#d6e4dc">۱۵ ثانیه وقت بیشتر</button></div><div id="onlineTrick" style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap;min-height:60px;margin:12px 0"></div><div id="onlineHand" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap"></div><div id="onlineScore" style="font-size:12px;text-align:center;margin-top:10px"></div></div></div>'+
  '<div id="onlineStatus">برای شروع، ساخت اتاق یا ورود با کد را انتخاب کن.</div></section>';
  document.body.appendChild(root);
  el('onlineClose').onclick=close;el('onlineCreate').onclick=createRoom;el('onlineShowJoin').onclick=function(){el('onlineJoinBox').style.display='block';};
- el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=startOnlineGame;el('onlineChooseNormal').onclick=function(){confirmOnlineDecision(null)};el('onlineChooseChallenge').onclick=function(){confirmOnlineDecision(el('onlineChallengeTeam').value)};el('onlineLeave').onclick=leave;
+ el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=startOnlineGame;el('onlineChooseNormal').onclick=function(){submitOnlineChallengeChoice('pass')};el('onlineChooseChallenge').onclick=function(){submitOnlineChallengeChoice('challenge')};el('onlineChallengeExtend').onclick=extendOnlineChallengeTime;el('onlineLeave').onclick=leave;
  root.addEventListener('click',function(e){if(e.target===root)close();});
 }
 function open(preselect){ensureUI();if(preselect&&el('onlineMode'))el('onlineMode').value=preselect;el('onlineOverlay').classList.add('open');}
@@ -685,10 +685,20 @@ async function startOnlineGame(){
  }catch(e){say('شروع بازی انجام نشد: '+(e.message||e));}
  finally{if(el('onlineStart'))el('onlineStart').disabled=false;}
 }
-async function confirmOnlineDecision(challengeTeam){
- try{if(!roomId)return;el('onlineChooseNormal').disabled=true;el('onlineChooseChallenge').disabled=true;say(challengeTeam?'در حال ثبت چالش پس از بررسی کارت‌ها...':'در حال ثبت بازی عادی...');var r=await client.rpc('set_room_game_decision',{p_room_id:roomId,p_challenge_team:challengeTeam});if(r.error)throw r.error;say(challengeTeam?'چالش ثبت شد؛ بازی شروع می‌شود.':'بازی عادی انتخاب شد؛ بازی شروع می‌شود.');await refreshOnlineGame();}
- catch(e){say('ثبت انتخاب بازی انجام نشد: '+(e.message||e));}
- finally{if(el('onlineChooseNormal'))el('onlineChooseNormal').disabled=false;if(el('onlineChooseChallenge'))el('onlineChooseChallenge').disabled=false;}
+async function submitOnlineChallengeChoice(choice){
+ try{if(!roomId)return;el('onlineChooseNormal').disabled=true;el('onlineChooseChallenge').disabled=true;el('onlineChallengeExtend').disabled=true;say(choice==='challenge'?'در حال ثبت اعلام چالش...':'در حال ثبت عبور از چالش...');var r=await client.rpc('submit_room_challenge_choice',{p_room_id:roomId,p_choice:choice});if(r.error)throw r.error;await refreshOnlineGame();}
+ catch(e){say('ثبت انتخاب انجام نشد: '+(e.message||e));}
+ finally{if(el('onlineChooseNormal'))el('onlineChooseNormal').disabled=false;if(el('onlineChooseChallenge'))el('onlineChooseChallenge').disabled=false;if(el('onlineChallengeExtend'))el('onlineChallengeExtend').disabled=false;}
+}
+async function extendOnlineChallengeTime(){
+ try{el('onlineChallengeExtend').disabled=true;var r=await client.rpc('extend_room_challenge_time',{p_room_id:roomId});if(r.error)throw r.error;say('۱۵ ثانیه زمان اضافه شد.');await refreshOnlineGame();}
+ catch(e){say('افزایش زمان انجام نشد: '+(e.message||e));if(el('onlineChallengeExtend'))el('onlineChallengeExtend').disabled=false;}
+}
+async function expireOnlineChallengeTurn(seat){
+ if(challengeExpiryBusy||!roomId)return;challengeExpiryBusy=true;
+ try{await client.rpc('expire_room_challenge_turn',{p_room_id:roomId,p_expected_seat:seat});}
+ catch(e){/* another device may already have advanced the turn */}
+ finally{challengeExpiryBusy=false;}
 }
 function cardText(c){
  var suit=({S:'♠',H:'♥',D:'♦',C:'♣'})[c.suit]||c.suit;
@@ -708,13 +718,25 @@ async function refreshOnlineGame(){
   if(mine.error)throw mine.error;
   var players=state.seatPlayers||{},names=[0,1,2,3].map(function(i){return players[String(i)]&&players[String(i)].name||('بازیکن '+(i+1));});
   var turn=Number(state.turn||0),finished=state.phase==='finished',decisionPending=state.phase==='challenge_decision';
+  var challengeTurn=Number(state.challengeTurn||0),isMyChallengeTurn=decisionPending&&challengeTurn===myOnlineSeat;
   var result=state.challengeResult;
-  var status=decisionPending?'کارت‌ها پخش شده‌اند؛ منتظر انتخاب میزبان برای بازی عادی یا چالش.':'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳ · حکم پیک';
-  if(state.challengeTeam)status+=' · چالش تیم '+(state.challengeTeam==='A'?'۱ و ۳':'۲ و ۴');
+  var status=decisionPending?'نوبت انتخاب چالش: '+names[challengeTurn]:'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳ · حکم پیک';
+  if(state.challengeTeam){var myTeam=(myOnlineSeat%2===0?'A':'B');status+=(state.challengeTeam===myTeam?' · بازیکن هم‌تیمی وارد چالش شد':' · حریف علیه شما اعلام چالش کرد');}
   if(finished)status=result?(result.status==='success'?'چالش با موفقیت انجام شد':result.status==='failed-opponent-sequence'?'چالش با توالی حریف شکست خورد':'چالش در دست آخر ناموفق شد'):'بازی تمام شد · نتیجه '+(state.scoreA||0)+' به '+(state.scoreB||0);
   el('onlineGameStatus').textContent=status;
   var decision=el('onlineDecision');decision.style.display=decisionPending?'block':'none';
-  if(decisionPending){var hostCheck=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();var host=!!(hostCheck.data&&hostCheck.data.is_host);el('onlineDecisionHint').textContent=host?'دست کارت‌ها را بررسی کن و یکی از دو گزینه را انتخاب کن.':'کارت‌ها را بررسی کن؛ منتظر انتخاب میزبان هستیم.';el('onlineChooseNormal').style.display=host?'block':'none';el('onlineChooseChallenge').style.display=host&&mode==='double-kout'?'block':'none';el('onlineChallengeTeam').style.display=host&&mode==='double-kout'?'block':'none';el('onlineChooseNormal').disabled=!host;el('onlineChooseChallenge').disabled=!host;}
+  if(decisionPending){
+   var remaining=Math.max(0,Math.ceil(Number(state.challengeDeadline||0)-Date.now()/1000));
+   el('onlineDecisionHint').textContent=isMyChallengeTurn?'نوبت شماست؛ چالش را انتخاب کن یا عبور کن. اگر تا پایان زمان تصمیم نگیری، نوبت به بازیکن بعدی می‌رسد.':'در انتظار انتخاب '+names[challengeTurn]+' هستیم.';
+   el('onlineChallengeClock').textContent=remaining+' ثانیه';
+   el('onlineChooseNormal').style.display=isMyChallengeTurn?'block':'none';
+   el('onlineChooseChallenge').style.display=isMyChallengeTurn?'block':'none';
+   el('onlineChallengeExtend').style.display=isMyChallengeTurn?'block':'none';
+   el('onlineChooseNormal').disabled=!isMyChallengeTurn||remaining<=0;
+   el('onlineChooseChallenge').disabled=!isMyChallengeTurn||remaining<=0;
+   el('onlineChallengeExtend').disabled=!isMyChallengeTurn||remaining<=0||!!state.challengeExtended;
+   if(remaining<=0)expireOnlineChallengeTurn(challengeTurn);
+  }
   el('onlineTrick').innerHTML=(state.plays||[]).map(function(p){return '<div style="background:#fffaf0;color:#17251f;border-radius:8px;padding:10px 13px;font-weight:bold;font-size:20px">'+cardText(p.card)+'</div><small style="align-self:center">'+(p.seat+1)+'</small>';}).join('');
   el('onlineScore').textContent='تیم صندلی‌های ۱ و ۳: '+(state.scoreA||0)+' · تیم صندلی‌های ۲ و ۴: '+(state.scoreB||0)+' · دست‌های برده‌شده: '+(state.trickWinners||[]).length;
   var hand=mine.data&&mine.data.cards||[];
