@@ -718,24 +718,25 @@ async function refreshOnlineGame(){
   if(mine.error)throw mine.error;
   var players=state.seatPlayers||{},names=[0,1,2,3].map(function(i){return players[String(i)]&&players[String(i)].name||('بازیکن '+(i+1));});
   var turn=Number(state.turn||0),finished=state.phase==='finished',decisionPending=state.phase==='challenge_decision';
-  var challengeTurn=Number(state.challengeTurn||0),isMyChallengeTurn=decisionPending&&challengeTurn===myOnlineSeat;
+  var challengeDeadlines=state.challengeDeadlines||{},myDeadline=Number(challengeDeadlines[String(myOnlineSeat)]||0),isMyChallengeTurn=decisionPending&&myOnlineSeat>=0&&myDeadline>0&&!(state.challengePassed||[]).includes(myOnlineSeat);
   var result=state.challengeResult;
-  var status=decisionPending?'نوبت انتخاب چالش: '+names[challengeTurn]:'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳ · حکم پیک';
+  var status=decisionPending?'فرصت انتخاب چالش برای همه بازیکنان هم‌زمان فعال است':'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳ · حکم پیک';
   if(state.challengeTeam){var myTeam=(myOnlineSeat%2===0?'A':'B');status+=(state.challengeTeam===myTeam?' · بازیکن هم‌تیمی وارد چالش شد':' · حریف علیه شما اعلام چالش کرد');}
   if(finished)status=result?(result.status==='success'?'چالش با موفقیت انجام شد':result.status==='failed-opponent-sequence'?'چالش با توالی حریف شکست خورد':'چالش در دست آخر ناموفق شد'):'بازی تمام شد · نتیجه '+(state.scoreA||0)+' به '+(state.scoreB||0);
   el('onlineGameStatus').textContent=status;
   var decision=el('onlineDecision');decision.style.display=decisionPending?'block':'none';
   if(decisionPending){
-   var remaining=Math.max(0,Math.ceil(Number(state.challengeDeadline||0)-Date.now()/1000));
-   el('onlineDecisionHint').textContent=isMyChallengeTurn?'نوبت شماست؛ چالش را انتخاب کن یا عبور کن. اگر تا پایان زمان تصمیم نگیری، نوبت به بازیکن بعدی می‌رسد.':'در انتظار انتخاب '+names[challengeTurn]+' هستیم.';
-   el('onlineChallengeClock').textContent=remaining+' ثانیه';
+   var remaining=Math.max(0,Math.ceil(myDeadline-Date.now()/1000));
+   var alreadyPassed=(state.challengePassed||[]).includes(myOnlineSeat);
+   el('onlineDecisionHint').textContent=alreadyPassed?'انتخاب شما ثبت شد؛ منتظر تصمیم دیگر بازیکنان هستیم.':isMyChallengeTurn?'همه بازیکنان هم‌زمان فرصت دارند؛ اگر دست مناسبی دارید چالش کنید یا عبور کنید.':'در حال انتظار برای تکمیل انتخاب بازیکنان...';
+   el('onlineChallengeClock').textContent=alreadyPassed?'ثبت شد':remaining+' ثانیه';
    el('onlineChooseNormal').style.display=isMyChallengeTurn?'block':'none';
    el('onlineChooseChallenge').style.display=isMyChallengeTurn?'block':'none';
    el('onlineChallengeExtend').style.display=isMyChallengeTurn?'block':'none';
    el('onlineChooseNormal').disabled=!isMyChallengeTurn||remaining<=0;
    el('onlineChooseChallenge').disabled=!isMyChallengeTurn||remaining<=0;
-   el('onlineChallengeExtend').disabled=!isMyChallengeTurn||remaining<=0||!!state.challengeExtended;
-   if(remaining<=0)expireOnlineChallengeTurn(challengeTurn);
+   el('onlineChallengeExtend').disabled=!isMyChallengeTurn||remaining<=0||(state.challengeExtendedSeats||[]).includes(myOnlineSeat);
+   if(isMyChallengeTurn&&remaining<=0)expireOnlineChallengeTurn(myOnlineSeat);
   }
   el('onlineTrick').innerHTML=(state.plays||[]).map(function(p){return '<div style="background:#fffaf0;color:#17251f;border-radius:8px;padding:10px 13px;font-weight:bold;font-size:20px">'+cardText(p.card)+'</div><small style="align-self:center">'+(p.seat+1)+'</small>';}).join('');
   el('onlineScore').textContent='تیم صندلی‌های ۱ و ۳: '+(state.scoreA||0)+' · تیم صندلی‌های ۲ و ۴: '+(state.scoreB||0)+' · دست‌های برده‌شده: '+(state.trickWinners||[]).length;
