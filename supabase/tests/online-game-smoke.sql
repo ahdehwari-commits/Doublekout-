@@ -80,8 +80,15 @@ begin
   perform public.set_room_ready(v_room_id,true);
   perform set_config('request.jwt.claim.sub',v_host::text,false);
   perform public.start_room_game(v_room_id,true,'S',null);
+  -- The guest in seat 1 declares the challenge and must lead the first trick.
+  perform set_config('request.jwt.claim.sub',v_guest::text,false);
   perform public.extend_room_challenge_time(v_room_id);
   perform public.submit_room_challenge_choice(v_room_id,'challenge');
+  select public_state into v_state from public.game_rooms where id=v_room_id;
+  if (v_state->>'turn')::integer<>1 or (v_state->>'leader')::integer<>1
+     or (v_state->>'challengeInitiator')::integer<>1 then
+    raise exception 'challenge initiator must be the opening leader';
+  end if;
 
   for v_step in 1..52 loop
     select status,public_state into v_status,v_state
