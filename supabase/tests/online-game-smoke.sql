@@ -26,7 +26,6 @@ begin
 
   perform set_config('request.jwt.claim.sub',v_host::text,false);
   perform public.start_room_game(v_room_id,true,'S',null);
-  perform public.set_room_game_decision(v_room_id,null);
 
   select public_state into v_state from public.game_rooms where id=v_room_id;
   if (select count(*) from public.room_game_hands where room_id=v_room_id) <> 4 then
@@ -80,8 +79,9 @@ begin
   perform public.join_game_room(v_code,'Guest');
   perform public.set_room_ready(v_room_id,true);
   perform set_config('request.jwt.claim.sub',v_host::text,false);
-  perform public.start_room_game(v_room_id,true,'S','A');
-  perform public.set_room_game_decision(v_room_id,'A');
+  perform public.start_room_game(v_room_id,true,'S',null);
+  perform public.extend_room_challenge_time(v_room_id);
+  perform public.submit_room_challenge_choice(v_room_id,'challenge');
 
   for v_step in 1..52 loop
     select status,public_state into v_status,v_state
@@ -122,7 +122,10 @@ begin
   perform public.set_room_ready(v_room_id,true);
   perform set_config('request.jwt.claim.sub',v_host::text,false);
   perform public.start_room_game(v_room_id,true,'S',null);
-  perform public.set_room_game_decision(v_room_id,null);
+  perform public.submit_room_challenge_choice(v_room_id,'pass');
+  perform set_config('request.jwt.claim.sub',v_guest::text,false);
+  perform public.submit_room_challenge_choice(v_room_id,'pass');
+  perform set_config('request.jwt.claim.sub',v_host::text,false);
   for v_step in 1..52 loop
     select status,public_state into v_status,v_state from public.game_rooms where id=v_room_id;
     exit when v_status='finished';
