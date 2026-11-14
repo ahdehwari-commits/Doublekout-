@@ -830,6 +830,8 @@ async function refreshOnlineGame(startPayload){
   el('onlineGame').style.display='block';
   var mine=await client.from('room_game_hands').select('seat,cards').eq('room_id',roomId).eq('owner_user_id',me.id).maybeSingle();
   if(mine.error)throw mine.error;
+  // The private-hand query is authoritative for this device's seat. Do not wait for the slower lobby roster poll.
+  if(mine.data&&Number.isInteger(Number(mine.data.seat)))myOnlineSeat=Number(mine.data.seat);
   var players=state.seatPlayers||{},names=[0,1,2,3].map(function(i){return players[String(i)]&&players[String(i)].name||('بازیکن '+(i+1));});
   var turn=Number(state.turn||0),finished=state.phase==='finished',decisionPending=state.phase==='challenge_decision';
   var challengeDeadlines=state.challengeDeadlines||{},myDeadline=Number(challengeDeadlines[String(myOnlineSeat)]||0),isMyChallengeTurn=decisionPending&&myOnlineSeat>=0&&myDeadline>0&&!(state.challengePassed||[]).includes(myOnlineSeat);
