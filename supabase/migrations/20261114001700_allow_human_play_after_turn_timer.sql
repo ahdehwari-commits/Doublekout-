@@ -4,22 +4,15 @@
 do $migration$
 declare
   v_definition text;
-  v_old text := $old$
-    if v_state->>'turnDeadline' is not null and extract(epoch from clock_timestamp()) > (v_state->>'turnDeadline')::numeric then
-      raise exception 'turn_time_expired';
-    end if;
-$old$;
+  v_old text := $old$raise exception 'turn_time_expired';$old$;
 begin
   select pg_get_functiondef('public.apply_room_card(uuid,smallint,text,boolean)'::regprocedure)
     into v_definition;
   if position(v_old in v_definition)=0 then
     raise exception 'Expected human turn deadline guard was not found in apply_room_card';
   end if;
-  v_definition := replace(v_definition, v_old, $new$
-    -- A human may still play after the displayed deadline while this seat
-    -- remains current. If AI timeout already advanced the turn, the normal
-    -- turn/hand checks below reject this stale action safely.
-$new$);
+  -- Keep the surrounding IF check harmless; it no longer rejects a late human play.
+  v_definition := replace(v_definition, v_old, 'null; -- human may still play if this turn is current');
   execute v_definition;
 end;
 $migration$;
