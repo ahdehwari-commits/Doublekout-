@@ -6,6 +6,13 @@ on:
     branches: [main]
     paths:
       - "android/**"
+      - "web-prototype.html"
+      - "lan-multiplayer.js"
+      - "kuwaiti-six-player-ui.js"
+      - "three-d-scene.js"
+      - "IMG_3647.png"
+      - "manifest.webmanifest"
+      - "sw.js"
       - "engine/**"
       - "engines/**"
       - "scripts/**"
