@@ -15,8 +15,8 @@ The six-player menu label must be «کوت کویتی» only. «دابل کوت�
 ## Multiplayer modes and current status
 - Four-player AI mode remains available.
 - Four-player local hotseat is now selectable: after each card, a full-screen privacy cover hides the table until the next seat holder taps to reveal only their own hand. Pass the phone face-down or away from the previous player before revealing.
-- Online play for four or six separate phones is a planned mode, not yet connected to a live room server. The UI explicitly blocks starting online play until a backend is configured; no fake room or simulated network play is presented as working.
-- The six-player Kuwaiti UI/engine remains incomplete; local hotseat and real multi-device support for six players need to be integrated after the table flow is completed.
+- Four-player online rooms are connected to the Supabase room backend, with server-authoritative hands, turn deadlines, and host-driven AI fallback. The GitHub Actions PostgreSQL smoke test exercises a complete four-seat game with two human seats and two AI seats; production behavior still depends on the deployed Supabase migrations and client configuration.
+- Six-player Kuwaiti online play is not yet complete; its UI/engine and multi-device room integration remain separate follow-up work.
 
 ## Confirmed rule notes
 - In Double Kout sequence, the first group begins at trick 1. The first exact-player consecutive win from tricks 3–4 onward closes that group and awards every trick from trick 1 through the closing trick to that player's team. If the first valid sequence is tricks 4–5, all five tricks are in the group; if tricks 5–6, all six are. Each later group begins on the trick after the previous group closes. If no valid sequence occurs by trick 13, the winner of trick 13 receives all remaining tricks.
