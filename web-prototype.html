@@ -543,7 +543,7 @@ $('newGame').onclick=()=>{if(G&&G.done){matchNo++;G=null;startGame();return;}mat
 $('backToModes').onclick=()=>{G=null;matchNo=1;previousWinner=null;previousStarter=null;$('game').classList.add('hidden');$('setup').classList.add('hidden');$('modePicker').classList.remove('hidden');$('modeMessage').textContent='یک حالت بازی را انتخاب کن.'};
 $('sortHand').onclick=()=>{if(!G)return;const p=playStyle==='hotseat'?G.turn:0;if(playStyle==='hotseat'&&!humanSeats.has(p))return;G.hands[p].sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);render()};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script><script src="./kuwaiti-six-player-ui.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+</script><script src="./kuwaiti-six-player-ui.js"></script><script>
 (function(){
 'use strict';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
@@ -591,14 +591,34 @@ function ensureUI(){
 }
 function open(preselect){ensureUI();if(preselect&&el('onlineMode'))el('onlineMode').value=preselect;el('onlineOverlay').classList.add('open');}
 function close(){if(el('onlineOverlay'))el('onlineOverlay').classList.remove('open');}
-function initClient(){
+var supabaseLoadPromise=null;
+function loadSupabaseScript(url){
+ return new Promise(function(resolve,reject){
+  var script=document.createElement('script'),settled=false,timer=setTimeout(function(){finish(new Error('مهلت بارگذاری کتابخانه تمام شد.'));},15000);
+  function finish(error){if(settled)return;settled=true;clearTimeout(timer);script.onload=script.onerror=null;if(error){script.remove();reject(error);}else resolve();}
+  script.src=url;script.async=true;script.onload=function(){if(window.supabase&&window.supabase.createClient)finish();else finish(new Error('فایل بارگذاری شد اما کتابخانه معتبر نبود.'));};script.onerror=function(){finish(new Error('دریافت فایل از این میزبان ناموفق بود.'));};document.head.appendChild(script);
+ });
+}
+async function initClient(){
  if(client)return true;
- if(!window.supabase||!window.supabase.createClient){say('کتابخانه اتصال بارگذاری نشد. صفحه را تازه‌سازی کن.');return false;}
+ if(!window.supabase||!window.supabase.createClient){
+  if(!supabaseLoadPromise)supabaseLoadPromise=(async function(){
+   var sources=[
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js',
+    'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js'
+   ],lastError;
+   for(var i=0;i<sources.length;i++){try{await loadSupabaseScript(sources[i]);return;}catch(e){lastError=e;}}
+   throw new Error('بارگذاری کتابخانه Supabase از هر دو میزبان ناموفق بود. اتصال اینترنت یا مسدودبودن CDN را بررسی کن. '+(lastError&&lastError.message||''));
+  })();
+  await supabaseLoadPromise;
+ }
+ if(!window.supabase||!window.supabase.createClient)throw new Error('کتابخانه Supabase در دسترس نیست.');
  client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
  return true;
 }
 async function authenticate(setStage){
- if(!initClient())throw new Error('کتابخانه Supabase در دسترس نیست.');
+ setStage('بارگذاری کتابخانه اتصال');
+ await initClient();
  setStage('بررسی نشست ورود');
  var got=await client.auth.getSession();if(got.error)throw got.error;session=got.data&&got.data.session;
  if(!session){setStage('ورود ناشناس به Supabase');var sign=await client.auth.signInAnonymously();if(sign.error)throw sign.error;session=sign.data.session;}
