@@ -604,8 +604,8 @@ async function initClient(){
  if(!window.supabase||!window.supabase.createClient){
   if(!supabaseLoadPromise)supabaseLoadPromise=(async function(){
    var sources=[
-    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js',
-    'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js'
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
+    'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
    ],lastError;
    for(var i=0;i<sources.length;i++){try{await loadSupabaseScript(sources[i]);return;}catch(e){lastError=e;}}
    throw new Error('بارگذاری کتابخانه Supabase از هر دو میزبان ناموفق بود. اتصال اینترنت یا مسدودبودن CDN را بررسی کن. '+(lastError&&lastError.message||''));
