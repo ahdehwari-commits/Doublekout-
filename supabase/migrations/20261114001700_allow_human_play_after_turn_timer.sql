@@ -1,19 +1,30 @@
--- Let a human play after the 10-second display timer if the server has not
--- already advanced that turn for the AI. Row locking serializes this against
--- advance_room_turn_timeout: whichever valid action reaches the room first wins.
+-- Allow a human to play after the displayed 10-second deadline,
+-- provided the server has not already advanced this turn.
+-- This is serialized with advance_room_turn_timeout by the room row lock
+-- inside apply_room_card, so only one action can advance the turn.
 do $migration$
 declare
   v_definition text;
-  v_old text := $old$raise exception 'turn_time_expired';$old$;
+  v_updated text;
 begin
-  select pg_get_functiondef('public.apply_room_card(uuid,smallint,text,boolean)'::regprocedure)
-    into v_definition;
-  if position(v_old in v_definition)=0 then
-    raise exception 'Expected human turn deadline guard was not found in apply_room_card';
+  select pg_get_functiondef(
+    'public.apply_room_card(uuid,smallint,text,boolean)'::regprocedure
+  ) into v_definition;
+
+  -- Match the RAISE statement independent of PostgreSQL's deparser
+  -- capitalization and whitespace formatting.
+  v_updated := regexp_replace(
+    v_definition,
+    '(?i)raise[[:space:]]+exception[[:space:]]+''turn_time_expired''[[:space:]]*;',
+    'null; -- human may still play if this turn is current',
+    'g'
+  );
+
+  if v_updated = v_definition then
+    raise exception 'Could not locate turn_time_expired guard in apply_room_card; no function was changed';
   end if;
-  -- Keep the surrounding IF check harmless; it no longer rejects a late human play.
-  v_definition := replace(v_definition, v_old, 'null; -- human may still play if this turn is current');
-  execute v_definition;
+
+  execute v_updated;
 end;
 $migration$;
 
