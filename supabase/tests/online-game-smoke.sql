@@ -170,6 +170,10 @@ begin
   perform public.set_room_ready(v_room_id,true);
   perform set_config('request.jwt.claim.sub',v_host::text,false);
   perform public.start_room_game(v_room_id,true,'S',null);
+  perform public.submit_room_challenge_choice(v_room_id,'pass');
+  perform set_config('request.jwt.claim.sub',v_guest::text,false);
+  perform public.submit_room_challenge_choice(v_room_id,'pass');
+  perform set_config('request.jwt.claim.sub',v_host::text,false);
 
   select jsonb_array_length(cards) into v_before_count
     from public.room_game_hands where room_id=v_room_id and seat=0;
