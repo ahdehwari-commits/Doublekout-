@@ -837,6 +837,8 @@ async function refreshOnlineGame(startPayload){
   var challengeDeadlines=state.challengeDeadlines||{},myDeadline=Number(challengeDeadlines[String(myOnlineSeat)]||0),isMyChallengeTurn=decisionPending&&myOnlineSeat>=0&&myDeadline>0&&!(state.challengePassed||[]).includes(myOnlineSeat);
   onlineChallengeDeadline=decisionPending&&isMyChallengeTurn?myDeadline:0;onlineChallengeExpired=false;
   window.__doubleKoutChallengeDeadlines=challengeDeadlines;window.__doubleKoutChallengePassed=state.challengePassed||[];
+  // Clear stale challenge-submission text as soon as the server leaves the challenge phase.
+  if(!decisionPending&&el('onlineStatus')&&/^در حال ثبت (?:عبور از چالش|اعلام چالش)|^عبور از چالش در سرور ثبت شده است/.test(el('onlineStatus').textContent||''))say('');
   var result=state.challengeResult;
   var status=decisionPending?'فرصت انتخاب چالش برای همه بازیکنان هم‌زمان فعال است':'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳ · حکم پیک';
   if(state.challengeTeam){var myTeam=(myOnlineSeat%2===0?'A':'B');status+=(state.challengeTeam===myTeam?' · بازیکن هم‌تیمی وارد چالش شد':' · حریف علیه شما اعلام چالش کرد');}
