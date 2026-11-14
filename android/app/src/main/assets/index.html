@@ -793,10 +793,13 @@ async function refreshOnlineGame(startPayload){
      if(sameState.seatPlayers&&sameState.seatPlayers[String(sameTurn)]&&sameState.seatPlayers[String(sameTurn)].human===false){
       aiBusy=true;try{var retryAi=await client.rpc('play_room_ai_turn',{p_room_id:roomId});if(retryAi.error)throw retryAi.error;setTimeout(refreshOnlineGame,150);}catch(e){say('اجرای خودکار ربات دوباره تلاش می‌شود: '+(e.message||e));}finally{aiBusy=false;}
      }else{
-      var sameDeadline=Number(sameState.turnDeadline||0);
-      if(sameDeadline>0&&Date.now()/1000>=sameDeadline){
-       try{var retryTimeout=await client.rpc('advance_room_turn_timeout',{p_room_id:roomId});if(retryTimeout.error)throw retryTimeout.error;if(retryTimeout.data&&retryTimeout.data.advanced!==false)setTimeout(refreshOnlineGame,150);}catch(e){say('پایان زمان؛ تلاش برای انداختن کارت خودکار: '+(e.message||e));}
-      }
+      // Let PostgreSQL decide whether the deadline has passed. Never gate this
+      // RPC on the phone clock: device clock skew can leave an expired turn stuck.
+      try{
+       var retryTimeout=await client.rpc('advance_room_turn_timeout',{p_room_id:roomId});
+       if(retryTimeout.error)throw retryTimeout.error;
+       if(retryTimeout.data&&retryTimeout.data.state)setTimeout(refreshOnlineGame,150);
+      }catch(e){say('خطای اجرای خودکار پس از پایان نوبت: '+(e.message||e));}
      }
     }
    }
