@@ -26,6 +26,7 @@ begin
 
   perform set_config('request.jwt.claim.sub',v_host::text,false);
   perform public.start_room_game(v_room_id,true,'S',null);
+  perform public.set_room_game_decision(v_room_id,null);
 
   select public_state into v_state from public.game_rooms where id=v_room_id;
   if (select count(*) from public.room_game_hands where room_id=v_room_id) <> 4 then
@@ -80,6 +81,7 @@ begin
   perform public.set_room_ready(v_room_id,true);
   perform set_config('request.jwt.claim.sub',v_host::text,false);
   perform public.start_room_game(v_room_id,true,'S','A');
+  perform public.set_room_game_decision(v_room_id,'A');
 
   for v_step in 1..52 loop
     select status,public_state into v_status,v_state
