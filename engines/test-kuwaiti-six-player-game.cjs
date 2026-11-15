@@ -79,7 +79,7 @@ const fs = require('node:fs');
 const ui = fs.readFileSync(require.resolve('../kuwaiti-six-player-ui.js'), 'utf8');
 assert.ok(ui.includes('points[bidderTeam]=(Number(points[bidderTeam])||0)+val'), 'match points must accumulate across deals');
 assert.ok(ui.includes('مجموع امتیاز تیم الف') && ui.includes('مجموع امتیاز تیم ب'), 'result panel must show cumulative team totals');
-assert.ok(ui.includes('const maxOpponentTricks=9-target;') && ui.includes('const success=opponentWon<=maxOpponentTricks;'), 'contract success must be decided by the opponents\' trick count');
+assert.ok(ui.includes('const maxOpponentTricks=9-target;') && ui.includes('const success=won>=target;'), 'contract success must be decided by the bidder team reaching its target');
 assert.ok(ui.includes("if(!game||game.done)return;"), 'AI turns must silently stop after the deal is complete');
 console.log('PASS: cumulative match scoring, opponent-trick contract thresholds, and post-game AI guard.');
 
