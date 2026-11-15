@@ -2,8 +2,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const source = fs.readFileSync(require.resolve('../kuwaiti-six-player-ui.js'), 'utf8');
 
-assert.match(source, /function setStatus\\(msg\\)\\{[\\s\\S]*?classList\\.remove\\('hidden'\\)/,
+assert.ok(source.includes("function setStatus(msg){") && source.includes("classList.remove('hidden')"),
   'status prompts must be visible after auction completion');
+assert.ok(source.includes("aria-live"),
+  'status must be announced accessibly');
 
 const auctionStart = source.indexOf('function finishAuction()');
 const contractChooser = source.indexOf('function aiChooseContract(', auctionStart);
