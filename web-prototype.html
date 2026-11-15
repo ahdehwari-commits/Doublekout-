@@ -236,6 +236,9 @@ body.deck-face-gold .card:not(.back) .corner{color:#694513!important}
 @keyframes pileCollect{0%{opacity:1;transform:translate(var(--px),var(--py)) rotate(var(--pr)) scale(1)}65%{opacity:.95;transform:translate(0,0) rotate(0) scale(.82)}100%{opacity:0;transform:translate(0,-18px) rotate(0) scale(.18)}}
 #onlineLobbyDecision{display:none;background:#153d2f;border:1px solid #e4c477;border-radius:12px;padding:10px;margin:10px 0;text-align:center}#onlineLobbyDecision .onrow{display:flex;gap:8px;margin-top:8px}#onlineLobbyDecision button{flex:1}
 
+/* Apply the same ornate black-and-gold spade back to four-player cards. */
+.card.back{border:3px solid #e7c777!important;outline:1px solid #fff1c866!important;outline-offset:-5px;background-color:#101010!important}
+.card.back:before{content:"♠"!important;position:absolute!important;z-index:1!important;inset:8% 9% 19%!important;display:flex!important;align-items:center!important;justify-content:center!important;border:2px double #f4d78e!important;border-radius:42% 42% 10% 10%!important;color:#f8dfa0!important;font:900 34px/1 Georgia,serif!important;text-shadow:0 1px 3px #241500,0 0 9px #e9bd5a!important;background:radial-gradient(ellipse at 50% 48%,#e4bd6530,transparent 62%),repeating-linear-gradient(45deg,transparent 0 6px,#f4d88a18 6px 7px),repeating-linear-gradient(-45deg,transparent 0 6px,#f4d88a15 6px 7px)!important;box-shadow:inset 0 0 0 3px #f5d98722,0 0 8px #0008!important}
 /* 0.8.52: image-inspired premium table collections and shared black-gold card backs */
 body.table-theme-marble{background:radial-gradient(ellipse at 50% 8%,#3b3a39 0,#171717 42%,#050505 100%)!important}
 body.table-theme-marble .table,body.table-theme-marble .k-table{
@@ -287,7 +290,7 @@ body.six-layout-wide .k-table>.k-seat[data-p="5"]{bottom:23%!important;left:0!im
 body.six-layout-wide .k-table>.k-seat[data-p="4"]{top:23%!important;left:0!important}
 body.six-layout-wide .k-table>.k-center{left:30%!important;right:30%!important;top:36%!important;bottom:36%!important}
 @media(max-width:520px){body.six-layout-hex .k-table{min-height:610px!important}body.six-layout-wide .k-table{min-height:650px!important}}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۴۳ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۵۲ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
 <button class="mode-card" id="modeDouble"><strong>♠ میز چهار نفره</strong><span>دابل کوت توالی · نسخه قابل‌بازی</span></button>
