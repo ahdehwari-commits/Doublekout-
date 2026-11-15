@@ -98,3 +98,6 @@ for (const level of ['easy','normal','hard','expert']) assert.ok(ui.includes('va
 assert.ok(ui.includes('simulateCandidate(item.card,64)'), 'expert AI must use hidden-hand Monte Carlo analysis');
 assert.ok(ui.includes('voidSuits') && ui.includes('K.findTrickWinner(plays'), 'advanced AI must use revealed void suits and official trick resolution');
 console.log('PASS: four selectable six-player AI levels and hidden-hand analysis are wired into live card selection.');
+
+assert.ok(ui.includes('bidAdjustment={easy:3.5,normal:0,hard:-1.5,expert:-3}') && ui.includes('malzoomThreshold={easy:26,normal:22,hard:20,expert:18}'), 'AI difficulty must also affect auction bidding thresholds');
+console.log('PASS: AI difficulty also scales auction aggression by hand strength.');
