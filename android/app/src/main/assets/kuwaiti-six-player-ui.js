@@ -440,8 +440,8 @@ function handStrength(p){
 }
 function aiBid(p){
  const rank=auction.highestRank,str=handStrength(p),difficulty=$('kDifficulty')?.value||'normal';
- const bidAdjustment={easy:3.5,normal:0,hard:-1.5,expert:-3}[difficulty]||0;
- const malzoomThreshold={easy:26,normal:22,hard:20,expert:18}[difficulty]||22;
+ const bidAdjustment={easy:-3.5,normal:0,hard:1.5,expert:3}[difficulty]||0;
+ const malzoomThreshold={easy:18,normal:22,hard:24,expert:26}[difficulty]||22;
  if(p===game.obligatedPlayer&&!auction.highest&&str>malzoomThreshold)return {type:'malzoom',rank:1,label:'ملزوم'};
  if(rank<4){const next=rank+1,target=next===4?9:5+next,threshold=[0,15.5,20.5,25.5,30][next]+bidAdjustment;if(str>=threshold)return {type:'normal',rank:next,label:String(target),target};}
  if(auction.passes>=5&&!auction.highest)return {type:'normal',rank:1,label:'۶',target:6};
