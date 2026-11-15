@@ -290,8 +290,54 @@ body.six-layout-wide .k-table>.k-seat[data-p="5"]{bottom:23%!important;left:0!im
 body.six-layout-wide .k-table>.k-seat[data-p="4"]{top:23%!important;left:0!important}
 body.six-layout-wide .k-table>.k-center{left:30%!important;right:30%!important;top:36%!important;bottom:36%!important}
 @media(max-width:520px){body.six-layout-hex .k-table{min-height:610px!important}body.six-layout-wide .k-table{min-height:650px!important}}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۵۲ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+/* Visual pre-game selectors */
+.visual-customizer{display:grid;gap:10px;margin:10px 0 16px;padding:10px;border:1px solid #caa65a;border-radius:16px;background:linear-gradient(145deg,#171714,#070908);box-shadow:inset 0 1px 0 #fff2,0 10px 24px #0008}
+.visual-row{display:grid;grid-template-columns:84px 1fr;align-items:center;gap:8px}.visual-label{font-size:12px;font-weight:900;color:#e8cd8a;text-align:center}.visual-choices{display:flex;align-items:center;gap:8px;overflow-x:auto;padding:5px 3px;scrollbar-width:none}
+.visual-choice{flex:0 0 auto;display:flex;align-items:center;justify-content:center;padding:4px;width:68px;height:78px;border:1px solid #887044;border-radius:10px;background:linear-gradient(145deg,#292720,#080909);box-shadow:0 4px 0 #030403,0 7px 12px #0009;transition:transform .16s,border-color .16s,box-shadow .16s}
+.visual-choice.selected{border:2px solid #ffe39a;box-shadow:0 0 0 2px #c18e39,0 0 18px #edc56a88,0 4px 0 #030403;transform:translateY(-3px)}
+.mini-card{display:block;width:40px;height:61px;border:2px solid #e7c777;border-radius:6px;position:relative;overflow:hidden;box-shadow:inset 0 0 0 2px #fff2,0 4px 8px #000b;background:radial-gradient(ellipse,#393124,#090909 70%)}
+.mini-card:before{content:"";position:absolute;inset:4px;border:1px double #f1d58e;border-radius:3px;background:repeating-radial-gradient(ellipse at center,transparent 0 4px,#f0d38a44 5px 6px),repeating-linear-gradient(45deg,transparent 0 4px,#f0d38a24 4px 5px)}
+.mini-card i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:900 23px Georgia,serif;color:#ffe6a0;text-shadow:0 0 5px #e3b34e}
+.mini-blue{background:radial-gradient(ellipse,#1e5b91,#071b40 72%)}.mini-red{background:radial-gradient(ellipse,#b62d40,#370715 72%)}.mini-green{background:radial-gradient(ellipse,#1b8058,#03281b 72%)}
+.mini-table,.mini-layout{display:block;width:58px;height:58px;position:relative;border:4px solid #d3b16a;border-radius:48%/40%;box-shadow:inset 0 0 0 2px #fff3,0 4px 8px #000a}
+.mini-table:before,.mini-layout:before{content:"";position:absolute;inset:8px;border:1px solid #f4dc9d66;border-radius:50%}.mini-table i,.mini-layout i{position:absolute;width:13px;height:9px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:#d8b96c;box-shadow:-19px 0 0 -2px #d8b96c,19px 0 0 -2px #d8b96c,0 -18px 0 -2px #d8b96c,0 18px 0 -2px #d8b96c}.mini-table b{position:absolute;inset:40% 38%;border-radius:50%;background:#e4c67e}
+.mini-table.marble{background:radial-gradient(ellipse,#55534e,#171717 70%,#050505)}.mini-table.royal{border-width:5px;background:radial-gradient(ellipse,#423322,#0a0806 70%);box-shadow:inset 0 0 0 3px #c09045,0 4px 8px #000a}.mini-table.casino{border-color:#c33a46;background:radial-gradient(ellipse,#3c2529,#070607 70%);box-shadow:inset 0 0 0 2px #f4d28c,0 0 9px #d22b3888}.mini-table.parquet{border-color:#c78b43;background:repeating-linear-gradient(90deg,#b16e2d 0 7px,#6c3818 8px 10px)}.mini-table.persian{border-color:#e0c17b;background:repeating-conic-gradient(#8c1829 0 12deg,#163b5d 12deg 24deg,#b52b32 24deg 36deg)}.mini-table.felt{background:radial-gradient(ellipse,#1c7655,#052c20 75%)}
+.mini-layout{border-width:2px;border-color:#d5b46b;background:#111;border-radius:45%/35%}.mini-layout:before{inset:7px}.mini-layout i{width:9px;height:7px;box-shadow:-16px -12px 0 -1px #d8b96c,16px -12px 0 -1px #d8b96c,-19px 4px 0 -1px #d8b96c,19px 4px 0 -1px #d8b96c,-10px 17px 0 -1px #d8b96c,10px 17px 0 -1px #d8b96c}.mini-layout.hex{border-radius:12px;transform:rotate(30deg) scale(.88)}.mini-layout.wide{width:64px;border-radius:50%}
+@media(max-width:520px){.visual-row{grid-template-columns:70px 1fr}.visual-choice{width:60px;height:72px}.mini-table,.mini-layout{width:53px;height:53px}}
+/* Ornate black-gold approved back: no text */
+.card.back{background:radial-gradient(ellipse at 50% 45%,#393124 0,#15130f 50%,#050505 100%)!important;border:3px solid #e8c978!important;outline:1px solid #fff2c866!important;outline-offset:-6px;box-shadow:inset 0 0 0 2px #fff2c455,inset 0 0 22px #000c,0 8px 14px #000b!important}
+.card.back:before{content:""!important;position:absolute!important;inset:5px!important;border:2px double #f4d78e!important;border-radius:5px!important;background:repeating-radial-gradient(ellipse at 50% 50%,transparent 0 6px,#f1d58c20 7px 8px),repeating-linear-gradient(45deg,transparent 0 5px,#f4d88a18 5px 6px),repeating-linear-gradient(-45deg,transparent 0 5px,#f4d88a18 5px 6px)!important;box-shadow:inset 0 0 0 4px #f5d98722!important}
+.card.back:after{content:"♠"!important;position:absolute!important;inset:0!important;display:flex!important;align-items:center!important;justify-content:center!important;width:auto!important;height:auto!important;border:0!important;border-radius:0!important;background:none!important;color:#f9dfa0!important;font:900 36px/1 Georgia,serif!important;text-shadow:0 1px 3px #160d00,0 0 8px #e7bd5a!important;transform:none!important;overflow:visible!important}
+body.deck-back-classic .card.back{background:radial-gradient(ellipse,#1c5c92,#061b40 78%)!important}body.deck-back-red .card.back{background:radial-gradient(ellipse,#a92d3c,#260511 78%)!important}body.deck-back-green .card.back{background:radial-gradient(ellipse,#18724c,#03251a 78%)!important}
+.online-hand-tools{display:flex;align-items:center;justify-content:space-between;gap:8px}#onlineSortHand{width:42px;height:38px;padding:0;border:1px solid #e7c879;background:linear-gradient(#3b3424,#111);color:#ffe5a0;font-size:23px}
+#onlinePanel #onlineHand button.online-card-legal{opacity:1!important;filter:none!important;z-index:30!important}#onlinePanel #onlineHand button.online-card-legal .card{transform:translateY(-13px) scale(1.07)!important;outline:3px solid #ffe39a!important;border:2px solid #fff0b3!important;box-shadow:0 0 0 3px #b27d2c,0 14px 24px #000e,0 0 18px #f3d07899!important;filter:brightness(1.08) saturate(1.2)!important}
+#onlinePanel #onlineHand button.online-card-illegal{opacity:.38!important;filter:grayscale(.55) brightness(.72)!important}#onlinePanel #onlineHand button.online-card-illegal .card{transform:translateY(2px) scale(.96)!important;outline:1px solid #756b59!important;box-shadow:0 3px 6px #0008!important}#onlinePanel #onlineHand button.online-card-inactive{opacity:.72!important}
+/* 0.8.53 structural table redesign: oval tabletop, raised perimeter seats and central medallion */
+.table,#onlineTable{display:block!important;position:relative!important;min-height:460px!important;padding:0!important;border-width:12px!important;border-radius:48%/31%!important;box-shadow:inset 0 0 0 3px #f6dc9a88,inset 0 0 0 9px #342416,inset 0 0 60px #000d,0 20px 34px #000d!important;overflow:hidden!important}
+.table:before,#onlineTable:before{content:""!important;position:absolute!important;inset:8px!important;border:2px solid #e2c27c!important;border-radius:48%/31%!important;box-shadow:inset 0 0 0 5px #fff1,inset 0 0 30px #0009!important;pointer-events:none!important;z-index:0!important}
+.table>.seat,#onlineTable>.seat{position:absolute!important;width:25%!important;min-height:90px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;padding:7px 4px!important;border:2px solid #c9a45e!important;border-radius:14px!important;background:linear-gradient(145deg,#1c1b18,#050505)!important;box-shadow:0 10px 18px #000c,inset 0 1px 0 #fff3!important;z-index:3!important}
+.table>.north,#onlineTable>.north{top:2%!important;left:37.5%!important;right:auto!important;bottom:auto!important}
+.table>.south,#onlineTable>.south{bottom:2%!important;left:37.5%!important;right:auto!important;top:auto!important}
+.table>.west,#onlineTable>.west{left:1%!important;top:38%!important;right:auto!important;bottom:auto!important}
+.table>.east,#onlineTable>.east{right:1%!important;top:38%!important;left:auto!important;bottom:auto!important}
+.table>.center,#onlineTable>.center{position:absolute!important;left:28%!important;right:28%!important;top:27%!important;bottom:27%!important;min-height:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;border:1px solid #c9a45e!important;border-radius:50%!important;background:radial-gradient(ellipse,#27231b99,#05050577)!important;box-shadow:inset 0 0 24px #000b,0 0 0 5px #d1ad6544!important;z-index:2!important}
+.table>.center .table-emblem{width:90%!important;opacity:.38!important}.table>.center .center-trick{top:55%!important;z-index:4!important}.table>.center .center-pile{top:55%!important;z-index:3!important}
+.table>.seat .name,#onlineTable>.seat .name{display:inline-block!important;padding:3px 8px!important;border-radius:5px!important;background:linear-gradient(#f4e3b7,#b88c4a)!important;color:#261a0d!important;font-weight:900!important;border:1px solid #f5d58b!important}
+.table>.seat .count,#onlineTable>.seat .count{color:#f5dfaa!important}
+@media(max-width:520px){.table,#onlineTable{min-height:440px!important;border-width:8px!important;border-radius:44%/25%!important}.table>.seat,#onlineTable>.seat{width:28%!important;min-height:78px!important;padding:5px 2px!important}.table>.north,#onlineTable>.north,.table>.south,#onlineTable>.south{left:36%!important;width:28%!important}.table>.west,#onlineTable>.west{left:0!important;top:39%!important}.table>.east,#onlineTable>.east{right:0!important;top:39%!important}.table>.center,#onlineTable>.center{left:27%!important;right:27%!important;top:29%!important;bottom:29%!important}.table>.seat .name,#onlineTable>.seat .name{font-size:10px!important;padding:2px 4px!important}}
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۵۳ · میزهای بازطراحی‌شده</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
+<div id="visualCustomizer" class="visual-customizer">
+ <div class="visual-row"><div class="visual-label">پشت کارت</div><div class="visual-choices" data-kind="back">
+  <button type="button" class="visual-choice" data-value="black" aria-label="مشکی طلایی"><span class="mini-card mini-black"><i>♠</i></span></button><button type="button" class="visual-choice" data-value="classic" aria-label="آبی طلایی"><span class="mini-card mini-blue"><i>♠</i></span></button><button type="button" class="visual-choice" data-value="red" aria-label="قرمز طلایی"><span class="mini-card mini-red"><i>♠</i></span></button><button type="button" class="visual-choice" data-value="green" aria-label="سبز طلایی"><span class="mini-card mini-green"><i>♠</i></span></button>
+ </div></div>
+ <div class="visual-row"><div class="visual-label">میز</div><div class="visual-choices" data-kind="table">
+  <button type="button" class="visual-choice" data-value="marble" aria-label="مرمر"><span class="mini-table marble"><i></i><b></b></span></button><button type="button" class="visual-choice" data-value="royal" aria-label="سلطنتی"><span class="mini-table royal"><i></i><b></b></span></button><button type="button" class="visual-choice" data-value="casino" aria-label="کازینو"><span class="mini-table casino"><i></i><b></b></span></button><button type="button" class="visual-choice" data-value="parquet" aria-label="پارکت"><span class="mini-table parquet"><i></i><b></b></span></button><button type="button" class="visual-choice" data-value="persian" aria-label="فرش ایرانی"><span class="mini-table persian"><i></i><b></b></span></button><button type="button" class="visual-choice" data-value="felt" aria-label="مخمل"><span class="mini-table felt"><i></i><b></b></span></button>
+ </div></div>
+ <div class="visual-row"><div class="visual-label">چینش ۶ نفره</div><div class="visual-choices" data-kind="layout">
+  <button type="button" class="visual-choice" data-value="arc" aria-label="قوسی"><span class="mini-layout arc"><i></i></span></button><button type="button" class="visual-choice" data-value="hex" aria-label="شش ضلعی"><span class="mini-layout hex"><i></i></span></button><button type="button" class="visual-choice" data-value="wide" aria-label="گسترده"><span class="mini-layout wide"><i></i></span></button>
+ </div></div>
+</div>
 <div class="mode-grid">
 <button class="mode-card" id="modeDouble"><strong>♠ میز چهار نفره</strong><span>دابل کوت توالی · نسخه قابل‌بازی</span></button>
 <button class="mode-card" id="modeHokm"><strong>♥ میز چهار نفره</strong><span>حکم معمولی · موتور مستقل متصل</span></button>
@@ -299,20 +345,9 @@ body.six-layout-wide .k-table>.k-center{left:30%!important;right:30%!important;t
 </div>
 <p class="muted" id="modeMessage">حالت شش‌نفره فقط با نام «کوت کویتی» نمایش داده می‌شود.</p><div class="actions" style="margin-top:12px"><button id="globalStatsBtn" type="button">آمار کل بازی‌ها</button><button id="exitAppBtn" type="button">خروج از برنامه</button></div>
 <section class="panel hidden" id="globalStatsPanel"><h3 class="section-title">آمار کل بازی‌ها</h3><div id="globalStatsReport" class="rules"></div><div class="actions"><button id="closeGlobalStats" type="button">بستن آمار</button><button id="resetGlobalStats" type="button">پاک‌کردن آمار</button></div></section></section>
-<section class="panel" id="cardCustomizer">
-<h2 class="section-title">🎨 شخصی‌سازی کارت‌ها</h2>
-<p class="muted">پشت کارت‌ها و ظاهر روی کارت‌ها را جداگانه انتخاب کن. انتخابت روی همین دستگاه ذخیره می‌شود و در بازی آفلاین و آنلاین نمایش داده می‌شود.</p>
-<div class="card-customizer">
- <div><label for="cardBackStyle">طرح پشت کارت</label><select id="cardBackStyle" onchange="setCardCustomization()"><option value="classic">آبی سلطنتی و طلایی</option><option value="red">قرمز یاقوتی و طلایی</option><option value="black">مشکی لوکس و طلایی</option><option value="green">سبز زمردی و طلایی</option></select></div>
- <div><label for="cardFaceStyle">طرح روی کارت</label><select id="cardFaceStyle" onchange="setCardCustomization()"><option value="classic">کلاسیک فعلی</option><option value="jumbo">اعداد درشت</option><option value="minimal">ساده و مینیمال</option><option value="vintage">کلاسیک قدیمی</option><option value="gold">اشرافی با حاشیه طلایی</option></select></div>
- <div><label for="tableStyle">سطح و زمینه میز</label><select id="tableStyle" onchange="setCardCustomization()"><option value="felt">مخمل سبز کلاسیک</option><option value="parquet">پارکت چوبی گرم</option><option value="persian">فرش ایرانی لاکی و سرمه‌ای</option><option value="marble">مرمر مشکی و طلایی (تصویر ۱)</option><option value="royal">میز سلطنتی مشکی و طلایی (تصویر ۲)</option><option value="casino">کازینوی مشکی با نور قرمز (تصویر ۳)</option></select></div><div><label for="sixLayoutStyle">چینش بازیکنان میز شش‌نفره</label><select id="sixLayoutStyle" onchange="setCardCustomization()"><option value="arc">قوس شش‌نفره متقارن</option><option value="hex">شش‌ضلعی باز</option><option value="wide">چینش گسترده اطراف میز</option></select></div>
-</div>
-<div class="card-customizer-preview"><div><small class="muted">نمونه پشت</small><div id="cardBackPreview" class="card back"></div></div><div><small class="muted">نمونه رو</small><div id="cardFacePreview" class="card"><span class="corner corner-top"><b>A</b><i>♠</i></span><span class="suit">♠</span><span class="corner corner-bottom"><b>A</b><i>♠</i></span></div></div></div>
-<div class="actions" style="margin-top:10px"><button type="button" onclick="resetCardCustomization()">بازگشت به طرح پیش‌فرض</button></div>
-</section>
 <section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><select id="hokmContract" class="hidden" aria-hidden="true"><option value="hokm_spades" selected>پیک</option><option value="hokm_hearts">دل</option><option value="hokm_diamonds">خشت</option><option value="hokm_clubs">گشنیز</option></select><div id="hokmContractPicker" class="hidden"></div><div class="setup"><div><label>شیوه بازی</label><select id="playStyle"><option value="ai">یک نفر در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با چهار گوشی (اتاق اینترنتی)</option></select></div><div id="humanSeatSetup" style="grid-column:1/-1"><label>صندلی بازیکنان انسانی (صندلی‌های خالی با هوش مصنوعی پر می‌شوند)</label><div id="humanSeatChoices" class="actions"></div><p class="muted">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option><option value="hard">سخت</option><option value="expert">خیلی سخت</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><div id="onlineSetupInfo" class="status hidden">برای بازی آنلاین، ابتدا اتاق بساز یا با کد وارد اتاق بازیکن دیگری شو. پنجره اتاق آنلاین با انتخاب این گزینه باز می‌شود.</div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
 <section class="panel hidden" id="game"><div id="hotseatGate" class="hidden"><div class="gate-card"><div style="font-size:42px">♠ ♥ ♦ ♣</div><h2>تحویل گوشی به بازیکن بعدی</h2><p id="hotseatGateText">گوشی را به بازیکن بعدی بدهید. مطمئن شوید نفر قبلی دیگر صفحه را نمی‌بیند؛ سپس کارت‌های خود را نمایش دهید.</p><button id="revealHotseatHand" type="button">کارت‌های من را نمایش بده</button></div></div><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">بازی‌های برده تیم شما: <b id="gamesWonA">۰</b></div><div class="score">بازی‌های برده تیم حریف: <b id="gamesWonB">۰</b></div><div class="score">دست: <b id="trickNo">۱</b> / ۱۳</div></div>
-<div class="k-live-tricks" style="display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:13px;font-weight:bold"><span>دست‌های برده این بازی · تیم شما: <b id="liveWonA">۰</b></span><span>تیم حریف: <b id="liveWonB">۰</b></span></div>
+<div class="k-live-tricks" style="display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:13px;font-weight:bold"><span>گروه‌های توالی تکمیل‌شده · تیم شما: <b id="liveWonA">۰</b></span><span>تیم حریف: <b id="liveWonB">۰</b></span></div>
 <div id="challengePanel" class="status" style="display:none"><b>چالش تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چالش را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چالش فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چالش علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب قرارداد بازی بعدی</b><p class="muted">پس از دیدن پنج کارت اول، می‌توانی یکی از چهار خال حکم، نرس، تک نرس، سرس یا برگ وسط یار را انتخاب کنی. هشت کارت باقی‌مانده بعد از انتخاب پخش می‌شود.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><div><label>نوع قرارداد</label><select id="nextContract"><option value="hokm_spades">حکم پیک ♠</option><option value="hokm_hearts">حکم دل ♥</option><option value="hokm_diamonds">حکم خشت ♦</option><option value="hokm_clubs">حکم گشنیز ♣</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار</option></select></div><button id="confirmTrump">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div class="table-emblem" aria-hidden="true">
 <svg viewBox="0 0 520 210" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg">
 <defs><linearGradient id="dkGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0b2"/><stop offset=".32" stop-color="#f6ce68"/><stop offset=".62" stop-color="#b87924"/><stop offset="1" stop-color="#ffe7a0"/></linearGradient><filter id="dkGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
@@ -699,32 +734,21 @@ function royalPortrait(rank){
  return '<svg class="royal-art" viewBox="0 0 64 76" role="img" aria-label="'+({K:'شاه',Q:'بی‌بی',J:'سرباز'})[rank]+'"><defs><linearGradient id="robe'+rank+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+p.coat+'"/><stop offset="1" stop-color="#101b2c"/></linearGradient></defs><rect x="2" y="2" width="60" height="72" rx="8" fill="#f4e7c8" stroke="#a37a3c" stroke-width="1.8"/><path d="M7 70Q9 53 21 49L32 55L43 49Q55 53 57 70Z" fill="url(#robe'+rank+')" stroke="#4b3928" stroke-width="1.5"/><path d="M21 50L32 61L43 50L40 70H24Z" fill="'+p.light+'" opacity=".9"/><path d="M15 69Q18 57 24 56L32 65L40 56Q47 58 49 69" fill="none" stroke="#f6df9a" stroke-width="2"/>'+head+crown+'<path d="M28 52L32 57L36 52" fill="none" stroke="#fff0c4" stroke-width="2"/><path d="M9 9H55M9 66H55" stroke="#b48b4a" stroke-width=".8" opacity=".75"/><circle cx="12" cy="12" r="2" fill="#c9a45d"/><circle cx="52" cy="12" r="2" fill="#c9a45d"/><circle cx="12" cy="64" r="2" fill="#c9a45d"/><circle cx="52" cy="64" r="2" fill="#c9a45d"/></svg>';
 }
 
+var visualChoice={back:'black',table:'marble',layout:'arc'};
 function setCardCustomization(){
- const back=$('cardBackStyle')?.value||'classic',face=$('cardFaceStyle')?.value||'classic',table=$('tableStyle')?.value||'felt',layout=$('sixLayoutStyle')?.value||'arc';
- document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','deck-face-jumbo','deck-face-minimal','deck-face-vintage','deck-face-gold','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','six-layout-arc','six-layout-hex','six-layout-wide');
- document.body.classList.add('deck-back-'+back,'table-theme-'+table,'six-layout-'+layout);
- if(face!=='classic')document.body.classList.add('deck-face-'+face);
- try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({back,face,table,layout}));}catch(e){}
- const bp=$('cardBackPreview'),fp=$('cardFacePreview');
- if(bp){bp.className='card back';}
- if(fp){fp.className='card'+(face==='vintage'?'':'');}
+ document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','six-layout-arc','six-layout-hex','six-layout-wide');
+ document.body.classList.add('deck-back-'+visualChoice.back,'table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
+ try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({back:visualChoice.back,table:visualChoice.table,layout:visualChoice.layout,v:2}));}catch(e){}
+ document.querySelectorAll('#visualCustomizer .visual-choice').forEach(function(b){b.classList.toggle('selected',visualChoice[b.parentElement.dataset.kind]===b.dataset.value);});
 }
-function resetCardCustomization(){
- if($('cardBackStyle'))$('cardBackStyle').value='classic';
- if($('cardFaceStyle'))$('cardFaceStyle').value='classic';
- if($('tableStyle'))$('tableStyle').value='felt';
- if($('sixLayoutStyle'))$('sixLayoutStyle').value='arc';
- setCardCustomization();
-}
+function resetCardCustomization(){visualChoice={back:'black',table:'marble',layout:'arc'};setCardCustomization();}
 (function loadCardCustomization(){
  let saved={};try{saved=JSON.parse(localStorage.getItem('doubleKoutCardStyle')||'{}')||{};}catch(e){}
- if($('cardBackStyle')&&['classic','red','black','green'].includes(saved.back))$('cardBackStyle').value=saved.back;
- if($('cardFaceStyle')&&['classic','jumbo','minimal','vintage','gold'].includes(saved.face))$('cardFaceStyle').value=saved.face;
- if($('tableStyle')&&['felt','parquet','persian','marble','royal','casino'].includes(saved.table))$('tableStyle').value=saved.table;
- if($('sixLayoutStyle')&&['arc','hex','wide'].includes(saved.layout))$('sixLayoutStyle').value=saved.layout;
- setCardCustomization();
+ visualChoice.back=saved.v===2&&['classic','red','black','green'].includes(saved.back)?saved.back:'black';
+ visualChoice.table=['felt','parquet','persian','marble','royal','casino'].includes(saved.table)?saved.table:'marble';
+ visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';setCardCustomization();
 })();
-
+document.getElementById('visualCustomizer').addEventListener('click',function(e){const b=e.target.closest('.visual-choice');if(!b)return;const kind=b.parentElement.dataset.kind;if(!kind)return;visualChoice[kind]=b.dataset.value;setCardCustomization();});
 function cardEl(c,small=false){
  let d=document.createElement('div');
  const rank=String(c.r||'');
@@ -737,19 +761,8 @@ function cardEl(c,small=false){
 }
 function liveSequenceScores(winners){
  const scores={A:0,B:0};let start=0,searchFrom=3;
- while(start<winners.length){
-  let close=-1;
-  for(let i=searchFrom;i<winners.length;i++){if(winners[i]===winners[i-1]){close=i;break;}}
-  if(close>=0){
-   const winningTeam=team(winners[close]),count=close-start+1;scores[winningTeam]+=count;
-   start=close+1;searchFrom=start+1;
-  }else{
-   const pending=winners.slice(start);
-   if(winners.length===13){const winnerTeam=team(winners[12]);scores[winnerTeam]+=13-start;}
-   else{pending.forEach(p=>scores[team(p)]++);}
-   break;
-  }
- }
+ while(start<winners.length){let close=-1;for(let i=searchFrom;i<winners.length;i++){if(winners[i]===winners[i-1]){close=i;break;}}
+ if(close>=0){scores[team(winners[close])]+=1;start=close+1;searchFrom=start+1;}else{if(winners.length===13)scores[team(winners[12])]+=1;break;}}
  return scores;
 }
 function render(){
@@ -794,7 +807,10 @@ $('takeChallenge').onclick=()=>beginNormalOrChallenge('A');$('skipChallenge').on
 $('localNextGame').onclick=startNextLocalGame;$('localExtendRematch').onclick=()=>{if(!G||!G.done||!localRematchDeadline)return;localRematchDeadline=Date.now()+15000;lastLocalRematchBeep=-1;renderLocalRematchClock();};
 $('newGame').onclick=()=>{if(G&&G.done){hideLocalRematch();matchNo++;G=null;startGame();return;}hideLocalRematch();matchNo=1;previousWinner=null;previousStarter=null;G=null;$('game').classList.add('hidden');$('setup').classList.remove('hidden');$('hokmContract').disabled=false;$('starter').disabled=false;$('newGame').textContent='بازی جدید';$('start').textContent='پخش کارت و شروع بازی'};
 $('backToModes').onclick=()=>{hideLocalRematch();G=null;matchNo=1;previousWinner=null;previousStarter=null;$('game').classList.add('hidden');$('setup').classList.add('hidden');$('modePicker').classList.remove('hidden');$('modeMessage').textContent='یک حالت بازی را انتخاب کن.'};
-$('sortHand').onclick=()=>{if(!G)return;const p=playStyle==='hotseat'?G.turn:0;if(playStyle==='hotseat'&&!humanSeats.has(p))return;G.hands[p].sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);render()};
+function normalizedSuit(c){const x=c&&((c.s!==undefined?c.s:c.suit)||'');return ({S:'♠',H:'♥',D:'♦',C:'♣','♠':'♠','♥':'♥','♦':'♦','♣':'♣'})[x]||'';}
+function normalizedRank(c){const x=c&&(c.r!==undefined?c.r:c.rank),m={'2':0,'3':1,'4':2,'5':3,'6':4,'7':5,'8':6,'9':7,'10':8,J:9,Q:10,K:11,A:12};return m[x]===undefined?99:m[x];}
+function sortCardArray(cards){const o={'♠':0,'♥':1,'♦':2,'♣':3};return cards.sort((x,y)=>(o[normalizedSuit(x)]??9)-(o[normalizedSuit(y)]??9)||normalizedRank(x)-normalizedRank(y));}
+$('sortHand').onclick=()=>{if(!G)return;const p=playStyle==='hotseat'?G.turn:0;if(playStyle==='hotseat'&&!humanSeats.has(p))return;sortCardArray(G.hands[p]);render()};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script><script src="./kuwaiti-six-player-ui.js"></script><script>
 (function(){
@@ -850,11 +866,11 @@ function ensureUI(){
  '<label>نام نمایشی</label><input id="onlineName" maxlength="24" value="بازیکن">'+
  '<div class="onrow"><button id="onlineCreate">ساخت اتاق جدید</button><button id="onlineShowJoin" class="secondary">ورود با کد</button></div>'+
  '<div id="onlineJoinBox" style="display:none"><label>کد اتاق</label><input id="onlineJoinCode" maxlength="6" placeholder="مثلاً A1B2C3" style="text-transform:uppercase;direction:ltr;text-align:center"><label>جایگاه تیمی شما</label><select id="onlinePreferredTeam"><option value="1">حریف میزبان (تیم مقابل)</option><option value="2">هم‌تیمی میزبان</option></select><button id="onlineJoin" style="width:100%;margin-top:8px">ورود به اتاق</button></div></div>'+
- '<div id="onlineRoom" style="display:none"><div id="onlineCode"></div><div id="onlineRoster"></div><div id="onlineLobbyDecision"><b id="onlineLobbyNotice">بازیکن جدید وارد اتاق شد.</b><div class="onrow"><button id="onlineAcceptHuman">شروع با بازیکن واقعی</button><button id="onlineUseAI">ادامه با هوش مصنوعی</button></div></div><div class="onrow"><button id="onlineReady">آماده‌ام</button><button id="onlineStart" style="display:none">پایان انتظار</button><button id="onlineLeave" class="secondary">خروج از اتاق</button></div><div id="onlineGame" style="display:none;background:#061b15;border:1px solid #648a73;border-radius:12px;padding:12px;margin-top:12px"><h3 style="margin:0 0 8px;color:#f4d58b">میز آنلاین</h3><div id="onlineGameStatus" style="font-size:12px;line-height:1.8"></div><div id="onlineLiveScoreTop" style="font-size:13px;font-weight:900;color:#ffe3a0;text-align:center;background:#09271f;border:1px solid #b99a5d;border-radius:9px;padding:8px;margin:8px 0">دست‌های برده‌شده در این بازی · در انتظار شروع</div><div id="onlineTurnTimer" style="display:none;text-align:center;font-size:24px;font-weight:900;color:#ffe39a;padding:5px">۱۰</div><div id="onlineDecision" style="display:none;background:#123b2d;border:1px solid #d7b66d;border-radius:10px;padding:10px;margin:10px 0"><b style="color:#f4d58b">نوبت انتخاب چالش بین بازیکنان</b><p id="onlineDecisionHint" style="font-size:13px;line-height:1.9"></p><div id="onlineChallengeClock" style="font-size:22px;font-weight:bold;color:#ffe39a;text-align:center;margin:6px">۱۰</div><div class="onrow"><button id="onlineChooseChallenge">اعلام چالش</button><button id="onlineChooseNormal">عبور / بازی عادی</button></div><button id="onlineChallengeExtend" style="width:100%;margin-top:8px;background:#d6e4dc">۱۵ ثانیه وقت بیشتر</button></div><div id="onlineTable" class="table" style="margin:12px 0;min-height:350px"><div class="seat north" id="onlineSeatNorth"><div class="name" id="onlineNameNorth">شمال</div><div class="count" id="onlineCountNorth"></div><div class="played" id="onlinePlayedNorth"></div></div><div class="seat west" id="onlineSeatWest"><div class="name" id="onlineNameWest">غرب</div><div class="count" id="onlineCountWest"></div><div class="played" id="onlinePlayedWest"></div></div><div class="center"><div><div class="muted">حکم</div><div id="onlineTrumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div id="onlineTrickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div><div id="onlineCenterPile" class="online-center-pile"></div><div id="onlineTrick" class="center-trick"></div></div><div class="seat east" id="onlineSeatEast"><div class="name" id="onlineNameEast">شرق</div><div class="count" id="onlineCountEast"></div><div class="played" id="onlinePlayedEast"></div></div><div class="seat south" id="onlineSeatSouth"><div class="name" id="onlineNameSouth">شما</div><div class="count" id="onlineCountSouth"></div><div class="played" id="onlinePlayedSouth"></div></div></div><h3 class="section-title" id="onlineHandTitle">کارت‌های شما</h3><div class="hand" id="onlineHand"></div><div id="onlineScore" style="font-size:12px;text-align:center;margin-top:10px"></div><div id="onlineRematchPanel" style="display:none;background:#09271f;border:1px solid #d7b66d;border-radius:12px;padding:10px;margin-top:12px;text-align:center"><div id="onlineRematchText" style="font-weight:900;color:#ffe3a0">بازی تمام شد</div><div id="onlineRematchClock" style="font-size:30px;font-weight:900;color:#ffe39a;margin:5px">۱۵</div><div class="onrow"><button id="onlineNextGame">بازی بعدی</button><button id="onlineExtendRematch" class="secondary">تمدید ۱۵ ثانیه</button></div></div></div></div>'+
+ '<div id="onlineRoom" style="display:none"><div id="onlineCode"></div><div id="onlineRoster"></div><div id="onlineLobbyDecision"><b id="onlineLobbyNotice">بازیکن جدید وارد اتاق شد.</b><div class="onrow"><button id="onlineAcceptHuman">شروع با بازیکن واقعی</button><button id="onlineUseAI">ادامه با هوش مصنوعی</button></div></div><div class="onrow"><button id="onlineReady">آماده‌ام</button><button id="onlineStart" style="display:none">پایان انتظار</button><button id="onlineLeave" class="secondary">خروج از اتاق</button></div><div id="onlineGame" style="display:none;background:#061b15;border:1px solid #648a73;border-radius:12px;padding:12px;margin-top:12px"><h3 style="margin:0 0 8px;color:#f4d58b">میز آنلاین</h3><div id="onlineGameStatus" style="font-size:12px;line-height:1.8"></div><div id="onlineLiveScoreTop" style="font-size:13px;font-weight:900;color:#ffe3a0;text-align:center;background:#09271f;border:1px solid #b99a5d;border-radius:9px;padding:8px;margin:8px 0">دست‌های برده‌شده در این بازی · در انتظار شروع</div><div id="onlineTurnTimer" style="display:none;text-align:center;font-size:24px;font-weight:900;color:#ffe39a;padding:5px">۱۰</div><div id="onlineDecision" style="display:none;background:#123b2d;border:1px solid #d7b66d;border-radius:10px;padding:10px;margin:10px 0"><b style="color:#f4d58b">نوبت انتخاب چالش بین بازیکنان</b><p id="onlineDecisionHint" style="font-size:13px;line-height:1.9"></p><div id="onlineChallengeClock" style="font-size:22px;font-weight:bold;color:#ffe39a;text-align:center;margin:6px">۱۰</div><div class="onrow"><button id="onlineChooseChallenge">اعلام چالش</button><button id="onlineChooseNormal">عبور / بازی عادی</button></div><button id="onlineChallengeExtend" style="width:100%;margin-top:8px;background:#d6e4dc">۱۵ ثانیه وقت بیشتر</button></div><div id="onlineTable" class="table" style="margin:12px 0;min-height:350px"><div class="seat north" id="onlineSeatNorth"><div class="name" id="onlineNameNorth">شمال</div><div class="count" id="onlineCountNorth"></div><div class="played" id="onlinePlayedNorth"></div></div><div class="seat west" id="onlineSeatWest"><div class="name" id="onlineNameWest">غرب</div><div class="count" id="onlineCountWest"></div><div class="played" id="onlinePlayedWest"></div></div><div class="center"><div><div class="muted">حکم</div><div id="onlineTrumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div id="onlineTrickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div><div id="onlineCenterPile" class="online-center-pile"></div><div id="onlineTrick" class="center-trick"></div></div><div class="seat east" id="onlineSeatEast"><div class="name" id="onlineNameEast">شرق</div><div class="count" id="onlineCountEast"></div><div class="played" id="onlinePlayedEast"></div></div><div class="seat south" id="onlineSeatSouth"><div class="name" id="onlineNameSouth">شما</div><div class="count" id="onlineCountSouth"></div><div class="played" id="onlinePlayedSouth"></div></div></div><div class="online-hand-tools"><h3 class="section-title" id="onlineHandTitle">کارت‌های شما</h3><button type="button" id="onlineSortHand" aria-label="مرتب‌سازی کارت‌ها">↕</button></div><div class="hand" id="onlineHand"></div><div id="onlineScore" style="font-size:12px;text-align:center;margin-top:10px"></div><div id="onlineRematchPanel" style="display:none;background:#09271f;border:1px solid #d7b66d;border-radius:12px;padding:10px;margin-top:12px;text-align:center"><div id="onlineRematchText" style="font-weight:900;color:#ffe3a0">بازی تمام شد</div><div id="onlineRematchClock" style="font-size:30px;font-weight:900;color:#ffe39a;margin:5px">۱۵</div><div class="onrow"><button id="onlineNextGame">بازی بعدی</button><button id="onlineExtendRematch" class="secondary">تمدید ۱۵ ثانیه</button></div></div></div></div>'+
  '<div id="onlineStatus">برای شروع، ساخت اتاق یا ورود با کد را انتخاب کن.</div></section>';
  document.body.appendChild(root);
  el('onlineClose').onclick=close;el('onlineCreate').onclick=createRoom;el('onlineShowJoin').onclick=function(){el('onlineJoinBox').style.display='block';};
- el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=function(){if(onlineRosterRows.some(function(x){return x.user_id!==me.id;})){el('onlineLobbyDecision').style.display='block';say('میزبان می‌تواند بازیکن واقعی را بپذیرد یا بازی را با هوش مصنوعی آغاز کند.');}else startOnlineGame('ai');};el('onlineAcceptHuman').onclick=function(){startOnlineGame('human');};el('onlineUseAI').onclick=function(){startOnlineGame('ai');};el('onlineChooseNormal').onclick=function(){submitOnlineChallengeChoice('pass')};el('onlineChooseChallenge').onclick=function(){submitOnlineChallengeChoice('challenge')};el('onlineChallengeExtend').onclick=extendOnlineChallengeTime;el('onlineNextGame').onclick=function(){startNextOnlineGame(false)};el('onlineExtendRematch').onclick=extendOnlineRematchTime;el('onlineLeave').onclick=leave;
+ el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=function(){if(onlineRosterRows.some(function(x){return x.user_id!==me.id;})){el('onlineLobbyDecision').style.display='block';say('میزبان می‌تواند بازیکن واقعی را بپذیرد یا بازی را با هوش مصنوعی آغاز کند.');}else startOnlineGame('ai');};el('onlineAcceptHuman').onclick=function(){startOnlineGame('human');};el('onlineUseAI').onclick=function(){startOnlineGame('ai');};el('onlineChooseNormal').onclick=function(){submitOnlineChallengeChoice('pass')};el('onlineChooseChallenge').onclick=function(){submitOnlineChallengeChoice('challenge')};el('onlineChallengeExtend').onclick=extendOnlineChallengeTime;el('onlineNextGame').onclick=function(){startNextOnlineGame(false)};el('onlineExtendRematch').onclick=extendOnlineRematchTime;el('onlineSortHand').onclick=function(){onlineHandSorted=!onlineHandSorted;lastGameRevision=-1;refreshOnlineGame();};el('onlineLeave').onclick=leave;
  root.addEventListener('click',function(e){if(e.target===root)close();});
 }
 function open(preselect){ensureUI();if(preselect&&el('onlineMode'))el('onlineMode').value=preselect;el('onlineOverlay').classList.add('open');}
@@ -1060,20 +1076,9 @@ function renderOnlineTurnClock(){
 }
 if(!onlineTurnTimerHandle)onlineTurnTimerHandle=setInterval(renderOnlineTurnClock,200);
 function onlineLiveSequenceScores(winners){
- var scores={A:0,B:0},start=0,searchFrom=3;
- var side=function(seat){return Number(seat)%2===0?'A':'B';};
- while(start<winners.length){
-  var close=-1;
-  for(var i=searchFrom;i<winners.length;i++){if(Number(winners[i])===Number(winners[i-1])){close=i;break;}}
-  if(close>=0){
-   scores[side(winners[close])]+=close-start+1;
-   start=close+1;searchFrom=start+1;
-  }else{
-   if(winners.length===13){scores[side(winners[12])]+=13-start;}
-   else for(var j=start;j<winners.length;j++)scores[side(winners[j])]++;
-   break;
-  }
- }
+ var scores={A:0,B:0},start=0,searchFrom=3,side=function(seat){return Number(seat)%2===0?'A':'B';};
+ while(start<winners.length){var close=-1;for(var i=searchFrom;i<winners.length;i++){if(Number(winners[i])===Number(winners[i-1])){close=i;break;}}
+ if(close>=0){scores[side(winners[close])]+=1;start=close+1;searchFrom=start+1;}else{if(winners.length===13)scores[side(winners[12])]+=1;break;}}
  return scores;
 }
 var onlineRematchTimerHandle=null;
@@ -1278,15 +1283,20 @@ async function refreshOnlineGame(startPayload){
    A:completedWinners.filter(function(seat){return Number(seat)%2===0;}).length,
    B:completedWinners.filter(function(seat){return Number(seat)%2===1;}).length
   };
-  var liveScoreText='دست‌های برده‌شده در این بازی · تیم '+teamAName+': '+faScore(liveTeamScores.A)+' · تیم '+teamBName+': '+faScore(liveTeamScores.B);
+  var liveScoreText='گروه‌های توالی تکمیل‌شده · تیم '+teamAName+': '+faScore(liveTeamScores.A)+' · تیم '+teamBName+': '+faScore(liveTeamScores.B);
   el('onlineLiveScoreTop').textContent=liveScoreText;
   el('onlineScore').textContent=liveScoreText;
   el('onlineHand').innerHTML='';
   el('onlineHandTitle').textContent='کارت‌های شما · '+hand.length+' کارت';
-  hand.forEach(function(c,i){
-   var b=document.createElement('button'),fanOffset=i-(hand.length-1)/2;b.type='button';b.style.transform='rotate('+(fanOffset*4.2)+'deg) translateY('+(Math.abs(fanOffset)*1.45)+'px)';b.style.zIndex=String(i+1);b.appendChild(cardEl(visualCard(c)));
-   b.disabled=finished||decisionPending||trickPending||turn!==myOnlineSeat;
-   b.onclick=async function(){
+  var leadOnlineCard=(state.plays||[])[0]&&((state.plays||[])[0].card||{}),leadOnlineSuit=leadOnlineCard.suit||leadOnlineCard.s;
+   leadOnlineSuit=({'S':'♠','H':'♥','D':'♦','C':'♣','♠':'♠','♥':'♥','♦':'♦','♣':'♣'})[leadOnlineSuit]||'';
+   var followsLead=!!leadOnlineSuit&&hand.some(function(card){return normalizedSuit(card)===leadOnlineSuit;});
+   var myPlayTurn=turn===myOnlineSeat&&!finished&&!decisionPending&&!trickPending;
+   hand.forEach(function(c,i){
+    var b=document.createElement('button'),fanOffset=i-(hand.length-1)/2;b.type='button';b.style.transform='rotate('+(fanOffset*4.2)+'deg) translateY('+(Math.abs(fanOffset)*1.45)+'px)';b.style.zIndex=String(i+1);
+    var legalCard=!followsLead||normalizedSuit(c)===leadOnlineSuit;b.classList.add(myPlayTurn?(legalCard?'online-card-legal':'online-card-illegal'):'online-card-inactive');b.appendChild(cardEl(visualCard(c)));
+    b.disabled=!myPlayTurn||!legalCard;
+    b.onclick=async function(){
     if(b.disabled)return;
     b.disabled=true;say('در حال ثبت کارت روی میز...');
     try{
