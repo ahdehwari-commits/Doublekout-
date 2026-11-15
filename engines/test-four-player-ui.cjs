@@ -151,3 +151,5 @@ assert.ok(fourEngine.includes("if(difficulty==='easy')return legal[Math.floor(Ma
 assert.ok(fourEngine.includes("if(difficulty==='hard')")&&fourEngine.includes("threatCount(a)-threatCount(b)"),'four-player hard AI must count threats and conserve high cards');
 assert.ok(fourEngine.includes("if(difficulty==='expert')")&&fourEngine.includes('const samples=64')&&fourEngine.includes('currentWinner(simulated,trumpSuit,contract)'),'four-player expert AI must simulate hidden cards for the current trick');
 assert.ok(html.includes("easy:{saras:3,naras:2,tak:2}")&&html.includes("hard:{saras:5,naras:4,tak:4}")&&html.includes("expert:{saras:6,naras:5,tak:5}"),'four-player contract choice must become more selective at higher AI levels');
+
+assert.ok(html.includes("activeMode==='standard-hokm'||difficulty==='hard'||difficulty==='expert'"),'hard and expert levels must also use the dedicated strategy engine in four-player Double Kout');
