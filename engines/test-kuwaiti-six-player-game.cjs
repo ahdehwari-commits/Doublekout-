@@ -76,7 +76,7 @@ assert.equal(K.scoreContract('malzoom', 4, { success: false }), -5);
 console.log(`PASS: ${scenarios} complete six-player deals (all four contract families, every auction-winning seat) plus contract scoring.`);
 
 const fs = require('node:fs');
-const ui = fs.readFileSync(require.resolve('../../kuwaiti-six-player-ui.js'), 'utf8');
+const ui = fs.readFileSync(require.resolve('../kuwaiti-six-player-ui.js'), 'utf8');
 assert.ok(ui.includes('points[bidderTeam]=(Number(points[bidderTeam])||0)+val'), 'match points must accumulate across deals');
 assert.ok(ui.includes('مجموع امتیاز تیم الف') && ui.includes('مجموع امتیاز تیم ب'), 'result panel must show cumulative team totals');
 assert.ok(ui.includes('const maxOpponentTricks=9-target;') && ui.includes('const success=opponentWon<=maxOpponentTricks;'), 'contract success must be decided by the opponents\' trick count');
