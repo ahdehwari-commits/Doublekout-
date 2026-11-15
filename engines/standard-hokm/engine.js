@@ -34,10 +34,12 @@ function cooperativeLeadCard(hand,lastTrick,lastWinner,player,contract='hokm'){
  if(contract!=='hokm'||!Array.isArray(lastTrick)||!lastTrick.length||!Number.isInteger(lastWinner)||teamOf(lastWinner)!==teamOf(player))return null;
  const ledSuit=lastTrick[0]&&lastTrick[0].card&&lastTrick[0].card.suit;
  if(!SUITS.includes(ledSuit))return null;
+ const partnerPlay=lastTrick.find(x=>x.player===lastWinner);
+ const partnerVoid=!!partnerPlay&&partnerPlay.card.suit!==ledSuit;
  const hasAce=hand.some(c=>c.suit===ledSuit&&c.rank==='A');
  const inSuit=hand.filter(c=>c.suit===ledSuit).sort((a,b)=>rankPower(a.rank,contract)-rankPower(b.rank,contract));
- if(!hasAce&&inSuit.length)return inSuit[0];
- if(hasAce){
+ if(!hasAce&&!partnerVoid&&inSuit.length)return inSuit[0];
+ if(hasAce||partnerVoid){
   const alternatives=SUITS.filter(s=>s!==ledSuit).map(s=>({s,cards:hand.filter(c=>c.suit===s)})).filter(x=>x.cards.length);
   alternatives.sort((a,b)=>b.cards.length-a.cards.length);
   if(alternatives.length)return alternatives[0].cards.slice().sort((a,b)=>rankPower(a.rank,contract)-rankPower(b.rank,contract))[0];
