@@ -30,7 +30,21 @@ function currentWinner(plays,trumpSuit,contract='hokm'){
  for(const p of plays.slice(1))if(beats(p.card,best.card,lead,trumpSuit,contract))best=p;
  return best.player;
 }
-function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='hokm',playedCards=[],initialHand=null){
+function cooperativeLeadCard(hand,lastTrick,lastWinner,player,contract='hokm'){
+ if(contract!=='hokm'||!Array.isArray(lastTrick)||!lastTrick.length||!Number.isInteger(lastWinner)||teamOf(lastWinner)!==teamOf(player))return null;
+ const ledSuit=lastTrick[0]&&lastTrick[0].card&&lastTrick[0].card.suit;
+ if(!SUITS.includes(ledSuit))return null;
+ const hasAce=hand.some(c=>c.suit===ledSuit&&c.rank==='A');
+ const inSuit=hand.filter(c=>c.suit===ledSuit).sort((a,b)=>rankPower(a.rank,contract)-rankPower(b.rank,contract));
+ if(!hasAce&&inSuit.length)return inSuit[0];
+ if(hasAce){
+  const alternatives=SUITS.filter(s=>s!==ledSuit).map(s=>({s,cards:hand.filter(c=>c.suit===s)})).filter(x=>x.cards.length);
+  alternatives.sort((a,b)=>b.cards.length-a.cards.length);
+  if(alternatives.length)return alternatives[0].cards.slice().sort((a,b)=>rankPower(a.rank,contract)-rankPower(b.rank,contract))[0];
+ }
+ return null;
+}
+function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='hokm',playedCards=[],initialHand=null,lastTrick=[],lastWinner=null){
  const lead=plays.length?plays[0].card.suit:null;
  const legal=legalCards(hand,lead);
  if(!legal.length)throw new Error('No legal Hokm card available');
@@ -44,6 +58,8 @@ function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='
  const cost=card=>value(card)+(card.suit===trumpSuit&&contract==='hokm'?7:0);
  const sorted=[...legal].sort((a,b)=>cost(a)-cost(b));
  if(!plays.length){
+  const coordinated=cooperativeLeadCard(hand,lastTrick,lastWinner,player,contract);
+  if(coordinated)return coordinated;
   const suitLength=s=>hand.filter(c=>c.suit===s).length;
   const scored=legal.map(card=>{
    const length=suitLength(card.suit),threats=threatCount(card);
@@ -112,6 +128,6 @@ function newGame({starter=0,matchNumber=1,rng=Math.random,contract='hokm'}={}){
  if(!CONTRACTS.includes(contract))throw new Error('نوع قرارداد حکم نامعتبر است: '+contract);
  return {mode:'standard-hokm',players:4,hands:deal(rng),trump:matchNumber===1&&contract==='hokm'?'S':null,contract,starter,hakemPlayer:starter,turn:starter,trick:[],trickNo:1,trickWinners:[],score:{A:0,B:0},done:false};
 }
-const StandardHokmEngine={SUITS,RANKS,POWER,CONTRACTS,createDeck,shuffle,deal,teamOf,legalCards,rankPower,beats,currentWinner,chooseAICard,resolveTrick,koutMessage,newGame};
+const StandardHokmEngine={SUITS,RANKS,POWER,CONTRACTS,createDeck,shuffle,deal,teamOf,legalCards,rankPower,beats,currentWinner,cooperativeLeadCard,chooseAICard,resolveTrick,koutMessage,newGame};
 if(typeof module!=='undefined'&&module.exports)module.exports=StandardHokmEngine;
 if(typeof window!=='undefined')window.StandardHokmEngine=StandardHokmEngine;
