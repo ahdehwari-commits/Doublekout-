@@ -33,4 +33,5 @@
  <path d="M150 132q-18 18 0 36q18-18 0-36M150 288q-18-18 0-36q18 18 0 36"/>
  <circle cx="54" cy="210" r="5"/><circle cx="246" cy="210" r="5"/><circle cx="150" cy="132" r="5"/><circle cx="150" cy="288" r="5"/>
 </g>
+<g transform="rotate(-18 150 210)"><rect x="51" y="195" width="198" height="30" rx="5" fill="#080909" fill-opacity=".78" stroke="#d7b66a" stroke-width="1"/><text x="150" y="214" text-anchor="middle" fill="#ffe6a0" font-family="Georgia,serif" font-size="13" font-style="italic" font-weight="bold" letter-spacing=".4">Abdulhamid Dehvari</text></g>
 </svg>
