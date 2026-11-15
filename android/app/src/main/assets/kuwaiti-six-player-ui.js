@@ -108,7 +108,10 @@ function addStyle(){
 @media(max-width:520px){.k-hand button{margin-left:-49px!important}}
 `;
  s.textContent+=`
-.k-auction.seat-auction-panel{position:absolute!important;z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);width:min(176px,42vw);max-width:176px;margin:0;padding:6px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#143e31f5,#061b16f8);box-shadow:0 8px 24px #000d;direction:rtl}
+.k-table-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px 0;padding:8px 10px;border:1px solid #b99a5d;border-radius:12px;background:linear-gradient(120deg,#102f25,#061d17);color:#f4dfaa}
+.k-trump-badge{display:flex;align-items:center;gap:8px;font-size:12px}.k-trump-badge b{font-size:15px;color:#ffe19a}
+.k-live-tricks{display:flex!important;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;font-weight:700}.k-live-tricks b{font-size:20px;color:#ffe19a;margin-right:4px}
+.k-table-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px 0;padding:8px 10px;border:1px solid #b99a5d;border-radius:12px;background:linear-gradient(120deg,#102f25,#061d17);color:#f4dfaa}\n.k-trump-badge{display:flex;align-items:center;gap:8px;font-size:12px}.k-trump-badge b{font-size:15px;color:#ffe19a}\n.k-live-tricks{display:flex!important;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;font-weight:700}.k-live-tricks b{font-size:20px;color:#ffe19a;margin-right:4px}\n.k-auction.seat-auction-panel{position:absolute!important;z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);width:min(176px,42vw);max-width:176px;margin:0;padding:6px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#143e31f5,#061b16f8);box-shadow:0 8px 24px #000d;direction:rtl}
 .k-auction.seat-auction-panel #kAuctionTitle{display:block;font-size:10px;line-height:1.5;color:#ffe6a1;text-align:center}
 .k-auction.seat-auction-panel #kAuctionInfo,.k-auction.seat-auction-panel #kAuctionLog{display:none}
 .k-auction.seat-auction-panel .k-bids{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:5px}
@@ -309,8 +312,8 @@ function setupMarkup(){
  <div id="kContractSetup" class="k-contract-setup hidden"><b>انتخاب قرارداد پس از پایان مزایده</b><label>نوع بازی و خال حکم</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option></select><button id="kConfirmContract" class="primary">تأیید قرارداد و شروع بازی</button></div>
  <div id="kMalzoomSetup" class="k-auction hidden"><b>تنظیم حکم ملزوم</b><label>خال حکم</label><select id="kTrumpSuit" class="k-select"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">گشنیز ♣</option></select><label><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
  <div class="k-table" id="kTable">${[0,1,2,3,4,5].map(p=>'<div class="k-seat" data-p="'+p+'"><div class="k-name" id="kName'+p+'">'+playerNames[p]+'</div><div class="k-count" id="kCount'+p+'">۹ کارت</div><div class="k-played" id="kPlayed'+p+'"></div></div>').join('')}
- <div class="k-center"><div style="color:#f2d998;font-weight:bold">کوت کویتی</div><div id="kTrumpDisplay" style="font-size:25px;color:#f3d58c">بدون حکم</div><div id="kTrickCards" class="k-small">کارت‌های این دست: ۰ از ۶</div><div id="kCenterCards" class="k-center-cards"></div><div id="kTurn" class="k-small">در انتظار مزایده</div></div></div>
- <div class="k-live-tricks" id="kLiveTricks" style="display:none!important" aria-hidden="true"><span>دست‌های برده تیم شما: <b id="kWonA">۰</b></span><span>دست‌های برده حریف: <b id="kWonB">۰</b></span></div>
+ <div class="k-center"><div style="color:#f2d998;font-weight:bold">کوت کویتی</div><div id="kTrickCards" class="k-small">کارت‌های این دست: ۰ از ۶</div><div id="kCenterCards" class="k-center-cards"></div><div id="kTurn" class="k-small">در انتظار مزایده</div></div></div>
+ <div class="k-table-meta"><div class="k-trump-badge"><span>حکم و قرارداد</span><b id="kTrumpDisplay">بدون حکم</b></div><div class="k-live-tricks" id="kLiveTricks"><span id="kOwnTricksLabel">دست‌های تیم مزایده‌برنده: <b id="kWonA">۰</b></span><span id="kOpponentTricksLabel">دست‌های تیم حریف: <b id="kWonB">۰</b></span></div></div>
  <div id="kStatus" class="k-status hidden">وضعیت بازی</div>
  <div class="k-actions"><button id="kAskTrump" class="hidden">درخواست اعلام حکم مخفی</button><button id="kAnnounceTrump" class="hidden">اعلام حکم</button></div>
  <div class="k-hand-tools"><h3 class="section-title">کارت‌های بازیکن نوبت‌دار</h3><button type="button" id="kSortHand" aria-label="مرتب‌سازی کارت‌ها">↕</button></div><div id="kHand" class="k-hand"></div>
@@ -490,7 +493,9 @@ function finishAuction(){
  $('kAuction').classList.add('hidden');
  $('kAuctionSummary').classList.remove('hidden');
  $('kAuctionSummary').textContent='نتیجه مزایده · برنده: '+playerNames[win]+' · پیشنهاد نهایی: '+bid.label+' · روند: '+auction.bids.map(x=>playerNames[x.player]+': '+x.label).join(' ← ');
- auction=null; // Auction is closed; subsequent phone handoffs belong to the active game turn.
+ const closedAuction=auction;auction=null;
+ if(window.kuwaitiAuctionSummaryTimer)clearTimeout(window.kuwaitiAuctionSummaryTimer);
+ window.kuwaitiAuctionSummaryTimer=setTimeout(()=>{const panel=$('kAuction');if(panel){panel.classList.add('hidden');const mount=$('kAuctionMount');if(mount&&panel.parentElement!==mount)mount.appendChild(panel);}const summary=$('kAuctionSummary');if(summary)summary.classList.add('hidden');},7800); // Auction is closed; subsequent phone handoffs belong to the active game turn.
  if(game.isMalzoom){
   game.contract='hokm';
   $('kStatus').textContent='برنده مزایده: '+playerNames[win]+' · ملزوم';
@@ -537,6 +542,14 @@ function renderContractChoiceHand(player){
  const host=$('kHand');host.innerHTML='';host.classList.add('k-contract-thinking');
  game.hands[player].forEach((card,i,arr)=>{const el=document.createElement('div');el.className='k-auction-card';const offset=i-(arr.length-1)/2;el.style.transform='rotate('+(offset*4.2)+'deg) translateY('+(Math.abs(offset)*2)+'px)';el.style.zIndex=String(10+i);el.style.opacity='1';el.style.filter='none';el.style.pointerEvents='none';el.append(cardNode(card));host.append(el);});
 }
+function markWinningSeatContract(contract){
+ if(!game||!Number.isInteger(game.auctionWinner))return;
+ const seat=document.querySelector('.k-seat[data-p="'+game.auctionWinner+'"]');if(!seat)return;
+ let chip=seat.querySelector('.k-bid-chip.winner');if(!chip){chip=document.createElement('span');chip.className='k-bid-chip winner';seat.append(chip);}
+ const target=game.auctionBid&&game.auctionBid.target;
+ const value=target?fa(target)+' · '+(contractName[contract]||contract):'M · '+(contractName[contract]||'ملزوم');
+ chip.textContent=value;chip.title='قرارداد نهایی برنده مزایده: '+value;
+}
 function beginWinningContract(contract){
  game.auctionBid.contract=contract;game.selectedContract=contract;
  const noTrump=['naras','tak_naras','saras'].includes(contract);
@@ -544,6 +557,7 @@ function beginWinningContract(contract){
  game.contract=noTrump?contract:'hokm';game.trumpSuit=trumpSuit;
  $('kContractSetup').classList.add('hidden');
  $('kStatus').textContent='برنده مزایده: '+playerNames[game.auctionWinner]+' · '+game.auctionBid.label+' · قرارداد: '+contractName[contract];
+ markWinningSeatContract(contract);
  startActualGame(trumpSuit,false);
 }
 function confirmWinningContract(){
@@ -577,7 +591,8 @@ function startActualGame(trumpSuit,hidden){
   game.hiddenTrump=!!hidden;game.trumpSuit=resolvedTrump;game.target=game.auctionBid.target||null;
   if(game.turn!==winner||!Array.isArray(game.trick)||game.trick.length!==0)throw new Error('انتقال نوبت از مزایده به بازی کامل نشد.');
   $('kMalzoomSetup').classList.add('hidden');$('kAuction').classList.add('hidden');$('kHand').classList.remove('k-contract-thinking');
-  $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':('حکم اعلام‌شده: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump])):(noTrumpContracts.includes(bidContract)?'بدون حکم · '+contractName[bidContract]:'حکم این بازی: '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]);
+  $('kTrumpDisplay').textContent=game.isMalzoom?(hidden?'حکم مخفی':('ملزوم · '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump])):(noTrumpContracts.includes(bidContract)?contractName[bidContract]+' · بدون حکم':contractName[bidContract]+' · '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]);
+  markWinningSeatContract(bidContract);
   $('kAuctionSummary').textContent+=' · قرارداد: '+(game.isMalzoom?'ملزوم':contractName[bidContract])+(resolvedTrump?' · '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]:'');
   $('kTrickCards').style.display='';
   $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(isHumanSeat(winner)?' · کارت‌های بازیکن انسانی پس از نمایش فعال می‌شوند.':' · هوش مصنوعی در حال بازی است.');
@@ -740,8 +755,12 @@ function renderGame(){
  if(!game)return;
  $('kScoreA').textContent=fa(points.A);$('kScoreB').textContent=fa(points.B);$('kGamesWonA').textContent=fa(matchGamesWon.A);$('kGamesWonB').textContent=fa(matchGamesWon.B);
  $('kTrickNo').textContent=fa(Math.min(game.trickNo,9));
- $('kWonA').textContent=fa(game.trickWinners.filter(p=>team(p)==='A').length);
- $('kWonB').textContent=fa(game.trickWinners.filter(p=>team(p)==='B').length);
+ const bidderTeam=Number.isInteger(game.auctionWinner)?team(game.auctionWinner):'A';
+ const ownTricks=game.trickWinners.filter(p=>team(p)===bidderTeam).length;
+ const opponentTricks=game.trickWinners.length-ownTricks;
+ $('kWonA').textContent=fa(ownTricks);$('kWonB').textContent=fa(opponentTricks);
+ $('kOwnTricksLabel').firstChild.textContent='دست‌های تیم برنده مزایده: ';
+ $('kOpponentTricksLabel').firstChild.textContent='دست‌های حریف: ';
  const currentPlays=game.trick.length?game.trick:(game.lastTrick||[]);
  const centerCards=$('kCenterCards');if(centerCards){centerCards.innerHTML='';currentPlays.forEach((x,i)=>{const card=cardNode(x.card,true);card.classList.add('k-table-played');card.style.setProperty('--play-index',i);centerCards.append(card);});}
  $('kTrickCards').textContent='کارت‌های این دست: '+fa(game.trick.length)+' از ۶';
