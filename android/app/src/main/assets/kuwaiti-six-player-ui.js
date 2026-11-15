@@ -296,7 +296,7 @@ function setupMarkup(){
  const s=document.createElement('section');s.className='panel hidden';s.id='kuwaitiSetup';
  s.innerHTML=`<h2 class="section-title">آماده‌سازی کوت کویتی · شش نفره</h2>
  <div class="k-intro"><div>۶ بازیکن</div><div>۵۴ کارت · ۹ کارت برای هر نفر</div><div>۹ دست در هر بازی</div></div>
- <label>شیوه بازی</label><select class="k-select" id="kPlayStyle"><option value="ai">یک بازیکن انسانی در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با شش گوشی (اتاق اینترنتی)</option></select><div id="kHumanSeatSetup"><label>انتخاب صندلی بازیکنان انسانی؛ صندلی‌های خالی با هوش مصنوعی پر می‌شوند</label><div id="kHumanSeatChoices" class="k-actions"></div><p class="k-small">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><label>حد امتیاز پایان مسابقه</label><select class="k-select" id="kMatchLimit"><option value="54">۵۴ امتیاز مثبت</option><option value="-54">۵۴ امتیاز منفی</option><option value="108">۱۰۸ امتیاز مثبت</option><option value="-108">۱۰۸ امتیاز منفی</option></select>
+ <label>شیوه بازی</label><select class="k-select" id="kPlayStyle"><option value="ai">یک بازیکن انسانی در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با شش گوشی (اتاق اینترنتی)</option></select><div id="kHumanSeatSetup"><label>انتخاب صندلی بازیکنان انسانی؛ صندلی‌های خالی با هوش مصنوعی پر می‌شوند</label><div id="kHumanSeatChoices" class="k-actions"></div><p class="k-small">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><label>سطح هوش مصنوعی</label><select class="k-select" id="kDifficulty"><option value="easy">آسان · انتخاب ساده</option><option value="normal" selected>معمولی · تحلیل پایه</option><option value="hard">سخت · شمارش و تحلیل کارت‌ها</option><option value="expert">خیلی سخت · شبیه‌سازی دست‌های پنهان</option></select><p class="k-small">سطح انتخابی روی تمام بازیکنان هوش مصنوعی در این میز اعمال می‌شود.</p><label>حد امتیاز پایان مسابقه</label><select class="k-select" id="kMatchLimit"><option value="54">۵۴ امتیاز مثبت</option><option value="-54">۵۴ امتیاز منفی</option><option value="108">۱۰۸ امتیاز مثبت</option><option value="-108">۱۰۸ امتیاز منفی</option></select>
  <div class="k-small" id="kMatchProgress">حد امتیاز مسابقه: ۵۴+</div>
  <div id="kNextPicker" class="hidden"><label>انتخاب نفر اول مزایده توسط تیم برنده بازی قبل</label><select class="k-select" id="kFirstAuction"><option value="0">بازیکن ۱</option><option value="2">بازیکن ۳</option><option value="4">بازیکن ۵</option></select></div>
  <p class="k-small">در بازی اول دارنده ۲ خاج نفر اول مزایده است. در بازی‌های بعدی تیم برنده بازی قبل نفر اول مزایده را انتخاب می‌کند و بازیکن نشسته قبل از برنده مزایده قبلی، ملزوم‌کننده است.</p>
@@ -621,72 +621,113 @@ function auctionTurn(){
  },500);
 }
 function aiCard(p){
- const trick=game.trick||[],trickNo=game.trickNo;
+ const trick=game.trick||[],trickNo=game.trickNo,difficulty=$('kDifficulty')?.value||'normal';
  const lead=K.effectiveLeadSuit(trick,{trickNo});
  const visibleTrump=(game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null;
  const legal=K.legalCards(game.hands[p],lead,{trickNo,isFirstPlay:trick.length===0,trumpSuit:trickNo===1?game.trumpSuit:visibleTrump,firstTrickNoCut:trickNo===1});
  if(!legal.length)throw new Error('هیچ کارت مجازی برای هوش مصنوعی وجود ندارد');
+ if(difficulty==='easy')return legal[Math.floor(Math.random()*legal.length)];
  const ownInitial=new Set((game.initialHands&&game.initialHands[p]||game.hands[p]).map(c=>c.id));
  const seen=new Set((game.playedCards||[]).map(x=>x.card.id));
  const unseen=K.deck().filter(c=>!ownInitial.has(c.id)&&!seen.has(c.id));
  const unseenHigher=(card,suit)=>unseen.filter(c=>c.kind==='normal'&&c.suit===suit&&K.normalPower(c,game.contract)>K.normalPower(card,game.contract)).length;
  const cardValue=card=>card.kind==='joker'?(card.color==='red'?55:(trickNo>=5?18:42)):K.normalPower(card,game.contract);
  const playStrength=(card,leadSuit,isLead)=>{
-  if(card.kind==='joker'){
-   const v=K.cardPower(card,game.contract,{trickNo,isLead,isMalzoom:game.isMalzoom,trumpAnnounced:game.trumpAnnounced});
-   return v>0?{tier:3,power:v}:{tier:0,power:0};
-  }
+  if(card.kind==='joker'){const v=K.cardPower(card,game.contract,{trickNo,isLead,isMalzoom:game.isMalzoom,trumpAnnounced:game.trumpAnnounced});return v>0?{tier:3,power:v}:{tier:0,power:0};}
   if(visibleTrump&&card.suit===visibleTrump)return {tier:2,power:K.normalPower(card,game.contract)};
   if(leadSuit&&card.suit===leadSuit)return {tier:1,power:K.normalPower(card,game.contract)};
   return {tier:0,power:0};
  };
- const compare=(a,b,leadSuit)=>{
-  const x=playStrength(a.card,leadSuit,a.index===0),y=playStrength(b.card,leadSuit,b.index===0);
-  return x.tier===y.tier?x.power-y.power:x.tier-y.tier;
- };
+ const compare=(a,b,leadSuit)=>{const x=playStrength(a.card,leadSuit,a.index===0),y=playStrength(b.card,leadSuit,b.index===0);return x.tier===y.tier?x.power-y.power:x.tier-y.tier;};
  const partialWinner=plays=>{
   if(!plays.length)return null;
   const effective=K.effectiveLeadSuit(plays,{trickNo});
   if(trickNo===9&&K.isJoker(plays[0].card)&&plays.length===1)return null;
   let best={...plays[0],index:0};
-  for(let i=1;i<plays.length;i++){
-   const candidate={...plays[i],index:i};
-   if(compare(candidate,best,effective)>0)best=candidate;
-  }
+  for(let i=1;i<plays.length;i++){const candidate={...plays[i],index:i};if(compare(candidate,best,effective)>0)best=candidate;}
   return best;
  };
- const current=partialWinner(trick);
- const partnerWinning=current&&team(current.player)===team(p);
- const opponentWinning=current&&!partnerWinning;
- const scores=legal.map(card=>{
-  const power=cardValue(card),isJoker=card.kind==='joker';
-  let cost=isJoker?power:power*.9;
+ const current=partialWinner(trick),partnerWinning=current&&team(current.player)===team(p),opponentWinning=current&&!partnerWinning;
+ const baseScores=legal.map(card=>{
+  const power=cardValue(card),isJoker=card.kind==='joker';let cost=isJoker?power:power*.9;
   if(card.kind==='normal'&&visibleTrump&&card.suit===visibleTrump)cost+=10;
   if(!trick.length){
-   const length=game.hands[p].filter(c=>c.kind==='normal'&&c.suit===card.suit).length;
-   const higher=unseenHigher(card,card.suit);
-   const control=card.kind==='normal'?(higher===0?18:higher===1?9:0):0;
-   const longSuit=length>=3?length*2.2:0;
-   const avoidShort=length===1?-5:0;
-   const leadBonus=card.kind==='normal'?longSuit+control+avoidShort:-(trickNo===9?0:80);
-   return {card,score:cost-leadBonus};
+   const length=game.hands[p].filter(c=>c.kind==='normal'&&c.suit===card.suit).length,higher=unseenHigher(card,card.suit);
+   const control=card.kind==='normal'?(higher===0?18:higher===1?9:0):0,longSuit=length>=3?length*2.2:0,avoidShort=length===1?-5:0;
+   return {card,score:cost-(card.kind==='normal'?longSuit+control+avoidShort:-(trickNo===9?0:80))};
   }
-  const candidatePlay={player:p,card,index:trick.length};
-  const candidateWinner=partialWinner([...trick,candidatePlay]);
-  const winsForUs=candidateWinner&&team(candidateWinner.player)===team(p);
+  const candidatePlay={player:p,card,index:trick.length},candidateWinner=partialWinner([...trick,candidatePlay]);
   const candidateTakesLead=!current||compare(candidatePlay,current,lead)>0;
-  if(partnerWinning){
-   // Keep the partner's winning trick; discard the cheapest card without overtaking.
-   return {card,score:cost+(candidateTakesLead?1000:0)};
-  }
-  if(opponentWinning){
-   // Take the trick with the least expensive winning card; otherwise shed cheaply.
-   return {card,score:cost-(candidateTakesLead&&winsForUs?65:0)};
-  }
+  if(partnerWinning)return {card,score:cost+(candidateTakesLead?1000:0)};
+  if(opponentWinning)return {card,score:cost-(candidateTakesLead&&candidateWinner&&team(candidateWinner.player)===team(p)?65:0)};
   return {card,score:cost};
  });
- scores.sort((a,b)=>a.score-b.score);
- return scores[0].card;
+ if(difficulty==='normal'){baseScores.sort((a,b)=>a.score-b.score);return baseScores[0].card;}
+ const voidSuits=Array.from({length:6},()=>new Set()),groups=new Map();
+ for(const entry of (game.playedCards||[])){if(!groups.has(entry.trickNo))groups.set(entry.trickNo,[]);groups.get(entry.trickNo).push(entry);}
+ for(const [number,entries] of groups){
+  const leadPlayer=entries[0].player;
+  entries.sort((a,b)=>((a.player-leadPlayer+6)%6)-((b.player-leadPlayer+6)%6));
+  const plays=entries.map(x=>({player:x.player,card:x.card})),suit=K.effectiveLeadSuit(plays,{trickNo:number});
+  if(suit)for(const x of entries)if(x.card.kind==='normal'&&x.card.suit!==suit)voidSuits[x.player].add(suit);
+ }
+ const hardScores=baseScores.map(item=>{
+  let score=item.score;
+  if(item.card.kind==='normal'){
+   const higher=unseenHigher(item.card,item.card.suit),remainingSuit=unseen.filter(c=>c.kind==='normal'&&c.suit===item.card.suit).length;
+   if(higher===0)score-=difficulty==='expert'?15:10;
+   if(remainingSuit===0)score-=8;
+  }
+  if(trick.length&&current&&team(current.player)===team(p)){
+   const takes=partialWinner([...trick,{player:p,card:item.card,index:trick.length}]);
+   if(takes&&team(takes.player)!==team(p))score+=1200;
+  }
+  return {...item,score};
+ });
+ if(difficulty==='hard'){hardScores.sort((a,b)=>a.score-b.score);return hardScores[0].card;}
+ const simulateCandidate=(candidate,samples)=>{
+  let wins=0,total=0;
+  for(let sample=0;sample<samples;sample++){
+   const seats=Array.from({length:6},(_,i)=>i).filter(seat=>seat!==p),capacities=seats.map(seat=>game.hands[seat].length),pool=unseen.slice();
+   let sampled=null;
+   for(let attempt=0;attempt<24&&!sampled;attempt++){
+    const shuffled=pool.slice();
+    for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}
+    const assigned=Array.from({length:6},()=>[]);let offset=0,valid=true;
+    for(let si=0;si<seats.length;si++){
+     const seat=seats[si],hand=shuffled.slice(offset,offset+capacities[si]);offset+=capacities[si];
+     if(hand.some(c=>c.kind==='normal'&&voidSuits[seat].has(c.suit))){valid=false;break;}
+     assigned[seat]=hand;
+    }
+    if(valid)sampled=assigned;
+   }
+   if(!sampled){sampled=Array.from({length:6},()=>[]);let offset=0;for(let si=0;si<seats.length;si++){sampled[seats[si]]=pool.slice(offset,offset+capacities[si]);offset+=capacities[si];}}
+   const plays=trick.map(x=>({player:x.player,card:x.card}));plays.push({player:p,card:candidate});
+   let next=(p+1)%6,guard=0;
+   while(plays.length<6&&guard++<6){
+    if(next===p){next=(next+1)%6;continue;}
+    const hand=sampled[next],activeTrump=trickNo===1?game.trumpSuit:(game.trumpSuit&&(game.trumpAnnounced||next===game.auctionWinner)?game.trumpSuit:null);
+    const effective=K.effectiveLeadSuit(plays,{trickNo});
+    const allowed=K.legalCards(hand,effective,{trickNo,isFirstPlay:plays.length===0,trumpSuit:activeTrump,firstTrickNoCut:trickNo===1});
+    if(!allowed.length)break;
+    const winnerNow=partialWinner(plays),allyWinning=winnerNow&&team(winnerNow.player)===team(next);
+    let chosen=allowed[Math.floor(Math.random()*allowed.length)];
+    if(allowed.length>1){
+     const ranked=allowed.map(card=>({card,cost:card.kind==='joker'?(card.color==='red'?55:35):K.normalPower(card,game.contract)})).sort((a,b)=>a.cost-b.cost);
+     chosen=allyWinning?ranked[0].card:ranked[Math.min(ranked.length-1,Math.floor(Math.random()*Math.min(3,ranked.length)))].card;
+    }
+    plays.push({player:next,card:chosen});next=(next+1)%6;
+   }
+   if(plays.length===6){
+    const result=K.findTrickWinner(plays,game.contract,{trickNo,isMalzoom:game.isMalzoom,trumpAnnounced:game.trumpAnnounced,trumpSuit:game.trumpSuit});
+    if(team(result.player)===team(p))wins++;total++;
+   }
+  }
+  return total?wins/total:0;
+ };
+ const scored=hardScores.map(item=>({...item,score:item.score-simulateCandidate(item.card,64)*150}));
+ scored.sort((a,b)=>a.score-b.score);
+ return scored[0].card;
 }
 function playHumanCard(card){
  if(!game||game.done||locked||!isHumanSeat(game.turn)||($('kPlayStyle').value==='hotseat'&&!hotseatRevealed))return;
