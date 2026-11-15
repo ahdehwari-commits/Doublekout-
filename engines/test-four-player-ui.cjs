@@ -88,6 +88,10 @@ assert.ok(html.includes('assets/card-back-black-gold.svg')&&html.includes('struc
 
 
 assert.ok(html.includes("scores[team(winners[close])]+=close-start+1")&&html.includes("scores[team(winners[12])]+=winners.length-start")&&html.includes("scores[side(winners[close])]+=close-start+1")&&html.includes("scores[side(winners[12])]+=winners.length-start"),'live sequence counters must add the number of tricks in each completed group, including the final remainder at trick 13');
+
+assert.ok(html.includes('id="openVisualCustomizer"')&&html.includes('id="visualCustomizer" class="visual-customizer-full hidden"')&&html.includes('class="customizer-rail"')&&html.includes('class="visual-choice large-choice"'),'customization must open a full-screen large visual rail rather than inline text-like options');
+assert.ok(html.includes('id="customizerDone"')&&html.includes('تأیید نهایی و بازگشت به انتخاب میزها')&&html.includes('data-go-step="1"'),'customization must confirm each stage and return to the pre-game table selection');
+
 console.log('PASS: four/six-player all four Hokm suits, partner-middle counter, auction-to-play handoff, auction rotation and rank adapter');
 
 
