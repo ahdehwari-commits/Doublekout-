@@ -281,7 +281,7 @@ function cardNode(c,small=false){
  d.innerHTML='<span class="k-corner k-corner-top">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span><span class="k-corner k-corner-bottom">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span>'+(['K','Q','J'].includes(rank)?'<span class="k-royal-frame">'+royal(rank)+'</span>':'<span class="ksuit">'+suitGlyph[c.suit]+'</span>');
  return d;
 }
-function setStatus(msg){const node=$('kStatus');if(!node){console.error('Kuwaiti status node is missing:',msg);return;}node.classList.remove('hidden');node.style.display='block';node.setAttribute('role','status');node.setAttribute('aria-live','assertive');node.textContent=msg;}
+function setStatus(msg){const node=$('kStatus');if(!node)return console.error('Kuwaiti status node is missing:',msg);node.classList.remove('hidden');node.style.display='block';node.setAttribute('role','status');node.setAttribute('aria-live','assertive');node.textContent=msg;}
 function setScreen(which){
  $('modePicker').classList.toggle('hidden',which!=='modes');
  $('setup').classList.add('hidden');$('game').classList.add('hidden');
