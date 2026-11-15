@@ -701,8 +701,7 @@ function playOne(p,card,throwOnError=false){
 }
 function cardLabel(c){return c.kind==='joker'?(c.color==='red'?'جوکر قرمز':'جوکر مشکی'):c.rank+' '+suitGlyph[c.suit];}
 function playAITurn(){
- if(!game){setStatus('تشخیص نوبت: اطلاعات بازی موجود نیست.');return;}
- if(game.done){setStatus('تشخیص نوبت: بازی به پایان رسیده است.');return;}
+ if(!game||game.done)return;
  if(isHumanSeat(game.turn))return;
  if(locked){setStatus('توقف نوبت هوش مصنوعی: قفل داخلی بازی فعال است.');return;}
  if(game.waitingResult){setStatus('توقف نوبت هوش مصنوعی: بازی منتظر ثبت نتیجه است.');return;}
@@ -710,7 +709,7 @@ function playAITurn(){
  const p=game.turn;setStatus('نوبت هوش مصنوعی: '+playerNames[p]+' · در حال انتخاب و انداختن کارت…');
  try{aiTimer=setTimeout(()=>{
   aiTimer=null;
-  if(!game||game.done){setStatus('اجرای هوش لغو شد: بازی فعال نیست یا تمام شده است.');return;}
+  if(!game||game.done)return;
   if(game.turn!==p){setStatus('اجرای هوش لغو شد: نوبت بازیکن تغییر کرده است.');return;}
   if(isHumanSeat(game.turn)){setStatus('اجرای هوش لغو شد: نوبت به بازیکن انسانی رسیده است.');return;}
   try{
@@ -719,12 +718,13 @@ function playAITurn(){
     game.trumpAnnounced=true;setStatus(playerNames[p]+' خال زمینه را نداشت و حکم مخفی را درخواست کرد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit]);$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];
    }
    let c;try{c=aiCard(p);}catch(aiError){const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});c=allowed[0];console.warn('Kuwaiti AI fallback card selected',aiError);}
-   if(!c)throw new Error('کارت مجاز برای بازیکن '+playerNames[p]+' پیدا نشد');
+   if(!c){if(!game||game.done)return;throw new Error('کارت مجاز برای بازیکن '+playerNames[p]+' پیدا نشد');}
    if(!playOne(p,c,true))throw new Error('اجرای کارت هوش مصنوعی ناموفق بود');
   }catch(e){
+   if(!game||game.done)return;
    console.error('Kuwaiti AI turn failed; attempting legal fallback',e);
    try{const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});if(!allowed.length)throw new Error('هیچ کارت مجازی باقی نمانده است');if(!playOne(p,allowed[0],true))throw new Error('اجرای کارت جایگزین ناموفق بود');}
-   catch(fallbackError){locked=true;const message='خطای نوبت '+playerNames[p]+': '+(fallbackError&&fallbackError.message?fallbackError.message:'نامشخص')+' · بازی متوقف شد.';setStatus(message);$('kTurn').textContent=message;console.error('Kuwaiti AI fallback failed',fallbackError);}
+   catch(fallbackError){if(!game||game.done)return;locked=true;const message='خطای نوبت '+playerNames[p]+': '+(fallbackError&&fallbackError.message?fallbackError.message:'نامشخص')+' · بازی متوقف شد.';setStatus(message);$('kTurn').textContent=message;console.error('Kuwaiti AI fallback failed',fallbackError);}
   }
  },550);}catch(scheduleError){aiTimer=null;locked=true;const message='خطا در زمان‌بندی نوبت '+playerNames[p]+': '+(scheduleError&&scheduleError.message?scheduleError.message:'نامشخص');setStatus(message);$('kTurn').textContent=message;console.error(scheduleError);}
 }
@@ -772,8 +772,11 @@ function renderGame(){
  $('kAnnounceTrump').classList.toggle('hidden',!(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&currentIsHuman&&hotseatRevealed&&currentPlayer===game.auctionWinner));
 }
 function finishGame(){
+ if(!game||game.scoreRecorded)return;
+ if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
  game.done=true;locked=true;$('kHotseatGate').classList.add('hidden');
  const bidderTeam=team(game.auctionWinner),won=game.trickWinners.filter(p=>team(p)===bidderTeam).length;
+ const opponentWon=9-won;
  let resultText='',score=0;
  if(game.isMalzoom){
   $('kResult').classList.remove('hidden');
@@ -783,10 +786,14 @@ function finishGame(){
   resultText='بازی تمام شد؛ نتیجه ملزوم را مشخص کن.';
  }else{
   const target=game.auctionBid.target;
-  const success=won>=target;
+  const maxOpponentTricks=9-target;
+  const success=opponentWon<=maxOpponentTricks;
+  game.opponentTricks=opponentWon;game.maxOpponentTricks=maxOpponentTricks;
   score=K.scoreContract(target,won);
   applyScore(success,won,bidderTeam,score);
-  resultText='تیم برنده مزایده '+fa(won)+' دست گرفت؛ هدف '+fa(target)+' دست بود. '+(success?'قرارداد موفق شد.':'قرارداد انجام نشد.');
+  resultText=success
+   ?'قرارداد موفق شد؛ تیم برنده مزایده '+fa(won)+' دست گرفت و حریف '+fa(opponentWon)+' دست برد.'
+   :'قرارداد ناموفق؛ تیم رقیب '+fa(opponentWon)+' دست گرفت، درحالی‌که حداکثر '+fa(maxOpponentTricks)+' دست مجاز بود. تیم برنده مزایده فقط '+fa(won)+' دست گرفت.';
  }
  setStatus(resultText);renderGame();
 }
@@ -796,12 +803,14 @@ function applyScore(success,won,bidderTeam,provided){
  const val=provided===undefined?K.scoreContract('malzoom',won,{success}):provided;
  playedTricks+=9;
  $('kMatchProgress').textContent=fa(playedTricks)+' از '+fa(matchLimit)+' دست انجام شده';
- points[bidderTeam]+=val;
+ points[bidderTeam]=(Number(points[bidderTeam])||0)+val;
  previousAuctionWinner=game.auctionWinner;
  previousWinningTeam=success?bidderTeam:(bidderTeam==='A'?'B':'A');
  firstGame=false;
  $('kResult').classList.remove('hidden');
- $('kResult').innerHTML='<b>'+(success?'قرارداد موفق شد':'قرارداد ناموفق شد')+'</b><p class="k-small">تعداد دست تیم مزایده‌برنده: '+fa(won)+' · امتیاز این بازی: '+(val>0?'+':'')+fa(val)+'</p>';
+ const opponentText=game.opponentTricks===undefined?'':(' · دست‌های تیم رقیب: '+fa(game.opponentTricks));
+ const limitText=game.maxOpponentTricks===undefined?'':(' · حداکثر دست مجاز حریف: '+fa(game.maxOpponentTricks));
+ $('kResult').innerHTML='<b>'+(success?'قرارداد موفق شد':'قرارداد ناموفق شد')+'</b><p class="k-small">تعداد دست تیم مزایده‌برنده: '+fa(won)+opponentText+limitText+' · امتیاز این بازی: '+(val>0?'+':'')+fa(val)+'</p><p class="k-small">مجموع امتیاز تیم الف: '+fa(points.A)+' · مجموع امتیاز تیم ب: '+fa(points.B)+'</p>';
  $('kNewGame').classList.remove('hidden');
  if(playedTricks<matchLimit)$('kNewGame').textContent='بازی بعدی';
  else{$('kNewGame').textContent='شروع مسابقه جدید';$('kResult').innerHTML+='<p class="k-small">مسابقه کامل شد: '+fa(matchLimit)+' دست انجام شد.</p>';}
