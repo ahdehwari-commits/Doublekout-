@@ -249,6 +249,8 @@ body.deck-back-classic .k-back{background:radial-gradient(ellipse,#1c5c92,#061b4
 .k-table .k-name{display:inline-block;padding:3px 7px;border-radius:5px;background:linear-gradient(#f4e3b7,#b88c4a)!important;color:#261a0d!important;font-weight:900!important;border:1px solid #f5d58b}
 .k-hand-tools{display:flex;align-items:center;justify-content:space-between;gap:8px}#kSortHand{width:42px;height:38px;padding:0;border:1px solid #e7c879;background:linear-gradient(#3b3424,#111);color:#ffe5a0;font-size:23px}
 `;
+s.textContent+=`body.deck-back-black .k-back{background-image:url("./assets/card-back-black-gold.svg")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
+body.deck-back-black .k-back:before,body.deck-back-black .k-back:after{content:none!important}`;
 document.head.appendChild(s);
 }
 function royalPortrait(rank){
