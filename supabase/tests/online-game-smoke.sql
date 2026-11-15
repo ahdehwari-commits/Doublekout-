@@ -15,6 +15,8 @@ declare
   v_step integer;
   v_before_count integer;
   v_timeout_result jsonb;
+  v_original_deadline numeric;
+  v_rematch_result jsonb;
 begin
   insert into auth.users(id) values(v_host),(v_guest) on conflict do nothing;
   perform set_config('request.jwt.claim.sub',v_host::text,false);
@@ -158,6 +160,29 @@ begin
     raise exception 'Double Kout sequence score must total 13';
   end if;
   raise notice 'PASS: Double Kout non-challenge sequence scoring totals 13';
+
+  -- Verify the server-stamped 15-second rematch countdown, extension, and
+  -- host-triggered next game without leaving the room.
+  v_original_deadline := (v_state->>'nextGameDeadline')::numeric;
+  if v_original_deadline is null then
+    raise exception 'finished game must include a shared nextGameDeadline';
+  end if;
+  perform set_config('request.jwt.claim.sub',v_host::text,false);
+  perform public.extend_room_rematch_time(v_room_id);
+  select public_state into v_state from public.game_rooms where id=v_room_id;
+  if (v_state->>'nextGameDeadline')::numeric < v_original_deadline+14 then
+    raise exception 'rematch extension must add 15 seconds';
+  end if;
+  v_rematch_result := public.start_next_room_game(v_room_id);
+  select status,public_state into v_status,v_state from public.game_rooms where id=v_room_id;
+  if v_status<>'playing' then raise exception 'manual next game must restart the same room'; end if;
+  if v_state->>'phase'<>'challenge_decision' then
+    raise exception 'next Double Kout game must reopen the challenge decision';
+  end if;
+  if exists(select 1 from public.room_game_hands where room_id=v_room_id and jsonb_array_length(cards)<>13) then
+    raise exception 'next game must deal fresh 13-card hands';
+  end if;
+  raise notice 'PASS: rematch deadline, 15-second extension and next game restart';
 
   -- A fourth room verifies that an expired HUMAN turn is automatically played
   -- by the host timeout worker using the latest migration's AI fallback path.
