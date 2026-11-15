@@ -85,7 +85,7 @@ begin
   return jsonb_build_object('room_id',p_room_id,'status','playing',
     'revision',v_room.revision+1,'state',v_state);
 end;
-$;
+$$;
 
 create or replace function public.start_room_game(
  p_room_id uuid,p_start_with_present boolean default false,p_trump text default 'S',p_challenge_team text default null
@@ -115,7 +115,7 @@ begin
  end if;
  update public.game_rooms set status='playing',public_state=v_state,revision=revision+1,updated_at=now() where id=p_room_id;
  return jsonb_build_object('room_id',p_room_id,'status','playing','revision',v_revision+1,'state',v_state,'decision_required',(v_state->>'phase'='challenge_decision'));
-end; $;
+end; $$;
 
 create or replace function public.host_decide_room_start(
   p_room_id uuid,
