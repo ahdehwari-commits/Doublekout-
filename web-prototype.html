@@ -522,6 +522,7 @@ function renderLocalRematchClock(){
 setInterval(renderLocalRematchClock,200);
 function finishGame(){
  if(G.done)return;G.done=true;
+ if(activeMode==='double-kout'&&(G.groupCards||[]).length){G.sequenceClearCards=G.groupCards.slice();G.groupCards=[];G.sequenceClearUntil=Date.now()+900;setTimeout(()=>{if(G){G.sequenceClearCards=[];G.sequenceClearUntil=0;render();}},950);}
  if(G.challenge){
    const outcome=G.challengeResult||window.DoubleKoutSequence.evaluateChallenge(G.trickWinners,G.challenge);
    G.challengeResult=outcome;
