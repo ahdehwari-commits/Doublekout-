@@ -143,6 +143,12 @@ function playCard(game,player,card){
  if(game.trickNo>9)game.done=true;
  return {completed:true,winner:winner.player,game};
 }
+function contractProgress(target,bidderTricks,opponentTricks){
+  if(![6,7,8,9].includes(target))throw new Error('تعداد دست قرارداد نامعتبر است');
+  if(bidderTricks>=target)return 'success';
+  if(opponentTricks>9-target)return 'failed';
+  return null;
+}
 function scoreContract(bid,tricksTaken,{success=null}={}){
  const ok=success===null?(typeof bid==='number'?tricksTaken>=bid:tricksTaken>=5):!!success;
  if(bid==='malzoom'){if(success===null)throw new Error('نتیجه موفقیت ملزوم باید صریح مشخص شود');return ok?5:-5;}
@@ -166,7 +172,7 @@ function newGame({rng=Math.random,firstGame=true,previousAuctionWinner=null,firs
    openingLeadRequired:false,done:false,firstGame,playedCards:[],lastTrick:[]};
 }
 const KuwaitiSixPlayerEngine={SUITS,RANKS,deck,shuffle,deal,teamOf,validateContract,isJoker,isTwoOfClubs,
- findOpeningPlayer,normalPower,cardPower,effectiveLeadSuit,legalCards,findTrickWinner,startPlay,playCard,scoreContract,newGame};
+ findOpeningPlayer,normalPower,cardPower,effectiveLeadSuit,legalCards,findTrickWinner,startPlay,playCard,contractProgress,scoreContract,newGame};
 if(typeof module!=='undefined'&&module.exports)module.exports=KuwaitiSixPlayerEngine;
 if(typeof window!=='undefined')window.KuwaitiSixPlayerEngine=KuwaitiSixPlayerEngine;
 
