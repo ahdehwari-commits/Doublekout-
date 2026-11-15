@@ -38,3 +38,11 @@ assert.match(aiTurn, /playOne\(p,c,true\)/, 'AI primary card-play failure must t
 assert.match(aiTurn, /playOne\(p,allowed\[0\],true\)/, 'AI fallback card-play failure must be reported');
 assert.match(status[1], /aria-live/ , 'status must be announced accessibly');
 console.log('PASS: AI card-play errors propagate to fallback and status diagnostics remain visible.');
+
+const webPrototype = fs.readFileSync(require.resolve('../web-prototype.html'), 'utf8');
+const speakPlayer = webPrototype.slice(webPrototype.indexOf("function speakPlayer(kind='play',player=1){"), webPrototype.indexOf("\\nfunction shuffle(", webPrototype.indexOf("function speakPlayer(kind='play',player=1){")));
+assert.ok(speakPlayer.includes('Array.isArray(requested)&&requested.length'),
+  'voice playback must safely handle missing voice categories');
+assert.ok(speakPlayer.includes("['کارت بازی شد!']"),
+  'voice playback must have a non-empty fallback and never access undefined pool.length');
+console.log('PASS: missing speech categories cannot interrupt card play.');
