@@ -8,7 +8,7 @@ create or replace function public.start_room_game_before_decision(
 ) returns jsonb
 language plpgsql security definer
 set search_path = public, pg_temp
-as $
+as $$
 declare
   v_user uuid := auth.uid();
   v_room public.game_rooms%rowtype;
@@ -89,7 +89,7 @@ $;
 
 create or replace function public.start_room_game(
  p_room_id uuid,p_start_with_present boolean default false,p_trump text default 'S',p_challenge_team text default null
-) returns jsonb language plpgsql security definer set search_path=public,pg_temp as $
+) returns jsonb language plpgsql security definer set search_path=public,pg_temp as $$
 declare
  v_state jsonb; v_revision bigint; v_now numeric:=extract(epoch from clock_timestamp());
  v_deadlines jsonb:='{}'::jsonb; v_hand record;
