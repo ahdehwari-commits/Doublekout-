@@ -152,6 +152,11 @@ const seqStop=tacticalFour.chooseAICard(
  [{player:1,card:{suit:'H',rank:'K'}}],2,'S','normal','hokm',[],null,[],null,true,true
 );
 assert.equal(seqStop.rank,'A','in sequence mode, spend the lowest winning card to stop an opponent from taking and extending a run');
+const pressureAce=tacticalFour.chooseAICard(
+ [{suit:'H',rank:'K'},{suit:'C',rank:'3'}],
+ [{player:0,card:{suit:'H',rank:'7'}}],2,'S','normal','hokm',[],null,[],null,true,true
+);
+assert.equal(pressureAce.rank,'K','in sequence mode, spend a king over a partner low lead when an opponent may still hold the ace, to pressure it out');
 const drawTrump=tacticalFour.chooseAICard(
  [{suit:'S',rank:'3'},{suit:'S',rank:'5'},{suit:'C',rank:'2'},{suit:'H',rank:'A'}],
  [],1,'S','normal','hokm',[],null,[],null,false,true
