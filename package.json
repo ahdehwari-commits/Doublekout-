@@ -1,6 +1,6 @@
 {
   "name": "double-kout-desktop",
-  "version": "0.8.26",
+  "version": "0.8.42",
   "private": true,
   "description": "Double Kout card game desktop build",
   "main": "desktop/main.cjs",
