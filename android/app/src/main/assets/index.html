@@ -901,7 +901,10 @@ async function refreshOnlineGame(startPayload){
   (state.plays||[]).forEach(function(p,i){var played=cardEl(visualCard(p.card),true);played.classList.add('table-played');played.style.setProperty('--play-index',i);el('onlineTrick').appendChild(played);});
   el('onlineTrickMsg').textContent=decisionPending?'در حال انتخاب چالش':('نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳');
   el('onlineTrumpBig').textContent=suitGlyph[state.trump||'S']||'♠';
-  el('onlineScore').textContent='تیم صندلی‌های ۱ و ۳: '+(state.scoreA||0)+' · تیم صندلی‌های ۲ و ۴: '+(state.scoreB||0)+' · دست‌های برده‌شده: '+(state.trickWinners||[]).length;
+  var teamAName=[players['0']&&players['0'].name,players['2']&&players['2'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۱ و ۳';
+  var teamBName=[players['1']&&players['1'].name,players['3']&&players['3'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۲ و ۴';
+  var faScore=function(n){return String(n).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];});};
+  el('onlineScore').textContent='تیم '+teamAName+': '+faScore(state.scoreA||0)+' دست · تیم '+teamBName+': '+faScore(state.scoreB||0)+' دست';
   el('onlineHand').innerHTML='';
   el('onlineHandTitle').textContent='کارت‌های شما · '+hand.length+' کارت';
   hand.forEach(function(c,i){
