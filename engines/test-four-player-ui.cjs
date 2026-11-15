@@ -84,7 +84,7 @@ assert.ok(sixUi.includes("$('kTrickCards').style.display='';"),'six-player trick
 
 assert.ok(html.includes('id="visualCustomizer"')&&!html.includes('id="cardCustomizer"'),'design options must be visual thumbnails on the pre-game mode selection screen');
 assert.ok(html.includes('online-card-legal')&&html.includes('online-card-illegal')&&html.includes('id="onlineSortHand"'),'online hand must visually distinguish legal cards and provide sorting');
-assert.ok(html.includes('assets/card-back-black-gold.svg')&&html.includes('structural table redesign'),'four-player table must use the image card back and redesigned oval table layout');
+assert.ok(html.includes('assets/card-back-black-gold.png')&&html.includes('structural table redesign'),'four-player table must use the image card back and redesigned oval table layout');
 
 
 assert.ok(html.includes("scores[team(winners[close])]+=close-start+1")&&html.includes("scores[team(winners[12])]+=winners.length-start")&&html.includes("scores[side(winners[close])]+=close-start+1")&&html.includes("scores[side(winners[12])]+=winners.length-start"),'live sequence counters must add the number of tricks in each completed group, including the final remainder at trick 13');
