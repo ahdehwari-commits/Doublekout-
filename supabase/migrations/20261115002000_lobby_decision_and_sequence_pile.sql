@@ -38,6 +38,7 @@ begin
   if p_challenge_team is not null and (v_room.game_mode <> 'double-kout' or p_challenge_team not in ('A','B')) then raise exception 'invalid_challenge_team'; end if;
   select count(*),count(*) filter(where ready) into v_total,v_ready
     from public.room_members where room_id=p_room_id;
+  if not exists(select 1 from public.room_members where room_id=p_room_id and user_id=v_user and is_host) then raise exception 'host_membership_required'; end if;
   if v_total < 1 then raise exception 'host_membership_required'; end if;
   if v_ready <> v_total then raise exception 'all_joined_players_must_be_ready'; end if;
   if not coalesce(p_start_with_present,false) and v_total <> 4 then raise exception 'room_not_full'; end if;
@@ -100,7 +101,7 @@ declare
   v_guest uuid;
 begin
   if v_user is null then raise exception 'authentication_required'; end if;
-  if p_choice not in ('human','ai') then raise exception 'invalid_lobby_choice'; end if;
+  if p_choice is null or p_choice not in ('human','ai') then raise exception 'invalid_lobby_choice'; end if;
   select * into v_room from public.game_rooms where id=p_room_id for update;
   if not found then raise exception 'room_not_found'; end if;
   if v_room.host_user_id is distinct from v_user then raise exception 'host_only'; end if;
