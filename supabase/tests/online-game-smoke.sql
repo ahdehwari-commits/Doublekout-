@@ -17,6 +17,9 @@ declare
   v_timeout_result jsonb;
   v_original_deadline numeric;
   v_rematch_result jsonb;
+  v_start_result jsonb;
+  v_human_count integer;
+  v_ai_count integer;
 begin
   insert into auth.users(id) values(v_host),(v_guest) on conflict do nothing;
   perform set_config('request.jwt.claim.sub',v_host::text,false);
@@ -258,6 +261,44 @@ begin
     raise exception 'expired human turn must remove one card from the human hand';
   end if;
   raise notice 'PASS: expired human turn is auto-played, removed from hand, and advances turn';
+
+  -- Host may end an indefinite lobby with no guest: one human plus three AI seats.
+  perform set_config('request.jwt.claim.sub',v_host::text,false);
+  v_room := public.create_game_room('double-kout',4::smallint,'Host');
+  v_room_id := (v_room->>'room_id')::uuid;
+  v_start_result := public.host_decide_room_start(v_room_id,'ai');
+  if v_start_result->'state'->>'humanCount'<>'1' then
+    raise exception 'AI-only start must keep exactly one human host';
+  end if;
+  select count(*) filter(where owner_user_id is not null),
+         count(*) filter(where owner_user_id is null)
+    into v_human_count,v_ai_count
+    from public.room_game_hands where room_id=v_room_id;
+  if v_human_count<>1 or v_ai_count<>3 then
+    raise exception 'AI-only start must deal one human hand and three AI hands';
+  end if;
+  raise notice 'PASS: host can end waiting alone and start with three AI seats';
+
+  -- First guest is accepted without requiring a separate ready-button action.
+  perform set_config('request.jwt.claim.sub',v_host::text,false);
+  v_room := public.create_game_room('double-kout',4::smallint,'Host');
+  v_room_id := (v_room->>'room_id')::uuid;
+  v_code := v_room->>'code';
+  perform set_config('request.jwt.claim.sub',v_guest::text,false);
+  perform public.join_game_room(v_code,'Guest',1::smallint);
+  perform set_config('request.jwt.claim.sub',v_host::text,false);
+  v_start_result := public.host_decide_room_start(v_room_id,'human');
+  if v_start_result->'state'->>'humanCount'<>'2' then
+    raise exception 'human-accepted start must keep two humans';
+  end if;
+  select count(*) filter(where owner_user_id is not null),
+         count(*) filter(where owner_user_id is null)
+    into v_human_count,v_ai_count
+    from public.room_game_hands where room_id=v_room_id;
+  if v_human_count<>2 or v_ai_count<>2 then
+    raise exception 'human-accepted start must deal two human and two AI hands';
+  end if;
+  raise notice 'PASS: host accepts first guest and fills remaining seats with two AI players';
 
   raise notice 'PASS: room start, private hands, 2 humans + 2 AI, turn validation, legal cards, 13 tricks, final score and human timeout fallback';
 end;
