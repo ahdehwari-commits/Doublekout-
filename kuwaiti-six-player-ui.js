@@ -281,7 +281,7 @@ function cardNode(c,small=false){
  d.innerHTML='<span class="k-corner k-corner-top">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span><span class="k-corner k-corner-bottom">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span>'+(['K','Q','J'].includes(rank)?'<span class="k-royal-frame">'+royal(rank)+'</span>':'<span class="ksuit">'+suitGlyph[c.suit]+'</span>');
  return d;
 }
-function setStatus(msg){$('kStatus').classList.remove('hidden');$('kStatus').textContent=msg;}
+function setStatus(msg){const node=$('kStatus');if(!node){console.error('Kuwaiti status node is missing:',msg);return;}node.classList.remove('hidden');node.style.display='block';node.setAttribute('role','status');node.setAttribute('aria-live','assertive');node.textContent=msg;}
 function setScreen(which){
  $('modePicker').classList.toggle('hidden',which!=='modes');
  $('setup').classList.add('hidden');$('game').classList.add('hidden');
@@ -682,11 +682,11 @@ function playHumanCard(card){
  }
  hotseatRevealed=false;playOne(p,card);
 }
-function playOne(p,card){
- if(!game||game.done)return;
+function playOne(p,card,throwOnError=false){
+ if(!game||game.done)return false;
  const wasFirst=game.trick.length===0;
  if(typeof playCardSound==='function')playCardSound();if(p!==0&&typeof speakPlayer==='function')speakPlayer('play',p);
- let res;try{res=K.playCard(game,p,card);}catch(e){setStatus('خطا در اجرای کارت: '+(e&&e.message?e.message:'نامشخص'));console.error('Kuwaiti playCard failed',e);return;}
+ let res;try{res=K.playCard(game,p,card);}catch(e){setStatus('خطا در اجرای کارت '+playerNames[p]+': '+(e&&e.message?e.message:'نامشخص'));console.error('Kuwaiti playCard failed',e);if(throwOnError)throw e;return false;}
  if(wasFirst&&game.trick.length===1)game.lastTrick=[];
  // The live team trick counter occupies this area; do not replace it with a per-card announcement.
  if(res.completed){
@@ -695,11 +695,14 @@ function playOne(p,card){
   if(game.done){finishGame();return;}
   setTimeout(()=>{renderGame();playAITurn()},700);
  }else{renderGame();playAITurn();}
+ return true;
 }
 function cardLabel(c){return c.kind==='joker'?(c.color==='red'?'جوکر قرمز':'جوکر مشکی'):c.rank+' '+suitGlyph[c.suit];}
 function playAITurn(){
- if(!game||game.done||isHumanSeat(game.turn)||locked||game.waitingResult||aiTimer)return;
+ if(!game||game.done||isHumanSeat(game.turn)||locked||game.waitingResult)return;
+ if(aiTimer){setStatus('نوبت '+playerNames[game.turn]+' در صف اجراست؛ منتظر پاسخ هوش مصنوعی…');return;}
  const p=game.turn;
+ setStatus('نوبت هوش مصنوعی: '+playerNames[p]+' · در حال انتخاب و انداختن کارت…');
  aiTimer=setTimeout(()=>{
   aiTimer=null;
   if(!game||game.done||game.turn!==p||isHumanSeat(game.turn))return;
@@ -715,14 +718,14 @@ function playAITurn(){
     c=allowed[0];console.warn('Kuwaiti AI fallback card selected',aiError);
    }
    if(!c)throw new Error('کارت مجاز برای بازیکن '+playerNames[p]+' پیدا نشد');
-   playOne(p,c);
+   playOne(p,c,true);
   }catch(e){
    console.error('Kuwaiti AI turn failed; attempting legal fallback',e);
    try{
     const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
     const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});
     if(!allowed.length)throw new Error('هیچ کارت مجازی باقی نمانده است');
-    playOne(p,allowed[0]);
+    playOne(p,allowed[0],true);
    }catch(fallbackError){locked=true;setStatus('خطای نوبت '+playerNames[p]+': '+(fallbackError&&fallbackError.message?fallbackError.message:'نامشخص')+' · بازی متوقف شد.');console.error('Kuwaiti AI fallback failed',fallbackError);}
   }
  },550);
