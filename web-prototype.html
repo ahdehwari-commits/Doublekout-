@@ -1076,14 +1076,15 @@ async function refreshOnlineGame(startPayload){
    var hostQ=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
    if(hostQ.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+hostQ.error.message);
    if(!hostQ.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
+   if(trickPending){
+    try{
+     var trickResolve=await onlineRequest(client.rpc('resolve_room_trick',{p_room_id:roomId}),'جمع‌کردن دست پس از نمایش',12000);
+     if(trickResolve.error&&trickResolve.error.message!=='trick_display_pending')throw trickResolve.error;
+     if(trickResolve.data&&trickResolve.data.resolved)setTimeout(refreshOnlineGame,120);
+    }catch(e){if(!/trick_display_pending/.test(String(e&&e.message||e)))say('جمع‌کردن دست: '+(e.message||e));}
+   }
    if(hostQ.data.is_host){
-    if(trickPending){
-     try{
-      var trickResolve=await onlineRequest(client.rpc('resolve_room_trick',{p_room_id:roomId}),'جمع‌کردن دست پس از نمایش',12000);
-      if(trickResolve.error&&trickResolve.error.message!=='trick_display_pending')throw trickResolve.error;
-      if(trickResolve.data&&trickResolve.data.resolved)setTimeout(refreshOnlineGame,120);
-     }catch(e){if(!/trick_display_pending/.test(String(e&&e.message||e)))say('جمع‌کردن دست: '+(e.message||e));}
-    }else if(players[String(turn)]&&players[String(turn)].human===false){
+    if(!trickPending&&players[String(turn)]&&players[String(turn)].human===false){
      aiBusy=true;try{var ai=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(ai.error)throw ai.error;setTimeout(refreshOnlineGame,150);}catch(e){say('نوبت ربات: '+(e.message||e));}finally{aiBusy=false;}
     }else{
      var timeout=await onlineRequest(client.rpc('advance_room_turn_timeout',{p_room_id:roomId}),'اجرای خودکار پس از پایان نوبت',12000);
