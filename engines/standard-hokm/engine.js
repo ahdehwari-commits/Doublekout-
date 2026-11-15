@@ -46,7 +46,7 @@ function cooperativeLeadCard(hand,lastTrick,lastWinner,player,contract='hokm'){
  }
  return null;
 }
-function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='hokm',playedCards=[],initialHand=null,lastTrick=[],lastWinner=null){
+function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='hokm',playedCards=[],initialHand=null,lastTrick=[],lastWinner=null,isHakemTeam=true,sequenceMode=false){
  const lead=plays.length?plays[0].card.suit:null;
  const legal=legalCards(hand,lead);
  if(!legal.length)throw new Error('No legal Hokm card available');
@@ -62,6 +62,13 @@ function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='
  if(!plays.length){
   const coordinated=cooperativeLeadCard(hand,lastTrick,lastWinner,player,contract);
   if(coordinated)return coordinated;
+  // In Double Kout sequence play, the non-hakem side should normally draw trump
+  // when it has a useful trump holding, forcing the declarer side to spend theirs.
+  if(contract==='hokm'&&!isHakemTeam&&trumpSuit){
+   const ownTrumps=hand.filter(c=>c.suit===trumpSuit).sort((a,b)=>rankPower(a.rank,contract)-rankPower(b.rank,contract));
+   const unseenTrumps=unseen.filter(c=>c.suit===trumpSuit);
+   if(ownTrumps.length>=2&&unseenTrumps.length>0)return ownTrumps[0];
+  }
   const suitLength=s=>hand.filter(c=>c.suit===s).length;
   const scored=legal.map(card=>{
    const length=suitLength(card.suit),threats=threatCount(card);
@@ -80,6 +87,12 @@ function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='
  const winningPlay=plays.find(p=>p.player===winnerPlayer);
  const partnerWinning=teamOf(winnerPlayer)===teamOf(player);
  if(partnerWinning)return sorted[0];
+ // In sequence mode, do not save a winning card while an opponent is taking
+ // the trick: stop their run with the cheapest card that overtakes the winner.
+ if(sequenceMode){
+  const stopRun=sorted.filter(c=>beats(c,winningPlay.card,lead,trumpSuit,contract));
+  if(stopRun.length)return stopRun[0];
+ }
  if(difficulty==='expert'){
   // Monte-Carlo estimate: deal unseen cards to the remaining seats and
   // estimate whether each candidate can secure this trick for our team.
