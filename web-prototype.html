@@ -878,7 +878,7 @@ async function refreshRoster(){
   var guest=rows.find(function(x){return !x.is_host;});
   if(mine&&mine.is_host&&guest){el('onlineLobbyDecision').style.display='block';el('onlineLobbyNotice').textContent='بازیکن واقعی «'+guest.display_name+'» وارد اتاق شد؛ شروع را انتخاب کن.';if(lastLobbyGuestId!==guest.user_id){lastLobbyGuestId=guest.user_id;say('بازیکن واقعی وارد اتاق شد. برای انتخاب نوع شروع آماده‌ای.');}}
   else if(!guest){el('onlineLobbyDecision').style.display='none';lastLobbyGuestId='';}
-  if(!allReady&&rows.length>1)say(rows.length+' بازیکن وارد شده‌اند؛ میزبان می‌تواند همین حالا تصمیم بگیرد.');
+  if(!allReady&&rows.length>1&&!guest)say(rows.length+' بازیکن وارد شده‌اند؛ میزبان می‌تواند همین حالا تصمیم بگیرد.');
   if(mine&&!mine.is_host)say('به اتاق میزبان متصل شدی؛ جایگاه تیمی انتخاب‌شده ثبت شده است.');
  }catch(e){if(/not_a_room_member|not a room member/i.test(String(e&&e.message||e)))say('میزبان اتاق را با هوش مصنوعی آغاز کرد؛ ورود شما پذیرفته نشد.');else say('به‌روزرسانی فهرست بازیکنان: '+(e.message||e));}
  finally{rosterBusy=false;if(rosterRefreshQueued){rosterRefreshQueued=false;Promise.resolve().then(refreshRoster);}}
@@ -917,7 +917,7 @@ async function toggleReady(){
 async function startOnlineGame(choice){
  try{
   if(!roomId||mode==='kuwaiti')return;
-  el('onlineStart').disabled=true;
+  el('onlineStart').disabled=true;el('onlineAcceptHuman').disabled=true;el('onlineUseAI').disabled=true;
   confirmedPlayedCardIds=Object.create(null);lastGameRevision=-1;lastOnlineHandSignature='';onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;
   say('در حال آماده‌سازی کارت‌ها و صندلی‌های ربات...');
   var r=await client.rpc('host_decide_room_start',{p_room_id:roomId,p_choice:choice||'ai'});
@@ -927,7 +927,7 @@ async function startOnlineGame(choice){
   say(choice==='human'?'بازیکن واقعی پذیرفته شد؛ دو جایگاه دیگر با هوش مصنوعی تکمیل شدند.':'انتظار پایان یافت؛ سه جایگاه با هوش مصنوعی تکمیل شدند.');
   await refreshOnlineGame(r.data);
  }catch(e){say('شروع بازی انجام نشد: '+(e.message||e));}
- finally{if(el('onlineStart'))el('onlineStart').disabled=false;}
+ finally{if(el('onlineStart'))el('onlineStart').disabled=false;if(el('onlineAcceptHuman'))el('onlineAcceptHuman').disabled=false;if(el('onlineUseAI'))el('onlineUseAI').disabled=false;}
 }
 async function submitOnlineChallengeChoice(choice){
  if(!roomId||!client)return;
