@@ -328,18 +328,69 @@ body.deck-back-classic .card.back{background:radial-gradient(ellipse,#1c5c92,#06
 .mini-card img{display:block;width:100%;height:100%;object-fit:cover}
 body.deck-back-black .card.back{background-image:url("./assets/card-back-black-gold.svg")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
 body.deck-back-black .card.back:before,body.deck-back-black .card.back:after{content:none!important}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۵۳ · میزهای بازطراحی‌شده</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+
+/* Full-screen visual customization: large image rail, one category per screen */
+.customize-open{display:block;width:100%;margin:8px 0 14px;padding:13px 16px;border:1px solid #e7c777;border-radius:14px;background:linear-gradient(135deg,#292116,#090909);color:#f6d98f;box-shadow:inset 0 1px 0 #fff3,0 5px 16px #0009;font-weight:900}
+.visual-customizer-full{position:fixed;inset:0;z-index:10000;background:radial-gradient(ellipse at 50% 0,#292116,#090909 62%);display:flex;flex-direction:column;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom);color:#f8e5b3}
+.visual-customizer-full.hidden{display:none!important}
+.customizer-top{height:58px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #9b783e}
+.customizer-top button,.customizer-bottom button,.customizer-tabs button{border:1px solid #b99652;border-radius:11px;background:linear-gradient(145deg,#f1d99b,#9c7131);color:#1b1308;padding:10px 13px;font-weight:900}
+#customizerTitle{font-size:19px;font-weight:900;color:#ffdf94}
+#customizerStep{font-size:13px;color:#c9b17d}
+.customizer-tabs{display:flex;justify-content:center;gap:8px;padding:12px 0}
+.customizer-tabs button{background:#17130d;color:#e9d49e;opacity:.72}
+.customizer-tabs button.active{opacity:1;border:2px solid #ffe2a0;box-shadow:0 0 15px #d6a64d66}
+.customizer-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.customizer-page{width:100%;height:100%;display:flex;align-items:center}
+.customizer-page.hidden{display:none}
+.customizer-rail{display:flex;align-items:center;gap:22px;width:100%;overflow-x:auto;overflow-y:hidden;padding:24px max(24px,calc((100vw - 340px)/2));scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#b58b43 #18130c}
+.large-choice{width:230px;height:330px;scroll-snap-align:center;border:2px solid #80622f;border-radius:18px;background:linear-gradient(145deg,#211d16,#080808);flex:0 0 230px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px #000b,inset 0 1px 0 #fff2}
+.large-choice.selected{border:3px solid #ffe39a;box-shadow:0 0 0 3px #bb8d3d,0 0 32px #e9bd5e88,0 15px 30px #000c;transform:translateY(-5px)}
+.back-art{width:190px;height:285px;object-fit:contain;filter:drop-shadow(0 8px 10px #000c)}
+.large-card{width:184px;height:276px;border:5px double #e7c777;border-radius:13px;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 5px #fff2,0 8px 18px #000b;overflow:hidden}
+.large-card:before{content:"";position:absolute;inset:12px;border:2px solid #f5d987;border-radius:7px;background:repeating-radial-gradient(ellipse,transparent 0 8px,#f0d38a33 9px 10px),repeating-linear-gradient(45deg,transparent 0 8px,#f0d38a2a 8px 9px)}
+.large-card i{font:900 80px Georgia;color:#ffe3a0;text-shadow:0 2px 5px #000;z-index:1}
+.large-card b{position:absolute;bottom:24px;font:700 12px Georgia;color:#ffe3a0;letter-spacing:1px}
+.table-rail .large-choice{width:300px;height:240px;flex-basis:300px}
+.table-rail .mini-table{width:245px;height:165px;border-width:8px;border-radius:48%/40%;box-shadow:inset 0 0 0 5px #fff3,0 10px 22px #000b}
+.table-rail .mini-table:before{inset:18px;border-width:2px}
+.table-rail .mini-table i{width:38px;height:25px;box-shadow:-82px 0 0 -5px #d8b96c,82px 0 0 -5px #d8b96c,0 -55px 0 -5px #d8b96c,0 55px 0 -5px #d8b96c}
+.table-rail .mini-table b{inset:40% 38%}
+.layout-rail .large-choice{width:250px;height:250px;flex-basis:250px}
+.layout-rail .mini-layout{width:190px;height:190px;border-width:5px}
+.layout-rail .mini-layout i{width:22px;height:17px;box-shadow:-52px -38px 0 -2px #d8b96c,52px -38px 0 -2px #d8b96c,-62px 15px 0 -2px #d8b96c,62px 15px 0 -2px #d8b96c,-32px 56px 0 -2px #d8b96c,32px 56px 0 -2px #d8b96c}
+.customizer-bottom{display:flex;justify-content:center;gap:10px;padding:14px 0 max(14px,env(safe-area-inset-bottom))}
+.customizer-bottom button{min-width:220px}
+@media(max-width:520px){.customizer-rail{gap:14px;padding:18px 28px}.large-choice{width:205px;height:300px;flex-basis:205px}.back-art{width:165px;height:250px}.table-rail .large-choice{width:270px;height:215px;flex-basis:270px}.table-rail .mini-table{width:220px;height:145px}.layout-rail .large-choice{width:220px;height:220px;flex-basis:220px}.layout-rail .mini-layout{width:165px;height:165px}.customizer-bottom button{min-width:0;flex:1;font-size:13px}}
+
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۵۴ · سفارشی‌سازی تصویری</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
-<div id="visualCustomizer" class="visual-customizer">
- <div class="visual-row"><div class="visual-label">پشت کارت</div><div class="visual-choices" data-kind="back">
-  <button type="button" class="visual-choice" data-value="black" aria-label="مشکی طلایی"><span class="mini-card mini-black"><img src="./assets/card-back-black-gold.svg" alt=""></span></button><button type="button" class="visual-choice" data-value="classic" aria-label="آبی طلایی"><span class="mini-card mini-blue"><i>♠</i></span></button><button type="button" class="visual-choice" data-value="red" aria-label="قرمز طلایی"><span class="mini-card mini-red"><i>♠</i></span></button><button type="button" class="visual-choice" data-value="green" aria-label="سبز طلایی"><span class="mini-card mini-green"><i>♠</i></span></button>
- </div></div>
- <div class="visual-row"><div class="visual-label">میز</div><div class="visual-choices" data-kind="table">
-  <button type="button" class="visual-choice" data-value="marble" aria-label="مرمر"><span class="mini-table marble"><i></i><b></b></span></button><button type="button" class="visual-choice" data-value="royal" aria-label="سلطنتی"><span class="mini-table royal"><i></i><b></b></span></button><button type="button" class="visual-choice" data-value="casino" aria-label="کازینو"><span class="mini-table casino"><i></i><b></b></span></button><button type="button" class="visual-choice" data-value="parquet" aria-label="پارکت"><span class="mini-table parquet"><i></i><b></b></span></button><button type="button" class="visual-choice" data-value="persian" aria-label="فرش ایرانی"><span class="mini-table persian"><i></i><b></b></span></button><button type="button" class="visual-choice" data-value="felt" aria-label="مخمل"><span class="mini-table felt"><i></i><b></b></span></button>
- </div></div>
- <div class="visual-row"><div class="visual-label">چینش ۶ نفره</div><div class="visual-choices" data-kind="layout">
-  <button type="button" class="visual-choice" data-value="arc" aria-label="قوسی"><span class="mini-layout arc"><i></i></span></button><button type="button" class="visual-choice" data-value="hex" aria-label="شش ضلعی"><span class="mini-layout hex"><i></i></span></button><button type="button" class="visual-choice" data-value="wide" aria-label="گسترده"><span class="mini-layout wide"><i></i></span></button>
- </div></div>
+<button id="openVisualCustomizer" class="customize-open" type="button">✦ سفارشی‌سازی ظاهر بازی</button>
+<div id="visualCustomizer" class="visual-customizer-full hidden" aria-modal="true" role="dialog" aria-label="سفارشی‌سازی ظاهر بازی">
+ <div class="customizer-top"><button id="customizerClose" type="button">بازگشت</button><div id="customizerTitle">پشت کارت‌ها</div><div id="customizerStep">۱ از ۳</div></div>
+ <div class="customizer-tabs"><button type="button" data-go-step="0" class="active">پشت کارت</button><button type="button" data-go-step="1">میز بازی</button><button type="button" data-go-step="2">چینش ۶ نفره</button></div>
+ <div class="customizer-stage">
+  <section class="customizer-page" data-step="0"><div class="customizer-rail" data-kind="back">
+   <button type="button" class="visual-choice large-choice" data-value="black" aria-label="مشکی طلایی"><img class="back-art" src="./assets/card-back-black-gold.svg" alt="پشت کارت مشکی طلایی"></button>
+   <button type="button" class="visual-choice large-choice" data-value="classic" aria-label="آبی طلایی"><span class="large-card mini-blue"><i>♠</i><b>DOUBLE KOUT</b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="red" aria-label="قرمز طلایی"><span class="large-card mini-red"><i>♠</i><b>DOUBLE KOUT</b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="green" aria-label="سبز طلایی"><span class="large-card mini-green"><i>♠</i><b>DOUBLE KOUT</b></span></button>
+  </div></section>
+  <section class="customizer-page hidden" data-step="1"><div class="customizer-rail table-rail" data-kind="table">
+   <button type="button" class="visual-choice large-choice" data-value="marble" aria-label="مرمر"><span class="mini-table marble"><i></i><b></b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="royal" aria-label="سلطنتی"><span class="mini-table royal"><i></i><b></b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="casino" aria-label="کازینو"><span class="mini-table casino"><i></i><b></b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="parquet" aria-label="پارکت"><span class="mini-table parquet"><i></i><b></b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="persian" aria-label="فرش ایرانی"><span class="mini-table persian"><i></i><b></b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="felt" aria-label="مخمل"><span class="mini-table felt"><i></i><b></b></span></button>
+  </div></section>
+  <section class="customizer-page hidden" data-step="2"><div class="customizer-rail layout-rail" data-kind="layout">
+   <button type="button" class="visual-choice large-choice" data-value="arc" aria-label="قوسی"><span class="mini-layout arc"><i></i></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="hex" aria-label="شش ضلعی"><span class="mini-layout hex"><i></i></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="wide" aria-label="گسترده"><span class="mini-layout wide"><i></i></span></button>
+  </div></section>
+ </div>
+ <div class="customizer-bottom"><button id="customizerNext" type="button">تأیید و مرحله بعد</button><button id="customizerDone" type="button" class="hidden">تأیید نهایی و بازگشت به انتخاب میزها</button></div>
 </div>
 <div class="mode-grid">
 <button class="mode-card" id="modeDouble"><strong>♠ میز چهار نفره</strong><span>دابل کوت توالی · نسخه قابل‌بازی</span></button>
@@ -751,7 +802,19 @@ function resetCardCustomization(){visualChoice={back:'black',table:'marble',layo
  visualChoice.table=['felt','parquet','persian','marble','royal','casino'].includes(saved.table)?saved.table:'marble';
  visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';setCardCustomization();
 })();
-document.getElementById('visualCustomizer').addEventListener('click',function(e){const b=e.target.closest('.visual-choice');if(!b)return;const kind=b.parentElement.dataset.kind;if(!kind)return;visualChoice[kind]=b.dataset.value;setCardCustomization();});
+(function(){
+ const modal=document.getElementById('visualCustomizer'),title=document.getElementById('customizerTitle'),stepLabel=document.getElementById('customizerStep');
+ const titles=['پشت کارت‌ها','میز بازی','چینش ۶ نفره'];
+ let step=0;
+ function showStep(n){step=Math.max(0,Math.min(2,n));modal.querySelectorAll('.customizer-page').forEach(p=>p.classList.toggle('hidden',Number(p.dataset.step)!==step));modal.querySelectorAll('[data-go-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.goStep)===step));title.textContent=titles[step];stepLabel.textContent=(step+1)+' از ۳';document.getElementById('customizerNext').classList.toggle('hidden',step===2);document.getElementById('customizerDone').classList.toggle('hidden',step!==2);modal.querySelectorAll('.customizer-rail .visual-choice').forEach(b=>{const rail=b.closest('[data-kind]');b.classList.toggle('selected',visualChoice[rail.dataset.kind]===b.dataset.value);});}
+ document.getElementById('openVisualCustomizer').addEventListener('click',()=>{modal.classList.remove('hidden');document.body.style.overflow='hidden';showStep(0);});
+ function close(){modal.classList.add('hidden');document.body.style.overflow='';}
+ document.getElementById('customizerClose').addEventListener('click',close);
+ modal.querySelectorAll('[data-go-step]').forEach(b=>b.addEventListener('click',()=>showStep(Number(b.dataset.goStep))));
+ modal.addEventListener('click',e=>{const b=e.target.closest('.customizer-rail .visual-choice');if(!b)return;const kind=b.closest('[data-kind]').dataset.kind;visualChoice[kind]=b.dataset.value;setCardCustomization();showStep(step);});
+ document.getElementById('customizerNext').addEventListener('click',()=>showStep(step+1));
+ document.getElementById('customizerDone').addEventListener('click',()=>{setCardCustomization();close();const picker=document.getElementById('modePicker');if(picker)picker.classList.remove('hidden');});
+})();
 function cardEl(c,small=false){
  let d=document.createElement('div');
  const rank=String(c.r||'');
