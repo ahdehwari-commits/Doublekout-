@@ -140,6 +140,21 @@ body.deck-face-vintage .card:not(.back){background:#f1e3c4;color:#493522;border-
 .card-customizer-preview{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px;background:#08271f;border:1px solid #477a68;border-radius:12px}
 .card-customizer-preview .card{flex:0 0 auto}
 .card-customizer small{display:block;color:var(--muted);font-size:11px;margin-top:5px}
+
+/* 0.8.44 premium signature backs: four coordinated colorways and maker engraving */
+.card.back{position:relative!important;isolation:isolate;overflow:hidden!important;border:2px solid #e5c36e!important;border-radius:9px!important;box-shadow:inset 0 0 0 2px #fff2c455,inset 0 0 16px #0008,0 7px 13px #000a!important}
+.card.back:before{content:"✥";position:absolute;z-index:1;inset:9% 9% 18%;display:flex;align-items:center;justify-content:center;border:1px solid #f5d987;border-radius:7px;color:#f7d77e;font:700 30px/1 Georgia,serif;text-shadow:0 1px 2px #2a1600,0 0 8px #f4d37b;background:radial-gradient(ellipse at center,rgba(255,222,139,.23),transparent 58%),repeating-linear-gradient(45deg,transparent 0 7px,rgba(255,222,139,.11) 7px 8px),repeating-linear-gradient(-45deg,transparent 0 7px,rgba(255,222,139,.09) 7px 8px);box-shadow:inset 0 0 0 3px #f5d98722,0 0 7px #0008;pointer-events:none}
+.card.back:after{content:"Abdulhamid Dehvari";position:absolute;z-index:2;left:5%;right:5%;bottom:5%;top:auto;height:13%;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;font:italic 700 6px/1 Georgia,"Times New Roman",serif;letter-spacing:.05px;color:#ffe8a5;text-shadow:0 1px 1px #392300,0 0 4px #f6d77e,0 0 7px #c18a25;background:linear-gradient(90deg,transparent,#091b2caa 14%,#091b2cdd 50%,#091b2caa 86%,transparent);border-top:1px solid #f4d27c;border-bottom:1px solid #f4d27c;padding:1px 0;transform:none!important;overflow:hidden}
+body.deck-back-classic .card.back{background-color:#082b5b!important;background-image:radial-gradient(circle at 50% 50%,#1d5a91 0,#0c376b 48%,#061d42 100%),repeating-linear-gradient(45deg,#f3d47d22 0 2px,transparent 2px 6px)!important;border-color:#f1d48a!important}
+body.deck-back-red .card.back{background-color:#651326!important;background-image:radial-gradient(circle at 50% 48%,#a72a39,#6d1429 65%,#310b19)!important;border-color:#f3d38a!important}
+body.deck-back-black .card.back{background-color:#111!important;background-image:radial-gradient(circle at 50% 50%,#34302a,#111 70%)!important;border-color:#e3c16b!important}
+body.deck-back-green .card.back{background-color:#06432f!important;background-image:radial-gradient(circle at 50% 50%,#18734c,#075037 58%,#02291d)!important;border-color:#e5ca79!important}
+body.deck-face-gold .card:not(.back){background:linear-gradient(145deg,#fff8df,#e9d39a 55%,#c39b4d)!important;color:#39280e!important;border:2px solid #b88a32!important;box-shadow:inset 0 0 0 2px #fff4c9,0 7px 0 #8b672d,0 12px 18px #0009!important}
+body.deck-face-gold .card:not(.back) .corner{color:#694513!important}
+.card-customizer-preview .card.back{width:61px;height:86px}
+.opponent-fan .card.back:after{font-size:3.6px!important;letter-spacing:-.12px!important;bottom:5%!important;height:14%!important}
+@media(max-width:520px){.card.back:after{font-size:5.2px}.opponent-fan .card.back:after{font-size:3.25px!important}}
+
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۴۳ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
@@ -153,8 +168,8 @@ body.deck-face-vintage .card:not(.back){background:#f1e3c4;color:#493522;border-
 <h2 class="section-title">🎨 شخصی‌سازی کارت‌ها</h2>
 <p class="muted">پشت کارت‌ها و ظاهر روی کارت‌ها را جداگانه انتخاب کن. انتخابت روی همین دستگاه ذخیره می‌شود و در بازی آفلاین و آنلاین نمایش داده می‌شود.</p>
 <div class="card-customizer">
- <div><label for="cardBackStyle">طرح پشت کارت</label><select id="cardBackStyle" onchange="setCardCustomization()"><option value="classic">آبی کلاسیک</option><option value="red">قرمز سنتی</option><option value="black">مشکی و طلایی</option><option value="green">سبز سلطنتی</option></select></div>
- <div><label for="cardFaceStyle">طرح روی کارت</label><select id="cardFaceStyle" onchange="setCardCustomization()"><option value="classic">کلاسیک فعلی</option><option value="jumbo">اعداد درشت</option><option value="minimal">ساده و مینیمال</option><option value="vintage">کلاسیک قدیمی</option></select></div>
+ <div><label for="cardBackStyle">طرح پشت کارت</label><select id="cardBackStyle" onchange="setCardCustomization()"><option value="classic">آبی سلطنتی و طلایی</option><option value="red">قرمز یاقوتی و طلایی</option><option value="black">مشکی لوکس و طلایی</option><option value="green">سبز زمردی و طلایی</option></select></div>
+ <div><label for="cardFaceStyle">طرح روی کارت</label><select id="cardFaceStyle" onchange="setCardCustomization()"><option value="classic">کلاسیک فعلی</option><option value="jumbo">اعداد درشت</option><option value="minimal">ساده و مینیمال</option><option value="vintage">کلاسیک قدیمی</option><option value="gold">اشرافی با حاشیه طلایی</option></select></div>
 </div>
 <div class="card-customizer-preview"><div><small class="muted">نمونه پشت</small><div id="cardBackPreview" class="card back"></div></div><div><small class="muted">نمونه رو</small><div id="cardFacePreview" class="card"><span class="corner corner-top"><b>A</b><i>♠</i></span><span class="suit">♠</span><span class="corner corner-bottom"><b>A</b><i>♠</i></span></div></div></div>
 <div class="actions" style="margin-top:10px"><button type="button" onclick="resetCardCustomization()">بازگشت به طرح پیش‌فرض</button></div>
@@ -526,7 +541,7 @@ function royalPortrait(rank){
 
 function setCardCustomization(){
  const back=$('cardBackStyle')?.value||'classic',face=$('cardFaceStyle')?.value||'classic';
- document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','deck-face-jumbo','deck-face-minimal','deck-face-vintage');
+ document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','deck-face-jumbo','deck-face-minimal','deck-face-vintage','deck-face-gold');
  document.body.classList.add('deck-back-'+back);
  if(face!=='classic')document.body.classList.add('deck-face-'+face);
  try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({back,face}));}catch(e){}
@@ -542,7 +557,7 @@ function resetCardCustomization(){
 (function loadCardCustomization(){
  let saved={};try{saved=JSON.parse(localStorage.getItem('doubleKoutCardStyle')||'{}')||{};}catch(e){}
  if($('cardBackStyle')&&['classic','red','black','green'].includes(saved.back))$('cardBackStyle').value=saved.back;
- if($('cardFaceStyle')&&['classic','jumbo','minimal','vintage'].includes(saved.face))$('cardFaceStyle').value=saved.face;
+ if($('cardFaceStyle')&&['classic','jumbo','minimal','vintage','gold'].includes(saved.face))$('cardFaceStyle').value=saved.face;
  setCardCustomization();
 })();
 
