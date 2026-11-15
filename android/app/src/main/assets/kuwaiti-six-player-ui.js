@@ -656,13 +656,15 @@ function aiCard(p){
  const previousWinner=Number.isInteger(game.lastWinner)?game.lastWinner:null;
  const partnerLedSuit=game.contract==='hokm'&&previousLead&&previousLead.kind==='normal'&&previousWinner!==null&&team(previousWinner)===team(p)?previousLead.suit:null;
  const holdingPartnerAce=!!partnerLedSuit&&game.hands[p].some(c=>c.kind==='normal'&&c.suit===partnerLedSuit&&c.rank==='A');
+ const partnerLastPlay=previousWinner!==null&&game.lastTrick?game.lastTrick.find(x=>x.player===previousWinner):null;
+ const partnerVoidInLedSuit=!!partnerLedSuit&&!!partnerLastPlay&&partnerLastPlay.card.kind==='normal'&&partnerLastPlay.card.suit!==partnerLedSuit;
  const baseScores=legal.map(card=>{
   const power=cardValue(card),isJoker=card.kind==='joker';let cost=isJoker?power:power*.9;
   if(card.kind==='normal'&&visibleTrump&&card.suit===visibleTrump)cost+=10;
   if(!trick.length){
    if(partnerLedSuit&&card.kind==='normal'){
-    if(holdingPartnerAce&&card.suit===partnerLedSuit)cost+=1000;
-    else if(!holdingPartnerAce&&card.suit===partnerLedSuit)cost-=35;
+    if((holdingPartnerAce||partnerVoidInLedSuit)&&card.suit===partnerLedSuit)cost+=1000;
+    else if(!holdingPartnerAce&&!partnerVoidInLedSuit&&card.suit===partnerLedSuit)cost-=35;
    }
    const length=game.hands[p].filter(c=>c.kind==='normal'&&c.suit===card.suit).length,higher=unseenHigher(card,card.suit);
    const control=card.kind==='normal'?(higher===0?18:higher===1?9:0):0,longSuit=length>=3?length*2.2:0,avoidShort=length===1?-5:0;
