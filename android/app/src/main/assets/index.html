@@ -188,23 +188,29 @@ body.deck-face-gold .card:not(.back) .corner{color:#694513!important}
 .table-theme-parquet .seat .name,.table-theme-persian .seat .name{display:inline-block;padding:3px 12px;margin:1px auto 4px;border-radius:5px;background:linear-gradient(180deg,#f4e3b7,#c6a36b 55%,#e7d2a0)!important;border:1px solid #76501f!important;box-shadow:inset 0 1px 1px #fff8,0 2px 3px #160b0588!important;color:#392411!important;font-weight:800;text-shadow:0 1px #fff2!important}
 .table-theme-parquet .seat .count,.table-theme-persian .seat .count{color:#f5e6c2!important}
 
-/* 0.8.48: royal Double Kout table emblem on felt and parquet only; never on Persian rug */
+/* 0.8.49: royal Double Kout wordmark centered on felt/parquet only; no lamp and no rug overlay */
 .table-theme-felt .table:after,.table-theme-parquet .table:after{
- content:"♠\\A DOUBLE KOUT\\A ♠"!important;
+ content:"♠\\A Double\\A Kout"!important;
  position:absolute!important;z-index:0!important;pointer-events:none!important;
  left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;
- width:78%!important;height:46%!important;display:flex!important;
+ width:76%!important;height:48%!important;display:flex!important;
  align-items:center!important;justify-content:center!important;text-align:center!important;
- white-space:pre!important;
- font:900 clamp(17px,4.2vw,31px)/1.18 Georgia,"Times New Roman",serif!important;
- letter-spacing:2px!important;color:#f3d58a!important;
+ white-space:pre!important;font:italic 900 clamp(22px,5.1vw,38px)/.96 Georgia,"Times New Roman",serif!important;
+ letter-spacing:1.2px!important;color:#f7d98f!important;
  text-shadow:0 2px 1px #241300,0 0 5px #f9df9b,0 0 13px #d29b37!important;
- opacity:.34!important;border:2px double #e5c16d!important;border-radius:18px!important;
+ opacity:.40!important;border:2px double #e5c16d!important;border-radius:20px!important;
  box-shadow:inset 0 0 0 4px #e5c16d22,0 0 18px #d8ad5740!important;
 }
-.table-theme-parquet .table:after{color:#ffe1a0!important;opacity:.48!important;text-shadow:0 2px 2px #301505,0 0 8px #f6d58c!important;border-color:#f1d18b!important}
+.table-theme-felt .table:before,.table-theme-parquet .table:before{
+ content:"✧  ♛  ✧"!important;position:absolute!important;z-index:0!important;
+ pointer-events:none!important;left:50%!important;top:23%!important;
+ transform:translateX(-50%)!important;color:#f4d17d!important;
+ font:900 clamp(16px,3.4vw,25px)/1 Georgia,serif!important;
+ letter-spacing:8px!important;opacity:.48!important;text-shadow:0 0 8px #d5a64a!important
+}
+.table-theme-parquet .table:after{color:#ffe1a0!important;opacity:.50!important;text-shadow:0 2px 2px #301505,0 0 8px #f6d58c!important;border-color:#f1d18b!important}
 .table-theme-felt .table>* ,.table-theme-parquet .table>*{position:relative;z-index:1}
-.table-theme-persian .table:after{content:none!important}
+.table-theme-persian .table:after,.table-theme-persian .table:before{content:none!important}
 /* Maker engraving: large, genuinely diagonal, centered and split over two lines */
 .card.back:after{
  content:"Abdulhamid\\A Dehvari"!important;position:absolute!important;z-index:8!important;
