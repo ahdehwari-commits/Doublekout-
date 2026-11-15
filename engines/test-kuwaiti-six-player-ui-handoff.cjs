@@ -28,3 +28,13 @@ assert.match(startActual, /\$\('kStatus'\)\.classList\.remove\('hidden'\)/,
   'the first-card prompt must be visible when play begins');
 
 console.log('PASS: six-player auction-to-contract-to-first-card UI handoff checks.');
+
+const playOne = source.slice(source.indexOf('function playOne('), source.indexOf('function cardLabel('));
+assert.match(playOne, /throwOnError=false/, 'AI card-play failures must propagate to the AI fallback');
+assert.match(playOne, /if\(throwOnError\)throw e/, 'AI card-play errors must not be swallowed');
+const aiTurn = source.slice(source.indexOf('function playAITurn('), source.indexOf('function renderGame('));
+assert.match(aiTurn, /setStatus\('نوبت هوش مصنوعی:/, 'AI turn start must be visible in the status bar');
+assert.match(aiTurn, /playOne\(p,c,true\)/, 'AI primary card-play failure must trigger fallback');
+assert.match(aiTurn, /playOne\(p,allowed\[0\],true\)/, 'AI fallback card-play failure must be reported');
+assert.match(status[1], /aria-live/ , 'status must be announced accessibly');
+console.log('PASS: AI card-play errors propagate to fallback and status diagnostics remain visible.');
