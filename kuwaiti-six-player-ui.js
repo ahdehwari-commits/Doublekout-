@@ -236,6 +236,19 @@ s.textContent+=`
 }
 html,body{min-height:100%;min-height:100dvh}
 `;
+s.textContent+=`
+/* 0.8.53: text-free ornate card back and raised oval table */
+.k-back{position:relative!important;overflow:hidden!important;background:radial-gradient(ellipse at 50% 45%,#393124 0,#15130f 50%,#050505 100%)!important;border:3px solid #e8c978!important;outline:1px solid #fff2c866!important;outline-offset:-6px;box-shadow:inset 0 0 0 2px #fff2c455,inset 0 0 22px #000c,0 8px 14px #000b!important}
+.k-back:before{content:""!important;position:absolute!important;inset:5px!important;border:2px double #f4d78e!important;border-radius:5px!important;background:repeating-radial-gradient(ellipse at 50% 50%,transparent 0 6px,#f1d58c20 7px 8px),repeating-linear-gradient(45deg,transparent 0 5px,#f4d88a18 5px 6px),repeating-linear-gradient(-45deg,transparent 0 5px,#f4d88a18 5px 6px)!important}
+.k-back:after{content:"♠"!important;position:absolute!important;inset:0!important;display:flex!important;align-items:center!important;justify-content:center!important;background:none!important;border:0!important;color:#f9dfa0!important;font:900 30px/1 Georgia,serif!important;text-shadow:0 1px 3px #160d00,0 0 8px #e7bd5a!important;transform:none!important}
+body.deck-back-classic .k-back{background:radial-gradient(ellipse,#1c5c92,#061b40 78%)!important}body.deck-back-red .k-back{background:radial-gradient(ellipse,#a92d3c,#260511 78%)!important}body.deck-back-green .k-back{background:radial-gradient(ellipse,#18724c,#03251a 78%)!important}
+.k-table{border:12px solid #8f6a35!important;border-radius:48%/30%!important;background:radial-gradient(ellipse at 50% 45%,#38352e,#151514 64%,#050505)!important;box-shadow:inset 0 0 0 3px #f6dc9a88,inset 0 0 0 9px #342416,inset 0 0 60px #000d,0 24px 40px #000d!important;overflow:hidden!important}
+.k-table:before{content:"";position:absolute;inset:8px;border:2px solid #e2c27c;border-radius:48%/30%;box-shadow:inset 0 0 0 5px #fff1;pointer-events:none;z-index:0}
+.k-table>.k-seat{border:2px solid #c9a45e!important;border-radius:14px!important;background:linear-gradient(145deg,#1c1b18,#050505)!important;box-shadow:0 10px 18px #000c,inset 0 1px 0 #fff3!important}
+.k-table>.k-center{border:1px solid #c9a45e!important;border-radius:48%!important;background:radial-gradient(ellipse,#27231b99,#05050577)!important;box-shadow:inset 0 0 24px #000b,0 0 0 5px #d1ad6544!important}
+.k-table .k-name{display:inline-block;padding:3px 7px;border-radius:5px;background:linear-gradient(#f4e3b7,#b88c4a)!important;color:#261a0d!important;font-weight:900!important;border:1px solid #f5d58b}
+.k-hand-tools{display:flex;align-items:center;justify-content:space-between;gap:8px}#kSortHand{width:42px;height:38px;padding:0;border:1px solid #e7c879;background:linear-gradient(#3b3424,#111);color:#ffe5a0;font-size:23px}
+`;
 document.head.appendChild(s);
 }
 function royalPortrait(rank){
