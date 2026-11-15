@@ -51,7 +51,7 @@ assert.ok(html.includes("const contract=$('nextContract').value;")&&html.include
 assert.ok(html.includes("value=\"naras\"")&&html.includes("value=\"tak_naras\"")&&html.includes("value=\"saras\"")&&html.includes("value=\"partner_middle\""),'later four-player contract picker must offer Naras, Tak Naras, Saras and partner-middle');
 assert.ok(html.includes("const staged=matchNo>1;"),'all later four-player contracts must deal five cards before selection');
 assert.ok(html.includes("function aiChooseFourPlayerContract(hand)")&&html.includes("const chosen=aiChooseFourPlayerContract(G.hands[starter])"),'AI hakim must choose among all supported contracts after seeing five cards');
-assert.ok(html.includes("liveSequenceScores(G.trickWinners||[])")&&html.includes("function liveSequenceScores(winners)")&&html.includes("scores[winningTeam]+=count"),'live DoubleKout counters must use the exact same scoring function as the final result');
+assert.ok(html.includes("liveSequenceScores(G.trickWinners||[])")&&html.includes("function liveSequenceScores(winners)")&&html.includes("scores[team(winners[close])]+=1")&&html.includes("function onlineLiveSequenceScores(winners)")&&html.includes("scores[side(winners[close])]+=1"),'live Double Kout counters must count completed sequence groups once, not each trick in a group');
 assert.ok(html.includes("globalStatsBtn")&&html.includes("function recordGlobalGame()")&&html.includes("localStorage.setItem(GLOBAL_STATS_KEY"),'four-player cumulative game statistics must be persisted and accessible from the mode menu');
 assert.ok(html.includes('id="gamesWonA"')&&html.includes('id="gamesWonB"')&&html.includes("globalStats.double.wins+globalStats.hokm.wins"),'the table must show a separate persistent counter for completed games won');
 assert.ok(!html.includes('id="trickCountWrap"')&&!html.includes('id="trickCount"'),'the per-trick four-card counter must be removed');
@@ -66,7 +66,7 @@ assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isM
 assert.ok(sixUi.includes("K.startPlay(game,winner,contract,{isMalzoom:!!game.isMalzoom,trumpAnnounced:!hidden,trumpSuit:resolvedTrump})")&&sixUi.includes("const openingCards=K.legalCards(game.hands[winner],null")&&sixUi.includes("if(isHumanSeat(winner)){")&&sixUi.includes("locked=false;playAITurn();"),"auction winner must receive a validated first legal card and AI must start through the managed turn scheduler");
 assert.ok(sixUi.includes("Kuwaiti AI fallback card selected"),'AI turn must have a legal-card fallback after auction');
 assert.ok(sixUi.includes('class="joker-art"')&&sixUi.includes("M12 105")&&sixUi.includes("RED JOKER")&&sixUi.includes("BLACK JOKER"),'six-player jokers must use custom devil-and-trident card artwork');
-assert.ok(sixUi.includes('transform:rotate(-24deg) scale(.92)'),'card-back name must be smaller, gold and contained within the card');
+assert.ok(sixUi.includes('body.deck-back-black .k-back:before,body.deck-back-black .k-back:after{content:none!important}')&&sixUi.includes('./assets/card-back-black-gold.svg'),'six-player card backs must use the ornate black-gold artwork without a name engraving');
 assert.ok(sixUi.includes("const noTrump=['naras','tak_naras','saras'].includes(contract)"));
 assert.ok(!sixUi.includes('value="partner_middle"'),'six-player partner-middle option must be removed');
 assert.ok(html.includes('challenge-thinking button:disabled{opacity:1!important')&&html.includes("classList.toggle('challenge-thinking',!!G.waitingChallenge)"),'four-player hand cards must stay fully bright but non-interactive until challenge or normal play is selected');
@@ -81,6 +81,11 @@ assert.ok(sixUi.includes('const teamPlayers=previousWinningTeam===\'B\'?[1,3,5]:
 
 assert.ok(!html.includes('trickCountWrap')&&!html.includes('trickCount'),'the four-player per-trick four-card counter is fully removed');
 assert.ok(sixUi.includes("$('kTrickCards').style.display='';"),'six-player trick counter should remain visible');
+
+assert.ok(html.includes('id="visualCustomizer"')&&!html.includes('id="cardCustomizer"'),'design options must be visual thumbnails on the pre-game mode selection screen');
+assert.ok(html.includes('online-card-legal')&&html.includes('online-card-illegal')&&html.includes('id="onlineSortHand"'),'online hand must visually distinguish legal cards and provide sorting');
+assert.ok(html.includes('assets/card-back-black-gold.svg')&&html.includes('structural table redesign'),'four-player table must use the image card back and redesigned oval table layout');
+
 console.log('PASS: four/six-player all four Hokm suits, partner-middle counter, auction-to-play handoff, auction rotation and rank adapter');
 
 
@@ -90,7 +95,7 @@ assert.ok(html.includes("G.hands[starter].forEach(c=>$('hakimPreview').append(ca
 assert.ok(sixUi.includes('id="kMatchLimit"')&&sixUi.includes('value="54"')&&sixUi.includes('value="108"'),'six-player match must offer 54 and 108 tricks');
 assert.ok(sixUi.includes('playedTricks+=9')&&sixUi.includes("if(playedTricks<matchLimit)"),'six-player match must track total tricks and stop at selected limit');
 assert.ok(sixUi.includes('RED JOKER')&&sixUi.includes('BLACK JOKER'),'jokers must use English titles');
-assert.ok(sixUi.includes('rotate(-24deg) scale(.92)'),'card-back title must be smaller and more angled');
+assert.ok(sixUi.includes('content:"♠"!important')&&sixUi.includes('0.8.53: text-free oval table'),'six-player card backs must show the ornate spade artwork without maker text');
 
 assert.ok(sixUi.includes("const bidContract=game.isMalzoom?'hokm':String(game.auctionBid.contract||'')"),'winning bid must be the only source of the active six-player contract');
 assert.ok(sixUi.includes("قرارداد بدون حکم نباید خال حکم یا حکم مخفی داشته باشد"),'no-trump contract must reject any inherited trump suit');
@@ -116,7 +121,7 @@ assert.ok(sixUi.includes("firstTrickNoCut:trickNo===1")&&sixUi.includes("firstTr
 assert.ok(sixUi.includes("label:String(target)")&&sixUi.includes('data-bid="6">۶</button>'),'auction bids must show only their numeric value');
 assert.ok(sixUi.includes('k-bid-chip')&&sixUi.includes('animation:kTurnPulse'),'auction turn must animate around player seats and display their bid number');
 assert.ok(sixUi.indexOf('id="kAuction"')<sixUi.indexOf('class="k-live-tricks"'),'six-player live trick counter must sit below the auction process');
-assert.ok(sixUi.includes("font:italic 700 4px/1.05")&&sixUi.includes("color:#ffdf83")&&sixUi.includes("rotate(-24deg) scale(.92)"),'card-back name must be contained and gold');
+assert.ok(sixUi.includes('body.deck-back-black .k-back:before,body.deck-back-black .k-back:after{content:none!important}')&&sixUi.includes('id="kSortHand"'),'six-player cards must use text-free back art and expose a working hand-sort control');
 
 const manifest=fs.readFileSync(require.resolve('../android/app/src/main/AndroidManifest.xml'),'utf8');
 const activity=fs.readFileSync(require.resolve('../android/app/src/main/java/com/doublekout/app/MainActivity.java'),'utf8');
