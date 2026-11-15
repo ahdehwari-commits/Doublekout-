@@ -1025,7 +1025,7 @@ async function refreshOnlineGame(startPayload){
    var visibleCount=def.offset===0?hand.length:left;
    el('onlineName'+def.key).textContent=(def.offset===0?'شما · ':'')+(player.name||('بازیکن '+(seat+1)));
    el('onlineCount'+def.key).textContent=visibleCount+' کارت';
-   el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&turn===seat);
+   el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&!trickPending&&turn===seat);
    var slot=el('onlinePlayed'+def.key);slot.innerHTML='';
    if(def.offset!==0&&left>0){
     var fan=document.createElement('div');fan.className='opponent-fan';
