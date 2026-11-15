@@ -930,10 +930,25 @@ async function refreshOnlineGame(startPayload){
   // Clear stale challenge-submission text as soon as the server leaves the challenge phase.
   if(!decisionPending&&el('onlineStatus')&&/^در حال ثبت (?:عبور از چالش|اعلام چالش)|^عبور از چالش در سرور ثبت شده است/.test(el('onlineStatus').textContent||''))say('');
   var result=state.challengeResult;
+  if(finished){
+   var serverRematchDeadline=Number(state.nextGameDeadline||0);
+   if(serverRematchDeadline>0)onlineRematchDeadline=serverRematchDeadline;
+   else if(!onlineRematchDeadline)onlineRematchDeadline=Date.now()/1000+15;
+  }else{
+   onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;
+  }
   var status=decisionPending?'فرصت انتخاب چالش برای همه بازیکنان هم‌زمان فعال است':'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳ · حکم پیک';
   if(state.challengeTeam){var myTeam=(myOnlineSeat%2===0?'A':'B');status+=(state.challengeTeam===myTeam?' · بازیکن هم‌تیمی وارد چالش شد':' · حریف علیه شما اعلام چالش کرد');}
   if(finished)status=result?(result.status==='success'?'چالش با موفقیت انجام شد':result.status==='failed-opponent-sequence'?'چالش با توالی حریف شکست خورد':'چالش در دست آخر ناموفق شد'):'بازی تمام شد · نتیجه '+(state.scoreA||0)+' به '+(state.scoreB||0);
   el('onlineGameStatus').textContent=status;
+  var rematchPanel=el('onlineRematchPanel');
+  rematchPanel.style.display=finished?'block':'none';
+  el('onlineRematchText').textContent=myOnlineIsHost
+   ?'بازی بعدی پس از پایان شمارش معکوس خودکار آغاز می‌شود.'
+   :'منتظر میزبان برای آغاز بازی بعدی بمانید.';
+  el('onlineNextGame').disabled=!myOnlineIsHost||rematchBusy;
+  el('onlineExtendRematch').disabled=!myOnlineIsHost||rematchBusy;
+  renderOnlineRematchClock();
   onlineTurnDeadline=(!finished&&!decisionPending)?Number(state.turnDeadline||0):0;
   renderOnlineTurnClock();
   var decision=el('onlineDecision');decision.style.display=decisionPending?'block':'none';
@@ -1055,7 +1070,7 @@ async function leave(){
   catch(e){say('خروج محلی انجام شد، اما حذف عضویت از اتاق انجام نشد: '+(e.message||e));}
  }
  if(channel){await client.removeChannel(channel);channel=null;}
- roomId=null;roomCode='';myOnlineSeat=-1;lastGameRevision=-1;lastOnlineHandSignature='';confirmedPlayedCardIds=Object.create(null);el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
+ roomId=null;roomCode='';myOnlineSeat=-1;myOnlineIsHost=false;lastGameRevision=-1;lastOnlineHandSignature='';confirmedPlayedCardIds=Object.create(null);onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
 }
 window.DoubleKoutOnline={open:open,leave:leave};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
