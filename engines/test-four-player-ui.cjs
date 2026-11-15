@@ -99,7 +99,7 @@ assert.ok(html.includes("if(matchNo===1){selected='hokm_spades';"),'first game m
 assert.ok(html.includes("hands[i%4].push({...deck[i],s:")&&html.includes("G.pendingDeck.splice(0,8)"),'later four-player games must deal five cards before asking trump');
 assert.ok(html.includes("G.hands[starter].forEach(c=>$('hakimPreview').append(cardEl(c,true)))"),'five-card hakim preview must be shown before trump selection');
 assert.ok(sixUi.includes('id="kMatchLimit"')&&sixUi.includes('value="54"')&&sixUi.includes('value="108"'),'six-player match must offer 54 and 108 tricks');
-assert.ok(sixUi.includes('playedTricks+=9')&&sixUi.includes("if(playedTricks<matchLimit)"),'six-player match must track total tricks and stop at selected limit');
+assert.ok(sixUi.includes('playedTricks+=game.trickWinners.length')&&sixUi.includes('function isMatchOver()')&&sixUi.includes('const matchOver=isMatchOver();'),'six-player match must accumulate contract scores and stop at the selected signed score limit');
 assert.ok(sixUi.includes('RED JOKER')&&sixUi.includes('BLACK JOKER'),'jokers must use English titles');
 assert.ok(sixUi.includes('content:"♠"!important')&&sixUi.includes('0.8.53: text-free ornate card back'),'six-player card backs must show the ornate spade artwork without maker text');
 
