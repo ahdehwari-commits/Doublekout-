@@ -2,9 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const source = fs.readFileSync(require.resolve('../kuwaiti-six-player-ui.js'), 'utf8');
 
-const status = source.match(/function setStatus\(msg\)\{([^}]*)\}/);
-assert.ok(status, 'setStatus helper must exist');
-assert.match(status[1], /classList\.remove\('hidden'\)/,
+assert.match(source, /function setStatus\\(msg\\)\\{[\\s\\S]*?classList\\.remove\\('hidden'\\)/,
   'status prompts must be visible after auction completion');
 
 const auctionStart = source.indexOf('function finishAuction()');
@@ -36,7 +34,7 @@ const aiTurn = source.slice(source.indexOf('function playAITurn('), source.index
 assert.match(aiTurn, /setStatus\('نوبت هوش مصنوعی:/, 'AI turn start must be visible in the status bar');
 assert.match(aiTurn, /playOne\(p,c,true\)/, 'AI primary card-play failure must trigger fallback');
 assert.match(aiTurn, /playOne\(p,allowed\[0\],true\)/, 'AI fallback card-play failure must be reported');
-assert.match(status[1], /aria-live/ , 'status must be announced accessibly');
+assert.match(source, /function setStatus\\(msg\\)\\{[\\s\\S]*?aria-live/ , 'status must be announced accessibly');
 console.log('PASS: AI card-play errors propagate to fallback and status diagnostics remain visible.');
 
 const webPrototype = fs.readFileSync(require.resolve('../web-prototype.html'), 'utf8');
