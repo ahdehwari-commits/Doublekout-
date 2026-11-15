@@ -619,7 +619,7 @@ function resolveTrick(){
  if(team(w)==='B'&&aceCut)speakPlayer('aceCut',w);
  else if(team(w)==='B')speakPlayer('collect',w);
  G.trickWinners.push(w);
- let msg=`دست ${fa(n)} را ${names[w]} برد.`;tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);if(w!==0)speakPlayer('win',w);
+ let msg=`دست ${fa(n)} را ${names[w]} برد.`;tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);
  G.history.push(msg);
  if(activeMode==='double-kout'){
   G.groupCards=(G.groupCards||[]).concat(G.plays.map(x=>({player:x.player,card:{...x.card}})));
