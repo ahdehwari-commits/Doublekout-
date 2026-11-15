@@ -174,6 +174,20 @@ begin
         to_jsonb(extract(epoch from clock_timestamp())-1),true) where id=v_room_id;
       perform public.resolve_room_trick(v_room_id);
       select status,public_state into v_status,v_state from public.game_rooms where id=v_room_id;
+      if jsonb_array_length(v_state->'trickWinners') between 1 and 3
+         and jsonb_array_length(v_state->'groupCards') <>
+             4*jsonb_array_length(v_state->'trickWinners') then
+        raise exception 'Double Kout sequence pile must accumulate all cards before the first sequence';
+      end if;
+      if jsonb_array_length(v_state->'trickWinners')=4 then
+        if (v_state->'trickWinners'->>3)=(v_state->'trickWinners'->>2) then
+          if jsonb_array_length(v_state->'groupCards')<>0 then
+            raise exception 'first valid sequence must collect the complete pile';
+          end if;
+        elsif jsonb_array_length(v_state->'groupCards')<>16 then
+          raise exception 'pile must continue accumulating when no valid sequence exists';
+        end if;
+      end if;
     end if;
     exit when v_status='finished';
     v_turn := (v_state->>'turn')::integer;
