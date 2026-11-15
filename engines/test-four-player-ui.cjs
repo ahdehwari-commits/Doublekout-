@@ -146,6 +146,11 @@ assert.ok(sixUi.includes("const win=auction.highestPlayer,bid={...auction.highes
 assert.ok(sixUi.includes("el.querySelector('.k-bid-chip')?.remove()")&&sixUi.includes("chip.className='k-bid-chip winner'"),'all pass markers must be removed when the auction ends');
 assert.ok(sixUi.includes("chip.textContent=bid.type==='malzoom'?'M':fa(bid.target||bid.label||'')"),'winning seat must show only the winning trick target');
 
+const tacticalFour=require('./standard-hokm/engine.js');
+const partnerLastTrick=[{player:0,card:{suit:'H',rank:'7'}},{player:1,card:{suit:'H',rank:'9'}},{player:2,card:{suit:'H',rank:'J'}},{player:3,card:{suit:'H',rank:'Q'}}];
+assert.equal(tacticalFour.cooperativeLeadCard([{suit:'H',rank:'4'},{suit:'S',rank:'6'}],partnerLastTrick,2,0,'hokm').suit,'H','when partner won by leading a suit and AI has no ace of it, continue that suit');
+assert.equal(tacticalFour.cooperativeLeadCard([{suit:'H',rank:'A'},{suit:'S',rank:'6'},{suit:'S',rank:'8'}],partnerLastTrick,2,0,'hokm').suit,'S','when partner won by leading a suit and AI holds its ace, switch to another suit to protect the ace from a later trump cut');
+assert.equal(tacticalFour.cooperativeLeadCard([{suit:'H',rank:'4'},{suit:'S',rank:'6'}],partnerLastTrick,1,0,'hokm'),null,'do not follow an opponent lead as a team-coordination instruction');
 const fourEngine=fs.readFileSync(require.resolve('./standard-hokm/engine.js'),'utf8');
 assert.ok(fourEngine.includes("if(difficulty==='easy')return legal[Math.floor(Math.random()*legal.length)]"),'four-player easy AI must make a simple legal choice');
 assert.ok(fourEngine.includes("if(difficulty==='hard')")&&fourEngine.includes("threatCount(a)-threatCount(b)"),'four-player hard AI must count threats and conserve high cards');
