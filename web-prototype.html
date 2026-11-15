@@ -124,6 +124,22 @@
 .royal-frame{inset:8px 5px 8px!important}
 .royal-art{display:block;width:100%;height:100%;max-height:none!important;filter:drop-shadow(0 2px 2px #49351f55)}
 .card .corner{z-index:6}
+
+/* Card customization: persistent user-selected back and face styles */
+.card.back{background-image:repeating-linear-gradient(45deg,#173e69 0 5px,#e4d6ad 5px 7px)}
+body.deck-back-red .card.back{background-color:#7f1726;background-image:repeating-linear-gradient(45deg,#8d1d2b 0 5px,#f0d7b1 5px 7px);border-color:#f3dfbd}
+body.deck-back-black .card.back{background-color:#151515;background-image:radial-gradient(circle at 50% 50%,#c9a45d 1px,transparent 2px),repeating-linear-gradient(45deg,#171717 0 6px,#b58b43 6px 8px);background-size:12px 12px;border-color:#d8bd78}
+body.deck-back-green .card.back{background-color:#0c4937;background-image:repeating-linear-gradient(45deg,#0c4937 0 5px,#d6bd78 5px 7px);border-color:#e7d6a4}
+body.deck-back-classic .card.back{background-color:#173e69;background-image:repeating-linear-gradient(45deg,#173e69 0 5px,#e4d6ad 5px 7px)}
+body.deck-face-jumbo .card:not(.back) .corner{font-size:1.28em}
+body.deck-face-jumbo .card:not(.back){font-size:22px}
+body.deck-face-minimal .card:not(.back) .royal-frame{display:none}
+body.deck-face-minimal .card:not(.back) .suit{font-size:34px}
+body.deck-face-vintage .card:not(.back){background:#f1e3c4;color:#493522;border-color:#b18a50;filter:sepia(.18)}
+.card-customizer{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;align-items:end}
+.card-customizer-preview{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px;background:#08271f;border:1px solid #477a68;border-radius:12px}
+.card-customizer-preview .card{flex:0 0 auto}
+.card-customizer small{display:block;color:var(--muted);font-size:11px;margin-top:5px}
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۴۳ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
@@ -133,6 +149,16 @@
 </div>
 <p class="muted" id="modeMessage">حالت شش‌نفره فقط با نام «کوت کویتی» نمایش داده می‌شود.</p><div class="actions" style="margin-top:12px"><button id="globalStatsBtn" type="button">آمار کل بازی‌ها</button><button id="exitAppBtn" type="button">خروج از برنامه</button></div>
 <section class="panel hidden" id="globalStatsPanel"><h3 class="section-title">آمار کل بازی‌ها</h3><div id="globalStatsReport" class="rules"></div><div class="actions"><button id="closeGlobalStats" type="button">بستن آمار</button><button id="resetGlobalStats" type="button">پاک‌کردن آمار</button></div></section></section>
+<section class="panel" id="cardCustomizer">
+<h2 class="section-title">🎨 شخصی‌سازی کارت‌ها</h2>
+<p class="muted">پشت کارت‌ها و ظاهر روی کارت‌ها را جداگانه انتخاب کن. انتخابت روی همین دستگاه ذخیره می‌شود و در بازی آفلاین و آنلاین نمایش داده می‌شود.</p>
+<div class="card-customizer">
+ <div><label for="cardBackStyle">طرح پشت کارت</label><select id="cardBackStyle" onchange="setCardCustomization()"><option value="classic">آبی کلاسیک</option><option value="red">قرمز سنتی</option><option value="black">مشکی و طلایی</option><option value="green">سبز سلطنتی</option></select></div>
+ <div><label for="cardFaceStyle">طرح روی کارت</label><select id="cardFaceStyle" onchange="setCardCustomization()"><option value="classic">کلاسیک فعلی</option><option value="jumbo">اعداد درشت</option><option value="minimal">ساده و مینیمال</option><option value="vintage">کلاسیک قدیمی</option></select></div>
+</div>
+<div class="card-customizer-preview"><div><small class="muted">نمونه پشت</small><div id="cardBackPreview" class="card back"></div></div><div><small class="muted">نمونه رو</small><div id="cardFacePreview" class="card"><span class="corner corner-top"><b>A</b><i>♠</i></span><span class="suit">♠</span><span class="corner corner-bottom"><b>A</b><i>♠</i></span></div></div></div>
+<div class="actions" style="margin-top:10px"><button type="button" onclick="resetCardCustomization()">بازگشت به طرح پیش‌فرض</button></div>
+</section>
 <section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><select id="hokmContract" class="hidden" aria-hidden="true"><option value="hokm_spades" selected>پیک</option><option value="hokm_hearts">دل</option><option value="hokm_diamonds">خشت</option><option value="hokm_clubs">گشنیز</option></select><div id="hokmContractPicker" class="hidden"></div><div class="setup"><div><label>شیوه بازی</label><select id="playStyle"><option value="ai">یک نفر در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با چهار گوشی (اتاق اینترنتی)</option></select></div><div id="humanSeatSetup" style="grid-column:1/-1"><label>صندلی بازیکنان انسانی (صندلی‌های خالی با هوش مصنوعی پر می‌شوند)</label><div id="humanSeatChoices" class="actions"></div><p class="muted">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option><option value="hard">سخت</option><option value="expert">خیلی سخت</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><div id="onlineSetupInfo" class="status hidden">برای بازی آنلاین، ابتدا اتاق بساز یا با کد وارد اتاق بازیکن دیگری شو. پنجره اتاق آنلاین با انتخاب این گزینه باز می‌شود.</div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
 <section class="panel hidden" id="game"><div id="hotseatGate" class="hidden"><div class="gate-card"><div style="font-size:42px">♠ ♥ ♦ ♣</div><h2>تحویل گوشی به بازیکن بعدی</h2><p id="hotseatGateText">گوشی را به بازیکن بعدی بدهید. مطمئن شوید نفر قبلی دیگر صفحه را نمی‌بیند؛ سپس کارت‌های خود را نمایش دهید.</p><button id="revealHotseatHand" type="button">کارت‌های من را نمایش بده</button></div></div><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">بازی‌های برده تیم شما: <b id="gamesWonA">۰</b></div><div class="score">بازی‌های برده تیم حریف: <b id="gamesWonB">۰</b></div><div class="score">دست: <b id="trickNo">۱</b> / ۱۳</div></div>
 <div class="k-live-tricks" style="display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:13px;font-weight:bold"><span>دست‌های برده این بازی · تیم شما: <b id="liveWonA">۰</b></span><span>تیم حریف: <b id="liveWonB">۰</b></span></div>
@@ -497,6 +523,29 @@ function royalPortrait(rank){
   : '<path d="M17 22Q13 7 29 9Q42 4 48 17L45 24L34 18L24 24Z" fill="#d7b05a" stroke="#765024" stroke-width="1.8"/><path d="M39 13Q52 1 51 5Q49 18 43 23" fill="#b33e47" stroke="#76252c" stroke-width="1.2"/>';
  return '<svg class="royal-art" viewBox="0 0 64 76" role="img" aria-label="'+({K:'شاه',Q:'بی‌بی',J:'سرباز'})[rank]+'"><defs><linearGradient id="robe'+rank+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+p.coat+'"/><stop offset="1" stop-color="#101b2c"/></linearGradient></defs><rect x="2" y="2" width="60" height="72" rx="8" fill="#f4e7c8" stroke="#a37a3c" stroke-width="1.8"/><path d="M7 70Q9 53 21 49L32 55L43 49Q55 53 57 70Z" fill="url(#robe'+rank+')" stroke="#4b3928" stroke-width="1.5"/><path d="M21 50L32 61L43 50L40 70H24Z" fill="'+p.light+'" opacity=".9"/><path d="M15 69Q18 57 24 56L32 65L40 56Q47 58 49 69" fill="none" stroke="#f6df9a" stroke-width="2"/>'+head+crown+'<path d="M28 52L32 57L36 52" fill="none" stroke="#fff0c4" stroke-width="2"/><path d="M9 9H55M9 66H55" stroke="#b48b4a" stroke-width=".8" opacity=".75"/><circle cx="12" cy="12" r="2" fill="#c9a45d"/><circle cx="52" cy="12" r="2" fill="#c9a45d"/><circle cx="12" cy="64" r="2" fill="#c9a45d"/><circle cx="52" cy="64" r="2" fill="#c9a45d"/></svg>';
 }
+
+function setCardCustomization(){
+ const back=$('cardBackStyle')?.value||'classic',face=$('cardFaceStyle')?.value||'classic';
+ document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','deck-face-jumbo','deck-face-minimal','deck-face-vintage');
+ document.body.classList.add('deck-back-'+back);
+ if(face!=='classic')document.body.classList.add('deck-face-'+face);
+ try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({back,face}));}catch(e){}
+ const bp=$('cardBackPreview'),fp=$('cardFacePreview');
+ if(bp){bp.className='card back';}
+ if(fp){fp.className='card'+(face==='vintage'?'':'');}
+}
+function resetCardCustomization(){
+ if($('cardBackStyle'))$('cardBackStyle').value='classic';
+ if($('cardFaceStyle'))$('cardFaceStyle').value='classic';
+ setCardCustomization();
+}
+(function loadCardCustomization(){
+ let saved={};try{saved=JSON.parse(localStorage.getItem('doubleKoutCardStyle')||'{}')||{};}catch(e){}
+ if($('cardBackStyle')&&['classic','red','black','green'].includes(saved.back))$('cardBackStyle').value=saved.back;
+ if($('cardFaceStyle')&&['classic','jumbo','minimal','vintage'].includes(saved.face))$('cardFaceStyle').value=saved.face;
+ setCardCustomization();
+})();
+
 function cardEl(c,small=false){
  let d=document.createElement('div');
  const rank=String(c.r||'');
