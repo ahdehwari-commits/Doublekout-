@@ -325,7 +325,7 @@ body.deck-back-classic .card.back{background:radial-gradient(ellipse,#1c5c92,#06
 .table>.seat .name,#onlineTable>.seat .name{display:inline-block!important;padding:3px 8px!important;border-radius:5px!important;background:linear-gradient(#f4e3b7,#b88c4a)!important;color:#261a0d!important;font-weight:900!important;border:1px solid #f5d58b!important}
 .table>.seat .count,#onlineTable>.seat .count{color:#f5dfaa!important}
 @media(max-width:520px){.table,#onlineTable{min-height:440px!important;border-width:8px!important;border-radius:44%/25%!important}.table>.seat,#onlineTable>.seat{width:28%!important;min-height:78px!important;padding:5px 2px!important}.table>.north,#onlineTable>.north,.table>.south,#onlineTable>.south{left:36%!important;width:28%!important}.table>.west,#onlineTable>.west{left:0!important;top:39%!important}.table>.east,#onlineTable>.east{right:0!important;top:39%!important}.table>.center,#onlineTable>.center{left:27%!important;right:27%!important;top:29%!important;bottom:29%!important}.table>.seat .name,#onlineTable>.seat .name{font-size:10px!important;padding:2px 4px!important}}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۵۲ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۵۳ · میزهای بازطراحی‌شده</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div id="visualCustomizer" class="visual-customizer">
  <div class="visual-row"><div class="visual-label">پشت کارت</div><div class="visual-choices" data-kind="back">
@@ -738,13 +738,13 @@ var visualChoice={back:'black',table:'marble',layout:'arc'};
 function setCardCustomization(){
  document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','six-layout-arc','six-layout-hex','six-layout-wide');
  document.body.classList.add('deck-back-'+visualChoice.back,'table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
- try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify(visualChoice));}catch(e){}
+ try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({back:visualChoice.back,table:visualChoice.table,layout:visualChoice.layout,v:2}));}catch(e){}
  document.querySelectorAll('#visualCustomizer .visual-choice').forEach(function(b){b.classList.toggle('selected',visualChoice[b.parentElement.dataset.kind]===b.dataset.value);});
 }
 function resetCardCustomization(){visualChoice={back:'black',table:'marble',layout:'arc'};setCardCustomization();}
 (function loadCardCustomization(){
  let saved={};try{saved=JSON.parse(localStorage.getItem('doubleKoutCardStyle')||'{}')||{};}catch(e){}
- visualChoice.back=['classic','red','black','green'].includes(saved.back)?saved.back:'black';if(!saved.back||saved.back==='classic')visualChoice.back='black';
+ visualChoice.back=saved.v===2&&['classic','red','black','green'].includes(saved.back)?saved.back:'black';
  visualChoice.table=['felt','parquet','persian','marble','royal','casino'].includes(saved.table)?saved.table:'marble';
  visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';setCardCustomization();
 })();
