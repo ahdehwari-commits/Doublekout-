@@ -293,8 +293,8 @@ function setupMarkup(){
  const s=document.createElement('section');s.className='panel hidden';s.id='kuwaitiSetup';
  s.innerHTML=`<h2 class="section-title">آماده‌سازی کوت کویتی · شش نفره</h2>
  <div class="k-intro"><div>۶ بازیکن</div><div>۵۴ کارت · ۹ کارت برای هر نفر</div><div>۹ دست در هر بازی</div></div>
- <label>شیوه بازی</label><select class="k-select" id="kPlayStyle"><option value="ai">یک بازیکن انسانی در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با شش گوشی (اتاق اینترنتی)</option></select><div id="kHumanSeatSetup"><label>انتخاب صندلی بازیکنان انسانی؛ صندلی‌های خالی با هوش مصنوعی پر می‌شوند</label><div id="kHumanSeatChoices" class="k-actions"></div><p class="k-small">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><label>پایان مسابقه پس از چند دست؟</label><select class="k-select" id="kMatchLimit"><option value="54">۵۴ دست</option><option value="108">۱۰۸ دست</option></select>
- <div class="k-small" id="kMatchProgress">۰ از ۵۴ دست انجام شده</div>
+ <label>شیوه بازی</label><select class="k-select" id="kPlayStyle"><option value="ai">یک بازیکن انسانی در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با شش گوشی (اتاق اینترنتی)</option></select><div id="kHumanSeatSetup"><label>انتخاب صندلی بازیکنان انسانی؛ صندلی‌های خالی با هوش مصنوعی پر می‌شوند</label><div id="kHumanSeatChoices" class="k-actions"></div><p class="k-small">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><label>حد امتیاز پایان مسابقه</label><select class="k-select" id="kMatchLimit"><option value="54">۵۴ امتیاز مثبت</option><option value="-54">۵۴ امتیاز منفی</option><option value="108">۱۰۸ امتیاز مثبت</option><option value="-108">۱۰۸ امتیاز منفی</option></select>
+ <div class="k-small" id="kMatchProgress">حد امتیاز مسابقه: ۵۴+</div>
  <div id="kNextPicker" class="hidden"><label>انتخاب نفر اول مزایده توسط تیم برنده بازی قبل</label><select class="k-select" id="kFirstAuction"><option value="0">بازیکن ۱</option><option value="2">بازیکن ۳</option><option value="4">بازیکن ۵</option></select></div>
  <p class="k-small">در بازی اول دارنده ۲ خاج نفر اول مزایده است. در بازی‌های بعدی تیم برنده بازی قبل نفر اول مزایده را انتخاب می‌کند و بازیکن نشسته قبل از برنده مزایده قبلی، ملزوم‌کننده است.</p>
  <div class="k-actions"><button id="kStartAuction">پخش کارت و شروع مزایده</button><button id="kBackModes">بازگشت</button></div>`;
@@ -321,6 +321,7 @@ function setupMarkup(){
 function renderHumanSeatChoices(){const host=$('kHumanSeatChoices');if(!host)return;host.innerHTML='';for(let p=0;p<6;p++){const l=document.createElement('label');l.style.cssText='display:flex;align-items:center;gap:5px;background:#09271f;border:1px solid #477a68;border-radius:9px;padding:7px;color:#f4dfaa;font-size:11px';const c=document.createElement('input');c.type='checkbox';c.value=String(p);c.checked=p===0;c.addEventListener('change',()=>{if(!host.querySelector('input:checked'))c.checked=true;});l.append(c,document.createTextNode('صندلی '+fa(p+1)));host.append(l);}}
 function isHumanSeat(p){return $('kPlayStyle')&&$('kPlayStyle').value!=='hotseat'?p===0:humanSeats.has(p);}
 function revealCurrentHuman(){hotseatRevealed=true;$('kHotseatGate').classList.add('hidden');if(auction){renderAuction();renderAuctionHand();}else renderGame();}
+function isMatchOver(){return matchLimit>=0?(points.A>=matchLimit||points.B>=matchLimit):(points.A<=matchLimit||points.B<=matchLimit);}
 function resetSetup(){
  if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
  game=null;auction=null;locked=false;trickView=[];hotseatRevealed=false;$('kHotseatGate')?.classList.add('hidden');
@@ -328,7 +329,7 @@ function resetSetup(){
  $('kHand').innerHTML='';$('kTrumpDisplay').textContent='بدون حکم';$('kTrickCards').textContent='کارت‌های این دست: ۰ از ۶';$('kTurn').textContent='در انتظار مزایده';$('kStatus').textContent='میز پاک و آماده بازی جدید است.';
  for(let p=0;p<6;p++){$('kPlayed'+p).innerHTML='';$('kCount'+p).textContent='۹ کارت';$('kSeat'+p)?.classList?.remove('active');}
  if(firstGame){playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;}
- $('kMatchProgress').textContent=fa(playedTricks)+' از '+fa(matchLimit)+' دست انجام شده';
+ $('kMatchProgress').textContent='حد امتیاز مسابقه: '+(matchLimit>0?'+':'')+fa(matchLimit)+' · مجموع الف: '+fa(points.A)+' · مجموع ب: '+fa(points.B);
  renderHumanSeatChoices();$('kHumanSeatSetup').classList.toggle('hidden',$('kPlayStyle').value!=='hotseat');
  setScreen('setup');
  if(firstGame){$('kNextPicker').classList.add('hidden');}
@@ -342,7 +343,7 @@ function resetSetup(){
 function startAuction(){
  humanSeats=$('kPlayStyle').value==='hotseat'?new Set([...document.querySelectorAll('#kHumanSeatChoices input:checked')].map(x=>Number(x.value))):new Set([0]);hotseatRevealed=false;
  if(!humanSeats.size){setStatus('دست‌کم یک صندلی انسانی انتخاب کن.');return;}
- if(playedTricks>=matchLimit){setStatus('مسابقه به پایان رسیده است.');return;}
+ if(isMatchOver()){setStatus('حد امتیاز مسابقه قبلاً ثبت شده است؛ مسابقه جدید را آغاز کن.');return;}
  locked=false;
  // Clear every visual trace from the previous deal before dealing a fresh 54-card deck.
  $('kHand').innerHTML='';$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');$('kTrickCards').textContent='کارت‌های این دست: ۰ از ۶';
@@ -693,9 +694,16 @@ function playOne(p,card,throwOnError=false){
  // The live team trick counter occupies this area; do not replace it with a per-card announcement.
  if(res.completed){
   const win=res.winner;if(typeof tone==='function'){tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);}if(win!==0&&typeof speakPlayer==='function')speakPlayer('win',win);setStatus('دست '+fa(game.trickNo-1)+' را '+playerNames[win]+' برد.');
+  if(!game.isMalzoom&&game.auctionBid&&Number.isInteger(game.auctionBid.target)){
+   const bidderTeam=team(game.auctionWinner);
+   const bidderWon=game.trickWinners.filter(p=>team(p)===bidderTeam).length;
+   const opponentWon=game.trickWinners.length-bidderWon;
+   const contractState=K.contractProgress(game.auctionBid.target,bidderWon,opponentWon);
+   if(contractState){game.done=true;game.earlyContractEnd=true;game.earlyContractState=contractState;}
+  }
   renderGame();
   if(game.done){finishGame();return;}
-  setTimeout(()=>{renderGame();playAITurn()},700);
+  setTimeout(()=>{if(!game||game.done)return;renderGame();playAITurn()},700);
  }else{renderGame();playAITurn();}
  return true;
 }
@@ -776,7 +784,7 @@ function finishGame(){
  if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
  game.done=true;locked=true;$('kHotseatGate').classList.add('hidden');
  const bidderTeam=team(game.auctionWinner),won=game.trickWinners.filter(p=>team(p)===bidderTeam).length;
- const opponentWon=9-won;
+ const opponentWon=game.trickWinners.length-won;
  let resultText='',score=0;
  if(game.isMalzoom){
   $('kResult').classList.remove('hidden');
@@ -787,8 +795,9 @@ function finishGame(){
  }else{
   const target=game.auctionBid.target;
   const maxOpponentTricks=9-target;
-  const success=opponentWon<=maxOpponentTricks;
-  game.opponentTricks=opponentWon;game.maxOpponentTricks=maxOpponentTricks;
+  const success=won>=target;
+  game.opponentTricks=opponentWon;
+  game.maxOpponentTricks=maxOpponentTricks;
   score=K.scoreContract(target,won);
   applyScore(success,won,bidderTeam,score);
   resultText=success
@@ -801,9 +810,10 @@ function applyScore(success,won,bidderTeam,provided){
  if(game.scoreRecorded)return;game.scoreRecorded=true;
  const gameWinner=success?bidderTeam:(bidderTeam==='A'?'B':'A');matchGamesWon[gameWinner]++;
  const val=provided===undefined?K.scoreContract('malzoom',won,{success}):provided;
- playedTricks+=9;
- $('kMatchProgress').textContent=fa(playedTricks)+' از '+fa(matchLimit)+' دست انجام شده';
+ playedTricks+=game.trickWinners.length;
  points[bidderTeam]=(Number(points[bidderTeam])||0)+val;
+ const matchOver=isMatchOver();
+ $('kMatchProgress').textContent='حد امتیاز مسابقه: '+(matchLimit>0?'+':'')+fa(matchLimit)+' · مجموع الف: '+fa(points.A)+' · مجموع ب: '+fa(points.B);
  previousAuctionWinner=game.auctionWinner;
  previousWinningTeam=success?bidderTeam:(bidderTeam==='A'?'B':'A');
  firstGame=false;
@@ -812,13 +822,13 @@ function applyScore(success,won,bidderTeam,provided){
  const limitText=game.maxOpponentTricks===undefined?'':(' · حداکثر دست مجاز حریف: '+fa(game.maxOpponentTricks));
  $('kResult').innerHTML='<b>'+(success?'قرارداد موفق شد':'قرارداد ناموفق شد')+'</b><p class="k-small">تعداد دست تیم مزایده‌برنده: '+fa(won)+opponentText+limitText+' · امتیاز این بازی: '+(val>0?'+':'')+fa(val)+'</p><p class="k-small">مجموع امتیاز تیم الف: '+fa(points.A)+' · مجموع امتیاز تیم ب: '+fa(points.B)+'</p>';
  $('kNewGame').classList.remove('hidden');
- if(playedTricks<matchLimit)$('kNewGame').textContent='بازی بعدی';
- else{$('kNewGame').textContent='شروع مسابقه جدید';$('kResult').innerHTML+='<p class="k-small">مسابقه کامل شد: '+fa(matchLimit)+' دست انجام شد.</p>';}
+ if(matchOver){$('kNewGame').textContent='شروع مسابقه جدید';$('kResult').innerHTML+='<p class="k-small">مسابقه با رسیدن امتیاز یکی از تیم‌ها به حد انتخابی پایان یافت.</p>';}
+ else $('kNewGame').textContent='بازی بعدی';
  renderGame();
 }
 function startNewMatch(){
  hotseatRevealed=false;
- if(playedTricks>=matchLimit){firstGame=true;previousAuctionWinner=null;previousWinningTeam=null;points={A:0,B:0};matchGamesWon={A:0,B:0};playedTricks=0;resetSetup();return;}
+ if(isMatchOver()){firstGame=true;previousAuctionWinner=null;previousWinningTeam=null;points={A:0,B:0};matchGamesWon={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;resetSetup();return;}
  locked=false;
  const teamPlayers=previousWinningTeam==='B'?[1,3,5]:[0,2,4];
  const firstPicker=$('kFirstAuction');
@@ -832,7 +842,7 @@ function bind(){
  $('kRevealHand').onclick=()=>{if((auction&&isHumanSeat(auction.current))||(game&&isHumanSeat(game.turn)))revealCurrentHuman();};
  $('kSortHand').onclick=()=>{if(!game||game.done)return;const p=$('kPlayStyle').value==='hotseat'?game.turn:0;if(!isHumanSeat(p))return;const order={S:0,H:1,D:2,C:3},rank={2:0,3:1,4:2,5:3,6:4,7:5,8:6,9:7,10:8,J:9,Q:10,K:11,A:12};game.hands[p].sort((a,b)=>{if(a.kind==='joker'||b.kind==='joker'){if(a.kind!=='joker')return -1;if(b.kind!=='joker')return 1;return (a.color==='red'?0:1)-(b.color==='red'?0:1);}return (order[a.suit]??9)-(order[b.suit]??9)||(rank[a.rank]??99)-(rank[b.rank]??99);});renderGame();};
  $('modeKuwaiti').onclick=()=>{try{if(window.audioReady)audioReady();if(!initialized&&!init())throw new Error('راه‌اندازی میز کامل نشد');resetSetup();}catch(e){$('modeMessage').textContent='خطا در باز کردن میز شش‌نفره: '+(e&&e.message?e.message:'خطای ناشناخته');console.error(e);}};
- $('kStartAuction').onclick=()=>{if(firstGame){points={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;}startAuction();};
+ $('kStartAuction').onclick=()=>{if(firstGame){points={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;$('kMatchProgress').textContent='حد امتیاز مسابقه: '+(matchLimit>0?'+':'')+fa(matchLimit)+' · مجموع الف: ۰ · مجموع ب: ۰';}startAuction();};
  $('kBackModes').onclick=()=>setScreen('modes');
  $('kExit').onclick=()=>setScreen('modes');
  $('kNewGame').onclick=()=>startNewMatch();
