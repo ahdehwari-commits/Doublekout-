@@ -281,7 +281,7 @@ function cardNode(c,small=false){
  d.innerHTML='<span class="k-corner k-corner-top">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span><span class="k-corner k-corner-bottom">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span>'+(['K','Q','J'].includes(rank)?'<span class="k-royal-frame">'+royal(rank)+'</span>':'<span class="ksuit">'+suitGlyph[c.suit]+'</span>');
  return d;
 }
-function setStatus(msg){$('kStatus').textContent=msg;}
+function setStatus(msg){$('kStatus').classList.remove('hidden');$('kStatus').textContent=msg;}
 function setScreen(which){
  $('modePicker').classList.toggle('hidden',which!=='modes');
  $('setup').classList.add('hidden');$('game').classList.add('hidden');
@@ -503,11 +503,13 @@ function finishAuction(){
   return;
  }
  if(isHumanSeat(win)){
+  setScreen('game');
+  $('kAuction').classList.add('hidden');$('kMalzoomSetup').classList.add('hidden');
   $('kContractSetup').classList.remove('hidden');
-  renderContractChoiceHand(win);
   $('kContract').value='hokm_spades';
   $('kTrumpDisplay').textContent='منتظر انتخاب قرارداد';
-  setStatus('مزایده را بردی؛ اکنون نوع قرارداد و خال حکم را انتخاب کن.');
+  setStatus('مزایده را بردی؛ قرارداد و خال حکم را انتخاب کن، سپس دکمه تأیید را بزن تا کارت‌بازی شروع شود.');
+  renderContractChoiceHand(win);
  }else{
   const chosen=aiChooseContract(win);
   beginWinningContract(chosen);
@@ -577,7 +579,7 @@ function startActualGame(trumpSuit,hidden){
   $('kAuctionSummary').textContent+=' · قرارداد: '+(game.isMalzoom?'ملزوم':contractName[bidContract])+(resolvedTrump?' · '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]:'');
   $('kTrickCards').style.display='';
   $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(isHumanSeat(winner)?' · کارت‌های بازیکن انسانی پس از نمایش فعال می‌شوند.':' · هوش مصنوعی در حال بازی است.');
-  $('kResult').classList.add('hidden');setScreen('game');
+  $('kResult').classList.add('hidden');setScreen('game');$('kStatus').classList.remove('hidden');
   renderGame();
   if(isHumanSeat(winner)){
    locked=false;hotseatRevealed=$('kPlayStyle').value!=='hotseat';
