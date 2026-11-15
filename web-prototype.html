@@ -514,15 +514,25 @@ function dealGame(trump){
  updateChallengeStats();
 }
 function aiChooseFourPlayerContract(hand){
+ const difficulty=$('difficulty').value;
  const suits=['♠','♥','♦','♣'],counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));
  const power=c=>({A:5,K:4,Q:3,J:2,10:1.2,9:.5}[c.r]||0);
  const suitScores=suits.map(s=>({s,count:counts[s],score:counts[s]*1.7+hand.filter(c=>c.s===s).reduce((n,c)=>n+power(c),0)})).sort((a,b)=>b.score-a.score);
  const highs=hand.filter(c=>['A','K','Q'].includes(c.r)).length;
  const twos=hand.filter(c=>c.r==='2').length;
  const balanced=Math.max(...Object.values(counts))<=2;
- if(highs>=4&&balanced)return 'saras';
- if(twos>=3)return 'naras';
- if(highs>=3&&balanced)return 'tak_naras';
+ // Four-player mode has no numeric auction: the AI selects its contract
+ // after seeing five cards. Difficulty changes how readily it chooses
+ // a no-trump contract rather than a trump suit.
+ const thresholds={
+  easy:{saras:3,naras:2,tak:2},
+  normal:{saras:4,naras:3,tak:3},
+  hard:{saras:5,naras:4,tak:4},
+  expert:{saras:6,naras:5,tak:5}
+ }[difficulty]||{saras:4,naras:3,tak:3};
+ if(highs>=thresholds.saras&&balanced)return 'saras';
+ if(twos>=thresholds.naras)return 'naras';
+ if(highs>=thresholds.tak&&balanced)return 'tak_naras';
  return ({'♠':'hokm_spades','♥':'hokm_hearts','♦':'hokm_diamonds','♣':'hokm_clubs'})[suitScores[0].s];
 }
 function startGame(){
