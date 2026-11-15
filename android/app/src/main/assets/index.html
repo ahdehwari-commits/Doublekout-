@@ -235,7 +235,62 @@ body.deck-face-gold .card:not(.back) .corner{color:#694513!important}
 .center-pile.clearing .pile-card,.online-center-pile.clearing .pile-card{animation:pileCollect .85s ease-in forwards}
 @keyframes pileCollect{0%{opacity:1;transform:translate(var(--px),var(--py)) rotate(var(--pr)) scale(1)}65%{opacity:.95;transform:translate(0,0) rotate(0) scale(.82)}100%{opacity:0;transform:translate(0,-18px) rotate(0) scale(.18)}}
 #onlineLobbyDecision{display:none;background:#153d2f;border:1px solid #e4c477;border-radius:12px;padding:10px;margin:10px 0;text-align:center}#onlineLobbyDecision .onrow{display:flex;gap:8px;margin-top:8px}#onlineLobbyDecision button{flex:1}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۴۳ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+
+/* Apply the same ornate black-and-gold spade back to four-player cards. */
+.card.back{border:3px solid #e7c777!important;outline:1px solid #fff1c866!important;outline-offset:-5px;background-color:#101010!important}
+.card.back:before{content:"♠"!important;position:absolute!important;z-index:1!important;inset:8% 9% 19%!important;display:flex!important;align-items:center!important;justify-content:center!important;border:2px double #f4d78e!important;border-radius:42% 42% 10% 10%!important;color:#f8dfa0!important;font:900 34px/1 Georgia,serif!important;text-shadow:0 1px 3px #241500,0 0 9px #e9bd5a!important;background:radial-gradient(ellipse at 50% 48%,#e4bd6530,transparent 62%),repeating-linear-gradient(45deg,transparent 0 6px,#f4d88a18 6px 7px),repeating-linear-gradient(-45deg,transparent 0 6px,#f4d88a15 6px 7px)!important;box-shadow:inset 0 0 0 3px #f5d98722,0 0 8px #0008!important}
+/* 0.8.52: image-inspired premium table collections and shared black-gold card backs */
+body.table-theme-marble{background:radial-gradient(ellipse at 50% 8%,#3b3a39 0,#171717 42%,#050505 100%)!important}
+body.table-theme-marble .table,body.table-theme-marble .k-table{
+ background-color:#171717!important;
+ background-image:radial-gradient(ellipse at 48% 38%,#55534f88 0,transparent 48%),repeating-linear-gradient(12deg,transparent 0 36px,#ffffff0a 37px 39px,transparent 40px 76px),repeating-linear-gradient(97deg,#161616 0 54px,#292725 55px 58px,#0d0d0d 59px 110px),linear-gradient(145deg,#35322e,#080808 70%)!important;
+ border:4px solid #c7a45e!important;border-radius:28px!important;
+ box-shadow:inset 0 0 0 2px #ffe7a044,inset 0 0 65px #000e,0 22px 44px #000e!important
+}
+body.table-theme-marble .seat,body.table-theme-marble .k-seat{background:linear-gradient(145deg,#242321,#080808)!important;border:1px solid #c8a65f!important;box-shadow:0 10px 20px #000c,inset 0 1px 0 #fff2!important;color:#f7e4b5!important}
+body.table-theme-marble .seat .name,body.table-theme-marble .seat .count,body.table-theme-marble .k-seat .k-name,body.table-theme-marble .k-seat .k-count{color:#f3dfaa!important}
+body.table-theme-royal{background:radial-gradient(ellipse at 50% 10%,#4b3922 0,#17130e 43%,#050505 100%)!important}
+body.table-theme-royal .table,body.table-theme-royal .k-table{
+ background-color:#111!important;background-image:radial-gradient(ellipse at 50% 45%,#38342d 0,#151411 62%,#050505 100%),repeating-linear-gradient(35deg,#ffffff08 0 2px,transparent 2px 8px)!important;
+ border:7px double #d8b36a!important;border-radius:32px!important;
+ box-shadow:inset 0 0 0 3px #fff1b044,inset 0 0 0 10px #8e652d55,inset 0 0 70px #000e,0 22px 48px #000e!important
+}
+body.table-theme-royal .seat,body.table-theme-royal .k-seat{background:linear-gradient(145deg,#171614,#030303)!important;border:2px solid #d9b66d!important;border-radius:15px!important;box-shadow:inset 0 0 0 2px #ffe8a022,0 12px 22px #000c!important}
+body.table-theme-royal .seat .name,body.table-theme-royal .k-seat .k-name{color:#ffe6a1!important}
+body.table-theme-casino{background:radial-gradient(ellipse at 50% 12%,#3a1015 0,#10090c 48%,#020203 100%)!important}
+body.table-theme-casino .table,body.table-theme-casino .k-table{
+ background-color:#080809!important;background-image:radial-gradient(ellipse at 50% 42%,#29252a 0,#0b0a0c 64%,#020203 100%),repeating-linear-gradient(0deg,transparent 0 35px,#ff26331a 36px 38px,transparent 39px 72px)!important;
+ border:5px solid #9e2631!important;border-radius:34px!important;
+ box-shadow:inset 0 0 0 2px #f6d78b88,inset 0 0 34px #d3192b55,0 0 18px #e01d2b88,0 24px 48px #000e!important
+}
+body.table-theme-casino .seat,body.table-theme-casino .k-seat{background:linear-gradient(145deg,#1d1014,#050507)!important;border:1px solid #e0b76c!important;box-shadow:0 0 12px #d21c2b55,inset 0 0 0 1px #fff2!important}
+body.table-theme-casino .seat .name,body.table-theme-casino .k-seat .k-name{color:#ffe0a0!important}
+body.deck-back-black .k-card.k-back{background:radial-gradient(ellipse at 50% 50%,#30291d,#090909 72%,#020202)!important;border-color:#e7c777!important}
+body.deck-back-red .k-card.k-back{background:radial-gradient(ellipse at 50% 50%,#a52a38,#4c0716 75%,#17030a)!important;border-color:#f2d38b!important}
+body.deck-back-green .k-card.k-back{background:radial-gradient(ellipse at 50% 50%,#1a7652,#06412f 70%,#02241a)!important;border-color:#e7d6a4!important}
+body.deck-back-classic .k-card.k-back{background:radial-gradient(ellipse at 50% 50%,#1d5a91,#0c376b 58%,#061d42)!important;border-color:#f1d48a!important}
+.k-card.k-back{position:relative!important;isolation:isolate;overflow:hidden!important;border:3px solid #e7c777!important;border-radius:8px!important;box-shadow:inset 0 0 0 2px #fff2c455,inset 0 0 18px #0009,0 8px 15px #000c!important}
+.k-card.k-back:before{content:"♠"!important;position:absolute!important;z-index:1!important;inset:8% 9% 19%!important;display:flex!important;align-items:center!important;justify-content:center!important;border:2px double #f4d78e!important;border-radius:42% 42% 10% 10%!important;color:#f8dfa0!important;font:900 34px/1 Georgia,serif!important;text-shadow:0 1px 3px #241500,0 0 9px #e9bd5a!important;background:radial-gradient(ellipse at 50% 48%,#e4bd6530,transparent 62%),repeating-linear-gradient(45deg,transparent 0 6px,#f4d88a18 6px 7px),repeating-linear-gradient(-45deg,transparent 0 6px,#f4d88a15 6px 7px)!important;box-shadow:inset 0 0 0 3px #f5d98722,0 0 8px #0008!important}
+.k-card.k-back:after{content:"Abdulhamid\\A Dehvari"!important;position:absolute!important;z-index:3!important;left:5%!important;right:5%!important;top:38%!important;width:90%!important;height:27%!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;white-space:pre!important;font:italic 900 7px/1.02 Georgia,"Times New Roman",serif!important;color:#ffe7a0!important;text-shadow:0 1px 2px #160d00,0 0 5px #e9bd5a!important;background:linear-gradient(90deg,transparent,#080808ed 10%,#080808ed 90%,transparent)!important;border-top:1px solid #f4d27c!important;border-bottom:1px solid #f4d27c!important;transform:rotate(-18deg)!important;overflow:visible!important}
+body.six-layout-hex .k-table{min-height:650px!important}
+body.six-layout-hex .k-table>.k-seat[data-p="3"]{top:0!important;left:36%!important;width:28%!important}
+body.six-layout-hex .k-table>.k-seat[data-p="2"]{top:19%!important;right:0!important;width:27%!important}
+body.six-layout-hex .k-table>.k-seat[data-p="1"]{bottom:19%!important;right:0!important;width:27%!important}
+body.six-layout-hex .k-table>.k-seat[data-p="0"]{bottom:0!important;left:36%!important;width:28%!important}
+body.six-layout-hex .k-table>.k-seat[data-p="5"]{bottom:19%!important;left:0!important;width:27%!important}
+body.six-layout-hex .k-table>.k-seat[data-p="4"]{top:19%!important;left:0!important;width:27%!important}
+body.six-layout-hex .k-table>.k-center{left:28%!important;right:28%!important;top:34%!important;bottom:34%!important}
+body.six-layout-wide .k-table{min-height:690px!important}
+body.six-layout-wide .k-table>.k-seat{width:31%!important;min-height:126px!important}
+body.six-layout-wide .k-table>.k-seat[data-p="3"]{top:0!important;left:34.5%!important}
+body.six-layout-wide .k-table>.k-seat[data-p="2"]{top:23%!important;right:0!important}
+body.six-layout-wide .k-table>.k-seat[data-p="1"]{bottom:23%!important;right:0!important}
+body.six-layout-wide .k-table>.k-seat[data-p="0"]{bottom:0!important;left:34.5%!important}
+body.six-layout-wide .k-table>.k-seat[data-p="5"]{bottom:23%!important;left:0!important}
+body.six-layout-wide .k-table>.k-seat[data-p="4"]{top:23%!important;left:0!important}
+body.six-layout-wide .k-table>.k-center{left:30%!important;right:30%!important;top:36%!important;bottom:36%!important}
+@media(max-width:520px){body.six-layout-hex .k-table{min-height:610px!important}body.six-layout-wide .k-table{min-height:650px!important}}
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۵۲ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
 <button class="mode-card" id="modeDouble"><strong>♠ میز چهار نفره</strong><span>دابل کوت توالی · نسخه قابل‌بازی</span></button>
@@ -250,7 +305,7 @@ body.deck-face-gold .card:not(.back) .corner{color:#694513!important}
 <div class="card-customizer">
  <div><label for="cardBackStyle">طرح پشت کارت</label><select id="cardBackStyle" onchange="setCardCustomization()"><option value="classic">آبی سلطنتی و طلایی</option><option value="red">قرمز یاقوتی و طلایی</option><option value="black">مشکی لوکس و طلایی</option><option value="green">سبز زمردی و طلایی</option></select></div>
  <div><label for="cardFaceStyle">طرح روی کارت</label><select id="cardFaceStyle" onchange="setCardCustomization()"><option value="classic">کلاسیک فعلی</option><option value="jumbo">اعداد درشت</option><option value="minimal">ساده و مینیمال</option><option value="vintage">کلاسیک قدیمی</option><option value="gold">اشرافی با حاشیه طلایی</option></select></div>
- <div><label for="tableStyle">سطح و زمینه میز</label><select id="tableStyle" onchange="setCardCustomization()"><option value="felt">مخمل سبز کلاسیک</option><option value="parquet">پارکت چوبی گرم</option><option value="persian">فرش ایرانی لاکی و سرمه‌ای</option></select></div>
+ <div><label for="tableStyle">سطح و زمینه میز</label><select id="tableStyle" onchange="setCardCustomization()"><option value="felt">مخمل سبز کلاسیک</option><option value="parquet">پارکت چوبی گرم</option><option value="persian">فرش ایرانی لاکی و سرمه‌ای</option><option value="marble">مرمر مشکی و طلایی (تصویر ۱)</option><option value="royal">میز سلطنتی مشکی و طلایی (تصویر ۲)</option><option value="casino">کازینوی مشکی با نور قرمز (تصویر ۳)</option></select></div><div><label for="sixLayoutStyle">چینش بازیکنان میز شش‌نفره</label><select id="sixLayoutStyle" onchange="setCardCustomization()"><option value="arc">قوس شش‌نفره متقارن</option><option value="hex">شش‌ضلعی باز</option><option value="wide">چینش گسترده اطراف میز</option></select></div>
 </div>
 <div class="card-customizer-preview"><div><small class="muted">نمونه پشت</small><div id="cardBackPreview" class="card back"></div></div><div><small class="muted">نمونه رو</small><div id="cardFacePreview" class="card"><span class="corner corner-top"><b>A</b><i>♠</i></span><span class="suit">♠</span><span class="corner corner-bottom"><b>A</b><i>♠</i></span></div></div></div>
 <div class="actions" style="margin-top:10px"><button type="button" onclick="resetCardCustomization()">بازگشت به طرح پیش‌فرض</button></div>
@@ -645,11 +700,11 @@ function royalPortrait(rank){
 }
 
 function setCardCustomization(){
- const back=$('cardBackStyle')?.value||'classic',face=$('cardFaceStyle')?.value||'classic',table=$('tableStyle')?.value||'felt';
- document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','deck-face-jumbo','deck-face-minimal','deck-face-vintage','deck-face-gold','table-theme-felt','table-theme-parquet','table-theme-persian');
- document.body.classList.add('deck-back-'+back,'table-theme-'+table);
+ const back=$('cardBackStyle')?.value||'classic',face=$('cardFaceStyle')?.value||'classic',table=$('tableStyle')?.value||'felt',layout=$('sixLayoutStyle')?.value||'arc';
+ document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','deck-face-jumbo','deck-face-minimal','deck-face-vintage','deck-face-gold','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','six-layout-arc','six-layout-hex','six-layout-wide');
+ document.body.classList.add('deck-back-'+back,'table-theme-'+table,'six-layout-'+layout);
  if(face!=='classic')document.body.classList.add('deck-face-'+face);
- try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({back,face,table}));}catch(e){}
+ try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({back,face,table,layout}));}catch(e){}
  const bp=$('cardBackPreview'),fp=$('cardFacePreview');
  if(bp){bp.className='card back';}
  if(fp){fp.className='card'+(face==='vintage'?'':'');}
@@ -658,13 +713,15 @@ function resetCardCustomization(){
  if($('cardBackStyle'))$('cardBackStyle').value='classic';
  if($('cardFaceStyle'))$('cardFaceStyle').value='classic';
  if($('tableStyle'))$('tableStyle').value='felt';
+ if($('sixLayoutStyle'))$('sixLayoutStyle').value='arc';
  setCardCustomization();
 }
 (function loadCardCustomization(){
  let saved={};try{saved=JSON.parse(localStorage.getItem('doubleKoutCardStyle')||'{}')||{};}catch(e){}
  if($('cardBackStyle')&&['classic','red','black','green'].includes(saved.back))$('cardBackStyle').value=saved.back;
  if($('cardFaceStyle')&&['classic','jumbo','minimal','vintage','gold'].includes(saved.face))$('cardFaceStyle').value=saved.face;
- if($('tableStyle')&&['felt','parquet','persian'].includes(saved.table))$('tableStyle').value=saved.table;
+ if($('tableStyle')&&['felt','parquet','persian','marble','royal','casino'].includes(saved.table))$('tableStyle').value=saved.table;
+ if($('sixLayoutStyle')&&['arc','hex','wide'].includes(saved.layout))$('sixLayoutStyle').value=saved.layout;
  setCardCustomization();
 })();
 
