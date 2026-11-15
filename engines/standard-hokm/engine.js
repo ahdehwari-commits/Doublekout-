@@ -86,7 +86,19 @@ function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='
  const winnerPlayer=currentWinner(plays,trumpSuit,contract);
  const winningPlay=plays.find(p=>p.player===winnerPlayer);
  const partnerWinning=teamOf(winnerPlayer)===teamOf(player);
- if(partnerWinning)return sorted[0];
+ if(partnerWinning){
+  // In Double Kout, a king can be worth spending to pressure an unseen ace.
+  // Do this only when partner is currently winning with a lower card and an
+  // opponent still has a turn: the king may force the ace out instead of
+  // letting the opposing side preserve it for a later sequence.
+  if(sequenceMode&&contract==='hokm'&&plays.length<3){
+   const opponentsStillToPlay=[0,1,2,3].some(seat=>seat!==player&&teamOf(seat)!==teamOf(player)&&!plays.some(x=>x.player===seat));
+   const king=legal.find(c=>c.suit===lead&&c.rank==='K');
+   const aceUnseen=unseen.some(c=>c.suit===lead&&c.rank==='A');
+   if(opponentsStillToPlay&&king&&aceUnseen&&rankPower('K',contract)>rankPower(winningPlay.card.rank,contract))return king;
+  }
+  return sorted[0];
+ }
  // In sequence mode, do not save a winning card while an opponent is taking
  // the trick: stop their run with the cheapest card that overtakes the winner.
  if(sequenceMode){
