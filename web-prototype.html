@@ -528,7 +528,7 @@ function aiChooseFourPlayerContract(hand){
   easy:{saras:3,naras:2,tak:2},
   normal:{saras:4,naras:3,tak:3},
   hard:{saras:5,naras:4,tak:4},
-  expert:{saras:6,naras:5,tak:5}
+  expert:{saras:5,naras:4,tak:5}
  }[difficulty]||{saras:4,naras:3,tak:3};
  if(highs>=thresholds.saras&&balanced)return 'saras';
  if(twos>=thresholds.naras)return 'naras';
