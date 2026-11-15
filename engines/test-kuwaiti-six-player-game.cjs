@@ -101,3 +101,5 @@ console.log('PASS: four selectable six-player AI levels and hidden-hand analysis
 
 assert.ok(ui.includes('bidAdjustment={easy:3.5,normal:0,hard:-1.5,expert:-3}') && ui.includes('malzoomThreshold={easy:26,normal:22,hard:20,expert:18}'), 'AI difficulty must also affect auction bidding thresholds');
 console.log('PASS: AI difficulty also scales auction aggression by hand strength.');
+
+assert.ok(ui.includes("bidAdjustment={easy:-3.5,normal:0,hard:1.5,expert:3}")&&ui.includes("malzoomThreshold={easy:18,normal:22,hard:24,expert:26}"),'easy AI must bid more readily while hard and expert AI require stronger hands');
