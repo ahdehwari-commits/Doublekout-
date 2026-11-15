@@ -12,6 +12,7 @@ let game=null,auction=null,firstGame=true,previousAuctionWinner=null,previousWin
 let points={A:0,B:0},trickView=[],locked=false,aiTimer=null,matchLimit=54,playedTricks=0;
 function addStyle(){
  const s=document.createElement('style');
+ s.textContent='#kuwaitiGame #kStatus{display:block!important;visibility:visible!important;opacity:1!important;position:relative;z-index:70;min-height:42px;box-sizing:border-box;}';
  s.textContent=`
  #kuwaitiSetup,#kuwaitiGame{direction:rtl}
  .k-intro{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -687,6 +688,7 @@ function playOne(p,card,throwOnError=false){
  const wasFirst=game.trick.length===0;
  if(typeof playCardSound==='function')playCardSound();if(p!==0&&typeof speakPlayer==='function')speakPlayer('play',p);
  let res;try{res=K.playCard(game,p,card);}catch(e){setStatus('خطا در اجرای کارت '+playerNames[p]+': '+(e&&e.message?e.message:'نامشخص'));console.error('Kuwaiti playCard failed',e);if(throwOnError)throw e;return false;}
+ if(!isHumanSeat(p))setStatus('هوش مصنوعی '+playerNames[p]+' کارت را با موفقیت انداخت.');
  if(wasFirst&&game.trick.length===1)game.lastTrick=[];
  // The live team trick counter occupies this area; do not replace it with a per-card announcement.
  if(res.completed){
