@@ -455,14 +455,17 @@ const voiceLines={
 };
 function speakPlayer(kind='play',player=1){
  if(!soundEnabled||!('speechSynthesis'in window)||Date.now()-lastVoiceAt<1100)return;
- const pool=voiceLines[kind]||voiceLines.play,line=pool[Math.floor(Math.random()*pool.length)];
  try{
+   const requested=voiceLines&&voiceLines[kind];
+   const fallback=voiceLines&&voiceLines.play;
+   const pool=Array.isArray(requested)&&requested.length?requested:(Array.isArray(fallback)&&fallback.length?fallback:['کارت بازی شد!']);
+   const line=pool[Math.floor(Math.random()*pool.length)];
    const voices=window.speechSynthesis.getVoices();
    const voice=voices.find(v=>/^fa([-_]|$)/i.test(v.lang))||voices.find(v=>/persian|farsi/i.test(v.name));
    const u=new SpeechSynthesisUtterance(line);u.lang=voice?voice.lang:'fa-IR';if(voice)u.voice=voice;
    u.rate=.98;u.pitch=player%2?1.08:.91;u.volume=1;
    window.speechSynthesis.speak(u);lastVoiceAt=Date.now();
- }catch(e){}
+ }catch(e){console.warn('Player voice announcement skipped:',e);}
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function bestTrump(hand){let counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));return [...suits].sort((a,b)=>counts[b]-counts[a])[0]}
