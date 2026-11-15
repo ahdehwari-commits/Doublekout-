@@ -92,3 +92,9 @@ assert.equal(K.contractProgress(6, 0, 4), 'failed');
 assert.ok(ui.includes("const matchOver=isMatchOver();"), 'match end must depend on accumulated score threshold');
 assert.ok(ui.includes('value="-54"') && ui.includes('value="108"') && ui.includes('value="-108"'), 'all four signed score targets must be selectable');
 console.log('PASS: contracts terminate as soon as success/failure is mathematically certain; match ends at signed score target.');
+
+assert.ok(ui.includes('id="kDifficulty"'), 'six-player table must expose four AI difficulty levels');
+for (const level of ['easy','normal','hard','expert']) assert.ok(ui.includes('value="'+level+'"'), 'missing AI difficulty: '+level);
+assert.ok(ui.includes('simulateCandidate(item.card,64)'), 'expert AI must use hidden-hand Monte Carlo analysis');
+assert.ok(ui.includes('voidSuits') && ui.includes('K.findTrickWinner(plays'), 'advanced AI must use revealed void suits and official trick resolution');
+console.log('PASS: four selectable six-player AI levels and hidden-hand analysis are wired into live card selection.');
