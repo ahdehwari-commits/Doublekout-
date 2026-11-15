@@ -82,3 +82,13 @@ assert.ok(ui.includes('مجموع امتیاز تیم الف') && ui.includes('�
 assert.ok(ui.includes('const maxOpponentTricks=9-target;') && ui.includes('const success=opponentWon<=maxOpponentTricks;'), 'contract success must be decided by the opponents\' trick count');
 assert.ok(ui.includes("if(!game||game.done)return;"), 'AI turns must silently stop after the deal is complete');
 console.log('PASS: cumulative match scoring, opponent-trick contract thresholds, and post-game AI guard.');
+
+assert.equal(K.contractProgress(9, 0, 1), 'failed', '9-trick bid fails as soon as opponents take one trick');
+assert.equal(K.contractProgress(8, 0, 1), null, '8-trick bid remains possible after one opponent trick');
+assert.equal(K.contractProgress(8, 0, 2), 'failed', '8-trick bid fails as soon as opponents take two tricks');
+assert.equal(K.contractProgress(8, 8, 0), 'success', '8-trick bid ends immediately when bidder team reaches eight');
+assert.equal(K.contractProgress(7, 0, 3), 'failed');
+assert.equal(K.contractProgress(6, 0, 4), 'failed');
+assert.ok(ui.includes("const matchOver=isMatchOver();"), 'match end must depend on accumulated score threshold');
+assert.ok(ui.includes('value="-54"') && ui.includes('value="108"') && ui.includes('value="-108"'), 'all four signed score targets must be selectable');
+console.log('PASS: contracts terminate as soon as success/failure is mathematically certain; match ends at signed score target.');
