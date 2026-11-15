@@ -326,7 +326,7 @@ body.deck-back-classic .card.back{background:radial-gradient(ellipse,#1c5c92,#06
 .table>.seat .count,#onlineTable>.seat .count{color:#f5dfaa!important}
 @media(max-width:520px){.table,#onlineTable{min-height:440px!important;border-width:8px!important;border-radius:44%/25%!important}.table>.seat,#onlineTable>.seat{width:28%!important;min-height:78px!important;padding:5px 2px!important}.table>.north,#onlineTable>.north,.table>.south,#onlineTable>.south{left:36%!important;width:28%!important}.table>.west,#onlineTable>.west{left:0!important;top:39%!important}.table>.east,#onlineTable>.east{right:0!important;top:39%!important}.table>.center,#onlineTable>.center{left:27%!important;right:27%!important;top:29%!important;bottom:29%!important}.table>.seat .name,#onlineTable>.seat .name{font-size:10px!important;padding:2px 4px!important}}
 .mini-card img{display:block;width:100%;height:100%;object-fit:cover}
-body.deck-back-black .card.back{background-image:url("./assets/card-back-black-gold.svg")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
+body.deck-back-black .card.back{background-image:url("./assets/card-back-black-gold.png")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
 body.deck-back-black .card.back:before,body.deck-back-black .card.back:after{content:none!important}
 
 /* Full-screen visual customization: large image rail, one category per screen */
@@ -371,7 +371,7 @@ body.deck-back-black .card.back:before,body.deck-back-black .card.back:after{con
  <div class="customizer-tabs"><button type="button" data-go-step="0" class="active">پشت کارت</button><button type="button" data-go-step="1">میز بازی</button><button type="button" data-go-step="2">چینش ۶ نفره</button></div>
  <div class="customizer-stage">
   <section class="customizer-page" data-step="0"><div class="customizer-rail" data-kind="back">
-   <button type="button" class="visual-choice large-choice" data-value="black" aria-label="مشکی طلایی"><img class="back-art" src="./assets/card-back-black-gold.svg" alt="پشت کارت مشکی طلایی"></button>
+   <button type="button" class="visual-choice large-choice" data-value="black" aria-label="مشکی طلایی"><img class="back-art" src="./assets/card-back-black-gold.png" alt="پشت کارت مشکی طلایی"></button>
    <button type="button" class="visual-choice large-choice" data-value="classic" aria-label="آبی طلایی"><span class="large-card mini-blue"><i>♠</i><b>DOUBLE KOUT</b></span></button>
    <button type="button" class="visual-choice large-choice" data-value="red" aria-label="قرمز طلایی"><span class="large-card mini-red"><i>♠</i><b>DOUBLE KOUT</b></span></button>
    <button type="button" class="visual-choice large-choice" data-value="green" aria-label="سبز طلایی"><span class="large-card mini-green"><i>♠</i><b>DOUBLE KOUT</b></span></button>
@@ -447,7 +447,9 @@ function shortNoise(duration=.075,volume=.075,frequency=1100){
 function playCardSound(){shortNoise(.085,.10,1450);tone(190,.075,'sine',.07,.008);tone(620,.035,'triangle',.018,.02)}
 function shuffleSound(){shortNoise(.22,.055,2200);[0,1,2,3].forEach((n)=>tone(280+n*70,.07,'triangle',.025,n*.045))}
 const voiceLines={
- play:['بگیرش!','تک منو می‌بری؟ بیا!','حریف می‌طلبم!','الان حسابتون می‌رسم!','این دست مال منه!','ببین چی می‌ندازم!','هنوز بازی تموم نشده!'],
+ ace:['بگیر که اومد!'],
+ aceCut:['تک منو می‌بری؟'],
+ collect:['دارم براتون!'],
  win:['گرفتمش!','اینم از این دست!','دیدی گفتم می‌برم؟'],
  lose:['این یکی از دستم در رفت!','باشه، دست بعدی!']
 };
@@ -596,7 +598,7 @@ function play(p,card){
     if(!Array.isArray(G.cardHistory))G.cardHistory=[];
     G.cardHistory.push({player:p,card:{...card},trickNo:G.trickNo});
     G.plays.push({player:p,card});
-    playCardSound();if(p!==0)speakPlayer('play',p);
+    playCardSound();if(p!==0&&card.r==='A')speakPlayer('ace',p);
     if(G.plays.length===4){
       G.trickCompletePending=true;G.turn=null;render();
       setTimeout(()=>{try{resolveTrick()}catch(e){G.trickCompletePending=false;$('status').textContent='خطا در تعیین برنده دست: '+(e&&e.message?e.message:'نامشخص');console.error(e)}},2800);
@@ -611,7 +613,12 @@ function play(p,card){
 function resolveTrick(){
  if(!G||G.done||G.plays.length!==4||G.resolvingTrick)return;
  G.resolvingTrick=true;G.trickCompletePending=false;
- let w=winner(G.plays),n=G.trickNo;G.trickWinners.push(w);
+ let w=winner(G.plays),n=G.trickNo;
+ const leadCard=G.plays[0]?.card,winningPlay=G.plays.find(x=>x.player===w),winningCard=winningPlay?.card;
+ const aceCut=leadCard?.r==='A'&&winningCard&&cardSuit(winningCard)!==cardSuit(leadCard)&&cardSuit(winningCard)===G.trump;
+ if(team(w)==='B'&&aceCut)speakPlayer('aceCut',w);
+ else if(team(w)==='B')speakPlayer('collect',w);
+ G.trickWinners.push(w);
  let msg=`دست ${fa(n)} را ${names[w]} برد.`;tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);if(w!==0)speakPlayer('win',w);
  G.history.push(msg);
  if(activeMode==='double-kout'){
