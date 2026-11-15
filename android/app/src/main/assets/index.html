@@ -548,7 +548,7 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 'use strict';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
-var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastOnlineHandSignature='',onlineChallengeDeadline=0,onlineChallengeExpired=false;
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastOnlineHandSignature='',onlineChallengeDeadline=0,onlineChallengeExpired=false,confirmedPlayedCardIds=Object.create(null);
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
@@ -718,7 +718,9 @@ async function toggleReady(){
 async function startOnlineGame(){
  try{
   if(!roomId||mode==='kuwaiti')return;
-  el('onlineStart').disabled=true;say('در حال آماده‌سازی کارت‌ها و صندلی‌های ربات...');
+  el('onlineStart').disabled=true;
+  confirmedPlayedCardIds=Object.create(null);lastGameRevision=-1;lastOnlineHandSignature='';
+  say('در حال آماده‌سازی کارت‌ها و صندلی‌های ربات...');
   var r=await client.rpc('start_room_game',{p_room_id:roomId,p_start_with_present:true,p_trump:'S',p_challenge_team:null});
   if(r.error)throw r.error;
   el('onlineGame').style.display='block';
@@ -818,6 +820,12 @@ async function refreshOnlineGame(startPayload){
   if(mine.error)throw mine.error;
   if(mine.data&&Number.isInteger(Number(mine.data.seat)))myOnlineSeat=Number(mine.data.seat);
   var hand=mine.data&&mine.data.cards||[];
+  // iOS PWA can briefly return a stale private-hand snapshot after a successful RPC.
+  // Keep server-confirmed plays hidden until the server hand catches up.
+  Object.keys(confirmedPlayedCardIds).forEach(function(cardId){
+   if(!hand.some(function(card){return card&&String(card.id)===cardId;}))delete confirmedPlayedCardIds[cardId];
+  });
+  hand=hand.filter(function(card){return !confirmedPlayedCardIds[String(card.id)];});
   var handSignature=JSON.stringify(hand);
   if(revision===lastGameRevision&&handSignature===lastOnlineHandSignature){
    // Re-check server-side turn automation even when the game revision is unchanged.
@@ -885,10 +893,12 @@ async function refreshOnlineGame(startPayload){
   var visualCard=function(c){return {r:rankGlyph[c.rank||c.r]||(c.rank||c.r),s:suitGlyph[c.suit||c.s]||(c.suit||c.s),id:c.id};};
   var seatDefs=[{key:'South',offset:0},{key:'East',offset:1},{key:'North',offset:2},{key:'West',offset:3}];
   var playBySeat={};(state.plays||[]).forEach(function(p){playBySeat[Number(p.seat)]=p;});
+  var completedTricks=Array.isArray(state.trickWinners)?state.trickWinners.length:Math.max(0,(Number(state.trickNo)||1)-1);
   seatDefs.forEach(function(def){
-   var seat=(myOnlineSeat+def.offset)%4,player=players[String(seat)]||{},left=Math.max(0,13-((Number(state.trickNo)||1)-1)-((playBySeat[seat])?1:0));
+   var seat=(myOnlineSeat+def.offset)%4,player=players[String(seat)]||{},left=Math.max(0,13-completedTricks-((playBySeat[seat])?1:0));
+   var visibleCount=def.offset===0?hand.length:left;
    el('onlineName'+def.key).textContent=(def.offset===0?'شما · ':'')+(player.name||('بازیکن '+(seat+1)));
-   el('onlineCount'+def.key).textContent=left+' کارت';
+   el('onlineCount'+def.key).textContent=visibleCount+' کارت';
    el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&turn===seat);
    var slot=el('onlinePlayed'+def.key);slot.innerHTML='';
    if(def.offset!==0&&left>0){
@@ -904,13 +914,38 @@ async function refreshOnlineGame(startPayload){
   var teamAName=[players['0']&&players['0'].name,players['2']&&players['2'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۱ و ۳';
   var teamBName=[players['1']&&players['1'].name,players['3']&&players['3'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۲ و ۴';
   var faScore=function(n){return String(n).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];});};
-  el('onlineScore').textContent='تیم '+teamAName+': '+faScore(state.scoreA||0)+' دست · تیم '+teamBName+': '+faScore(state.scoreB||0)+' دست';
+  var completedWinners=Array.isArray(state.trickWinners)?state.trickWinners:[];
+  var teamAWins=completedWinners.filter(function(seat){return Number(seat)%2===0;}).length;
+  var teamBWins=completedWinners.filter(function(seat){return Number(seat)%2===1;}).length;
+  el('onlineScore').textContent='دست‌های برده‌شده در این بازی · تیم '+teamAName+': '+faScore(teamAWins)+' · تیم '+teamBName+': '+faScore(teamBWins);
   el('onlineHand').innerHTML='';
   el('onlineHandTitle').textContent='کارت‌های شما · '+hand.length+' کارت';
   hand.forEach(function(c,i){
    var b=document.createElement('button'),fanOffset=i-(hand.length-1)/2;b.type='button';b.style.transform='rotate('+(fanOffset*4.2)+'deg) translateY('+(Math.abs(fanOffset)*1.45)+'px)';b.style.zIndex=String(i+1);b.appendChild(cardEl(visualCard(c)));
    b.disabled=finished||decisionPending||turn!==myOnlineSeat;
-   b.onclick=async function(){if(b.disabled)return;b.disabled=true;say('در حال ثبت کارت روی میز...');try{var played=await onlineRequest(client.rpc('play_room_card',{p_room_id:roomId,p_card_id:c.id}),'ثبت کارت روی میز',12000);if(played.error)throw played.error;lastGameRevision=-1;var playedState=played.data&&played.data.state;await refreshOnlineGame(playedState?{status:played.data.done?'finished':'playing',state:playedState,revision:played.data.revision}:null);say('');}catch(e){var msg=String(e&&e.message||e);lastGameRevision=-1;try{await refreshOnlineGame();}catch(refreshError){}if(/turn_time_expired|card_not_in_hand|card no(t)? in hand/i.test(msg)){say('مهلت این نوبت تمام شده یا کارت قبلاً ثبت شده بود؛ وضعیت دست از سرور تازه شد.');}else if(/online_request_timeout/.test(msg)){say('پاسخ سرور برای ثبت کارت دیر رسید؛ وضعیت دست دوباره از سرور خوانده شد. اگر کارت ثبت شده باشد، از دست حذف می‌شود.');}else{say('اجرای کارت ناموفق بود: '+msg);}}};
+   b.onclick=async function(){
+    if(b.disabled)return;
+    b.disabled=true;say('در حال ثبت کارت روی میز...');
+    try{
+     var played=await onlineRequest(client.rpc('play_room_card',{p_room_id:roomId,p_card_id:c.id}),'ثبت کارت روی میز',12000);
+     if(played.error)throw played.error;
+     // The server confirmed this card. Remove it immediately on iPhone instead
+     // of waiting for the private-hand query to refresh.
+     confirmedPlayedCardIds[String(c.id)]=true;
+     b.remove();
+     el('onlineHandTitle').textContent='کارت‌های شما · '+el('onlineHand').querySelectorAll('button').length+' کارت';
+     lastGameRevision=-1;
+     var playedState=played.data&&played.data.state;
+     await refreshOnlineGame(playedState?{status:played.data.done?'finished':'playing',state:playedState,revision:played.data.revision}:null);
+     say('');
+    }catch(e){
+     var msg=String(e&&e.message||e);lastGameRevision=-1;
+     try{await refreshOnlineGame();}catch(refreshError){}
+     if(/turn_time_expired|card_not_in_hand|card no(t)? in hand/i.test(msg)){say('مهلت این نوبت تمام شده یا کارت قبلاً ثبت شده بود؛ وضعیت دست از سرور تازه شد.');}
+     else if(/online_request_timeout/.test(msg)){say('پاسخ سرور برای ثبت کارت دیر رسید؛ وضعیت دست دوباره از سرور خوانده شد. اگر کارت ثبت شده باشد، از دست حذف می‌شود.');}
+     else{say('اجرای کارت ناموفق بود: '+msg);}
+    }
+   };
    el('onlineHand').appendChild(b);
   });
   lastGameRevision=revision;
@@ -947,7 +982,7 @@ async function leave(){
   catch(e){say('خروج محلی انجام شد، اما حذف عضویت از اتاق انجام نشد: '+(e.message||e));}
  }
  if(channel){await client.removeChannel(channel);channel=null;}
- roomId=null;roomCode='';myOnlineSeat=-1;lastGameRevision=-1;lastOnlineHandSignature='';el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
+ roomId=null;roomCode='';myOnlineSeat=-1;lastGameRevision=-1;lastOnlineHandSignature='';confirmedPlayedCardIds=Object.create(null);el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
 }
 window.DoubleKoutOnline={open:open,leave:leave};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
