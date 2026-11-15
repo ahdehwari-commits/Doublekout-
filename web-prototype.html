@@ -806,11 +806,18 @@ function renderOnlineChallengeClock(){
  checkExpiredChallengeSeats();
 }
 setInterval(renderOnlineChallengeClock,200);
-var onlineTurnDeadline=0,onlineTurnTimerHandle=null,lastTurnBeep=-1,turnAudio=null;
+var onlineTurnDeadline=0,onlineTurnTimerHandle=null,lastTurnBeep=-1,turnAudio=null,onlineTrickDeadline=0,lastTrickBeep=-1;
 function unlockTurnAudio(){try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;if(!turnAudio)turnAudio=new AC();if(turnAudio.state==='suspended')turnAudio.resume();}catch(e){}}
 document.addEventListener('pointerdown',unlockTurnAudio,{passive:true});
 function playTurnBeep(){try{if(!turnAudio||turnAudio.state!=='running')return;var o=turnAudio.createOscillator(),g=turnAudio.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.0001,turnAudio.currentTime);g.gain.exponentialRampToValueAtTime(.12,turnAudio.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,turnAudio.currentTime+.16);o.connect(g);g.connect(turnAudio.destination);o.start();o.stop(turnAudio.currentTime+.17);}catch(e){}}
 function renderOnlineTurnClock(){
+ var trickNode=el('onlineTrickMsg');
+ if(onlineTrickDeadline>0&&trickNode){
+  var trickLeft=Math.max(0,Math.ceil(onlineTrickDeadline-Date.now()/1000));
+  trickNode.textContent='همه کارت‌ها روی میز؛ فرصت دیدن دست: '+trickLeft+' ثانیه';
+  if(trickLeft>0&&trickLeft<=3&&trickLeft!==lastTrickBeep){lastTrickBeep=trickLeft;playTurnBeep();}
+  if(trickLeft===0)lastTrickBeep=-1;
+ }
  var node=el('onlineTurnTimer');if(!node)return;
  if(!onlineTurnDeadline){node.style.display='none';return;}
  var left=Math.max(0,Math.ceil(onlineTurnDeadline-Date.now()/1000));
@@ -923,7 +930,7 @@ async function refreshOnlineGame(startPayload){
   if(revision===lastGameRevision&&handSignature===lastOnlineHandSignature){
    // Re-check server-side turn automation even when the game revision is unchanged.
    // Otherwise a timeout checked once before its deadline is never checked again.
-   if(q.data.status==='playing'&&!((q.data.public_state||{}).phase==='challenge_decision')&&!aiBusy){
+   if(q.data.status==='playing'&&!((q.data.public_state||{}).phase==='challenge_decision')&&!q.data.public_state.trickPendingUntil&&!aiBusy){
     var sameState=q.data.public_state||{},sameTurn=Number(sameState.turn||0);
     var sameHost=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
     if(sameHost.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+sameHost.error.message);
@@ -947,7 +954,9 @@ async function refreshOnlineGame(startPayload){
   el('onlineGame').style.display='block';
   // The private hand was fetched before the revision fast-path above.
   var players=state.seatPlayers||{},names=[0,1,2,3].map(function(i){return players[String(i)]&&players[String(i)].name||('بازیکن '+(i+1));});
+  var trickPending=!!state.trickPendingUntil;
   var turn=Number(state.turn||0),finished=state.phase==='finished',decisionPending=state.phase==='challenge_decision';
+  onlineTrickDeadline=trickPending?Number(state.trickPendingUntil):0;
   var challengeDeadlines=state.challengeDeadlines||{},myDeadline=Number(challengeDeadlines[String(myOnlineSeat)]||0),isMyChallengeTurn=decisionPending&&myOnlineSeat>=0&&myDeadline>0&&!(state.challengePassed||[]).includes(myOnlineSeat);
   onlineChallengeDeadline=decisionPending&&isMyChallengeTurn?myDeadline:0;onlineChallengeExpired=false;
   window.__doubleKoutChallengeDeadlines=challengeDeadlines;window.__doubleKoutChallengePassed=state.challengePassed||[];
@@ -961,7 +970,7 @@ async function refreshOnlineGame(startPayload){
   }else{
    onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;
   }
-  var status=decisionPending?'فرصت انتخاب چالش برای همه بازیکنان هم‌زمان فعال است':'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳ · حکم پیک';
+  var status=trickPending?'چهار کارت روی میز است؛ تا پایان فرصت نمایش، دست بعدی شروع نمی‌شود.':(decisionPending?'فرصت انتخاب چالش برای همه بازیکنان هم‌زمان فعال است':'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳ · حکم پیک');
   if(state.challengeTeam){var myTeam=(myOnlineSeat%2===0?'A':'B');status+=(state.challengeTeam===myTeam?' · بازیکن هم‌تیمی وارد چالش شد':' · حریف علیه شما اعلام چالش کرد');}
   if(finished)status=result?(result.status==='success'?'چالش با موفقیت انجام شد':result.status==='failed-opponent-sequence'?'چالش با توالی حریف شکست خورد':'چالش در دست آخر ناموفق شد'):'بازی تمام شد · نتیجه '+(state.scoreA||0)+' به '+(state.scoreB||0);
   el('onlineGameStatus').textContent=status;
@@ -973,7 +982,7 @@ async function refreshOnlineGame(startPayload){
   el('onlineNextGame').disabled=!myOnlineIsHost||rematchBusy;
   el('onlineExtendRematch').disabled=!myOnlineIsHost||rematchBusy;
   renderOnlineRematchClock();
-  onlineTurnDeadline=(!finished&&!decisionPending)?Number(state.turnDeadline||0):0;
+  onlineTurnDeadline=(!finished&&!decisionPending&&!trickPending)?Number(state.turnDeadline||0):0;
   renderOnlineTurnClock();
   var decision=el('onlineDecision');decision.style.display=decisionPending?'block':'none';
   var handTitle=el('onlineHandTitle'),handArea=el('onlineHand'),onlineTable=el('onlineTable');
@@ -1017,7 +1026,7 @@ async function refreshOnlineGame(startPayload){
   });
   el('onlineTrick').innerHTML='';
   (state.plays||[]).forEach(function(p,i){var played=cardEl(visualCard(p.card),true);played.classList.add('table-played');played.style.setProperty('--play-index',i);el('onlineTrick').appendChild(played);});
-  el('onlineTrickMsg').textContent=decisionPending?'در حال انتخاب چالش':('نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳');
+  el('onlineTrickMsg').textContent=trickPending?'همه کارت‌ها روی میز؛ فرصت دیدن دست: '+Math.max(0,Math.ceil(onlineTrickDeadline-Date.now()/1000))+' ثانیه':(decisionPending?'در حال انتخاب چالش':('نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳'));
   el('onlineTrumpBig').textContent=suitGlyph[state.trump||'S']||'♠';
   var teamAName=[players['0']&&players['0'].name,players['2']&&players['2'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۱ و ۳';
   var teamBName=[players['1']&&players['1'].name,players['3']&&players['3'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۲ و ۴';
@@ -1034,7 +1043,7 @@ async function refreshOnlineGame(startPayload){
   el('onlineHandTitle').textContent='کارت‌های شما · '+hand.length+' کارت';
   hand.forEach(function(c,i){
    var b=document.createElement('button'),fanOffset=i-(hand.length-1)/2;b.type='button';b.style.transform='rotate('+(fanOffset*4.2)+'deg) translateY('+(Math.abs(fanOffset)*1.45)+'px)';b.style.zIndex=String(i+1);b.appendChild(cardEl(visualCard(c)));
-   b.disabled=finished||decisionPending||turn!==myOnlineSeat;
+   b.disabled=finished||decisionPending||trickPending||turn!==myOnlineSeat;
    b.onclick=async function(){
     if(b.disabled)return;
     b.disabled=true;say('در حال ثبت کارت روی میز...');
@@ -1068,7 +1077,13 @@ async function refreshOnlineGame(startPayload){
    if(hostQ.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+hostQ.error.message);
    if(!hostQ.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
    if(hostQ.data.is_host){
-    if(players[String(turn)]&&players[String(turn)].human===false){
+    if(trickPending){
+     try{
+      var trickResolve=await onlineRequest(client.rpc('resolve_room_trick',{p_room_id:roomId}),'جمع‌کردن دست پس از نمایش',12000);
+      if(trickResolve.error&&trickResolve.error.message!=='trick_display_pending')throw trickResolve.error;
+      if(trickResolve.data&&trickResolve.data.resolved)setTimeout(refreshOnlineGame,120);
+     }catch(e){if(!/trick_display_pending/.test(String(e&&e.message||e)))say('جمع‌کردن دست: '+(e.message||e));}
+    }else if(players[String(turn)]&&players[String(turn)].human===false){
      aiBusy=true;try{var ai=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(ai.error)throw ai.error;setTimeout(refreshOnlineGame,150);}catch(e){say('نوبت ربات: '+(e.message||e));}finally{aiBusy=false;}
     }else{
      var timeout=await onlineRequest(client.rpc('advance_room_turn_timeout',{p_room_id:roomId}),'اجرای خودکار پس از پایان نوبت',12000);
