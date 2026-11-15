@@ -647,7 +647,9 @@ function aiCard(p){
   for(let i=1;i<plays.length;i++){const candidate={...plays[i],index:i};if(compare(candidate,best,effective)>0)best=candidate;}
   return best;
  };
- const current=partialWinner(trick),partnerWinning=current&&team(current.player)===team(p),opponentWinning=current&&!partnerWinning;
+ const current=partialWinner(trick);
+ const partnerWinning=current&&team(current.player)===team(p);
+ const opponentWinning=current&&!partnerWinning;
  const baseScores=legal.map(card=>{
   const power=cardValue(card),isJoker=card.kind==='joker';let cost=isJoker?power:power*.9;
   if(card.kind==='normal'&&visibleTrump&&card.suit===visibleTrump)cost+=10;
