@@ -204,7 +204,7 @@ begin
     end if;
   end loop;
 
-  v_pile := coalesce(v_state->'groupCards','[]'::jsonb) || v_plays;
+  v_pile := case when v_room.game_mode='double-kout' then coalesce(v_state->'groupCards','[]'::jsonb) || v_plays else '[]'::jsonb end;
   v_state:=jsonb_set(v_state,'{groupCards}',v_pile,true);
   v_state:=jsonb_set(v_state,'{trickWinners}',
     coalesce(v_state->'trickWinners','[]'::jsonb)||jsonb_build_array(v_winner),true);
