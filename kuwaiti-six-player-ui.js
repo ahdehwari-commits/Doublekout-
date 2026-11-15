@@ -236,6 +236,21 @@ s.textContent+=`
 }
 html,body{min-height:100%;min-height:100dvh}
 `;
+s.textContent+=`
+/* 0.8.53: text-free ornate card back and raised oval table */
+.k-back{position:relative!important;overflow:hidden!important;background:radial-gradient(ellipse at 50% 45%,#393124 0,#15130f 50%,#050505 100%)!important;border:3px solid #e8c978!important;outline:1px solid #fff2c866!important;outline-offset:-6px;box-shadow:inset 0 0 0 2px #fff2c455,inset 0 0 22px #000c,0 8px 14px #000b!important}
+.k-back:before{content:""!important;position:absolute!important;inset:5px!important;border:2px double #f4d78e!important;border-radius:5px!important;background:repeating-radial-gradient(ellipse at 50% 50%,transparent 0 6px,#f1d58c20 7px 8px),repeating-linear-gradient(45deg,transparent 0 5px,#f4d88a18 5px 6px),repeating-linear-gradient(-45deg,transparent 0 5px,#f4d88a18 5px 6px)!important}
+.k-back:after{content:"♠"!important;position:absolute!important;inset:0!important;display:flex!important;align-items:center!important;justify-content:center!important;background:none!important;border:0!important;color:#f9dfa0!important;font:900 30px/1 Georgia,serif!important;text-shadow:0 1px 3px #160d00,0 0 8px #e7bd5a!important;transform:none!important}
+body.deck-back-classic .k-back{background:radial-gradient(ellipse,#1c5c92,#061b40 78%)!important}body.deck-back-red .k-back{background:radial-gradient(ellipse,#a92d3c,#260511 78%)!important}body.deck-back-green .k-back{background:radial-gradient(ellipse,#18724c,#03251a 78%)!important}
+.k-table{border:12px solid #8f6a35!important;border-radius:48%/30%!important;background:radial-gradient(ellipse at 50% 45%,#38352e,#151514 64%,#050505)!important;box-shadow:inset 0 0 0 3px #f6dc9a88,inset 0 0 0 9px #342416,inset 0 0 60px #000d,0 24px 40px #000d!important;overflow:hidden!important}
+.k-table:before{content:"";position:absolute;inset:8px;border:2px solid #e2c27c;border-radius:48%/30%;box-shadow:inset 0 0 0 5px #fff1;pointer-events:none;z-index:0}
+.k-table>.k-seat{border:2px solid #c9a45e!important;border-radius:14px!important;background:linear-gradient(145deg,#1c1b18,#050505)!important;box-shadow:0 10px 18px #000c,inset 0 1px 0 #fff3!important}
+.k-table>.k-center{border:1px solid #c9a45e!important;border-radius:48%!important;background:radial-gradient(ellipse,#27231b99,#05050577)!important;box-shadow:inset 0 0 24px #000b,0 0 0 5px #d1ad6544!important}
+.k-table .k-name{display:inline-block;padding:3px 7px;border-radius:5px;background:linear-gradient(#f4e3b7,#b88c4a)!important;color:#261a0d!important;font-weight:900!important;border:1px solid #f5d58b}
+.k-hand-tools{display:flex;align-items:center;justify-content:space-between;gap:8px}#kSortHand{width:42px;height:38px;padding:0;border:1px solid #e7c879;background:linear-gradient(#3b3424,#111);color:#ffe5a0;font-size:23px}
+`;
+s.textContent+=`body.deck-back-black .k-back{background-image:url("./assets/card-back-black-gold.svg")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
+body.deck-back-black .k-back:before,body.deck-back-black .k-back:after{content:none!important}`;
 document.head.appendChild(s);
 }
 function royalPortrait(rank){
@@ -297,7 +312,7 @@ function setupMarkup(){
  <div class="k-live-tricks" id="kLiveTricks" style="display:none!important" aria-hidden="true"><span>دست‌های برده تیم شما: <b id="kWonA">۰</b></span><span>دست‌های برده حریف: <b id="kWonB">۰</b></span></div>
  <div id="kStatus" class="k-status hidden">وضعیت بازی</div>
  <div class="k-actions"><button id="kAskTrump" class="hidden">درخواست اعلام حکم مخفی</button><button id="kAnnounceTrump" class="hidden">اعلام حکم</button></div>
- <h3 class="section-title">کارت‌های بازیکن نوبت‌دار</h3><div id="kHand" class="k-hand"></div>
+ <div class="k-hand-tools"><h3 class="section-title">کارت‌های بازیکن نوبت‌دار</h3><button type="button" id="kSortHand" aria-label="مرتب‌سازی کارت‌ها">↕</button></div><div id="kHand" class="k-hand"></div>
  <div id="kResult" class="k-auction hidden"></div>
  <div id="kHotseatGate" class="k-auction hidden"><b id="kHotseatTitle">تحویل گوشی</b><p class="k-small" id="kHotseatText">گوشی را به بازیکن بعدی بدهید.</p><button id="kRevealHand" class="primary">کارت‌ها را نمایش بده</button></div><div class="k-actions"><button id="kNewGame" class="hidden">بازی بعدی</button><button id="kExit">بازگشت به انتخاب بازی</button></div>`;
  $('modePicker').insertAdjacentElement('afterend',s);s.insertAdjacentElement('afterend',g);
@@ -803,6 +818,7 @@ function startNewMatch(){
 function bind(){
  $('kPlayStyle').onchange=()=>{const style=$('kPlayStyle').value;$('kHumanSeatSetup').classList.toggle('hidden',style!=='hotseat');if(style==='online'){if(window.DoubleKoutOnline&&typeof window.DoubleKoutOnline.open==='function')window.DoubleKoutOnline.open('kuwaiti');else $('kStatus').textContent='ماژول اتاق آنلاین بارگذاری نشده است؛ صفحه را تازه‌سازی کن.';}};
  $('kRevealHand').onclick=()=>{if((auction&&isHumanSeat(auction.current))||(game&&isHumanSeat(game.turn)))revealCurrentHuman();};
+ $('kSortHand').onclick=()=>{if(!game||game.done)return;const p=$('kPlayStyle').value==='hotseat'?game.turn:0;if(!isHumanSeat(p))return;const order={S:0,H:1,D:2,C:3},rank={2:0,3:1,4:2,5:3,6:4,7:5,8:6,9:7,10:8,J:9,Q:10,K:11,A:12};game.hands[p].sort((a,b)=>{if(a.kind==='joker'||b.kind==='joker'){if(a.kind!=='joker')return -1;if(b.kind!=='joker')return 1;return (a.color==='red'?0:1)-(b.color==='red'?0:1);}return (order[a.suit]??9)-(order[b.suit]??9)||(rank[a.rank]??99)-(rank[b.rank]??99);});renderGame();};
  $('modeKuwaiti').onclick=()=>{try{if(window.audioReady)audioReady();if(!initialized&&!init())throw new Error('راه‌اندازی میز کامل نشد');resetSetup();}catch(e){$('modeMessage').textContent='خطا در باز کردن میز شش‌نفره: '+(e&&e.message?e.message:'خطای ناشناخته');console.error(e);}};
  $('kStartAuction').onclick=()=>{if(firstGame){points={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;}startAuction();};
  $('kBackModes').onclick=()=>setScreen('modes');

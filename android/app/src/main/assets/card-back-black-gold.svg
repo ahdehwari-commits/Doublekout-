@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420">
+<defs>
+ <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#282319"/><stop offset=".45" stop-color="#080909"/><stop offset="1" stop-color="#1d170d"/></linearGradient>
+ <linearGradient id="gold" x2="0" y2="1"><stop stop-color="#fff0b5"/><stop offset=".3" stop-color="#e9c46c"/><stop offset=".65" stop-color="#9d6a25"/><stop offset="1" stop-color="#f8df9c"/></linearGradient>
+ <pattern id="mesh" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M0 0L16 16M16 0L0 16" stroke="#d7b66a" stroke-opacity=".16" stroke-width=".7"/><circle cx="8" cy="8" r="2.2" fill="none" stroke="#f1d58a" stroke-opacity=".18"/></pattern>
+ <g id="corner" fill="none" stroke="url(#gold)" stroke-width="1.7" stroke-linecap="round">
+  <path d="M0 58C8 34 24 25 48 24C25 17 18 8 22 0C34 8 42 8 58 0C48 18 52 30 70 34C55 42 47 50 44 70C35 53 22 49 0 58Z"/>
+  <path d="M10 46C22 34 30 34 42 38C34 25 35 17 44 10M18 54C29 45 36 46 49 54M4 33C17 26 19 19 17 10"/>
+  <circle cx="35" cy="35" r="5"/><path d="M35 25l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z"/>
+ </g>
+</defs>
+<rect width="300" height="420" rx="18" fill="url(#bg)"/>
+<rect x="7" y="7" width="286" height="406" rx="14" fill="none" stroke="url(#gold)" stroke-width="4"/>
+<rect x="14" y="14" width="272" height="392" rx="10" fill="url(#mesh)" stroke="#e5c777" stroke-width="1.2"/>
+<rect x="23" y="23" width="254" height="374" rx="8" fill="none" stroke="url(#gold)" stroke-width="1.8"/>
+<use href="#corner" x="25" y="25"/><use href="#corner" x="275" y="25" transform="rotate(90 275 25)"/>
+<use href="#corner" x="25" y="395" transform="rotate(-90 25 395)"/><use href="#corner" x="275" y="395" transform="rotate(180 275 395)"/>
+<path d="M150 55C115 92 91 113 150 154C209 113 185 92 150 55Z" fill="url(#gold)" stroke="#5c3b13" stroke-width="3"/>
+<path d="M150 365C115 328 91 307 150 266C209 307 185 328 150 365Z" fill="url(#gold)" stroke="#5c3b13" stroke-width="3"/>
+<g fill="none" stroke="url(#gold)" stroke-width="2">
+ <path d="M62 150C85 118 111 112 150 150C189 112 215 118 238 150C215 182 189 188 150 150C111 188 85 182 62 150Z"/>
+ <path d="M62 270C85 238 111 232 150 270C189 232 215 238 238 270C215 302 189 308 150 270C111 308 85 302 62 270Z"/>
+ <path d="M45 210Q75 175 105 210T165 210T225 210T255 210"/>
+ <path d="M150 92V328M80 210H220"/>
+ <circle cx="150" cy="210" r="77" stroke-width="2.5"/><circle cx="150" cy="210" r="68" stroke-opacity=".55"/>
+</g>
+<g fill="url(#gold)" stroke="#593b15" stroke-width="1.5">
+ <path d="M150 157C125 185 112 200 150 227C188 200 175 185 150 157Z"/>
+ <path d="M150 263C125 235 112 220 150 193C188 220 175 235 150 263Z"/>
+</g>
+<g fill="none" stroke="url(#gold)" stroke-width="1.3" opacity=".9">
+ <path d="M54 210q18-18 36 0t36 0M174 210q18-18 36 0t36 0"/>
+ <path d="M150 132q-18 18 0 36q18-18 0-36M150 288q-18-18 0-36q18 18 0 36"/>
+ <circle cx="54" cy="210" r="5"/><circle cx="246" cy="210" r="5"/><circle cx="150" cy="132" r="5"/><circle cx="150" cy="288" r="5"/>
+</g>
+</svg>
