@@ -806,7 +806,7 @@ function renderOnlineChallengeClock(){
  checkExpiredChallengeSeats();
 }
 setInterval(renderOnlineChallengeClock,200);
-var onlineTurnDeadline=0,onlineTurnTimerHandle=null,lastTurnBeep=-1,turnAudio=null,onlineTrickDeadline=0,lastTrickBeep=-1;
+var onlineTurnDeadline=0,onlineTurnTimerHandle=null,lastTurnBeep=-1,turnAudio=null,onlineTrickDeadline=0,lastTrickBeep=-1;var onlineTrickResolveTimer=null,onlineTrickResolveScheduled=false;
 function unlockTurnAudio(){try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;if(!turnAudio)turnAudio=new AC();if(turnAudio.state==='suspended')turnAudio.resume();}catch(e){}}
 document.addEventListener('pointerdown',unlockTurnAudio,{passive:true});
 function playTurnBeep(){try{if(!turnAudio||turnAudio.state!=='running')return;var o=turnAudio.createOscillator(),g=turnAudio.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.0001,turnAudio.currentTime);g.gain.exponentialRampToValueAtTime(.12,turnAudio.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,turnAudio.currentTime+.16);o.connect(g);g.connect(turnAudio.destination);o.start();o.stop(turnAudio.currentTime+.17);}catch(e){}}
@@ -957,6 +957,15 @@ async function refreshOnlineGame(startPayload){
   var trickPending=!!state.trickPendingUntil;
   var turn=Number(state.turn||0),finished=state.phase==='finished',decisionPending=state.phase==='challenge_decision';
   onlineTrickDeadline=trickPending?Number(state.trickPendingUntil):0;
+  if(trickPending&&!onlineTrickResolveScheduled){
+   onlineTrickResolveScheduled=true;
+   onlineTrickResolveTimer=setTimeout(function(){
+    onlineTrickResolveScheduled=false;onlineTrickResolveTimer=null;
+    refreshOnlineGame();
+   },3100);
+  }else if(!trickPending&&onlineTrickResolveTimer){
+   clearTimeout(onlineTrickResolveTimer);onlineTrickResolveTimer=null;onlineTrickResolveScheduled=false;
+  }
   var challengeDeadlines=state.challengeDeadlines||{},myDeadline=Number(challengeDeadlines[String(myOnlineSeat)]||0),isMyChallengeTurn=decisionPending&&myOnlineSeat>=0&&myDeadline>0&&!(state.challengePassed||[]).includes(myOnlineSeat);
   onlineChallengeDeadline=decisionPending&&isMyChallengeTurn?myDeadline:0;onlineChallengeExpired=false;
   window.__doubleKoutChallengeDeadlines=challengeDeadlines;window.__doubleKoutChallengePassed=state.challengePassed||[];
