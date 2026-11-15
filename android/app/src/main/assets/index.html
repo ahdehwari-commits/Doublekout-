@@ -187,6 +187,41 @@ body.deck-face-gold .card:not(.back) .corner{color:#694513!important}
 /* 0.8.47b: player names sit on small wooden nameplates like the reference table */
 .table-theme-parquet .seat .name,.table-theme-persian .seat .name{display:inline-block;padding:3px 12px;margin:1px auto 4px;border-radius:5px;background:linear-gradient(180deg,#f4e3b7,#c6a36b 55%,#e7d2a0)!important;border:1px solid #76501f!important;box-shadow:inset 0 1px 1px #fff8,0 2px 3px #160b0588!important;color:#392411!important;font-weight:800;text-shadow:0 1px #fff2!important}
 .table-theme-parquet .seat .count,.table-theme-persian .seat .count{color:#f5e6c2!important}
+
+/* 0.8.48: royal Double Kout table emblem on felt and parquet only; never on Persian rug */
+.table-theme-felt .table:after,.table-theme-parquet .table:after{
+ content:"♠\\A DOUBLE KOUT\\A ♠"!important;
+ position:absolute!important;z-index:0!important;pointer-events:none!important;
+ left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;
+ width:78%!important;height:46%!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;text-align:center!important;
+ white-space:pre!important;
+ font:900 clamp(17px,4.2vw,31px)/1.18 Georgia,"Times New Roman",serif!important;
+ letter-spacing:2px!important;color:#f3d58a!important;
+ text-shadow:0 2px 1px #241300,0 0 5px #f9df9b,0 0 13px #d29b37!important;
+ opacity:.34!important;border:2px double #e5c16d!important;border-radius:18px!important;
+ box-shadow:inset 0 0 0 4px #e5c16d22,0 0 18px #d8ad5740!important;
+}
+.table-theme-parquet .table:after{color:#ffe1a0!important;opacity:.48!important;text-shadow:0 2px 2px #301505,0 0 8px #f6d58c!important;border-color:#f1d18b!important}
+.table-theme-felt .table>* ,.table-theme-parquet .table>*{position:relative;z-index:1}
+.table-theme-persian .table:after{content:none!important}
+/* Maker engraving: large, genuinely diagonal, centered and split over two lines */
+.card.back:after{
+ content:"Abdulhamid\\A Dehvari"!important;position:absolute!important;z-index:8!important;
+ left:7%!important;right:7%!important;top:39%!important;bottom:auto!important;
+ width:86%!important;height:25%!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;text-align:center!important;
+ white-space:pre!important;font:italic 900 9.2px/1.04 Georgia,"Times New Roman",serif!important;
+ letter-spacing:0!important;color:#ffe7a0!important;
+ text-shadow:0 1px 1px #251300,0 0 4px #f8d77b,0 0 8px #c28a27!important;
+ background:linear-gradient(90deg,transparent,#091b2cf0 10%,#091b2cf0 90%,transparent)!important;
+ border-top:1px solid #f4d27c!important;border-bottom:1px solid #f4d27c!important;
+ border-radius:2px!important;padding:2px 0!important;transform:rotate(-18deg)!important;
+ transform-origin:center center!important;overflow:visible!important;box-sizing:border-box!important
+}
+.card-customizer-preview .card.back:after{font-size:10px!important;line-height:1.02!important}
+.opponent-fan .card.back:after{font-size:2.9px!important;line-height:1.02!important}
+@media(max-width:520px){.card.back:after{font-size:6.5px!important}.opponent-fan .card.back:after{font-size:2.7px!important}}
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۴۳ · میز چهار و شش‌نفره</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="mode-grid">
