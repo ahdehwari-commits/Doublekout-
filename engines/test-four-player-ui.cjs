@@ -105,7 +105,7 @@ assert.ok(sixUi.includes('content:"♠"!important')&&sixUi.includes('0.8.53: tex
 
 assert.ok(sixUi.includes("const bidContract=game.isMalzoom?'hokm':String(game.auctionBid.contract||'')"),'winning bid must be the only source of the active six-player contract');
 assert.ok(sixUi.includes("قرارداد بدون حکم نباید خال حکم یا حکم مخفی داشته باشد"),'no-trump contract must reject any inherited trump suit');
-assert.ok(sixUi.includes("'بدون حکم · '+contractName[bidContract]"),'no-trump variant must be explicitly shown on the table');
+assert.ok(sixUi.includes("'بدون حکم · '+contractName[bidContract]")||sixUi.includes("contractName[bidContract]+' · بدون حکم'"),'no-trump variant must be explicitly shown on the table');
 assert.ok(sixUi.includes("game.trumpSuit=null;game.trumpAnnounced=false;game.hiddenTrump=false"),'new auction must clear previous trump state');
 
 assert.ok(sixUi.includes("const committedBid={...bid}"),'auction bid must not contain a prematurely selected contract');
