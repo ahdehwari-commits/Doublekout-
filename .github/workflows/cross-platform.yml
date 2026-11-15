@@ -27,6 +27,8 @@ jobs:
           node-version: "20"
       - name: Test four-player shared game engine
         run: node engines/test-double-kout-game.cjs
+      - name: Test six-player Kuwaiti game lifecycle and auction handoff
+        run: node engines/test-kuwaiti-six-player-game.cjs
       - name: Check embedded browser JavaScript
         run: node scripts/check-inline-js.cjs web-prototype.html
       - name: Build portable Windows EXE
