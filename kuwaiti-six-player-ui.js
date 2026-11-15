@@ -297,7 +297,7 @@ function setupMarkup(){
  <div class="k-live-tricks" id="kLiveTricks" style="display:none!important" aria-hidden="true"><span>دست‌های برده تیم شما: <b id="kWonA">۰</b></span><span>دست‌های برده حریف: <b id="kWonB">۰</b></span></div>
  <div id="kStatus" class="k-status hidden">وضعیت بازی</div>
  <div class="k-actions"><button id="kAskTrump" class="hidden">درخواست اعلام حکم مخفی</button><button id="kAnnounceTrump" class="hidden">اعلام حکم</button></div>
- <h3 class="section-title">کارت‌های بازیکن نوبت‌دار</h3><div id="kHand" class="k-hand"></div>
+ <div class="k-hand-tools"><h3 class="section-title">کارت‌های بازیکن نوبت‌دار</h3><button type="button" id="kSortHand" aria-label="مرتب‌سازی کارت‌ها">↕</button></div><div id="kHand" class="k-hand"></div>
  <div id="kResult" class="k-auction hidden"></div>
  <div id="kHotseatGate" class="k-auction hidden"><b id="kHotseatTitle">تحویل گوشی</b><p class="k-small" id="kHotseatText">گوشی را به بازیکن بعدی بدهید.</p><button id="kRevealHand" class="primary">کارت‌ها را نمایش بده</button></div><div class="k-actions"><button id="kNewGame" class="hidden">بازی بعدی</button><button id="kExit">بازگشت به انتخاب بازی</button></div>`;
  $('modePicker').insertAdjacentElement('afterend',s);s.insertAdjacentElement('afterend',g);
@@ -803,6 +803,7 @@ function startNewMatch(){
 function bind(){
  $('kPlayStyle').onchange=()=>{const style=$('kPlayStyle').value;$('kHumanSeatSetup').classList.toggle('hidden',style!=='hotseat');if(style==='online'){if(window.DoubleKoutOnline&&typeof window.DoubleKoutOnline.open==='function')window.DoubleKoutOnline.open('kuwaiti');else $('kStatus').textContent='ماژول اتاق آنلاین بارگذاری نشده است؛ صفحه را تازه‌سازی کن.';}};
  $('kRevealHand').onclick=()=>{if((auction&&isHumanSeat(auction.current))||(game&&isHumanSeat(game.turn)))revealCurrentHuman();};
+ $('kSortHand').onclick=()=>{if(!game||game.done)return;const p=$('kPlayStyle').value==='hotseat'?game.turn:0;if(!isHumanSeat(p))return;const order={S:0,H:1,D:2,C:3},rank={2:0,3:1,4:2,5:3,6:4,7:5,8:6,9:7,10:8,J:9,Q:10,K:11,A:12};game.hands[p].sort((a,b)=>{if(a.kind==='joker'||b.kind==='joker'){if(a.kind!=='joker')return -1;if(b.kind!=='joker')return 1;return (a.color==='red'?0:1)-(b.color==='red'?0:1);}return (order[a.suit]??9)-(order[b.suit]??9)||(rank[a.rank]??99)-(rank[b.rank]??99);});renderGame();};
  $('modeKuwaiti').onclick=()=>{try{if(window.audioReady)audioReady();if(!initialized&&!init())throw new Error('راه‌اندازی میز کامل نشد');resetSetup();}catch(e){$('modeMessage').textContent='خطا در باز کردن میز شش‌نفره: '+(e&&e.message?e.message:'خطای ناشناخته');console.error(e);}};
  $('kStartAuction').onclick=()=>{if(firstGame){points={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;}startAuction();};
  $('kBackModes').onclick=()=>setScreen('modes');
