@@ -51,7 +51,7 @@ assert.ok(html.includes("const contract=$('nextContract').value;")&&html.include
 assert.ok(html.includes("value=\"naras\"")&&html.includes("value=\"tak_naras\"")&&html.includes("value=\"saras\"")&&html.includes("value=\"partner_middle\""),'later four-player contract picker must offer Naras, Tak Naras, Saras and partner-middle');
 assert.ok(html.includes("const staged=matchNo>1;"),'all later four-player contracts must deal five cards before selection');
 assert.ok(html.includes("function aiChooseFourPlayerContract(hand)")&&html.includes("const chosen=aiChooseFourPlayerContract(G.hands[starter])"),'AI hakim must choose among all supported contracts after seeing five cards');
-assert.ok(html.includes("liveSequenceScores(G.trickWinners||[])")&&html.includes("function liveSequenceScores(winners)")&&html.includes("scores[team(winners[close])]+=1")&&html.includes("function onlineLiveSequenceScores(winners)")&&html.includes("scores[side(winners[close])]+=1"),'live Double Kout counters must count completed sequence groups once, not each trick in a group');
+assert.ok(html.includes("liveSequenceScores(G.trickWinners||[])")&&html.includes("function liveSequenceScores(winners)")&&html.includes("scores[team(winners[close])]+=close-start+1")&&html.includes("function onlineLiveSequenceScores(winners)")&&html.includes("scores[side(winners[close])]+=close-start+1"),'live Double Kout counters must count completed sequence groups once, not each trick in a group');
 assert.ok(html.includes("globalStatsBtn")&&html.includes("function recordGlobalGame()")&&html.includes("localStorage.setItem(GLOBAL_STATS_KEY"),'four-player cumulative game statistics must be persisted and accessible from the mode menu');
 assert.ok(html.includes('id="gamesWonA"')&&html.includes('id="gamesWonB"')&&html.includes("globalStats.double.wins+globalStats.hokm.wins"),'the table must show a separate persistent counter for completed games won');
 assert.ok(!html.includes('id="trickCountWrap"')&&!html.includes('id="trickCount"'),'the per-trick four-card counter must be removed');
@@ -86,6 +86,8 @@ assert.ok(html.includes('id="visualCustomizer"')&&!html.includes('id="cardCustom
 assert.ok(html.includes('online-card-legal')&&html.includes('online-card-illegal')&&html.includes('id="onlineSortHand"'),'online hand must visually distinguish legal cards and provide sorting');
 assert.ok(html.includes('assets/card-back-black-gold.svg')&&html.includes('structural table redesign'),'four-player table must use the image card back and redesigned oval table layout');
 
+
+assert.ok(html.includes("scores[team(winners[close])]+=close-start+1")&&html.includes("scores[team(winners[12])]+=winners.length-start")&&html.includes("scores[side(winners[close])]+=close-start+1")&&html.includes("scores[side(winners[12])]+=winners.length-start"),'live sequence counters must add the number of tricks in each completed group, including the final remainder at trick 13');
 console.log('PASS: four/six-player all four Hokm suits, partner-middle counter, auction-to-play handoff, auction rotation and rank adapter');
 
 
