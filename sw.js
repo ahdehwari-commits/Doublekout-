@@ -1,5 +1,5 @@
-const CACHE='double-kout-0.8.54';
-const ASSETS=['./','./index.html','./manifest.webmanifest','./IMG_3647.png','./assets/card-back-black-gold.svg','./kuwaiti-six-player-ui.js','./supabase-multiplayer.js','./lan-multiplayer.js','./three-d-scene.js','./engines/standard-hokm/engine.js','./engines/kuwaiti-six-player/engine.js','./engines/double-kout-sequence.js','./engines/double-kout-game.js'];
+const CACHE='double-kout-0.8.55';
+const ASSETS=['./','./index.html','./manifest.webmanifest','./IMG_3647.png','./assets/card-back-black-gold.svg','./assets/card-back-black-gold.png','./kuwaiti-six-player-ui.js','./supabase-multiplayer.js','./lan-multiplayer.js','./three-d-scene.js','./engines/standard-hokm/engine.js','./engines/kuwaiti-six-player/engine.js','./engines/double-kout-sequence.js','./engines/double-kout-game.js'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{
