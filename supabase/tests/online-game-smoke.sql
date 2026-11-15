@@ -40,9 +40,21 @@ begin
   end if;
   if v_state ? 'hands' then raise exception 'private hands leaked into public state'; end if;
 
-  for v_step in 1..52 loop
+  for v_step in 1..70 loop
     select status,public_state into v_status,v_state
       from public.game_rooms where id=v_room_id;
+    if v_state ? 'trickPendingUntil' then
+      if jsonb_array_length(v_state->'plays')<>4 then
+        raise exception 'completed trick must keep all four cards visible';
+      end if;
+      update public.game_rooms
+        set public_state=jsonb_set(public_state,'{trickPendingUntil}',
+          to_jsonb(extract(epoch from clock_timestamp())-1),true)
+        where id=v_room_id;
+      perform public.resolve_room_trick(v_room_id);
+      select status,public_state into v_status,v_state
+        from public.game_rooms where id=v_room_id;
+    end if;
     exit when v_status='finished';
     v_turn := (v_state->>'turn')::integer;
     select owner_user_id,cards into v_owner,v_cards
@@ -94,9 +106,21 @@ begin
     raise exception 'challenge initiator must be the opening leader';
   end if;
 
-  for v_step in 1..52 loop
+  for v_step in 1..70 loop
     select status,public_state into v_status,v_state
       from public.game_rooms where id=v_room_id;
+    if v_state ? 'trickPendingUntil' then
+      if jsonb_array_length(v_state->'plays')<>4 then
+        raise exception 'completed trick must keep all four cards visible';
+      end if;
+      update public.game_rooms
+        set public_state=jsonb_set(public_state,'{trickPendingUntil}',
+          to_jsonb(extract(epoch from clock_timestamp())-1),true)
+        where id=v_room_id;
+      perform public.resolve_room_trick(v_room_id);
+      select status,public_state into v_status,v_state
+        from public.game_rooms where id=v_room_id;
+    end if;
     exit when v_status='finished';
     v_turn := (v_state->>'turn')::integer;
     select owner_user_id,cards into v_owner,v_cards
@@ -137,8 +161,17 @@ begin
   perform set_config('request.jwt.claim.sub',v_guest::text,false);
   perform public.submit_room_challenge_choice(v_room_id,'pass');
   perform set_config('request.jwt.claim.sub',v_host::text,false);
-  for v_step in 1..52 loop
+  for v_step in 1..70 loop
     select status,public_state into v_status,v_state from public.game_rooms where id=v_room_id;
+    if v_state ? 'trickPendingUntil' then
+      if jsonb_array_length(v_state->'plays')<>4 then
+        raise exception 'completed trick must keep all four cards visible';
+      end if;
+      update public.game_rooms set public_state=jsonb_set(public_state,'{trickPendingUntil}',
+        to_jsonb(extract(epoch from clock_timestamp())-1),true) where id=v_room_id;
+      perform public.resolve_room_trick(v_room_id);
+      select status,public_state into v_status,v_state from public.game_rooms where id=v_room_id;
+    end if;
     exit when v_status='finished';
     v_turn := (v_state->>'turn')::integer;
     select owner_user_id,cards into v_owner,v_cards from public.room_game_hands where room_id=v_room_id and seat=v_turn;
