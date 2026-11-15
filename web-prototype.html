@@ -746,10 +746,10 @@ function updateChallengeStats(){
 function aiChoose(p){
   const legal=legalCards(p),difficulty=$('difficulty').value;
   if(difficulty==='easy')return legal[Math.floor(Math.random()*legal.length)];
-  if(activeMode==='standard-hokm'||difficulty==='hard'||difficulty==='expert'){
+  if(activeMode==='standard-hokm'||activeMode==='double-kout'||difficulty==='hard'||difficulty==='expert'){
     const code={'♠':'S','♥':'H','♦':'D','♣':'C'};
     const plays=G.plays.map(x=>({player:x.player,card:{suit:code[cardSuit(x.card)],rank:cardRank(x.card)}}));
-    return window.StandardHokmEngine.chooseAICard(G.hands[p],plays,p,G.trumpCode,difficulty,G.contract||'hokm',G.cardHistory||[],G.initialHands[p],G.lastTrick||[],G.trickWinners?.[G.trickWinners.length-1]);
+    return window.StandardHokmEngine.chooseAICard(G.hands[p],plays,p,G.trumpCode,difficulty,G.contract||'hokm',G.cardHistory||[],G.initialHands[p],G.lastTrick||[],G.trickWinners?.[G.trickWinners.length-1],team(p)===team(G.hakemPlayer),'activeMode==='double-kout'');
   }
   const lead=G.plays.length?G.plays[0].card.s:null;
   const current=G.plays.length?G.plays.reduce((best,x)=>beats(x.card,best.card,lead)?x:best):null;
