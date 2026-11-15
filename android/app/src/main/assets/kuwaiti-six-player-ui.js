@@ -12,6 +12,7 @@ let game=null,auction=null,firstGame=true,previousAuctionWinner=null,previousWin
 let points={A:0,B:0},trickView=[],locked=false,aiTimer=null,matchLimit=54,playedTricks=0;
 function addStyle(){
  const s=document.createElement('style');
+ s.textContent='#kuwaitiGame #kStatus{display:block!important;visibility:visible!important;opacity:1!important;position:relative;z-index:70;min-height:42px;box-sizing:border-box;}';
  s.textContent=`
  #kuwaitiSetup,#kuwaitiGame{direction:rtl}
  .k-intro{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -92,7 +93,7 @@ function addStyle(){
 `;
 
  s.textContent+=`
-/* 0.8.13: dual-corner ranks and illustrated face cards */
+/* AI diagnostic banner */\n#kuwaitiGame #kStatus{display:block!important;visibility:visible!important;opacity:1!important;position:fixed!important;left:8px!important;right:8px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:2147483000!important;min-height:42px!important;max-height:25vh!important;overflow:auto!important}\n/* 0.8.13: dual-corner ranks and illustrated face cards */
 .k-card{position:relative;overflow:hidden}
 .k-corner{position:absolute;z-index:4;display:flex;flex-direction:column;align-items:center;font:900 10px/1 Georgia,serif}
 .k-corner i{font-style:normal;font-size:9px}
@@ -281,7 +282,7 @@ function cardNode(c,small=false){
  d.innerHTML='<span class="k-corner k-corner-top">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span><span class="k-corner k-corner-bottom">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span>'+(['K','Q','J'].includes(rank)?'<span class="k-royal-frame">'+royal(rank)+'</span>':'<span class="ksuit">'+suitGlyph[c.suit]+'</span>');
  return d;
 }
-function setStatus(msg){$('kStatus').textContent=msg;}
+function setStatus(msg){const node=$('kStatus');if(!node){console.error('Kuwaiti status node is missing:',msg);const turn=$('kTurn');if(turn)turn.textContent=String(msg);return;}node.classList.remove('hidden');node.removeAttribute('hidden');node.style.cssText+=';display:block!important;visibility:visible!important;opacity:1!important;position:fixed!important;left:8px!important;right:8px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:2147483000!important;min-height:42px!important;max-height:25vh!important;overflow:auto!important;background:#09271f!important;color:#fff0c2!important;border:2px solid #e7c879!important;border-radius:12px!important;padding:10px!important;box-sizing:border-box!important;';node.setAttribute('role','status');node.setAttribute('aria-live','assertive');node.textContent=String(msg);const turn=$('kTurn');if(turn&&String(msg).includes('هوش'))turn.textContent=String(msg);console.info('[Kuwaiti status]',msg);}
 function setScreen(which){
  $('modePicker').classList.toggle('hidden',which!=='modes');
  $('setup').classList.add('hidden');$('game').classList.add('hidden');
@@ -503,11 +504,13 @@ function finishAuction(){
   return;
  }
  if(isHumanSeat(win)){
+  setScreen('game');
+  $('kAuction').classList.add('hidden');$('kMalzoomSetup').classList.add('hidden');
   $('kContractSetup').classList.remove('hidden');
-  renderContractChoiceHand(win);
   $('kContract').value='hokm_spades';
   $('kTrumpDisplay').textContent='منتظر انتخاب قرارداد';
-  setStatus('مزایده را بردی؛ اکنون نوع قرارداد و خال حکم را انتخاب کن.');
+  setStatus('مزایده را بردی؛ قرارداد و خال حکم را انتخاب کن، سپس دکمه تأیید را بزن تا کارت‌بازی شروع شود.');
+  renderContractChoiceHand(win);
  }else{
   const chosen=aiChooseContract(win);
   beginWinningContract(chosen);
@@ -577,7 +580,7 @@ function startActualGame(trumpSuit,hidden){
   $('kAuctionSummary').textContent+=' · قرارداد: '+(game.isMalzoom?'ملزوم':contractName[bidContract])+(resolvedTrump?' · '+suitGlyph[resolvedTrump]+' '+suitName[resolvedTrump]:'');
   $('kTrickCards').style.display='';
   $('kStatus').textContent='مزایده تمام شد؛ نوبت اولین کارت: '+playerNames[winner]+(isHumanSeat(winner)?' · کارت‌های بازیکن انسانی پس از نمایش فعال می‌شوند.':' · هوش مصنوعی در حال بازی است.');
-  $('kResult').classList.add('hidden');setScreen('game');
+  $('kResult').classList.add('hidden');setScreen('game');$('kStatus').classList.remove('hidden');
   renderGame();
   if(isHumanSeat(winner)){
    locked=false;hotseatRevealed=$('kPlayStyle').value!=='hotseat';
@@ -680,11 +683,12 @@ function playHumanCard(card){
  }
  hotseatRevealed=false;playOne(p,card);
 }
-function playOne(p,card){
- if(!game||game.done)return;
+function playOne(p,card,throwOnError=false){
+ if(!game||game.done)return false;
  const wasFirst=game.trick.length===0;
  if(typeof playCardSound==='function')playCardSound();if(p!==0&&typeof speakPlayer==='function')speakPlayer('play',p);
- let res;try{res=K.playCard(game,p,card);}catch(e){setStatus('خطا در اجرای کارت: '+(e&&e.message?e.message:'نامشخص'));console.error('Kuwaiti playCard failed',e);return;}
+ let res;try{res=K.playCard(game,p,card);}catch(e){setStatus('خطا در اجرای کارت '+playerNames[p]+': '+(e&&e.message?e.message:'نامشخص'));console.error('Kuwaiti playCard failed',e);if(throwOnError)throw e;return false;}
+ if(!isHumanSeat(p))setStatus('هوش مصنوعی '+playerNames[p]+' کارت را با موفقیت انداخت.');
  if(wasFirst&&game.trick.length===1)game.lastTrick=[];
  // The live team trick counter occupies this area; do not replace it with a per-card announcement.
  if(res.completed){
@@ -693,37 +697,36 @@ function playOne(p,card){
   if(game.done){finishGame();return;}
   setTimeout(()=>{renderGame();playAITurn()},700);
  }else{renderGame();playAITurn();}
+ return true;
 }
 function cardLabel(c){return c.kind==='joker'?(c.color==='red'?'جوکر قرمز':'جوکر مشکی'):c.rank+' '+suitGlyph[c.suit];}
 function playAITurn(){
- if(!game||game.done||isHumanSeat(game.turn)||locked||game.waitingResult||aiTimer)return;
- const p=game.turn;
- aiTimer=setTimeout(()=>{
+ if(!game){setStatus('تشخیص نوبت: اطلاعات بازی موجود نیست.');return;}
+ if(game.done){setStatus('تشخیص نوبت: بازی به پایان رسیده است.');return;}
+ if(isHumanSeat(game.turn))return;
+ if(locked){setStatus('توقف نوبت هوش مصنوعی: قفل داخلی بازی فعال است.');return;}
+ if(game.waitingResult){setStatus('توقف نوبت هوش مصنوعی: بازی منتظر ثبت نتیجه است.');return;}
+ if(aiTimer){setStatus('نوبت '+playerNames[game.turn]+' در صف اجراست؛ منتظر پاسخ هوش مصنوعی…');return;}
+ const p=game.turn;setStatus('نوبت هوش مصنوعی: '+playerNames[p]+' · در حال انتخاب و انداختن کارت…');
+ try{aiTimer=setTimeout(()=>{
   aiTimer=null;
-  if(!game||game.done||game.turn!==p||isHumanSeat(game.turn))return;
+  if(!game||game.done){setStatus('اجرای هوش لغو شد: بازی فعال نیست یا تمام شده است.');return;}
+  if(game.turn!==p){setStatus('اجرای هوش لغو شد: نوبت بازیکن تغییر کرده است.');return;}
+  if(isHumanSeat(game.turn)){setStatus('اجرای هوش لغو شد: نوبت به بازیکن انسانی رسیده است.');return;}
   try{
    const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
    if(game.isMalzoom&&game.hiddenTrump&&!game.trumpAnnounced&&p!==game.auctionWinner&&lead&&!game.hands[p].some(c=>c.kind==='normal'&&c.suit===lead)){
-    game.trumpAnnounced=true;setStatus(playerNames[p]+' خال زمینه را نداشت و حکم مخفی را درخواست کرد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit]);
-    $('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];
+    game.trumpAnnounced=true;setStatus(playerNames[p]+' خال زمینه را نداشت و حکم مخفی را درخواست کرد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit]);$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];
    }
-   let c;
-   try{c=aiCard(p);}catch(aiError){
-    const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});
-    c=allowed[0];console.warn('Kuwaiti AI fallback card selected',aiError);
-   }
+   let c;try{c=aiCard(p);}catch(aiError){const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});c=allowed[0];console.warn('Kuwaiti AI fallback card selected',aiError);}
    if(!c)throw new Error('کارت مجاز برای بازیکن '+playerNames[p]+' پیدا نشد');
-   playOne(p,c);
+   if(!playOne(p,c,true))throw new Error('اجرای کارت هوش مصنوعی ناموفق بود');
   }catch(e){
    console.error('Kuwaiti AI turn failed; attempting legal fallback',e);
-   try{
-    const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
-    const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});
-    if(!allowed.length)throw new Error('هیچ کارت مجازی باقی نمانده است');
-    playOne(p,allowed[0]);
-   }catch(fallbackError){locked=true;setStatus('خطای نوبت '+playerNames[p]+': '+(fallbackError&&fallbackError.message?fallbackError.message:'نامشخص')+' · بازی متوقف شد.');console.error('Kuwaiti AI fallback failed',fallbackError);}
+   try{const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});if(!allowed.length)throw new Error('هیچ کارت مجازی باقی نمانده است');if(!playOne(p,allowed[0],true))throw new Error('اجرای کارت جایگزین ناموفق بود');}
+   catch(fallbackError){locked=true;const message='خطای نوبت '+playerNames[p]+': '+(fallbackError&&fallbackError.message?fallbackError.message:'نامشخص')+' · بازی متوقف شد.';setStatus(message);$('kTurn').textContent=message;console.error('Kuwaiti AI fallback failed',fallbackError);}
   }
- },550);
+ },550);}catch(scheduleError){aiTimer=null;locked=true;const message='خطا در زمان‌بندی نوبت '+playerNames[p]+': '+(scheduleError&&scheduleError.message?scheduleError.message:'نامشخص');setStatus(message);$('kTurn').textContent=message;console.error(scheduleError);}
 }
 function renderGame(){
  if(!game)return;
