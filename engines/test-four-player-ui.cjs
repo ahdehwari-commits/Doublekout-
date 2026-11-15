@@ -147,6 +147,22 @@ assert.ok(sixUi.includes("el.querySelector('.k-bid-chip')?.remove()")&&sixUi.inc
 assert.ok(sixUi.includes("chip.textContent=bid.type==='malzoom'?'M':fa(bid.target||bid.label||'')"),'winning seat must show only the winning trick target');
 
 const tacticalFour=require('./standard-hokm/engine.js');
+const seqStop=tacticalFour.chooseAICard(
+ [{suit:'H',rank:'A'},{suit:'S',rank:'3'}],
+ [{player:0,card:{suit:'H',rank:'K'}}],2,'S','normal','hokm',[],null,[],null,true,true
+);
+assert.equal(seqStop.rank,'A','in sequence mode, spend the lowest winning card to stop an opponent from taking and extending a run');
+const drawTrump=tacticalFour.chooseAICard(
+ [{suit:'S',rank:'3'},{suit:'S',rank:'5'},{suit:'H',rank:'A'}],
+ [],1,'S','normal','hokm',[],null,[],null,false,true
+);
+assert.equal(drawTrump.suit,'S','non-hakem side should normally lead a low trump when holding at least two and unseen trumps remain');
+const hakemKeepsTrump=tacticalFour.chooseAICard(
+ [{suit:'S',rank:'3'},{suit:'S',rank:'5'},{suit:'H',rank:'A'}],
+ [],1,'S','normal','hokm',[],null,[],null,true,true
+);
+assert.notEqual(hakemKeepsTrump.suit,'S','hakem side should not automatically pull trump');
+
 const partnerLastTrick=[{player:0,card:{suit:'H',rank:'7'}},{player:1,card:{suit:'H',rank:'9'}},{player:2,card:{suit:'H',rank:'J'}},{player:3,card:{suit:'H',rank:'Q'}}];
 assert.equal(tacticalFour.cooperativeLeadCard([{suit:'H',rank:'4'},{suit:'S',rank:'6'}],partnerLastTrick,2,0,'hokm').suit,'H','when partner won by leading a suit and AI has no ace of it, continue that suit');
 assert.equal(tacticalFour.cooperativeLeadCard([{suit:'H',rank:'A'},{suit:'S',rank:'6'},{suit:'S',rank:'8'}],partnerLastTrick,2,0,'hokm').suit,'S','when partner won by leading a suit and AI holds its ace, switch to another suit to protect the ace from a later trump cut');
