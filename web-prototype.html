@@ -317,7 +317,7 @@ function play(p,card){
     playCardSound();if(p!==0)speakPlayer('play',p);
     if(G.plays.length===4){
       G.trickCompletePending=true;G.turn=null;render();
-      setTimeout(()=>{try{resolveTrick()}catch(e){G.trickCompletePending=false;$('status').textContent='خطا در تعیین برنده دست: '+(e&&e.message?e.message:'نامشخص');console.error(e)}},450);
+      setTimeout(()=>{try{resolveTrick()}catch(e){G.trickCompletePending=false;$('status').textContent='خطا در تعیین برنده دست: '+(e&&e.message?e.message:'نامشخص');console.error(e)}},2800);
     }else{
       G.turn=(p+1)%4;hotseatRevealed=false;render();runAI();
     }
