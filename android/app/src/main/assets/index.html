@@ -1127,7 +1127,7 @@ function renderOnlineChallengeClock(){
  checkExpiredChallengeSeats();
 }
 setInterval(renderOnlineChallengeClock,200);
-var onlineTurnDeadline=0,onlineTurnTimerHandle=null,lastTurnBeep=-1,turnAudio=null,onlineTrickDeadline=0,lastTrickBeep=-1;var onlineTrickResolveTimer=null,onlineTrickResolveScheduled=false;
+var onlineTurnDeadline=0,onlineTurnTimerHandle=null,lastTurnBeep=-1,turnAudio=null,onlineTrickDeadline=0,lastTrickBeep=-1;var onlineTrickResolveTimer=null,onlineTrickResolveScheduled=false,lastOnlineVoiceTrickCount=null,lastOnlineFourPlays=null;
 function unlockTurnAudio(){try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;if(!turnAudio)turnAudio=new AC();if(turnAudio.state==='suspended')turnAudio.resume();}catch(e){}}
 document.addEventListener('pointerdown',unlockTurnAudio,{passive:true});
 function playTurnBeep(){try{if(!turnAudio||turnAudio.state!=='running')return;var o=turnAudio.createOscillator(),g=turnAudio.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.0001,turnAudio.currentTime);g.gain.exponentialRampToValueAtTime(.12,turnAudio.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,turnAudio.currentTime+.16);o.connect(g);g.connect(turnAudio.destination);o.start();o.stop(turnAudio.currentTime+.17);}catch(e){}}
@@ -1352,6 +1352,18 @@ async function refreshOnlineGame(startPayload){
   var teamBName=[players['1']&&players['1'].name,players['3']&&players['3'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۲ و ۴';
   var faScore=function(n){return String(n).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];});};
   var completedWinners=Array.isArray(state.trickWinners)?state.trickWinners:[];
+  if(lastOnlineVoiceTrickCount===null)lastOnlineVoiceTrickCount=completedWinners.length;
+  else if(completedWinners.length>lastOnlineVoiceTrickCount){
+   var voiceWinner=Number(completedWinners[completedWinners.length-1]);
+   if(voiceWinner%2!==myOnlineSeat%2){
+    var lastPlays=lastOnlineFourPlays||[],leadVoiceCard=lastPlays[0]&&lastPlays[0].card,winVoicePlay=lastPlays.find(function(p){return Number(p.seat)===voiceWinner;}),winVoiceCard=winVoicePlay&&winVoicePlay.card;
+    var trumpGlyph=({S:'♠',H:'♥',D:'♦',C:'♣','♠':'♠','♥':'♥','♦':'♦','♣':'♣'})[state.trump]||'♠';
+    var aceWasCut=leadVoiceCard&&(leadVoiceCard.rank||leadVoiceCard.r)==='A'&&winVoiceCard&&normalizedSuit(winVoiceCard)!==normalizedSuit(leadVoiceCard)&&normalizedSuit(winVoiceCard)===trumpGlyph;
+    speakPlayer(aceWasCut?'aceCut':'collect',voiceWinner);
+   }
+   lastOnlineVoiceTrickCount=completedWinners.length;lastOnlineFourPlays=null;
+  }
+  if((state.plays||[]).length===4)lastOnlineFourPlays=(state.plays||[]).map(function(p){return {seat:Number(p.seat),card:p.card};});
   var liveTeamScores=(mode==='double-kout'&&!state.challengeTeam)?onlineLiveSequenceScores(completedWinners):{
    A:completedWinners.filter(function(seat){return Number(seat)%2===0;}).length,
    B:completedWinners.filter(function(seat){return Number(seat)%2===1;}).length
@@ -1382,6 +1394,7 @@ async function refreshOnlineGame(startPayload){
      el('onlineHandTitle').textContent='کارت‌های شما · '+el('onlineHand').querySelectorAll('button').length+' کارت';
      lastGameRevision=-1;
      var playedState=played.data&&played.data.state;
+     if((c.rank||c.r)==='A')speakPlayer('ace',myOnlineSeat);
      await refreshOnlineGame(playedState?{status:played.data.done?'finished':'playing',state:playedState,revision:played.data.revision}:null);
      say('');
     }catch(e){
