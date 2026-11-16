@@ -12,6 +12,7 @@ assert.ok(html.includes('id="hokmContract"')&&html.includes('value="hokm_spades"
 assert.ok(html.includes("value=\"hokm_spades\"")&&html.includes("value=\"hokm_clubs\"")&&html.includes("value=\"partner_middle\""));
 assert.ok(html.includes("function beginNormalOrChallenge(challengerTeam)")&&html.includes("function confirmTrump()"),'both choice buttons must have defined handlers');
 assert.ok(html.includes("function cardRank(c)")&&html.includes("c.rank!==undefined"),'card rank adapter must accept both r and rank fields');
+assert.ok(html.includes('const handLegalCards=legalCards(handPlayer);'),'render must calculate legal cards for the displayed hand before testing card playability');
 assert.ok(html.includes("function winner(plays){const code=")&&html.includes("StandardHokmEngine.resolveTrick"));
 assert.ok(html.includes("G.trickCompletePending||G.plays.length>=4"));
 assert.ok(html.includes("G.trickCompletePending=true;G.turn=null"));
