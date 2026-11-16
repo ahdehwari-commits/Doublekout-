@@ -364,7 +364,7 @@ body.deck-back-black .card.back:before,body.deck-back-black .card.back:after{con
 @media(max-width:520px){.customizer-rail{gap:14px;padding:18px 28px}.large-choice{width:205px;height:300px;flex-basis:205px}.back-art{width:165px;height:250px}.table-rail .large-choice{width:270px;height:215px;flex-basis:270px}.table-rail .mini-table{width:220px;height:145px}.layout-rail .large-choice{width:220px;height:220px;flex-basis:220px}.layout-rail .mini-layout{width:165px;height:165px}.customizer-bottom button{min-width:0;flex:1;font-size:13px}}
 
 html{background-color:#061b16!important;min-height:100%;}body{background-color:#061b16!important;min-height:100vh;min-height:100dvh;overscroll-behavior-y:none;}@supports(padding:env(safe-area-inset-top)){html,body{background-color:#061b16!important;}}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۵۵ · سفارشی‌سازی تصویری</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+.hand:not(.has-legal-restrictions) button:not(:disabled) .card{border:1px solid #fff9!important;filter:none!important;transform:none!important}#onlinePanel #onlineHand button.online-card-unrestricted{opacity:1!important;filter:none!important;z-index:auto!important}#onlinePanel #onlineHand button.online-card-unrestricted .card{transform:none!important;outline:none!important;border:1px solid #fff9!important;box-shadow:0 9px 0 #c8bfa9,0 13px 22px #0009!important;filter:none!important}</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۵۵ · سفارشی‌سازی تصویری</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <button id="openVisualCustomizer" class="customize-open" type="button">✦ سفارشی‌سازی ظاهر بازی</button>
 <div id="visualCustomizer" class="visual-customizer-full hidden" aria-modal="true" role="dialog" aria-label="سفارشی‌سازی ظاهر بازی">
@@ -891,7 +891,7 @@ function render(){
  const centerTrick=$('centerTrick');if(centerTrick){centerTrick.innerHTML='';G.plays.forEach((x,i)=>{const played=cardEl(x.card,true);played.classList.add('table-played');played.style.setProperty('--play-index',i);centerTrick.append(played);});}
  const pileNode=$('centerPile');if(pileNode){pileNode.innerHTML='';const clearing=Date.now()<Number(G.sequenceClearUntil||0);pileNode.classList.toggle('clearing',clearing);const pile=clearing?(G.sequenceClearCards||[]):(G.groupCards||[]);pile.forEach((x,i)=>{const c=cardEl(x.card||x,true);c.classList.add('pile-card');c.style.setProperty('--px',(((i%5)-2)*3)+'px');c.style.setProperty('--py',(((i%7)-3)*2)+'px');c.style.setProperty('--pr',((((i*17)%13)-6)*1.25)+'deg');c.style.zIndex=String(i+1);pileNode.append(c);});}
  const handTitle=document.querySelector('#game h3.section-title');if(handTitle)handTitle.textContent=playStyle==='hotseat'?'کارت‌های بازیکن نوبت‌دار':'کارت‌های شما';
- (playStyle==='hotseat'&&!humanSeats.has(G.turn)?[]:(G.hands[handPlayer]||[])).forEach((c,i,arr)=>{let b=document.createElement('button'),offset=i-(arr.length-1)/2;b.style.transform='rotate('+(offset*3.4)+'deg) translateY('+(Math.abs(offset)*1.8)+'px)';b.style.zIndex=String(10+i);let legal=(playStyle==='hotseat'?humanSeats.has(G.turn)&&hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&legalCards(handPlayer).some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
+ (playStyle==='hotseat'&&!humanSeats.has(G.turn)?[]:(G.hands[handPlayer]||[])).forEach((c,i,arr)=>{let b=document.createElement('button'),offset=i-(arr.length-1)/2;b.style.transform='rotate('+(offset*3.4)+'deg) translateY('+(Math.abs(offset)*1.8)+'px)';b.style.zIndex=String(10+i);let legal=(playStyle==='hotseat'?humanSeats.has(G.turn)&&hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&handLegalCards.some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
  $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
  $('trickMsg').textContent=G.trickCompletePending?'در حال اعلام برنده دست…':G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
 }
@@ -1482,11 +1482,11 @@ async function refreshOnlineGame(startPayload){
   el('onlineHandTitle').textContent='کارت‌های شما · '+hand.length+' کارت';
   var leadOnlineCard=(state.plays||[])[0]&&((state.plays||[])[0].card||{}),leadOnlineSuit=leadOnlineCard&&(leadOnlineCard.suit||leadOnlineCard.s);
    leadOnlineSuit=({'S':'♠','H':'♥','D':'♦','C':'♣','♠':'♠','♥':'♥','♦':'♦','♣':'♣'})[leadOnlineSuit]||'';
-   var followsLead=!!leadOnlineSuit&&hand.some(function(card){return normalizedSuit(card)===leadOnlineSuit;});
+   var followsLead=!!leadOnlineSuit&&hand.some(function(card){return normalizedSuit(card)===leadOnlineSuit;}),hasForcedSuit=!!leadOnlineSuit&&followsLead&&hand.some(function(card){return normalizedSuit(card)!==leadOnlineSuit;});
    var myPlayTurn=turn===myOnlineSeat&&!finished&&!decisionPending&&!trickPending;
    hand.forEach(function(c,i){
     var b=document.createElement('button'),fanOffset=i-(hand.length-1)/2;b.type='button';b.style.transform='rotate('+(fanOffset*4.2)+'deg) translateY('+(Math.abs(fanOffset)*1.45)+'px)';b.style.zIndex=String(i+1);
-    var legalCard=!followsLead||normalizedSuit(c)===leadOnlineSuit;b.classList.add(myPlayTurn?(legalCard?'online-card-legal':'online-card-illegal'):'online-card-inactive');b.appendChild(cardEl(visualCard(c)));
+    var legalCard=!followsLead||normalizedSuit(c)===leadOnlineSuit;b.classList.add(myPlayTurn?(hasForcedSuit?(legalCard?'online-card-legal':'online-card-illegal'):'online-card-unrestricted'):'online-card-inactive');b.appendChild(cardEl(visualCard(c)));
     b.disabled=!myPlayTurn||!legalCard;
     b.onclick=async function(){
     if(b.disabled)return;
