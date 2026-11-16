@@ -933,7 +933,7 @@ function onlineRequest(promise,label,limit){
 function ensureUI(){
  if(el('onlineButton'))return;
  var grid=document.querySelector('#modePicker .mode-grid');if(!grid)return;
- var b=document.createElement('button');b.id='onlineButton';b.className='mode-card';b.innerHTML='<strong>🌐 بازی آنلاین چندگوشی</strong><span>ساخت اتاق، ورود با کد و آمادگی بازیکنان از گوشی‌های مختلف</span>';b.onclick=open;grid.appendChild(b);
+ var b=document.createElement('button');b.id='onlineButton';b.className='mode-card';b.innerHTML='<strong>🏆 حساب کاربری، امتیاز و بازی آنلاین</strong><span>ثبت‌نام، ورود، امتیاز بردها، رتبه‌بندی و بازی با گوشی‌های مختلف</span>';b.onclick=open;grid.appendChild(b);
  var style=document.createElement('style');style.textContent=
  '#onlineOverlay{position:fixed;inset:0;z-index:100000;background:#03140ff5;display:none;align-items:center;justify-content:center;padding:14px;direction:rtl;font-family:Tahoma,Arial,sans-serif}'+
  '#onlineOverlay.open{display:flex}#onlinePanel{width:min(560px,100%);max-height:92vh;overflow:auto;background:linear-gradient(145deg,#164333,#071d17);border:2px solid #d7b66d;border-radius:20px;padding:16px;color:#fff;box-shadow:0 20px 55px #000c}'+
