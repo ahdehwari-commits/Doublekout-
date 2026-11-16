@@ -39,7 +39,14 @@ The SQL migration must be applied to the connected Supabase project before the n
 - The new migration must be applied to the production Supabase project before uploads can succeed. GitHub Pages / APK deployment does not apply database migrations.
 
 
-## User accounts (email/password and Google)
+## User accounts (email/password, Google and Apple)
+
+- Email/password registration accepts any valid email address, not only Gmail. A user can use an existing iCloud address, Outlook, Yahoo, or another mailbox as the login identifier; the game password is separate from the Apple ID password. Email confirmation depends on the Supabase Auth email-confirmation setting.
+- The game now exposes an Apple sign-in button using Supabase OAuth (`provider: apple`), including linking from an anonymous guest session. This button is only operational after the Apple provider is configured in the Supabase project.
+- Web-based Sign in with Apple requires an Apple Developer account configured with an App ID, Services ID, Sign in with Apple capability, a signing key, and the generated Apple client secret. Configure the Apple provider in Supabase Authentication > Providers and allow the deployed Pages URL in Auth URL Configuration. Apple's OAuth client secret must be rotated every six months. Never commit the `.p8` key or generated secret to GitHub.
+- If the user does not have Apple Developer Program access, the immediate no-new-provider alternative is to register using an existing iCloud email address and a separate game password.
+
+
 
 - The online lobby supports Supabase Auth email/password registration and sign-in. The email address is the login username; a separate display name is saved in user metadata for the game table.
 - Existing anonymous sessions can be upgraded to an email/password account, preserving the current authenticated user where Supabase email confirmation settings permit it.
