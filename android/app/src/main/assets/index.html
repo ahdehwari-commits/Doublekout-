@@ -710,8 +710,13 @@ function renderLocalRematchClock(){
  if(left===0)startNextLocalGame();
 }
 setInterval(renderLocalRematchClock,200);
+function awardLocalAccountWin(winningTeam,mode){
+ if(winningTeam!=='A'||playStyle!=='ai'||!humanSeats.has(0)||!window.DoubleKoutProgress)return;
+ const id=G.centralGameId||(G.centralGameId=(window.crypto&&crypto.randomUUID?crypto.randomUUID():('local-'+Date.now()+'-'+Math.random().toString(36).slice(2))));
+ window.DoubleKoutProgress.awardLocalWin(id,mode).then(result=>window.DoubleKoutProgress.showAwardResult(result,'status'));
+}
 function finishGame(){
- if(G.done)return;G.done=true;
+ if(G.done)return;G.done=true;let centralWinningTeam=null;
  if(activeMode==='double-kout'&&(G.groupCards||[]).length){G.sequenceClearCards=G.groupCards.slice();G.groupCards=[];G.sequenceClearUntil=Date.now()+900;setTimeout(()=>{if(G){G.sequenceClearCards=[];G.sequenceClearUntil=0;render();}},950);}
  if(G.challenge){
    const outcome=G.challengeResult||window.DoubleKoutSequence.evaluateChallenge(G.trickWinners,G.challenge);
@@ -720,7 +725,7 @@ function finishGame(){
      challengeStats.winA++;
      G.history.push('چالش با موفقیت انجام شد؛ یک امتیاز مستقل برای تیم شما ثبت شد.');
      $('status').innerHTML='<span class="winner">چالش موفق شد؛ تیم شما هر ۱۳ دست را کامل کرد.</span>';
-     previousWinner='A';previousStarter=lastPlayerOfTeam(G.trickWinners,'A',G.leader);
+     previousWinner='A';previousStarter=lastPlayerOfTeam(G.trickWinners,'A',G.leader);centralWinningTeam='A';
    }else{
      challengeStats.loseA++;
      const reason=outcome.status==='failed-opponent-sequence'
@@ -728,7 +733,7 @@ function finishGame(){
        :'تیم شما دست سیزدهم را نبرد؛ چالش ناموفق شد.';
      G.history.push(reason);
      $('status').innerHTML='<span class="winner">چالش شکست خورد؛ امتیاز مستقل چالش ثبت شد.</span> '+reason;
-     previousWinner='B';previousStarter=lastPlayerOfTeam(G.trickWinners,'B',G.leader);
+     previousWinner='B';previousStarter=lastPlayerOfTeam(G.trickWinners,'B',G.leader);centralWinningTeam='B';
    }
  }else{
    scoreNormal();
@@ -737,9 +742,9 @@ function finishGame(){
    if(kout)G.history.push(kout+'؛ نتیجه ۱۳ بر صفر ثبت شد.');
    $('status').innerHTML=`بازی تمام شد. <span class="winner">${kout||winnerTeam} · ${fa(G.scoreA)} دست به ${fa(G.scoreB)} دست</span>`;
    const winningTeam=G.scoreA===G.scoreB?previousWinner:(G.scoreA>G.scoreB?'A':'B');
-   if(winningTeam){previousWinner=winningTeam;previousStarter=lastPlayerOfTeam(G.trickWinners,winningTeam,G.leader);}
+   if(winningTeam){previousWinner=winningTeam;previousStarter=lastPlayerOfTeam(G.trickWinners,winningTeam,G.leader);if(G.scoreA!==G.scoreB)centralWinningTeam=winningTeam;}
  }
- recordGlobalGame();updateChallengeStats();render();
+ recordGlobalGame();updateChallengeStats();render();if(centralWinningTeam)awardLocalAccountWin(centralWinningTeam,activeMode);
  $('history').innerHTML=G.history.slice(-18).reverse().join('<br>');
  $('newGame').textContent='بازی بعدی';
  localRematchDeadline=Date.now()+15000;lastLocalRematchBeep=-1;renderLocalRematchClock();
@@ -759,7 +764,7 @@ function aiChoose(p){
   if(activeMode==='standard-hokm'||activeMode==='double-kout'||difficulty==='hard'||difficulty==='expert'){
     const code={'♠':'S','♥':'H','♦':'D','♣':'C'};
     const plays=G.plays.map(x=>({player:x.player,card:{suit:code[cardSuit(x.card)],rank:cardRank(x.card)}}));
-    return window.StandardHokmEngine.chooseAICard(G.hands[p],plays,p,G.trumpCode,difficulty,G.contract||'hokm',G.cardHistory||[],G.initialHands[p],G.lastTrick||[],G.trickWinners?.[G.trickWinners.length-1],team(p)===team(G.hakemPlayer),activeMode==='double-kout');
+    return window.StandardHokmEngine.chooseAICard(G.hands[p],plays,p,G.trumpCode,difficulty,G.contract||'hokm',G.cardHistory||[],G.initialHands[p],G.lastTrick||[],G.trickWinners?.[G.trickWinners.length-1],team(p)===team(G.hakemPlayer),activeMode==='double-kout',activeMode,G.trickNo);
   }
   const lead=G.plays.length?G.plays[0].card.s:null;
   const current=G.plays.length?G.plays.reduce((best,x)=>beats(x.card,best.card,lead)?x:best):null;
@@ -961,7 +966,7 @@ function ensureUI(){
  var root=document.createElement('div');root.id='onlineOverlay';root.innerHTML=
  '<section id="onlinePanel"><button id="onlineClose" class="secondary" style="float:left">بستن</button><h2>اتاق آنلاین دابل کوت</h2>'+
  '<p>بازیکنان با گوشی‌های جداگانه وارد اتاق می‌شوند؛ پس از آماده‌شدن بازیکنان، کارت‌ها پخش می‌شود و هر نفر دست خودش را می‌بیند. سپس میزبان انتخاب می‌کند بازی عادی باشد یا چالش.</p>'+
- '<div id="onlineAuth"><b style="color:#f4d58b">حساب کاربری</b><div class="auth-note" id="onlineAuthIntro">برای نگهداری حساب روی گوشی‌های مختلف، با ایمیل و رمز عبور ثبت‌نام کن یا با Google وارد شو. بازی مهمان هم همچنان در دسترس است.</div><label>ایمیل / نام کاربری</label><input id="onlineAuthEmail" type="email" autocomplete="username" placeholder="name@example.com" dir="ltr"><label>رمز عبور</label><input id="onlineAuthPassword" type="password" autocomplete="current-password" placeholder="حداقل ۸ نویسه" dir="ltr"><label>نام نمایشی (برای ثبت‌نام)</label><input id="onlineAuthDisplayName" maxlength="24" placeholder="نامی که دیگران در بازی می‌بینند"><div class="auth-grid"><button id="onlineRegister">ثبت‌نام</button><button id="onlineLogin" class="secondary">ورود با رمز</button><button id="onlineGoogle" class="secondary" style="grid-column:1/-1">ورود با حساب Google</button><button id="onlineLogout" class="secondary" style="grid-column:1/-1">خروج از حساب</button></div><div id="onlineAuthStatus">هنوز وارد حساب نشده‌ای؛ می‌توانی به‌صورت مهمان هم بازی کنی.</div></div>'+
+ '<div id="onlineAuth"><b style="color:#f4d58b">حساب کاربری</b><div class="auth-note" id="onlineAuthIntro">برای نگهداری حساب روی گوشی‌های مختلف، با ایمیل و رمز عبور ثبت‌نام کن یا با Google وارد شو. بازی مهمان هم همچنان در دسترس است.</div><label>ایمیل / نام کاربری</label><input id="onlineAuthEmail" type="email" autocomplete="username" placeholder="name@example.com" dir="ltr"><label>رمز عبور</label><input id="onlineAuthPassword" type="password" autocomplete="current-password" placeholder="حداقل ۸ نویسه" dir="ltr"><label>نام نمایشی (برای ثبت‌نام)</label><input id="onlineAuthDisplayName" maxlength="24" placeholder="نامی که دیگران در بازی می‌بینند"><div class="auth-grid"><button id="onlineRegister">ثبت‌نام</button><button id="onlineLogin" class="secondary">ورود با رمز</button><button id="onlineGoogle" class="secondary" style="grid-column:1/-1">ورود با حساب Google</button><button id="onlineLogout" class="secondary" style="grid-column:1/-1">خروج از حساب</button></div><div id="onlineAuthStatus">هنوز وارد حساب نشده‌ای؛ می‌توانی به‌صورت مهمان هم بازی کنی.</div><div id="onlineProgress" style="border-top:1px solid #668c78;margin-top:10px;padding-top:10px"><div id="onlineMyPoints">برای دیدن امتیازها وارد حساب شو.</div><button id="onlineRefreshProgress" class="secondary" style="width:100%;margin-top:8px">بروزرسانی امتیاز و رتبه‌بندی</button><div id="onlineLeaderboard" style="font-size:12px;line-height:2;margin-top:8px"></div></div></div>'+
  '<div id="onlineSetup"><label>نوع بازی</label><select id="onlineMode"><option value="double-kout">دابل کوت توالی · چهار نفره</option><option value="standard-hokm">حکم معمولی · چهار نفره</option><option value="kuwaiti" disabled>کوت کویتی · آنلاین شش‌نفره (در حال توسعه)</option></select>'+
  '<label>نام نمایشی</label><input id="onlineName" maxlength="24" value="بازیکن">'+
  '<div class="onrow"><button id="onlineCreate">ساخت اتاق جدید</button><button id="onlineShowJoin" class="secondary">ورود با کد</button></div>'+
@@ -1013,7 +1018,7 @@ async function registerOnlineAccount(){
   }
   if(result.error)throw result.error;
   session=result.data.session||null;me=result.data.user||null;
-  if(session){authMessage('حساب ساخته شد و وارد بازی شدی.');if(el('onlineName'))el('onlineName').value=v.displayName;}
+  if(session){authMessage('حساب ساخته شد و وارد بازی شدی.');if(el('onlineName'))el('onlineName').value=v.displayName;if(window.DoubleKoutProgress)window.DoubleKoutProgress.refresh();}
   else authMessage('درخواست ثبت‌نام ثبت شد. ایمیل تأیید را باز کن و سپس با ایمیل و رمز وارد شو. اگر حساب مهمان داشتی، تبدیل حساب پس از تأیید ایمیل کامل می‌شود.');
  }catch(e){authMessage('ثبت‌نام انجام نشد: '+(e.message||e));}
  finally{el('onlineRegister').disabled=false;}
@@ -1022,7 +1027,7 @@ async function loginOnlineAccount(){
  try{await initClient();var v=authFields();validateAuthFields(v,false);el('onlineLogin').disabled=true;authMessage('در حال ورود…');
   var r=await client.auth.signInWithPassword({email:v.email,password:v.password});if(r.error)throw r.error;
   session=r.data.session;me=r.data.user;var display=(me.user_metadata&&me.user_metadata.display_name)||v.displayName||'بازیکن';if(el('onlineName'))el('onlineName').value=display;
-  authMessage('با موفقیت وارد شدی: '+v.email);
+  authMessage('با موفقیت وارد شدی: '+v.email);if(window.DoubleKoutProgress)window.DoubleKoutProgress.refresh();
  }catch(e){authMessage('ورود ناموفق بود: '+(e.message||e));}
  finally{el('onlineLogin').disabled=false;}
 }
@@ -1048,7 +1053,7 @@ async function authenticate(setStage){
  var got=await client.auth.getSession();if(got.error)throw got.error;session=got.data&&got.data.session;
  if(!session){setStage('ورود ناشناس به Supabase');var sign=await client.auth.signInAnonymously();if(sign.error)throw sign.error;session=sign.data.session;}
  if(!session)throw new Error('ورود مهمان انجام نشد. ورود ناشناس را در Authentication فعال کن.');
- me=session.user;var display=(me.user_metadata&&me.user_metadata.display_name)||'';if(display&&el('onlineName'))el('onlineName').value=display;if(el('onlineAuthStatus'))el('onlineAuthStatus').textContent=me.is_anonymous?'وارد حساب مهمان هستی؛ می‌توانی آن را به حساب دائمی تبدیل کنی.':'وارد حساب شدی: '+(me.email||display||'کاربر');return me;
+ me=session.user;var display=(me.user_metadata&&me.user_metadata.display_name)||'';if(display&&el('onlineName'))el('onlineName').value=display;if(window.DoubleKoutProgress)window.DoubleKoutProgress.refresh();if(el('onlineAuthStatus'))el('onlineAuthStatus').textContent=me.is_anonymous?'وارد حساب مهمان هستی؛ می‌توانی آن را به حساب دائمی تبدیل کنی.':'وارد حساب شدی: '+(me.email||display||'کاربر');return me;
 }
 function showRoom(){el('onlineSetup').style.display='none';el('onlineRoom').style.display='block';el('onlineCode').textContent=roomCode;}
 function subscribe(){
@@ -1518,8 +1523,8 @@ async function leave(){
  if(channel){await client.removeChannel(channel);channel=null;}
  roomId=null;roomCode='';myOnlineSeat=-1;myOnlineIsHost=false;lastGameRevision=-1;lastOnlineHandSignature='';confirmedPlayedCardIds=Object.create(null);onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
 }
-window.DoubleKoutOnline={open:open,leave:leave};
+window.DoubleKoutOnline={open:open,leave:leave,getSession:async function(){await initClient();var r=await client.auth.getSession();if(r.error)throw r.error;return r.data.session||null;},rpc:async function(name,args){await initClient();return client.rpc(name,args||{});}};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
 })();
 
-</script><script>if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script><script src="./lan-multiplayer.js"></script></body></html>
+</script><script src="./central-progress.js"></script><script>if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script><script src="./lan-multiplayer.js"></script></body></html>
