@@ -403,7 +403,7 @@ html{background-color:#061b16!important;min-height:100%;}body{background-color:#
 <section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><select id="hokmContract" class="hidden" aria-hidden="true"><option value="hokm_spades" selected>پیک</option><option value="hokm_hearts">دل</option><option value="hokm_diamonds">خشت</option><option value="hokm_clubs">گشنیز</option></select><div id="hokmContractPicker" class="hidden"></div><div class="setup"><div><label>شیوه بازی</label><select id="playStyle"><option value="ai">یک نفر در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با چهار گوشی (اتاق اینترنتی)</option></select></div><div id="humanSeatSetup" style="grid-column:1/-1"><label>صندلی بازیکنان انسانی (صندلی‌های خالی با هوش مصنوعی پر می‌شوند)</label><div id="humanSeatChoices" class="actions"></div><p class="muted">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="easy">آسان</option><option value="normal">معمولی</option><option value="hard">سخت</option><option value="expert">خیلی سخت</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><div id="onlineSetupInfo" class="status hidden">برای بازی آنلاین، ابتدا اتاق بساز یا با کد وارد اتاق بازیکن دیگری شو. پنجره اتاق آنلاین با انتخاب این گزینه باز می‌شود.</div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
 <section class="panel hidden" id="game"><div id="hotseatGate" class="hidden"><div class="gate-card"><div style="font-size:42px">♠ ♥ ♦ ♣</div><h2>تحویل گوشی به بازیکن بعدی</h2><p id="hotseatGateText">گوشی را به بازیکن بعدی بدهید. مطمئن شوید نفر قبلی دیگر صفحه را نمی‌بیند؛ سپس کارت‌های خود را نمایش دهید.</p><button id="revealHotseatHand" type="button">کارت‌های من را نمایش بده</button></div></div><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">بازی‌های برده تیم شما: <b id="gamesWonA">۰</b></div><div class="score">بازی‌های برده تیم حریف: <b id="gamesWonB">۰</b></div><div class="score">دست: <b id="trickNo">۱</b> / ۱۳</div></div>
 <div class="k-live-tricks" style="display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:13px;font-weight:bold"><span>دست‌های گروه‌های توالی · تیم شما: <b id="liveWonA">۰</b></span><span>تیم حریف: <b id="liveWonB">۰</b></span></div>
-<div id="challengePanel" class="status" style="display:none"><b>چالش تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چالش را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چالش فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چالش علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب قرارداد بازی بعدی</b><p class="muted">پس از دیدن پنج کارت اول، می‌توانی یکی از چهار خال حکم، نرس، تک نرس، سرس یا برگ وسط یار را انتخاب کنی. هشت کارت باقی‌مانده بعد از انتخاب پخش می‌شود.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><div><label>نوع قرارداد</label><select id="nextContract"><option value="hokm_spades">حکم پیک ♠</option><option value="hokm_hearts">حکم دل ♥</option><option value="hokm_diamonds">حکم خشت ♦</option><option value="hokm_clubs">حکم گشنیز ♣</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار</option></select></div><button id="confirmTrump">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div class="table-emblem" aria-hidden="true">
+<div id="challengePanel" class="status" style="display:none"><b>چالش تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چالش را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چالش فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چالش علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب قرارداد بازی بعدی</b><p class="muted">پس از دیدن پنج کارت اول، می‌توانی یکی از چهار خال حکم، نرس، تک نرس، سرس یا برگ وسط یار را انتخاب کنی. هشت کارت باقی‌مانده بعد از انتخاب پخش می‌شود.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><div><label>نوع قرارداد</label><select id="nextContract"><option value="" selected disabled>ابتدا حکم را انتخاب کن…</option><option value="hokm_spades">حکم پیک ♠</option><option value="hokm_hearts">حکم دل ♥</option><option value="hokm_diamonds">حکم خشت ♦</option><option value="hokm_clubs">حکم گشنیز ♣</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار</option></select></div><button id="confirmTrump">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div class="table-emblem" aria-hidden="true">
 <svg viewBox="0 0 520 210" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg">
 <defs><linearGradient id="dkGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0b2"/><stop offset=".32" stop-color="#f6ce68"/><stop offset=".62" stop-color="#b87924"/><stop offset="1" stop-color="#ffe7a0"/></linearGradient><filter id="dkGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
 <g fill="none" stroke="url(#dkGold)" stroke-width="3" stroke-linecap="round" filter="url(#dkGlow)">
@@ -497,15 +497,15 @@ function dealGame(trump){
   $('hakimPreview').innerHTML='';
   G.hands[starter].forEach(c=>$('hakimPreview').append(cardEl(c,true)));
   $('trumpPicker').classList.remove('hidden');
-  if(starter!==0){
+  const humanHakem=starter===0||(playStyle==='hotseat'&&humanSeats.has(starter));
+  if(!humanHakem){
    const chosen=aiChooseFourPlayerContract(G.hands[starter]);
    $('nextContract').value=chosen;
-   const counts={'♠':0,'♥':0,'♦':0,'♣':0};G.hands[starter].forEach(c=>counts[c.s]++);
-   /* AI contract encodes its suit directly */
-    setTimeout(()=>confirmTrump(),650);
+   /* The AI sees its five cards, chooses the contract, then starts the deal. */
+   setTimeout(()=>confirmTrump(),650);
   }else{
-   $('nextContract').value='hokm_spades';
-   $('status').textContent='پنج کارت اول حاکم نمایش داده شد؛ اکنون نوع قرارداد را انتخاب کن.';
+   $('nextContract').value='';
+   $('status').textContent=starter===0?'پنج کارت اول شما نمایش داده شد؛ حکم را انتخاب کن.':'پنج کارت اول حاکم نمایش داده شد؛ گوشی را به او بده تا حکم را انتخاب کند.';
   }
  }else{
   $('trumpPicker').classList.add('hidden');render();
@@ -546,7 +546,7 @@ function startGame(){
  if(matchNo>1&&previousStarter!==null){starterSelect.value=String(previousStarter);starterSelect.disabled=true;}else starterSelect.disabled=false;
  let selected=$('hokmContract').value;
  if(matchNo===1){selected='hokm_spades';$('hokmContract').value=selected;$('hokmContract').disabled=true;}
- else {$('nextContract').value='hokm_spades';/* suit is encoded by the selected contract */}
+ else {$('nextContract').value='';/* Hakem must choose after seeing the first five cards. */}
  const selectedName={hokm_spades:'پیک',hokm_hearts:'دل',hokm_diamonds:'خشت',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',partner_middle:'برگ وسط یار'}[selected]||'حکم';
  dealGame(null);
  $('challengePanel').style.display='none';
@@ -1029,7 +1029,7 @@ async function loginOnlineAccount(){
  try{await initClient();var v=authFields();validateAuthFields(v,false);el('onlineLogin').disabled=true;authMessage('در حال ورود…');
   var r=await client.auth.signInWithPassword({email:v.email,password:v.password});if(r.error)throw r.error;
   session=r.data.session;me=r.data.user;var display=(me.user_metadata&&me.user_metadata.display_name)||v.displayName||'بازیکن';if(el('onlineName'))el('onlineName').value=display;
-  authMessage('با موفقیت وارد شدی: '+v.email);if(window.DoubleKoutProgress)window.DoubleKoutProgress.refresh();
+  authMessage('با موفقیت وارد شدی: '+v.email);if(window.DoubleKoutProgress){window.DoubleKoutProgress.refresh();window.DoubleKoutProgress.flushPending();}
  }catch(e){var msg=e&&(e.message||e.msg)||String(e);if(/invalid login credentials|user not found/i.test(msg))msg='حسابی با این ایمیل و رمز پیدا نشد؛ اگر قبلاً ثبت‌نام نکرده‌ای، ابتدا ثبت‌نام کن. اگر حساب داری، رمز را بررسی یا بازیابی کن.';else if(/email not confirmed/i.test(msg))msg='ایمیل حساب هنوز تأیید نشده است؛ ایمیل تأیید را باز کن و سپس دوباره وارد شو.';authMessage('ورود ناموفق بود: '+msg);}
  finally{el('onlineLogin').disabled=false;}
 }
@@ -1038,17 +1038,17 @@ async function resetOnlinePassword(){
  catch(e){authMessage('ارسال لینک بازیابی ناموفق بود: '+(e.message||e));}
 }
 async function resendOnlineConfirmation(){
- try{await initClient();var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');authMessage('در حال ارسال دوباره ایمیل تأیید…');var r=await client.auth.resend({type:'signup',email:email,options:{emailRedirectTo:PUBLIC_AUTH_REDIRECT}});if(r.error)throw r.error;authMessage('درخواست ارسال مجدد ثبت شد. صندوق ورودی و پوشه هرزنامه را بررسی کن.');}
- catch(e){authMessage('ارسال مجدد ایمیل تأیید ناموفق بود: '+(e.message||e));}
-}
-async function googleOnlineAccount(){
- try{await initClient();el('onlineGoogle').disabled=true;authMessage('در حال انتقال به صفحه امن Google…');
-  var current=await client.auth.getSession();if(current.error)throw current.error;
-  var redirectTo=PUBLIC_AUTH_REDIRECT;var result;
-  if(current.data.session&&current.data.session.user&&current.data.session.user.is_anonymous&&typeof client.auth.linkIdentity==='function'){
-   result=await client.auth.linkIdentity({provider:'google',options:{redirectTo:redirectTo}});
-  }else result=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:redirectTo}});
-  if(result.error)throw result.error;
+  try{
+   await initClient();
+   var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();
+   if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');
+   authMessage('در حال بررسی و ارسال دوباره ایمیل تأیید…');
+   var first=await client.auth.resend({type:'email_change',email:email,options:{emailRedirectTo:PUBLIC_AUTH_REDIRECT}});
+   var r=first;
+   if(first.error)r=await client.auth.resend({type:'signup',email:email,options:{emailRedirectTo:PUBLIC_AUTH_REDIRECT}});
+   if(r.error)throw new Error('ارسال برای حالت ثبت‌نام و پیوند حساب هر دو ناموفق بود: '+(r.error.message||r.error));
+   authMessage('درخواست ارسال ایمیل به سامانه پذیرفته شد؛ تحویل واقعی ایمیل از داخل بازی قابل تأیید نیست. صندوق ورودی، هرزنامه و در صورت تأخیر محدودیت ارسال ایمیل Supabase را بررسی کن.');
+  }catch(e){authMessage('ارسال مجدد ایمیل تأیید ناموفق بود: '+(e.message||e));}
  }catch(e){authMessage('ورود Google فعلاً در دسترس نیست: '+(e.message||e)+'. مدیر سامانه باید Google Provider و نشانی بازگشت را در Supabase تنظیم کند.');el('onlineGoogle').disabled=false;}
 }
 
