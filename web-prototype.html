@@ -919,6 +919,7 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 </script><script src="./kuwaiti-six-player-ui.js"></script><script>
 (function(){
 'use strict';
+var PUBLIC_AUTH_REDIRECT='https://ahdehwari-commits.github.io/Doublekout-/';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
 var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,onlineRosterRows=[],lastLobbyGuestId='',gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastOnlineHandSignature='',onlineChallengeDeadline=0,onlineChallengeExpired=false,confirmedPlayedCardIds=Object.create(null),onlineRematchDeadline=0,lastRematchBeep=-1,rematchBusy=false,myOnlineIsHost=false,rematchAutoAttemptedDeadline=0;
@@ -1013,9 +1014,9 @@ async function registerOnlineAccount(){
  try{await initClient();var v=authFields();validateAuthFields(v,true);el('onlineRegister').disabled=true;authMessage('در حال ساخت حساب…');
   var current=await client.auth.getSession();if(current.error)throw current.error;var result;
   if(current.data.session&&current.data.session.user&&current.data.session.user.is_anonymous){
-   result=await client.auth.updateUser({email:v.email,password:v.password,data:{display_name:v.displayName}});
+   result=await client.auth.updateUser({email:v.email,password:v.password,data:{display_name:v.displayName}},{emailRedirectTo:PUBLIC_AUTH_REDIRECT});
   }else{
-   result=await client.auth.signUp({email:v.email,password:v.password,options:{data:{display_name:v.displayName},emailRedirectTo:location.href.split('#')[0]}});
+   result=await client.auth.signUp({email:v.email,password:v.password,options:{data:{display_name:v.displayName},emailRedirectTo:PUBLIC_AUTH_REDIRECT}});
   }
   if(result.error)throw result.error;
   session=result.data.session||null;me=result.data.user||null;
@@ -1033,13 +1034,13 @@ async function loginOnlineAccount(){
  finally{el('onlineLogin').disabled=false;}
 }
 async function resetOnlinePassword(){
- try{await initClient();var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');authMessage('در حال ارسال لینک بازیابی…');var r=await client.auth.resetPasswordForEmail(email,{redirectTo:location.href.split('#')[0]});if(r.error)throw r.error;authMessage('اگر این ایمیل در سامانه ثبت شده باشد، لینک بازیابی رمز برای آن ارسال می‌شود. صندوق ورودی و هرزنامه را بررسی کن.');}
+ try{await initClient();var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');authMessage('در حال ارسال لینک بازیابی…');var r=await client.auth.resetPasswordForEmail(email,{redirectTo:PUBLIC_AUTH_REDIRECT});if(r.error)throw r.error;authMessage('اگر این ایمیل در سامانه ثبت شده باشد، لینک بازیابی رمز برای آن ارسال می‌شود. صندوق ورودی و هرزنامه را بررسی کن.');}
  catch(e){authMessage('ارسال لینک بازیابی ناموفق بود: '+(e.message||e));}
 }
 async function googleOnlineAccount(){
  try{await initClient();el('onlineGoogle').disabled=true;authMessage('در حال انتقال به صفحه امن Google…');
   var current=await client.auth.getSession();if(current.error)throw current.error;
-  var redirectTo=location.href.split('#')[0];var result;
+  var redirectTo=PUBLIC_AUTH_REDIRECT;var result;
   if(current.data.session&&current.data.session.user&&current.data.session.user.is_anonymous&&typeof client.auth.linkIdentity==='function'){
    result=await client.auth.linkIdentity({provider:'google',options:{redirectTo:redirectTo}});
   }else result=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:redirectTo}});
@@ -1051,7 +1052,7 @@ async function appleOnlineAccount(){
  try{
   await initClient();el('onlineApple').disabled=true;authMessage('در حال انتقال به صفحه امن Apple…');
   var current=await client.auth.getSession();if(current.error)throw current.error;
-  var redirectTo=location.href.split('#')[0],result;
+  var redirectTo=PUBLIC_AUTH_REDIRECT,result;
   if(current.data.session&&current.data.session.user&&current.data.session.user.is_anonymous&&typeof client.auth.linkIdentity==='function'){
    result=await client.auth.linkIdentity({provider:'apple',options:{redirectTo:redirectTo,scopes:'name email'}});
   }else result=await client.auth.signInWithOAuth({provider:'apple',options:{redirectTo:redirectTo,scopes:'name email'}});
@@ -1466,7 +1467,7 @@ async function refreshOnlineGame(startPayload){
   el('onlineScore').textContent=liveScoreText;
   el('onlineHand').innerHTML='';
   el('onlineHandTitle').textContent='کارت‌های شما · '+hand.length+' کارت';
-  var leadOnlineCard=(state.plays||[])[0]&&((state.plays||[])[0].card||{}),leadOnlineSuit=leadOnlineCard.suit||leadOnlineCard.s;
+  var leadOnlineCard=(state.plays||[])[0]&&((state.plays||[])[0].card||{}),leadOnlineSuit=leadOnlineCard&&(leadOnlineCard.suit||leadOnlineCard.s);
    leadOnlineSuit=({'S':'♠','H':'♥','D':'♦','C':'♣','♠':'♠','♥':'♥','♦':'♦','♣':'♣'})[leadOnlineSuit]||'';
    var followsLead=!!leadOnlineSuit&&hand.some(function(card){return normalizedSuit(card)===leadOnlineSuit;});
    var myPlayTurn=turn===myOnlineSeat&&!finished&&!decisionPending&&!trickPending;
