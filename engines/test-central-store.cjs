@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const sql=fs.readFileSync(require.resolve('../supabase/migrations/20261116002300_central_cosmetic_store.sql'),'utf8');
+const js=fs.readFileSync(require.resolve('../central-store.js'),'utf8');
+for(const fn of ['get_store_catalog','purchase_card_back','equip_card_back'])assert.match(sql,new RegExp('function public\\.'+fn));
+assert.match(sql,/for update/,'balance is locked during purchase');
+assert.match(sql,/not_enough_points/);
+assert.match(sql,/primary key\(user_id,card_back_id\)/,'duplicate ownership is prevented');
+assert.match(js,/window\.DoubleKoutStore/);
+assert.match(js,/purchase_card_back/);
+assert.match(js,/equip_card_back/);
+assert.match(js,/classic-blue/);
+console.log('Central cosmetic store checks passed.');
