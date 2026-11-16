@@ -82,6 +82,8 @@ jobs:
           done
       - name: Test central player points and leaderboard
         run: docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/player-progress-smoke.sql
+      - name: Test cosmetic store purchases and card-back ownership
+        run: docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/cosmetic-store-smoke.sql
       - name: Play a complete four-seat game with two humans and two AI seats
         run: docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/online-game-smoke.sql
 
