@@ -187,3 +187,15 @@ begin
 end; $$;
 revoke all on function public.complete_zarinpal_payment(uuid,text,text,boolean) from public,anon,authenticated;
 grant execute on function public.complete_zarinpal_payment(uuid,text,text,boolean) to service_role;
+
+create or replace function public.admin_set_role(p_user_id uuid,p_role text,p_active boolean default true)
+returns jsonb language plpgsql security definer set search_path=public,pg_temp as $$
+begin
+ if not public.has_admin_role(array['super_admin']) then raise exception 'super_admin_required'; end if;
+ if p_role not in ('super_admin','finance','support') then raise exception 'invalid_admin_role'; end if;
+ insert into public.admin_roles(user_id,role,active) values(p_user_id,p_role,p_active)
+ on conflict(user_id) do update set role=excluded.role,active=excluded.active;
+ return jsonb_build_object('user_id',p_user_id,'role',p_role,'active',p_active);
+end; $$;
+revoke all on function public.admin_set_role(uuid,text,boolean) from public,anon;
+grant execute on function public.admin_set_role(uuid,text,boolean) to authenticated;
