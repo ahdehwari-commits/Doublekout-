@@ -471,10 +471,10 @@ function speakPlayer(kind='play',player=1){
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function bestTrump(hand){let counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));return [...suits].sort((a,b)=>counts[b]-counts[a])[0]}
-function dealGame(trump){
+function dealGame(trump,stagedOverride){
  let starter=matchNo>1&&previousStarter!==null?previousStarter:Number($('starter').value),hands=[],pendingDeck=[];
  const selected=$('hokmContract').value;
- const staged=matchNo>1;
+ const staged=typeof stagedOverride==='boolean'?stagedOverride:matchNo>1;
  let deck=window.StandardHokmEngine.shuffle(window.StandardHokmEngine.createDeck());
  if(staged){
   hands=[[],[],[],[]];
