@@ -33,8 +33,10 @@ Open `android/` in Android Studio with JDK 17 and Android SDK 35, sync Gradle, t
 
 
 ## Central player accounts and cosmetic store
-- Central player profiles, win points and leaderboard use Supabase migrations. The latest cosmetic-store migration is `supabase/migrations/20261116002300_central_cosmetic_store.sql`.
+- Central player profiles, win points and leaderboard use Supabase migrations. The latest admin/payment migration is `supabase/migrations/20261116002400_admin_payments.sql`.
 - The cosmetic store adds five card-back designs, server-side point deduction, unique ownership, and account-persistent equipped design. Buying and equipping are authenticated RPC operations; duplicate purchases cannot double-charge.
 - The web/PWA and Android asset builds load the same central store module. The service worker cache was versioned for the new module.
-- Point-based cosmetic purchases are implemented in code. Real-money payments and rewarded-video rewards are deliberately not enabled until verified payment/ad providers and server callbacks are configured.
+- Point-based cosmetic purchases, Iran-oriented top-up packages (50/110/240/650 points at 50k/100k/200k/500k toman), a role-based admin console, auditable point ledger, manual payment review, and a server-side ZarinPal v4 Edge Function are implemented in source. Online payment remains inactive until the Supabase migrations, Edge Function and private ZarinPal secrets are deployed. Rewarded-video rewards remain inactive until an ad provider and server-side reward verification are configured.
+- Admin roles: one initial super-admin, with finance and support roles available for later delegation. Follow `supabase/ADMIN_BOOTSTRAP.md` to safely bootstrap the first admin. Admin users can search player accounts, adjust balances with a reason, review manual transfers, and inspect pending orders. Manual credits are idempotently tied to payment orders.
+- Apply production migrations in this order: `20261116002100_anonymous_strategy_learning.sql`, `20261116002200_central_player_progress.sql`, `20261116002300_central_cosmetic_store.sql`, and `20261116002400_admin_payments.sql`. Then set private Edge Function secrets and deploy `zarinpal` as documented in `supabase/ADMIN_BOOTSTRAP.md`.
 - Production Supabase still requires applying the pending migrations in order: anonymous learning (`20261116002100`), central player progress (`20261116002200`), and cosmetic store (`20261116002300`). GitHub Actions PostgreSQL smoke tests do not apply migrations to production.
