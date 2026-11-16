@@ -81,7 +81,7 @@ function addStyle(){
 .k-hand button .k-card{width:80px;height:120px}
 .k-hand button .k-card .ksuit{font-size:36px}
 .k-hand button:not(:disabled) .k-card{outline:2px solid #f0d38a;transform:translateY(-5px) rotateY(-3deg);filter:saturate(1.12)}
-.k-hand button:not(:disabled):hover .k-card{transform:translateY(-17px) rotateY(0) scale(1.04);z-index:5}
+.k-hand button:not(:disabled):hover .k-card{transform:translateY(-17px) rotateY(0) scale(1.04);z-index:5}.k-hand:not(.k-has-legal-restrictions) button:not(:disabled) .k-card{outline:none!important;filter:none!important}
 .k-opponent-fan{direction:ltr;display:flex;align-items:center;justify-content:center;height:66px;max-width:100%;overflow:visible;padding:2px}
 .k-opponent-fan .k-card.k-back{width:44px;height:66px;min-width:44px;padding:0;margin-left:-37px;border-width:2px!important;border-radius:5px;transform:rotate(calc((var(--fan-index) - 3)*3deg))}
 .k-opponent-fan .k-card.k-back:first-child{margin-left:0}
@@ -860,13 +860,14 @@ function renderGame(){
  gate.classList.toggle('hidden',!hideGate);
  if(hideGate){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[turnPlayer];$('kHotseatText').textContent='گوشی را به '+playerNames[turnPlayer]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
  const canRevealHand=displayHuman&&($('kPlayStyle').value!=='hotseat'||(displayPlayer===turnPlayer&&hotseatRevealed));
+  const displayLead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});const displayLegalCards=K.legalCards(game.hands[displayPlayer],displayLead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||displayPlayer===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});$('kHand').classList.toggle('k-has-legal-restrictions',displayLegalCards.length<game.hands[displayPlayer].length);
  if(canRevealHand)game.hands[displayPlayer].forEach((c,i,arr)=>{
   const b=document.createElement('button');
   const offset=i-(arr.length-1)/2;
   b.style.transform='rotate('+(offset*4.8)+'deg) translateY('+(Math.abs(offset)*2.4)+'px)';
   b.style.zIndex=String(10+i);
   const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
-  const legal=displayPlayer===turnPlayer&&isTurnHuman&&!game.done&&($('kPlayStyle').value!=='hotseat'||hotseatRevealed)&&K.legalCards(game.hands[displayPlayer],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||displayPlayer===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1}).some(x=>x.id===c.id);
+  const legal=displayPlayer===turnPlayer&&isTurnHuman&&!game.done&&($('kPlayStyle').value!=='hotseat'||hotseatRevealed)&&displayLegalCards.some(x=>x.id===c.id);
   b.disabled=!legal;b.append(cardNode(c));b.onclick=()=>playHumanCard(c);$('kHand').append(b);
  });
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
