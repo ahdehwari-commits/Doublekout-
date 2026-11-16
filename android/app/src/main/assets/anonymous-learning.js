@@ -18,14 +18,15 @@ function consentAllowed(){
   return ok;
  }catch(_){return false;}
 }
-function card(c){if(!c)return null;return {rank:c.rank||c.r||null,suit:c.suit||c.s||null,kind:c.kind||'normal',color:c.color||null};}
+function suitCode(s){return ({'♠':'S','♥':'H','♦':'D','♣':'C'})[s]||s||null;}
+function card(c){if(!c)return null;return {rank:c.rank||c.r||null,suit:suitCode(c.suit||c.s),kind:c.kind||'normal',color:c.color||null};}
 function cleanPlays(plays,actor,count){return (plays||[]).map(p=>({relativeSeat:(p.player-actor+count)%count,card:card(p.card)}));}
 function capture(x){
  if(!consentAllowed())return;
  if(!x||!Array.isArray(x.hand)||!Array.isArray(x.legalCards)||!x.legalCards.length)return;
  const count=x.playerCount||4,actor=x.player, ownTeam=actor%2;
  const hand=x.hand.map(card),legal=x.legalCards.map(card),plays=cleanPlays(x.plays,actor,count);
- const trump=x.trumpSuit||null,trumps=trump?hand.filter(c=>c.suit===trump).length:0;
+ const trump=suitCode(x.trumpSuit),trumps=trump?hand.filter(c=>c.suit===trump).length:0;
  const state={mode:x.mode||'unknown',players:count,contract:x.contract||'hokm',
   trickNo:Number(x.trickNo||1),leadSuit:plays.length?plays[0].card.suit:null,
   hand,legal,plays,trump,trumpCount:trumps,partnerWinning:!!x.partnerWinning,
