@@ -1033,7 +1033,7 @@ async function loginOnlineAccount(){
  finally{el('onlineLogin').disabled=false;}
 }
 async function resetOnlinePassword(){
- try{await initClient();var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');authMessage('در حال ارسال لینک بازیابی…');var r=await client.auth.resetPasswordForEmail(email,{redirectTo:location.href.split('#')[0]});if(r.error)throw r.error;authMessage('اگر این ایمیل در سامانه ثبت شده باشد، لینک بازیابی رمز برای آن ارسال می‌شود. صندوق ورودی و هرزنامه را بررسی کن.');}
+ try{await initClient();var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');authMessage('در حال ارسال لینک بازیابی…');var r=await client.auth.resetPasswordForEmail(email,{redirectTo:location.href.split('#')[0]});if(r.error)throw r.error;authMessage('اگر این ایمیل در سامانه ثبت شده باشد، لینک بازیابی رمز برای آن ارسال می‌شود. صندوق ورودی و هرزنامه را بررسی کن.');}
  catch(e){authMessage('ارسال لینک بازیابی ناموفق بود: '+(e.message||e));}
 }
 async function googleOnlineAccount(){
