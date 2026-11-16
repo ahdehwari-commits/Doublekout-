@@ -761,7 +761,8 @@ function aiCard(p){
  const visibleTrump=(game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:(trickNo===1?game.trumpSuit:null);
  const legal=K.legalCards(game.hands[p],lead,{trickNo,isFirstPlay:trick.length===0,trumpSuit:trickNo===1?game.trumpSuit:visibleTrump,firstTrickNoCut:trickNo===1});
  const trumpCount=visibleTrump?game.hands[p].filter(c=>c.kind==='normal'&&c.suit===visibleTrump).length:0;
- const pattern=['kuwaiti',game.contract||'hokm',trickNo,lead||'-',legal.length,trumpCount,0,0].join('|');
+ const patternLead=trick.length?trick[0].card.suit:null;
+ const pattern=['kuwaiti',game.contract||'hokm',trickNo,patternLead||'-',legal.length,trumpCount,0,0].join('|');
  try{return window.DoubleKoutLearning.getSuggestion(pattern,legal,chosen)||chosen;}catch(_){return chosen;}
 }
 function playOne(p,card,throwOnError=false){
