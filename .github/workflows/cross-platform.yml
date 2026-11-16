@@ -9,6 +9,7 @@ on:
       - "lan-multiplayer.js"
       - "supabase-multiplayer.js"
       - "anonymous-learning.js"
+      - "central-progress.js"
       - "three-d-scene.js"
       - "engines/**"
       - "scripts/**"
@@ -63,15 +64,18 @@ jobs:
           CREATE ROLE anon NOLOGIN;
           CREATE ROLE authenticated NOLOGIN;
           CREATE SCHEMA auth;
-          CREATE TABLE auth.users(id uuid PRIMARY KEY);
+          CREATE TABLE auth.users(id uuid PRIMARY KEY, raw_user_meta_data jsonb NOT NULL DEFAULT '{}'::jsonb, is_anonymous boolean NOT NULL DEFAULT false);
           CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS 'SELECT nullif(current_setting(''request.jwt.claim.sub'', true), '''')::uuid';
+          CREATE FUNCTION auth.jwt() RETURNS jsonb LANGUAGE sql STABLE AS 'SELECT coalesce(nullif(current_setting(''request.jwt.claims'', true), '''')::jsonb, ''{}''::jsonb)';
           CREATE PUBLICATION supabase_realtime;
           SQL
       - name: Apply Supabase migrations in order
         run: |
-          for file in supabase/migrations/20261113000100_multiplayer_rooms.sql supabase/migrations/20261113000200_room_lobby_actions.sql supabase/migrations/20261113000300_authoritative_four_player_game.sql supabase/migrations/20261114000400_reliable_room_lobby.sql supabase/migrations/20261114000500_deal_before_challenge_decision.sql supabase/migrations/20261114000600_rotating_challenge_turns.sql supabase/migrations/20261114000700_simultaneous_challenge_window.sql supabase/migrations/20261114000800_ten_second_turn_timeout.sql supabase/migrations/20261114000900_fix_challenge_extension_json.sql supabase/migrations/20261114001000_force_room_playing_status.sql supabase/migrations/20261114001100_fix_challenge_choice_json.sql supabase/migrations/20261114001200_challenger_starts_first.sql supabase/migrations/20261114001300_ten_second_challenge_window.sql supabase/migrations/20261114001400_fix_guest_room_playing_status.sql supabase/migrations/20261114001500_guest_team_selection.sql supabase/migrations/20261114001600_add_room_snapshot_rpc.sql supabase/migrations/20261114001700_allow_human_play_after_turn_timer.sql supabase/migrations/20261115001800_online_rematch_timer.sql supabase/migrations/20261115001900_online_trick_display_delay.sql supabase/migrations/20261115002000_lobby_decision_and_sequence_pile.sql supabase/migrations/20261116002100_anonymous_strategy_learning.sql; do
+          for file in supabase/migrations/20261113000100_multiplayer_rooms.sql supabase/migrations/20261113000200_room_lobby_actions.sql supabase/migrations/20261113000300_authoritative_four_player_game.sql supabase/migrations/20261114000400_reliable_room_lobby.sql supabase/migrations/20261114000500_deal_before_challenge_decision.sql supabase/migrations/20261114000600_rotating_challenge_turns.sql supabase/migrations/20261114000700_simultaneous_challenge_window.sql supabase/migrations/20261114000800_ten_second_turn_timeout.sql supabase/migrations/20261114000900_fix_challenge_extension_json.sql supabase/migrations/20261114001000_force_room_playing_status.sql supabase/migrations/20261114001100_fix_challenge_choice_json.sql supabase/migrations/20261114001200_challenger_starts_first.sql supabase/migrations/20261114001300_ten_second_challenge_window.sql supabase/migrations/20261114001400_fix_guest_room_playing_status.sql supabase/migrations/20261114001500_guest_team_selection.sql supabase/migrations/20261114001600_add_room_snapshot_rpc.sql supabase/migrations/20261114001700_allow_human_play_after_turn_timer.sql supabase/migrations/20261115001800_online_rematch_timer.sql supabase/migrations/20261115001900_online_trick_display_delay.sql supabase/migrations/20261115002000_lobby_decision_and_sequence_pile.sql supabase/migrations/20261116002100_anonymous_strategy_learning.sql supabase/migrations/20261116002200_central_player_progress.sql; do
             docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < "$file"
           done
+      - name: Test central player points and leaderboard
+        run: docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/player-progress-smoke.sql
       - name: Play a complete four-seat game with two humans and two AI seats
         run: docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/online-game-smoke.sql
 
