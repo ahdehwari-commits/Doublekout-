@@ -921,7 +921,7 @@ function applyScore(success,won,bidderTeam,provided){
  if(matchOver){$('kNewGame').textContent='شروع مسابقه جدید';$('kResult').innerHTML+='<p class="k-small">مسابقه با رسیدن امتیاز یکی از تیم‌ها به حد انتخابی پایان یافت.</p>';}
  else $('kNewGame').textContent='بازی بعدی';
  renderGame();
- if(gameWinner==='A'&&$('kPlayStyle').value==='ai'&&isHumanSeat(0)&&window.DoubleKoutProgress){const gameId=game.centralGameId||(game.centralGameId=(window.crypto&&crypto.randomUUID?crypto.randomUUID():('kuwaiti-'+Date.now()+'-'+Math.random().toString(36).slice(2))));window.DoubleKoutProgress.awardLocalWin(gameId,'kuwaiti').then(result=>window.DoubleKoutProgress.showAwardResult(result,'kResult'));}
+ if(gameWinner==='A'&&humanSeats.has(0)&&humanSeats.size===1&&window.DoubleKoutProgress){const gameId=game.centralGameId||(game.centralGameId=(window.crypto&&crypto.randomUUID?crypto.randomUUID():('kuwaiti-'+Date.now()+'-'+Math.random().toString(36).slice(2))));window.DoubleKoutProgress.awardLocalWin(gameId,'kuwaiti').then(result=>window.DoubleKoutProgress.showAwardResult(result,'kResult'));}
 }
 function startNewMatch(){
  hotseatRevealed=false;
