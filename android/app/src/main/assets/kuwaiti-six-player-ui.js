@@ -757,13 +757,25 @@ function playHumanCard(card){
 function playOne(p,card,throwOnError=false){
  if(!game||game.done)return false;
  const wasFirst=game.trick.length===0;
+ if(window.DoubleKoutLearning&&isHumanSeat(p)){
+  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
+  const activeTrump=game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null);
+  const legalNow=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:activeTrump,firstTrickNoCut:game.trickNo===1});
+  const own=team(p)==='A';
+  window.DoubleKoutLearning.capture({mode:'kuwaiti',playerCount:6,player:p,hand:game.hands[p],legalCards:legalNow,chosen:card,
+   plays:game.trick,contract:game.contract||'hokm',trumpSuit:activeTrump,trickNo:game.trickNo,
+   ownScore:own?points.A:points.B,opponentScore:own?points.B:points.A,
+   target:game.auctionBid&&game.auctionBid.target});
+ }
+
  if(typeof playCardSound==='function')playCardSound();if(p!==0&&typeof speakPlayer==='function')speakPlayer('play',p);
  let res;try{res=K.playCard(game,p,card);}catch(e){setStatus('خطا در اجرای کارت '+playerNames[p]+': '+(e&&e.message?e.message:'نامشخص'));console.error('Kuwaiti playCard failed',e);if(throwOnError)throw e;return false;}
  if(!isHumanSeat(p))setStatus('هوش مصنوعی '+playerNames[p]+' کارت را با موفقیت انداخت.');
  if(wasFirst&&game.trick.length===1)game.lastTrick=[];
  // The live team trick counter occupies this area; do not replace it with a per-card announcement.
  if(res.completed){
-  const win=res.winner;if(typeof tone==='function'){tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);}if(win!==0&&typeof speakPlayer==='function')speakPlayer('win',win);setStatus('دست '+fa(game.trickNo-1)+' را '+playerNames[win]+' برد.');
+  const win=res.winner;
+  if(window.DoubleKoutLearning)window.DoubleKoutLearning.complete(win,game.lastTrick,6);if(typeof tone==='function'){tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);}if(win!==0&&typeof speakPlayer==='function')speakPlayer('win',win);setStatus('دست '+fa(game.trickNo-1)+' را '+playerNames[win]+' برد.');
   if(!game.isMalzoom&&game.auctionBid&&Number.isInteger(game.auctionBid.target)){
    const bidderTeam=team(game.auctionWinner);
    const bidderWon=game.trickWinners.filter(p=>team(p)===bidderTeam).length;
