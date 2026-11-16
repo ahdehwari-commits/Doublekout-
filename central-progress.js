@@ -4,6 +4,7 @@
 (function(){
 'use strict';
 let busy=false;
+const QUEUE_KEY='doublekout.pendingWinAwards.v1';
 function online(){return window.DoubleKoutOnline&&typeof window.DoubleKoutOnline.rpc==='function';}
 function setText(id,value){const n=document.getElementById(id);if(n)n.textContent=value;}
 function escapeHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -30,6 +31,21 @@ async function refresh(){
  }catch(e){setText('onlineMyPoints','دریافت امتیازها ناموفق بود: '+(e.message||e));return null;}
  finally{busy=false;}
 }
+function readQueue(){try{const x=JSON.parse(localStorage.getItem(QUEUE_KEY)||'[]');return Array.isArray(x)?x:[];}catch(_){return [];}}
+function writeQueue(q){try{localStorage.setItem(QUEUE_KEY,JSON.stringify(q.slice(-100)));}catch(_){}}
+async function flushPending(){
+ try{
+  const session=await window.DoubleKoutOnline.getSession();if(!session||!session.user||session.user.is_anonymous)return;
+  const queue=readQueue(),keep=[];
+  for(const item of queue){
+   if(item.userId!==session.user.id){keep.push(item);continue;}
+   try{const r=await rpc('award_local_game_win',{p_game_id:item.gameId,p_game_mode:item.mode});if(r.error)throw r.error;}
+   catch(_){keep.push(item);}
+  }
+  writeQueue(keep);
+  if(queue.length!==keep.length)await refresh();
+ }catch(_){}
+}
 async function awardLocalWin(gameId,mode){
  try{
   const session=await window.DoubleKoutOnline.getSession();
@@ -39,10 +55,14 @@ async function awardLocalWin(gameId,mode){
   const data=r.data||{};
   await refresh();
   return {status:data.awarded?'awarded':'duplicate',points:Number(data.points_added||0)};
- }catch(e){console.warn('Central win-point sync failed:',e&&e.message||e);return {status:'error',message:e.message||String(e)};}
+ }catch(e){
+  try{const session=await window.DoubleKoutOnline.getSession();if(session&&session.user&&!session.user.is_anonymous){const q=readQueue();if(!q.some(x=>x.gameId===gameId&&x.userId===session.user.id)){q.push({gameId,mode,userId:session.user.id});writeQueue(q);}return {status:'pending'};}}catch(_){}
+  console.warn('Central win-point sync failed:',e&&e.message||e);return {status:'error',message:e.message||String(e)};
+ }
 }
-function showAwardResult(result,containerId){const host=document.getElementById(containerId);if(!host)return;let n=document.getElementById('centralAwardNotice');if(!n){n=document.createElement('div');n.id='centralAwardNotice';n.style.cssText='margin-top:8px;padding:8px;border:1px solid #b99a5d;border-radius:8px;font-size:12px;line-height:1.8';host.appendChild(n);}n.innerHTML='';if(result&&result.status==='awarded'){n.textContent='یک امتیاز برد به حساب مرکزی اضافه شد.';}else if(result&&result.status==='duplicate'){n.textContent='امتیاز این بازی قبلاً ثبت شده است؛ امتیاز تکراری داده نشد.';}else if(result&&result.status==='no_account'){n.textContent='برای ثبت این برد و دریافت امتیاز، ابتدا وارد حساب دائمی شو. ';const b=document.createElement('button');b.textContent='ورود به حساب';b.onclick=openAccount;n.appendChild(b);}else{n.textContent='ثبت امتیاز انجام نشد: '+(result&&result.message||'اتصال مرکزی برقرار نیست.');}}
+function showAwardResult(result,containerId){const host=document.getElementById(containerId);if(!host)return;let n=document.getElementById('centralAwardNotice');if(!n){n=document.createElement('div');n.id='centralAwardNotice';n.style.cssText='margin-top:8px;padding:8px;border:1px solid #b99a5d;border-radius:8px;font-size:12px;line-height:1.8';host.appendChild(n);}n.innerHTML='';if(result&&result.status==='awarded'){n.textContent='یک امتیاز برد به حساب مرکزی اضافه شد.';}else if(result&&result.status==='duplicate'){n.textContent='امتیاز این بازی قبلاً ثبت شده است؛ امتیاز تکراری داده نشد.';}else if(result&&result.status==='pending'){n.textContent='برد روی همین دستگاه نگهداری شد و پس از برقراری اینترنت با همین حساب همگام می‌شود.';}else if(result&&result.status==='no_account'){n.textContent='برای ثبت این برد و دریافت امتیاز، ابتدا وارد حساب دائمی شو. ';const b=document.createElement('button');b.textContent='ورود به حساب';b.onclick=openAccount;n.appendChild(b);}else{n.textContent='ثبت امتیاز انجام نشد: '+(result&&result.message||'اتصال مرکزی برقرار نیست.');}}
 function openAccount(){if(online())window.DoubleKoutOnline.open();setText('onlineAuthStatus','برای ثبت بردهای محلی و دیدن رتبه‌ات، وارد حساب دائمی شو.');}
-window.DoubleKoutProgress={refresh,awardLocalWin,openAccount,showAwardResult};
-const bindRefresh=()=>{const b=document.getElementById('onlineRefreshProgress');if(b)b.onclick=refresh;};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindRefresh);else bindRefresh();
+window.DoubleKoutProgress={refresh,awardLocalWin,openAccount,showAwardResult,flushPending};
+window.addEventListener('online',flushPending);
+const bindRefresh=()=>{const b=document.getElementById('onlineRefreshProgress');if(b)b.onclick=()=>{refresh();flushPending();};};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindRefresh);else bindRefresh();
 })();
