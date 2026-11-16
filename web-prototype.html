@@ -1038,7 +1038,7 @@ async function resetOnlinePassword(){
  catch(e){authMessage('ارسال لینک بازیابی ناموفق بود: '+(e.message||e));}
 }
 async function resendOnlineConfirmation(){
- try{await initClient();var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');authMessage('در حال ارسال دوباره ایمیل تأیید…');var r=await client.auth.resend({type:'signup',email:email,options:{emailRedirectTo:PUBLIC_AUTH_REDIRECT}});if(r.error)throw r.error;authMessage('درخواست ارسال مجدد ثبت شد. صندوق ورودی و پوشه هرزنامه را بررسی کن.');}
+ try{await initClient();var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');authMessage('در حال ارسال دوباره ایمیل تأیید…');var r=await client.auth.resend({type:'signup',email:email,options:{emailRedirectTo:PUBLIC_AUTH_REDIRECT}});if(r.error)throw r.error;authMessage('درخواست ارسال مجدد ثبت شد. صندوق ورودی و پوشه هرزنامه را بررسی کن.');}
  catch(e){authMessage('ارسال مجدد ایمیل تأیید ناموفق بود: '+(e.message||e));}
 }
 async function googleOnlineAccount(){
