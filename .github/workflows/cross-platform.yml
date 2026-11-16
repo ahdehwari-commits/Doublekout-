@@ -32,6 +32,10 @@ jobs:
           node-version: "20"
       - name: Test four-player shared game engine
         run: node engines/test-double-kout-game.cjs
+      - name: Test four-player UI and staged trump selection
+        run: node engines/test-four-player-ui.cjs
+      - name: Test standard four-player Hokm rules
+        run: node engines/test-standard-hokm.cjs
       - name: Test anonymous strategy learning capture
         run: node engines/test-anonymous-learning.cjs
       - name: Test central cosmetic store
