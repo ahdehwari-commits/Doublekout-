@@ -56,7 +56,7 @@ async function awardLocalWin(gameId,mode){
   await refresh();
   return {status:data.awarded?'awarded':'duplicate',points:Number(data.points_added||0)};
  }catch(e){
-  try{const session=await window.DoubleKoutOnline.getSession();if(session&&session.user&&!session.user.is_anonymous){const q=readQueue();if(!q.some(x=>x.gameId===gameId&&x.userId===session.user.id)){q.push({gameId,mode,userId:session.user.id});writeQueue(q);}return {status:'pending'};}}catch(_){}
+  if(e instanceof TypeError||/network|fetch|offline/i.test(String(e&&e.message||e))){try{const session=await window.DoubleKoutOnline.getSession();if(session&&session.user&&!session.user.is_anonymous){const q=readQueue();if(!q.some(x=>x.gameId===gameId&&x.userId===session.user.id)){q.push({gameId,mode,userId:session.user.id});writeQueue(q);}return {status:'pending'};}}catch(_){}}
   console.warn('Central win-point sync failed:',e&&e.message||e);return {status:'error',message:e.message||String(e)};
  }
 }
