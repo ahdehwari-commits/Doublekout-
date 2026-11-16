@@ -1323,10 +1323,11 @@ async function refreshOnlineGame(startPayload){
  if(!roomId||!client)return;
  if(gameBusy){gameRefreshQueued=true;if(startPayload)gameStartSnapshot=startPayload;return;}
  gameBusy=true;
+ var syncStage='خواندن وضعیت بازی';
  try{
   var q;
   if(startPayload&&startPayload.status==='playing')q={data:{status:startPayload.status,public_state:startPayload.state,revision:startPayload.revision},error:null};
-  else q=await client.rpc('get_room_snapshot',{p_room_id:roomId});
+  else{syncStage='دریافت وضعیت اتاق از سرور';q=await client.rpc('get_room_snapshot',{p_room_id:roomId});}
   if(q.error)throw q.error;
   if(q.data.status!=='playing'&&q.data.status!=='finished'){showRoom();el('onlineGame').style.display='none';say('اتاق باز است؛ منتظر شروع میزبان هستیم · وضعیت سرور: '+q.data.status);return;}
   showRoom();
@@ -1334,7 +1335,7 @@ async function refreshOnlineGame(startPayload){
   // Always re-read the private hand, even when the public room revision is unchanged.
   // A hand update can arrive before/after its room notification; compare its signature
   // so cards already played never remain as tappable stale cards on screen.
-  var mine=await client.from('room_game_hands').select('seat,cards').eq('room_id',roomId).eq('owner_user_id',me.id).maybeSingle();
+  syncStage='دریافت کارت‌های خصوصی بازیکن';var mine=await client.from('room_game_hands').select('seat,cards').eq('room_id',roomId).eq('owner_user_id',me.id).maybeSingle();
   if(mine.error)throw mine.error;
   if(mine.data&&Number.isInteger(Number(mine.data.seat)))myOnlineSeat=Number(mine.data.seat);
   var hand=mine.data&&mine.data.cards||[];
@@ -1350,17 +1351,17 @@ async function refreshOnlineGame(startPayload){
    // Otherwise a timeout checked once before its deadline is never checked again.
    if(q.data.status==='playing'&&!((q.data.public_state||{}).phase==='challenge_decision')&&!q.data.public_state.trickPendingUntil&&!aiBusy){
     var sameState=q.data.public_state||{},sameTurn=Number(sameState.turn||0);
-    var sameHost=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
+    syncStage='بررسی نقش میزبان برای ادامه نوبت';var sameHost=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
     if(sameHost.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+sameHost.error.message);
     if(!sameHost.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
     if(sameHost.data.is_host){
      if(sameState.seatPlayers&&sameState.seatPlayers[String(sameTurn)]&&sameState.seatPlayers[String(sameTurn)].human===false){
-      aiBusy=true;try{var retryAi=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(retryAi.error)throw retryAi.error;setTimeout(refreshOnlineGame,150);}catch(e){say('اجرای خودکار ربات دوباره تلاش می‌شود: '+(e.message||e));}finally{aiBusy=false;}
+      aiBusy=true;try{syncStage='اجرای نوبت هوش مصنوعی';var retryAi=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(retryAi.error)throw retryAi.error;setTimeout(refreshOnlineGame,150);}catch(e){say('اجرای خودکار ربات دوباره تلاش می‌شود: '+(e.message||e));}finally{aiBusy=false;}
      }else{
       // Let PostgreSQL decide whether the deadline has passed. Never gate this
       // RPC on the phone clock: device clock skew can leave an expired turn stuck.
       try{
-       var retryTimeout=await onlineRequest(client.rpc('advance_room_turn_timeout',{p_room_id:roomId}),'اجرای خودکار پس از پایان نوبت',12000);
+       syncStage='پیش‌برد خودکار نوبت پس از پایان زمان';var retryTimeout=await onlineRequest(client.rpc('advance_room_turn_timeout',{p_room_id:roomId}),'اجرای خودکار پس از پایان نوبت',12000);
        if(retryTimeout.error)throw retryTimeout.error;
        if(retryTimeout.data&&retryTimeout.data.state)setTimeout(refreshOnlineGame,150);
       }catch(e){say('خطای اجرای خودکار پس از پایان نوبت: '+(e.message||e));}
@@ -1519,19 +1520,19 @@ async function refreshOnlineGame(startPayload){
   lastOnlineHandSignature=handSignature;
   if(!finished&&myOnlineSeat===-1)myOnlineSeat=-1;
   if(!finished&&!decisionPending&&me.id&&!aiBusy){
-   var hostQ=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
+   syncStage='بررسی دسترسی میزبان';var hostQ=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
    if(hostQ.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+hostQ.error.message);
    if(!hostQ.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
    if(trickPending){
     try{
-     var trickResolve=await onlineRequest(client.rpc('resolve_room_trick',{p_room_id:roomId}),'جمع‌کردن دست پس از نمایش',12000);
+     syncStage='ثبت برنده و جمع‌کردن دست';var trickResolve=await onlineRequest(client.rpc('resolve_room_trick',{p_room_id:roomId}),'جمع‌کردن دست پس از نمایش',12000);
      if(trickResolve.error&&trickResolve.error.message!=='trick_display_pending')throw trickResolve.error;
      if(trickResolve.data&&trickResolve.data.resolved)setTimeout(refreshOnlineGame,120);
     }catch(e){if(!/trick_display_pending/.test(String(e&&e.message||e)))say('جمع‌کردن دست: '+(e.message||e));}
    }
    if(hostQ.data.is_host){
     if(!trickPending&&players[String(turn)]&&players[String(turn)].human===false){
-     aiBusy=true;try{var ai=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(ai.error)throw ai.error;setTimeout(refreshOnlineGame,150);}catch(e){say('نوبت ربات: '+(e.message||e));}finally{aiBusy=false;}
+     aiBusy=true;try{syncStage='اجرای نوبت هوش مصنوعی';var ai=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(ai.error)throw ai.error;setTimeout(refreshOnlineGame,150);}catch(e){say('نوبت ربات: '+(e.message||e));}finally{aiBusy=false;}
     }else{
      var timeout=await onlineRequest(client.rpc('advance_room_turn_timeout',{p_room_id:roomId}),'اجرای خودکار پس از پایان نوبت',12000);
      if(timeout.error&&timeout.error.message!=='time_remaining')say('بررسی پایان زمان نوبت: '+timeout.error.message);
@@ -1540,7 +1541,7 @@ async function refreshOnlineGame(startPayload){
    }
   }
   if(finished)say('بازی پایان یافت. '+status);
- }catch(e){say('همگام‌سازی بازی: '+(e.message||e));}
+ }catch(e){say('همگام‌سازی بازی · مرحله: '+syncStage+' · '+(e.name?e.name+': ':'')+(e.message||e));}
  finally{
   gameBusy=false;
   if(gameStartSnapshot){var snapshot=gameStartSnapshot;gameStartSnapshot=null;gameRefreshQueued=false;Promise.resolve().then(function(){refreshOnlineGame(snapshot);});}
