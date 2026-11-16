@@ -75,7 +75,6 @@ jobs:
           node engines/test-four-player-ui.cjs
           node engines/test-anonymous-learning.cjs
           node engines/test-central-store.cjs
-          node engines/test-central-store.cjs
           node engines/test-browser-engine-load-order.cjs
           node engines/test-double-kout-sequence.cjs
           node engines/test-double-kout-game.cjs
