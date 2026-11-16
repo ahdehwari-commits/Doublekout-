@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
-const html=fs.readFileSync(require.resolve('../web-prototype.html'),'utf8');
+const html=fs.readFileSync(require.resolve('../web-prototype.html'),'utf8').replace(/\r\n/g,'\n');
 const engineTag=html.indexOf('<script src="./engines/double-kout-sequence.js"></script>');
 const scriptStart=html.indexOf('<script>',engineTag);
 const scriptEnd=html.indexOf('</script>',scriptStart);
@@ -23,7 +23,7 @@ assert.ok(html.includes("G.turn=(p+1)%4;hotseatRevealed=false;render();runAI()")
 assert.ok(html.includes('id="hotseatGate"')&&html.includes('id="revealHotseatHand"'),'hotseat must cover the table until the next player confirms the phone handoff');
 assert.ok(html.includes("value=\"partner_middle\"")&&html.includes("const contract=$('nextContract').value"),'partner-middle must remain available in the single later-deal contract selector');
 
-const sixUi=fs.readFileSync(require.resolve('../kuwaiti-six-player-ui.js'),'utf8');
+const sixUi=fs.readFileSync(require.resolve('../kuwaiti-six-player-ui.js'),'utf8').replace(/\r\n/g,'\n');
 new vm.Script(sixUi,{filename:'kuwaiti-six-player-ui.js'});
 for(const mode of ['hokm_spades','hokm_clubs','naras','tak_naras','saras']){
  assert.ok(sixUi.includes('value="'+mode+'"')||sixUi.includes("'"+mode+"'"),'six-player selector/engine must support '+mode);
