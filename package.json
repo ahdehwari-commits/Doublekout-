@@ -24,7 +24,8 @@
       "three-d-scene.js",
       "IMG_3647.png",
       "engines/**/*",
-      "anonymous-learning.js"
+      "anonymous-learning.js",
+      "central-progress.js"
     ],
     "asar": true,
     "win": {
