@@ -46,7 +46,7 @@ function cooperativeLeadCard(hand,lastTrick,lastWinner,player,contract='hokm'){
  }
  return null;
 }
-function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='hokm',playedCards=[],initialHand=null,lastTrick=[],lastWinner=null,isHakemTeam=true,sequenceMode=false){
+function chooseAICardBase(hand,plays,player,trumpSuit,difficulty='normal',contract='hokm',playedCards=[],initialHand=null,lastTrick=[],lastWinner=null,isHakemTeam=true,sequenceMode=false){
  const lead=plays.length?plays[0].card.suit:null;
  const legal=legalCards(hand,lead);
  if(!legal.length)throw new Error('No legal Hokm card available');
@@ -143,6 +143,16 @@ function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='
  }
  if(winning.length)return winning[0];
  return sorted[0];
+}
+function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='hokm',playedCards=[],initialHand=null,lastTrick=[],lastWinner=null,isHakemTeam=true,sequenceMode=false,gameMode='standard-hokm',trickNo=1){
+ const chosen=chooseAICardBase(hand,plays,player,trumpSuit,difficulty,contract,playedCards,initialHand,lastTrick,lastWinner,isHakemTeam,sequenceMode);
+ if(difficulty==='easy'||typeof globalThis==='undefined'||!globalThis.DoubleKoutLearning||typeof globalThis.DoubleKoutLearning.getSuggestion!=='function')return chosen;
+ const lead=plays.length?plays[0].card.suit:null,legal=legalCards(hand,lead);
+ let partnerWinning=false;
+ if(plays.length){const w=currentWinner(plays,trumpSuit,contract);partnerWinning=teamOf(w)===teamOf(player);}
+ const trumpCount=trumpSuit?hand.filter(c=>c.suit===trumpSuit).length:0;
+ const pattern=[gameMode||'standard-hokm',contract,trickNo||1,lead||'-',legal.length,trumpCount,partnerWinning?1:0,sequenceMode?1:0].join('|');
+ try{return globalThis.DoubleKoutLearning.getSuggestion(pattern,legal,chosen)||chosen;}catch(_){return chosen;}
 }
 function resolveTrick(plays,trumpSuit,contract='hokm'){if(!Array.isArray(plays)||plays.length!==4)throw new Error('A Hokm trick requires four plays');return currentWinner(plays,trumpSuit,contract);}
 function koutMessage(scoreA,scoreB,hakemPlayer){
