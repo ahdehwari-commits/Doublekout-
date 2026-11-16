@@ -6,7 +6,7 @@
 'use strict';
 const URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 const KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
-let pending=[];
+let pending=[],summaryRows=[];
 const CONSENT_KEY='doubleKout.anonymousLearningConsent.v1';
 function consentAllowed(){
  try{
@@ -52,7 +52,32 @@ async function complete(winner,plays,count){
    body:JSON.stringify({p_events:result})
   });
   if(!response.ok)throw new Error('HTTP '+response.status);
+  await refreshSummary();
  }catch(err){console.warn('Anonymous strategy learning upload skipped:',err&&err.message||err);}
 }
-window.DoubleKoutLearning={capture,complete,discard:function(){pending=[];},setConsent:function(allowed){try{localStorage.setItem(CONSENT_KEY,allowed?'yes':'no');}catch(_){}if(!allowed)pending=[];}};
+async function refreshSummary(){
+ try{
+  const response=await fetch(URL+'/rest/v1/rpc/get_anonymous_learning_summary',{
+   method:'POST',headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json'},
+   body:JSON.stringify({p_limit:200})
+  });
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const rows=await response.json();summaryRows=Array.isArray(rows)?rows:[];
+  return summaryRows.length;
+ }catch(err){console.warn('Central AI strategy summary unavailable:',err&&err.message||err);return 0;}
+}
+function getSuggestion(pattern,legal,baseCard){
+ const matches=summaryRows.filter(x=>x.pattern_key===pattern&&Number(x.samples)>=12&&x.action_rank&&x.action_suit);
+ if(!matches.length)return null;
+ const rateFor=c=>{const x=matches.find(y=>y.action_rank===(c.rank||c.r)&&y.action_suit===suitCode(c.suit||c.s));return x?Number(x.win_rate):null;};
+ const baseRate=rateFor(baseCard);
+ const options=matches.filter(x=>legal.some(c=>(c.rank||c.r)===x.action_rank&&suitCode(c.suit||c.s)===x.action_suit)).sort((a,b)=>Number(b.win_rate)-Number(a.win_rate));
+ if(!options.length)return null;
+ const best=options[0],bestRate=Number(best.win_rate);
+ if(baseRate!==null&&bestRate<baseRate+0.08)return null;
+ if(baseRate===null&&bestRate<0.65)return null;
+ return legal.find(c=>(c.rank||c.r)===best.action_rank&&suitCode(c.suit||c.s)===best.action_suit)||null;
+}
+window.DoubleKoutLearning={capture,complete,refreshSummary,getSuggestion,discard:function(){pending=[];},setConsent:function(allowed){try{localStorage.setItem(CONSENT_KEY,allowed?'yes':'no');}catch(_){}if(!allowed)pending=[];}};
+refreshSummary();
 })();
