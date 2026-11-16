@@ -1,4 +1,4 @@
-name: Build Android APK # Rebuild synced online-enabled Android assets
+name: Build Android APK # Rebuild synced central-progress and online-enabled Android assets
 
 on:
   workflow_dispatch:
