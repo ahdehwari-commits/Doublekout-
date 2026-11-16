@@ -7,7 +7,7 @@ const store=new Map();
 const context={console,URL,Math,Number,Array,JSON,String,Promise,
  window:{confirm:()=>{confirmCalls++;return true;}},
  localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)},
- fetch:async(url,opts)=>{sent={url,opts};return {ok:true};}
+ fetch:async(url,opts)=>{if(url.includes('get_anonymous_learning_summary'))return {ok:true,json:async()=>[]};sent={url,opts};return {ok:true};}
 };
 vm.runInNewContext(source,context);
 const api=context.window.DoubleKoutLearning;
