@@ -711,7 +711,8 @@ function renderLocalRematchClock(){
 }
 setInterval(renderLocalRematchClock,200);
 function awardLocalAccountWin(winningTeam,mode){
- if(winningTeam!=='A'||!humanSeats.has(0)||humanSeats.size!==1||!window.DoubleKoutProgress)return;
+ const humanSeat=humanSeats.size===1?Array.from(humanSeats)[0]:-1;const humanTeam=humanSeat>=0?(humanSeat%2===0?'A':'B'):null;
+ if(!humanTeam||winningTeam!==humanTeam||!window.DoubleKoutProgress)return;
  const id=G.centralGameId||(G.centralGameId=(window.crypto&&crypto.randomUUID?crypto.randomUUID():('local-'+Date.now()+'-'+Math.random().toString(36).slice(2))));
  window.DoubleKoutProgress.awardLocalWin(id,mode).then(result=>window.DoubleKoutProgress.showAwardResult(result,'status'));
 }
