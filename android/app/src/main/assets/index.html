@@ -424,6 +424,7 @@ html{background-color:#061b16!important;min-height:100%;}body{background-color:#
 <section class="panel"><h3 class="section-title">محدوده این نسخه آزمایشی</h3><div class="rules">این نسخه شامل میز چهار نفره و میز شش نفره کوت کویتی است. در حالت شش نفره، مزایده، قراردادهای نرس و تک نرس و سرس، ملزوم، حکم مخفی، جوکرها، بازی ۹ دست و بازیکنان هوش مصنوعی فعال هستند. بازی آنلاین چندنفره هنوز فعال نیست.</div></section>
 </main>
 <script src="./engines/standard-hokm/engine.js"></script>
+<script src="./anonymous-learning.js"></script>
 <script src="./engines/kuwaiti-six-player/engine.js"></script>
 <script src="./engines/double-kout-sequence.js"></script>
 <script src="./engines/double-kout-game.js"></script>
@@ -608,6 +609,14 @@ function play(p,card){
   try{
     let allowed=legalCards(p);
     if(!allowed.some(c=>c.id===card.id))return;
+    if(window.DoubleKoutLearning&&(playStyle==='hotseat'?humanSeats.has(p):p===0)){
+      const legalNow=legalCards(p),own=team(p)==='A';
+      const current=G.plays.length?G.plays.reduce((best,x)=>beats(x.card,best.card,G.plays[0].card.s)?x:best):null;
+      window.DoubleKoutLearning.capture({mode:activeMode==='standard-hokm'?'standard-hokm':'double-kout',playerCount:4,player:p,
+       hand:G.hands[p],legalCards:legalNow,chosen:card,plays:G.plays,contract:G.contract||'hokm',trumpSuit:G.trumpCode,
+       trickNo:G.trickNo,ownScore:own?G.scoreA:G.scoreB,opponentScore:own?G.scoreB:G.scoreA,
+       sequenceMode:activeMode==='double-kout',partnerWinning:!!(current&&team(current.player)===team(p))});
+    }
     G.hands[p]=G.hands[p].filter(c=>c.id!==card.id);
     if(!Array.isArray(G.cardHistory))G.cardHistory=[];
     G.cardHistory.push({player:p,card:{...card},trickNo:G.trickNo});
@@ -633,6 +642,7 @@ function resolveTrick(){
  if(team(w)==='B'&&aceCut)speakPlayer('aceCut',w);
  else if(team(w)==='B')speakPlayer('collect',w);
  G.trickWinners.push(w);
+ if(window.DoubleKoutLearning)window.DoubleKoutLearning.complete(w,G.lastTrick,4);
  G.lastTrick=G.plays.map(x=>({player:x.player,card:{...x.card}}));
  let msg=`دست ${fa(n)} را ${names[w]} برد.`;tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);
  G.history.push(msg);
