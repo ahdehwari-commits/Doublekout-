@@ -31,6 +31,8 @@ jobs:
         run: node engines/test-double-kout-game.cjs
       - name: Test anonymous strategy learning capture
         run: node engines/test-anonymous-learning.cjs
+      - name: Check central player progress module
+        run: node --check central-progress.js
       - name: Test six-player Kuwaiti game lifecycle and auction handoff
         run: node engines/test-kuwaiti-six-player-game.cjs
       - name: Test six-player auction-to-card UI handoff
