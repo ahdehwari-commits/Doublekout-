@@ -1008,7 +1008,7 @@ async function initClient(){
 }
 function authMessage(message){var n=el('onlineAuthStatus');if(n)n.textContent=message;}
 function authFields(){return {email:(el('onlineAuthEmail').value||'').trim().toLowerCase(),password:el('onlineAuthPassword').value||'',displayName:(el('onlineAuthDisplayName').value||'').trim()};}
-function validateAuthFields(v,needName){if(!v.email||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(v.email))throw new Error('ایمیل معتبر وارد کن؛ ایمیل نقش نام کاربری حساب را دارد.');if(v.password.length<8)throw new Error('رمز عبور باید دست‌کم ۸ نویسه داشته باشد.');if(needName&&!v.displayName)throw new Error('یک نام نمایشی برای بازی وارد کن.');}
+function validateAuthFields(v,needName){if(!v.email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email))throw new Error('ایمیل معتبر وارد کن؛ ایمیل نقش نام کاربری حساب را دارد.');if(v.password.length<8)throw new Error('رمز عبور باید دست‌کم ۸ نویسه داشته باشد.');if(needName&&!v.displayName)throw new Error('یک نام نمایشی برای بازی وارد کن.');}
 async function registerOnlineAccount(){
  try{await initClient();var v=authFields();validateAuthFields(v,true);el('onlineRegister').disabled=true;authMessage('در حال ساخت حساب…');
   var current=await client.auth.getSession();if(current.error)throw current.error;var result;
@@ -1021,7 +1021,7 @@ async function registerOnlineAccount(){
   session=result.data.session||null;me=result.data.user||null;
   if(session){authMessage('حساب ساخته شد و وارد بازی شدی.');if(el('onlineName'))el('onlineName').value=v.displayName;if(window.DoubleKoutProgress)window.DoubleKoutProgress.refresh();}
   else authMessage('درخواست ثبت‌نام ثبت شد. ایمیل تأیید را باز کن و سپس با ایمیل و رمز وارد شو. اگر حساب مهمان داشتی، تبدیل حساب پس از تأیید ایمیل کامل می‌شود.');
- }catch(e){authMessage('ثبت‌نام انجام نشد: '+(e.message||e));}
+ }catch(e){var msg=e&& (e.message||e.msg)||String(e);if(/already registered|user already exists|already been registered/i.test(msg))msg='این ایمیل قبلاً حساب دارد؛ از دکمه «ورود با رمز» استفاده کن یا رمزت را بازیابی کن.';else if(/email not confirmed/i.test(msg))msg='ایمیل هنوز تأیید نشده است؛ صندوق ورودی و پوشه هرزنامه را بررسی کن.';else if(/invalid email/i.test(msg))msg='ساختار ایمیل معتبر نیست؛ نشانی را دوباره بررسی کن.';else if(/password.*(weak|short)|weak password/i.test(msg))msg='رمز عبور ضعیف است؛ یک رمز قوی‌تر با حداقل ۸ نویسه انتخاب کن.';authMessage('ثبت‌نام انجام نشد: '+msg);}
  finally{el('onlineRegister').disabled=false;}
 }
 async function loginOnlineAccount(){
@@ -1029,7 +1029,7 @@ async function loginOnlineAccount(){
   var r=await client.auth.signInWithPassword({email:v.email,password:v.password});if(r.error)throw r.error;
   session=r.data.session;me=r.data.user;var display=(me.user_metadata&&me.user_metadata.display_name)||v.displayName||'بازیکن';if(el('onlineName'))el('onlineName').value=display;
   authMessage('با موفقیت وارد شدی: '+v.email);if(window.DoubleKoutProgress)window.DoubleKoutProgress.refresh();
- }catch(e){authMessage('ورود ناموفق بود: '+(e.message||e));}
+ }catch(e){var msg=e&&(e.message||e.msg)||String(e);if(/invalid login credentials|user not found/i.test(msg))msg='حسابی با این ایمیل و رمز پیدا نشد؛ اگر قبلاً ثبت‌نام نکرده‌ای، ابتدا ثبت‌نام کن. اگر حساب داری، رمز را بررسی یا بازیابی کن.';else if(/email not confirmed/i.test(msg))msg='ایمیل حساب هنوز تأیید نشده است؛ ایمیل تأیید را باز کن و سپس دوباره وارد شو.';authMessage('ورود ناموفق بود: '+msg);}
  finally{el('onlineLogin').disabled=false;}
 }
 async function googleOnlineAccount(){
