@@ -86,4 +86,11 @@ assert.equal(hokm.chooseAICard(overtakeHand,[{player:0,card:{rank:'2',suit:'H'}}
 assert.equal(hokm.currentWinner([{player:0,card:{rank:'2',suit:'H'}},{player:1,card:{rank:'A',suit:'H'}}],'S'),1);
 const game=hokm.newGame({starter:2,matchNumber:1,rng:()=>0.37});
 assert.equal(game.turn,2);assert.equal(game.trump,'S');assert.equal(game.hands.length,4);
+const learningHand=[{id:'AS',rank:'A',suit:'S'},{id:'2H',rank:'2',suit:'H'},{id:'KC',rank:'K',suit:'C'}];
+let learnedPattern='';
+global.DoubleKoutLearning={getSuggestion:(pattern,legal,base)=>{learnedPattern=pattern;return legal.find(c=>c.id==='2H')||base;}};
+const learnedChoice=hokm.chooseAICard(learningHand,[],0,'S','normal','hokm',[],learningHand,[],null,true,false,'double-kout',4);
+assert.equal(learnedChoice.id,'2H','four-player AI must accept a legal central learned action');
+assert.equal(learnedPattern,'double-kout|hokm|4|-|3|1|0|0','AI must query central learning with the matching anonymized decision pattern');
+delete global.DoubleKoutLearning;
 console.log('PASS: standard four-player Hokm deal, follow-suit, trump and trick winner');
