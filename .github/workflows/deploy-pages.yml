@@ -7,6 +7,7 @@ on:
       - "kuwaiti-six-player-ui.js"
       - "lan-multiplayer.js"
       - "supabase-multiplayer.js"
+      - "anonymous-learning.js"
       - "three-d-scene.js"
       - "engines/**"
       - "IMG_3647.png"
@@ -35,7 +36,7 @@ jobs:
         run: |
           mkdir -p dist/engines/standard-hokm dist/engines/kuwaiti-six-player
           cp web-prototype.html dist/index.html
-          cp kuwaiti-six-player-ui.js lan-multiplayer.js supabase-multiplayer.js three-d-scene.js IMG_3647.png manifest.webmanifest sw.js dist/
+          cp kuwaiti-six-player-ui.js lan-multiplayer.js supabase-multiplayer.js anonymous-learning.js three-d-scene.js IMG_3647.png manifest.webmanifest sw.js dist/
           cp -R assets dist/assets
           cp engines/standard-hokm/engine.js dist/engines/standard-hokm/
           cp engines/kuwaiti-six-player/engine.js dist/engines/kuwaiti-six-player/
