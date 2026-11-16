@@ -7,9 +7,21 @@
 const URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 const KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
 let pending=[];
+const CONSENT_KEY='doubleKout.anonymousLearningConsent.v1';
+function consentAllowed(){
+ try{
+  const saved=localStorage.getItem(CONSENT_KEY);
+  if(saved==='yes')return true;
+  if(saved==='no')return false;
+  const ok=window.confirm('یادگیری ناشناس دابل کوت: فقط وضعیت کارت‌ها، تصمیم و نتیجهٔ بازی برای بهبود هوش ذخیره می‌شود؛ نام، شناسهٔ بازیکن و شناسهٔ دستگاه ذخیره نمی‌شود. فقط اگر همهٔ بازیکنان این دستگاه موافق‌اند تأیید کن. آیا موافقید؟');
+  localStorage.setItem(CONSENT_KEY,ok?'yes':'no');
+  return ok;
+ }catch(_){return false;}
+}
 function card(c){if(!c)return null;return {rank:c.rank||c.r||null,suit:c.suit||c.s||null,kind:c.kind||'normal',color:c.color||null};}
 function cleanPlays(plays,actor,count){return (plays||[]).map(p=>({relativeSeat:(p.player-actor+count)%count,card:card(p.card)}));}
 function capture(x){
+ if(!consentAllowed())return;
  if(!x||!Array.isArray(x.hand)||!Array.isArray(x.legalCards)||!x.legalCards.length)return;
  const count=x.playerCount||4,actor=x.player, ownTeam=actor%2;
  const hand=x.hand.map(card),legal=x.legalCards.map(card),plays=cleanPlays(x.plays,actor,count);
@@ -41,5 +53,5 @@ async function complete(winner,plays,count){
   if(!response.ok)throw new Error('HTTP '+response.status);
  }catch(err){console.warn('Anonymous strategy learning upload skipped:',err&&err.message||err);}
 }
-window.DoubleKoutLearning={capture,complete,discard:function(){pending=[];}};
+window.DoubleKoutLearning={capture,complete,discard:function(){pending=[];},setConsent:function(allowed){try{localStorage.setItem(CONSENT_KEY,allowed?'yes':'no');}catch(_){}if(!allowed)pending=[];}};
 })();
