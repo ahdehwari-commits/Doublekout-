@@ -15,6 +15,7 @@ on:
       - "sw.js"
       - "anonymous-learning.js"
       - "central-progress.js"
+      - "central-store.js"
       - "engine/**"
       - "engines/**"
       - "scripts/**"
@@ -54,6 +55,8 @@ jobs:
           node --check lan-multiplayer.js
           node --check anonymous-learning.js
           node --check central-progress.js
+          node --check central-store.js
+          cmp central-store.js android/app/src/main/assets/central-store.js
           cmp central-progress.js android/app/src/main/assets/central-progress.js
           cmp anonymous-learning.js android/app/src/main/assets/anonymous-learning.js
           cmp lan-multiplayer.js android/app/src/main/assets/lan-multiplayer.js
@@ -71,6 +74,8 @@ jobs:
           node engines/test-standard-hokm.cjs
           node engines/test-four-player-ui.cjs
           node engines/test-anonymous-learning.cjs
+          node engines/test-central-store.cjs
+          node engines/test-central-store.cjs
           node engines/test-browser-engine-load-order.cjs
           node engines/test-double-kout-sequence.cjs
           node engines/test-double-kout-game.cjs
