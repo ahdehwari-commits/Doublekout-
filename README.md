@@ -30,3 +30,11 @@ Run `node engine/test-kuwaiti-card-power.cjs`.
 
 ## Android build
 Open `android/` in Android Studio with JDK 17 and Android SDK 35, sync Gradle, then build a debug APK. This repository currently contains source, not a signed or verified APK.
+
+
+## Central player accounts and cosmetic store
+- Central player profiles, win points and leaderboard use Supabase migrations. The latest cosmetic-store migration is `supabase/migrations/20261116002300_central_cosmetic_store.sql`.
+- The cosmetic store adds five card-back designs, server-side point deduction, unique ownership, and account-persistent equipped design. Buying and equipping are authenticated RPC operations; duplicate purchases cannot double-charge.
+- The web/PWA and Android asset builds load the same central store module. The service worker cache was versioned for the new module.
+- Point-based cosmetic purchases are implemented in code. Real-money payments and rewarded-video rewards are deliberately not enabled until verified payment/ad providers and server callbacks are configured.
+- Production Supabase still requires applying the pending migrations in order: anonymous learning (`20261116002100`), central player progress (`20261116002200`), and cosmetic store (`20261116002300`). GitHub Actions PostgreSQL smoke tests do not apply migrations to production.
