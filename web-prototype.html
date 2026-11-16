@@ -742,7 +742,7 @@ function finishGame(){
    if(kout)G.history.push(kout+'؛ نتیجه ۱۳ بر صفر ثبت شد.');
    $('status').innerHTML=`بازی تمام شد. <span class="winner">${kout||winnerTeam} · ${fa(G.scoreA)} دست به ${fa(G.scoreB)} دست</span>`;
    const winningTeam=G.scoreA===G.scoreB?previousWinner:(G.scoreA>G.scoreB?'A':'B');
-   if(winningTeam){previousWinner=winningTeam;previousStarter=lastPlayerOfTeam(G.trickWinners,winningTeam,G.leader);centralWinningTeam=winningTeam;}
+   if(winningTeam){previousWinner=winningTeam;previousStarter=lastPlayerOfTeam(G.trickWinners,winningTeam,G.leader);if(G.scoreA!==G.scoreB)centralWinningTeam=winningTeam;}
  }
  recordGlobalGame();updateChallengeStats();render();if(centralWinningTeam)awardLocalAccountWin(centralWinningTeam,activeMode);
  $('history').innerHTML=G.history.slice(-18).reverse().join('<br>');
