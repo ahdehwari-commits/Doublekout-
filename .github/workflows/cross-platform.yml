@@ -93,7 +93,7 @@ jobs:
         run: |
           mkdir -p dist-pwa/engines/standard-hokm dist-pwa/engines/kuwaiti-six-player
           cp web-prototype.html dist-pwa/index.html
-          cp kuwaiti-six-player-ui.js three-d-scene.js lan-multiplayer.js supabase-multiplayer.js anonymous-learning.js IMG_3647.png manifest.webmanifest sw.js dist-pwa/
+          cp kuwaiti-six-player-ui.js three-d-scene.js lan-multiplayer.js supabase-multiplayer.js anonymous-learning.js central-progress.js central-store.js IMG_3647.png manifest.webmanifest sw.js dist-pwa/
           cp engines/standard-hokm/engine.js dist-pwa/engines/standard-hokm/
           cp engines/kuwaiti-six-player/engine.js dist-pwa/engines/kuwaiti-six-player/
           cp engines/double-kout-sequence.js engines/double-kout-game.js dist-pwa/engines/
