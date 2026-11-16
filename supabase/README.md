@@ -13,7 +13,7 @@ This directory contains the database schema and migrations for the Double Kout o
 ## Required Supabase setup
 
 1. Keep **Anonymous Sign-Ins** enabled under Authentication > Providers.
-2. Apply all migrations in `supabase/migrations/` in ascending filename order. If migrations through `20261115002000` are already applied, apply `20261116002100_anonymous_strategy_learning.sql` next.
+2. Apply all migrations in `supabase/migrations/` in ascending filename order. If migrations through `20261115002000` are already applied, apply `20261116002100_anonymous_strategy_learning.sql` and then `20261116002200_central_player_progress.sql`.
 3. The web app uses only the project URL and public publishable key. Never put the `service_role` key in the app, website, GitHub source, or chat.
 4. Realtime is used for lobby changes; game state also has client polling as a reconnect fallback.
 
