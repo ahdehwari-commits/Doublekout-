@@ -576,6 +576,7 @@ function beginNormalOrChallenge(challengerTeam){
 function confirmTrump(){
  if(!G||!G.waitingTrump)return;
  const contract=$('nextContract').value;
+ if(!contract){$('status').textContent='ابتدا پس از دیدن پنج کارت، حکم یا نوع قرارداد را انتخاب کن.';return;}
  const noTrump=['naras','tak_naras','saras'].includes(contract);
  let suit=null;
  if(contract.startsWith('hokm_'))suit=({'hokm_spades':'♠','hokm_hearts':'♥','hokm_diamonds':'♦','hokm_clubs':'♣'})[contract];
@@ -1020,7 +1021,7 @@ async function registerOnlineAccount(){
   }
   if(result.error)throw result.error;
   session=result.data.session||null;me=result.data.user||null;
-  if(session){authMessage('حساب ساخته شد و وارد بازی شدی.');if(el('onlineName'))el('onlineName').value=v.displayName;if(window.DoubleKoutProgress)window.DoubleKoutProgress.refresh();}
+  if(session){authMessage('حساب ساخته شد و وارد بازی شدی.');if(el('onlineName'))el('onlineName').value=v.displayName;if(window.DoubleKoutProgress){window.DoubleKoutProgress.refresh();window.DoubleKoutProgress.flushPending();}}
   else authMessage('درخواست ثبت‌نام ثبت شد. ایمیل تأیید را باز کن و سپس با ایمیل و رمز وارد شو. اگر حساب مهمان داشتی، تبدیل حساب پس از تأیید ایمیل کامل می‌شود.');
  }catch(e){var msg=e&& (e.message||e.msg)||String(e);if(/already registered|user already exists|already been registered/i.test(msg))msg='این ایمیل قبلاً حساب دارد؛ از دکمه «ورود با رمز» استفاده کن یا رمزت را بازیابی کن.';else if(/email not confirmed/i.test(msg))msg='ایمیل هنوز تأیید نشده است؛ صندوق ورودی و پوشه هرزنامه را بررسی کن.';else if(/invalid email/i.test(msg))msg='ساختار ایمیل معتبر نیست؛ نشانی را دوباره بررسی کن.';else if(/password.*(weak|short)|weak password/i.test(msg))msg='رمز عبور ضعیف است؛ یک رمز قوی‌تر با حداقل ۸ نویسه انتخاب کن.';authMessage('ثبت‌نام انجام نشد: '+msg);}
  finally{el('onlineRegister').disabled=false;}
@@ -1041,7 +1042,7 @@ async function resendOnlineConfirmation(){
   try{
    await initClient();
    var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();
-   if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');
+   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');
    authMessage('در حال بررسی و ارسال دوباره ایمیل تأیید…');
    var first=await client.auth.resend({type:'email_change',email:email,options:{emailRedirectTo:PUBLIC_AUTH_REDIRECT}});
    var r=first;
