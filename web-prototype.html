@@ -937,7 +937,8 @@ function ensureUI(){
  '#onlinePanel input,#onlinePanel select{width:100%;padding:11px;border-radius:9px;border:1px solid #7b9d8b;background:#f7f2e5;color:#13251d;font:inherit}'+
  '#onlinePanel button{padding:10px 12px;border-radius:10px;border:1px solid #e6ce92;background:linear-gradient(145deg,#f5dfaa,#bd9144);color:#211808;font-weight:bold;font:inherit;cursor:pointer}'+
  '#onlinePanel button.secondary{background:#193b30;color:#f5e8c4;border-color:#688d7d}'+
- '#onlinePanel button:disabled{opacity:.45;cursor:not-allowed}#onlinePanel .onrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}#onlinePanel .onrow>*{flex:1;min-width:120px}'+
+ '#onlineAuth{background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:12px;margin:12px 0}#onlineAuth input{width:100%;padding:11px;border-radius:9px;border:1px solid #7b9d8b;background:#f7f2e5;color:#13251d;font:inherit;margin-top:5px}#onlineAuth .auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}#onlineAuth .auth-note{font-size:11px;line-height:1.8;color:#d1e1d8;margin:7px 0}#onlineAuthStatus{font-size:12px;line-height:1.8;color:#ffe3a0;margin-top:8px;white-space:pre-wrap}'+
+  '#onlinePanel button:disabled{opacity:.45;cursor:not-allowed}#onlinePanel .onrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}#onlinePanel .onrow>*{flex:1;min-width:120px}'+
  '#onlineStatus{background:#071b15;border-radius:9px;padding:10px;font-size:12px;line-height:1.9;color:#f3dfaa;margin-top:10px;white-space:pre-wrap}'+
  '#onlineCode{direction:ltr;text-align:center;font-size:27px;letter-spacing:5px;color:#ffe09a;padding:12px;border:1px dashed #c9a65f;border-radius:10px;margin:10px 0}'+
  '#onlineRoster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}#onlineRoster div{background:#0b2a20;border:1px solid #537e6a;border-radius:9px;padding:9px;font-size:12px}'+
@@ -960,6 +961,7 @@ function ensureUI(){
  var root=document.createElement('div');root.id='onlineOverlay';root.innerHTML=
  '<section id="onlinePanel"><button id="onlineClose" class="secondary" style="float:left">بستن</button><h2>اتاق آنلاین دابل کوت</h2>'+
  '<p>بازیکنان با گوشی‌های جداگانه وارد اتاق می‌شوند؛ پس از آماده‌شدن بازیکنان، کارت‌ها پخش می‌شود و هر نفر دست خودش را می‌بیند. سپس میزبان انتخاب می‌کند بازی عادی باشد یا چالش.</p>'+
+ '<div id="onlineAuth"><b style="color:#f4d58b">حساب کاربری</b><div class="auth-note" id="onlineAuthIntro">برای نگهداری حساب روی گوشی‌های مختلف، با ایمیل و رمز عبور ثبت‌نام کن یا با Google وارد شو. بازی مهمان هم همچنان در دسترس است.</div><label>ایمیل / نام کاربری</label><input id="onlineAuthEmail" type="email" autocomplete="username" placeholder="name@example.com" dir="ltr"><label>رمز عبور</label><input id="onlineAuthPassword" type="password" autocomplete="current-password" placeholder="حداقل ۸ نویسه" dir="ltr"><label>نام نمایشی (برای ثبت‌نام)</label><input id="onlineAuthDisplayName" maxlength="24" placeholder="نامی که دیگران در بازی می‌بینند"><div class="auth-grid"><button id="onlineRegister">ثبت‌نام</button><button id="onlineLogin" class="secondary">ورود با رمز</button><button id="onlineGoogle" class="secondary" style="grid-column:1/-1">ورود با حساب Google</button><button id="onlineForgot" class="secondary" style="grid-column:1/-1">بازیابی رمز عبور</button></div><div id="onlineAuthStatus">هنوز وارد حساب نشده‌ای؛ می‌توانی به‌صورت مهمان هم بازی کنی.</div></div>'+
  '<div id="onlineSetup"><label>نوع بازی</label><select id="onlineMode"><option value="double-kout">دابل کوت توالی · چهار نفره</option><option value="standard-hokm">حکم معمولی · چهار نفره</option><option value="kuwaiti" disabled>کوت کویتی · آنلاین شش‌نفره (در حال توسعه)</option></select>'+
  '<label>نام نمایشی</label><input id="onlineName" maxlength="24" value="بازیکن">'+
  '<div class="onrow"><button id="onlineCreate">ساخت اتاق جدید</button><button id="onlineShowJoin" class="secondary">ورود با کد</button></div>'+
@@ -967,7 +969,7 @@ function ensureUI(){
  '<div id="onlineRoom" style="display:none"><div id="onlineCode"></div><div id="onlineRoster"></div><div id="onlineLobbyDecision"><b id="onlineLobbyNotice">بازیکن جدید وارد اتاق شد.</b><div class="onrow"><button id="onlineAcceptHuman">شروع با بازیکن واقعی</button><button id="onlineUseAI">ادامه با هوش مصنوعی</button></div></div><div class="onrow"><button id="onlineReady">آماده‌ام</button><button id="onlineStart" style="display:none">پایان انتظار</button><button id="onlineLeave" class="secondary">خروج از اتاق</button></div><div id="onlineGame" style="display:none;background:#061b15;border:1px solid #648a73;border-radius:12px;padding:12px;margin-top:12px"><h3 style="margin:0 0 8px;color:#f4d58b">میز آنلاین</h3><div id="onlineGameStatus" style="font-size:12px;line-height:1.8"></div><div id="onlineLiveScoreTop" style="font-size:13px;font-weight:900;color:#ffe3a0;text-align:center;background:#09271f;border:1px solid #b99a5d;border-radius:9px;padding:8px;margin:8px 0">دست‌های برده‌شده در این بازی · در انتظار شروع</div><div id="onlineTurnTimer" style="display:none;text-align:center;font-size:24px;font-weight:900;color:#ffe39a;padding:5px">۱۰</div><div id="onlineDecision" style="display:none;background:#123b2d;border:1px solid #d7b66d;border-radius:10px;padding:10px;margin:10px 0"><b style="color:#f4d58b">نوبت انتخاب چالش بین بازیکنان</b><p id="onlineDecisionHint" style="font-size:13px;line-height:1.9"></p><div id="onlineChallengeClock" style="font-size:22px;font-weight:bold;color:#ffe39a;text-align:center;margin:6px">۱۰</div><div class="onrow"><button id="onlineChooseChallenge">اعلام چالش</button><button id="onlineChooseNormal">عبور / بازی عادی</button></div><button id="onlineChallengeExtend" style="width:100%;margin-top:8px;background:#d6e4dc">۱۵ ثانیه وقت بیشتر</button></div><div id="onlineTable" class="table" style="margin:12px 0;min-height:350px"><div class="seat north" id="onlineSeatNorth"><div class="name" id="onlineNameNorth">شمال</div><div class="count" id="onlineCountNorth"></div><div class="played" id="onlinePlayedNorth"></div></div><div class="seat west" id="onlineSeatWest"><div class="name" id="onlineNameWest">غرب</div><div class="count" id="onlineCountWest"></div><div class="played" id="onlinePlayedWest"></div></div><div class="center"><div><div class="muted">حکم</div><div id="onlineTrumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div id="onlineTrickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div><div id="onlineCenterPile" class="online-center-pile"></div><div id="onlineTrick" class="center-trick"></div></div><div class="seat east" id="onlineSeatEast"><div class="name" id="onlineNameEast">شرق</div><div class="count" id="onlineCountEast"></div><div class="played" id="onlinePlayedEast"></div></div><div class="seat south" id="onlineSeatSouth"><div class="name" id="onlineNameSouth">شما</div><div class="count" id="onlineCountSouth"></div><div class="played" id="onlinePlayedSouth"></div></div></div><div class="online-hand-tools"><h3 class="section-title" id="onlineHandTitle">کارت‌های شما</h3><button type="button" id="onlineSortHand" aria-label="مرتب‌سازی کارت‌ها">↕</button></div><div class="hand" id="onlineHand"></div><div id="onlineScore" style="font-size:12px;text-align:center;margin-top:10px"></div><div id="onlineRematchPanel" style="display:none;background:#09271f;border:1px solid #d7b66d;border-radius:12px;padding:10px;margin-top:12px;text-align:center"><div id="onlineRematchText" style="font-weight:900;color:#ffe3a0">بازی تمام شد</div><div id="onlineRematchClock" style="font-size:30px;font-weight:900;color:#ffe39a;margin:5px">۱۵</div><div class="onrow"><button id="onlineNextGame">بازی بعدی</button><button id="onlineExtendRematch" class="secondary">تمدید ۱۵ ثانیه</button></div></div></div></div>'+
  '<div id="onlineStatus">برای شروع، ساخت اتاق یا ورود با کد را انتخاب کن.</div></section>';
  document.body.appendChild(root);
- el('onlineClose').onclick=close;el('onlineCreate').onclick=createRoom;el('onlineShowJoin').onclick=function(){el('onlineJoinBox').style.display='block';};
+ el('onlineClose').onclick=close;el('onlineRegister').onclick=registerOnlineAccount;el('onlineLogin').onclick=loginOnlineAccount;el('onlineGoogle').onclick=googleOnlineAccount;el('onlineForgot').onclick=resetOnlinePassword;el('onlineCreate').onclick=createRoom;el('onlineShowJoin').onclick=function(){el('onlineJoinBox').style.display='block';};
  el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=function(){if(onlineRosterRows.some(function(x){return x.user_id!==me.id;})){el('onlineLobbyDecision').style.display='block';say('میزبان می‌تواند بازیکن واقعی را بپذیرد یا بازی را با هوش مصنوعی آغاز کند.');}else startOnlineGame('ai');};el('onlineAcceptHuman').onclick=function(){startOnlineGame('human');};el('onlineUseAI').onclick=function(){startOnlineGame('ai');};el('onlineChooseNormal').onclick=function(){submitOnlineChallengeChoice('pass')};el('onlineChooseChallenge').onclick=function(){submitOnlineChallengeChoice('challenge')};el('onlineChallengeExtend').onclick=extendOnlineChallengeTime;el('onlineNextGame').onclick=function(){startNextOnlineGame(false)};el('onlineExtendRematch').onclick=extendOnlineRematchTime;el('onlineSortHand').onclick=function(){onlineHandSorted=!onlineHandSorted;lastGameRevision=-1;refreshOnlineGame();};el('onlineLeave').onclick=leave;
  root.addEventListener('click',function(e){if(e.target===root)close();});
 }
@@ -998,6 +1000,46 @@ async function initClient(){
  client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
  return true;
 }
+function authMessage(message){var n=el('onlineAuthStatus');if(n)n.textContent=message;}
+function authFields(){return {email:(el('onlineAuthEmail').value||'').trim().toLowerCase(),password:el('onlineAuthPassword').value||'',displayName:(el('onlineAuthDisplayName').value||'').trim()};}
+function validateAuthFields(v,needName){if(!v.email||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(v.email))throw new Error('ایمیل معتبر وارد کن؛ ایمیل نقش نام کاربری حساب را دارد.');if(v.password.length<8)throw new Error('رمز عبور باید دست‌کم ۸ نویسه داشته باشد.');if(needName&&!v.displayName)throw new Error('یک نام نمایشی برای بازی وارد کن.');}
+async function registerOnlineAccount(){
+ try{await initClient();var v=authFields();validateAuthFields(v,true);el('onlineRegister').disabled=true;authMessage('در حال ساخت حساب…');
+  var current=await client.auth.getSession();if(current.error)throw current.error;var result;
+  if(current.data.session&&current.data.session.user&&current.data.session.user.is_anonymous){
+   result=await client.auth.updateUser({email:v.email,password:v.password,data:{display_name:v.displayName}});
+  }else{
+   result=await client.auth.signUp({email:v.email,password:v.password,options:{data:{display_name:v.displayName},emailRedirectTo:location.href.split('#')[0]}});
+  }
+  if(result.error)throw result.error;
+  session=result.data.session||null;me=result.data.user||null;
+  if(session){authMessage('حساب ساخته شد و وارد بازی شدی.');if(el('onlineName'))el('onlineName').value=v.displayName;}
+  else authMessage('درخواست ثبت‌نام ثبت شد. ایمیل تأیید را باز کن و سپس با ایمیل و رمز وارد شو. اگر حساب مهمان داشتی، تبدیل حساب پس از تأیید ایمیل کامل می‌شود.');
+ }catch(e){authMessage('ثبت‌نام انجام نشد: '+(e.message||e));}
+ finally{el('onlineRegister').disabled=false;}
+}
+async function loginOnlineAccount(){
+ try{await initClient();var v=authFields();validateAuthFields(v,false);el('onlineLogin').disabled=true;authMessage('در حال ورود…');
+  var r=await client.auth.signInWithPassword({email:v.email,password:v.password});if(r.error)throw r.error;
+  session=r.data.session;me=r.data.user;var display=(me.user_metadata&&me.user_metadata.display_name)||v.displayName||'بازیکن';if(el('onlineName'))el('onlineName').value=display;
+  authMessage('با موفقیت وارد شدی: '+v.email);
+ }catch(e){authMessage('ورود ناموفق بود: '+(e.message||e));}
+ finally{el('onlineLogin').disabled=false;}
+}
+async function googleOnlineAccount(){
+ try{await initClient();el('onlineGoogle').disabled=true;authMessage('در حال انتقال به صفحه امن Google…');
+  var current=await client.auth.getSession();if(current.error)throw current.error;
+  var redirectTo=location.href.split('#')[0];var result;
+  if(current.data.session&&current.data.session.user&&current.data.session.user.is_anonymous&&typeof client.auth.linkIdentity==='function'){
+   result=await client.auth.linkIdentity({provider:'google',options:{redirectTo:redirectTo}});
+  }else result=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:redirectTo}});
+  if(result.error)throw result.error;
+ }catch(e){authMessage('ورود Google فعلاً در دسترس نیست: '+(e.message||e)+'. مدیر سامانه باید Google Provider و نشانی بازگشت را در Supabase تنظیم کند.');el('onlineGoogle').disabled=false;}
+}
+async function resetOnlinePassword(){
+ try{await initClient();var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();if(!email)throw new Error('ابتدا ایمیل حساب را وارد کن.');var r=await client.auth.resetPasswordForEmail(email,{redirectTo:location.href.split('#')[0]});if(r.error)throw r.error;authMessage('اگر حسابی با این ایمیل وجود داشته باشد، لینک بازیابی رمز برایت ارسال می‌شود.');}
+ catch(e){authMessage('ارسال لینک بازیابی ناموفق بود: '+(e.message||e));}
+}
 async function authenticate(setStage){
  setStage('بارگذاری کتابخانه اتصال');
  await initClient();
@@ -1005,7 +1047,7 @@ async function authenticate(setStage){
  var got=await client.auth.getSession();if(got.error)throw got.error;session=got.data&&got.data.session;
  if(!session){setStage('ورود ناشناس به Supabase');var sign=await client.auth.signInAnonymously();if(sign.error)throw sign.error;session=sign.data.session;}
  if(!session)throw new Error('ورود مهمان انجام نشد. ورود ناشناس را در Authentication فعال کن.');
- me=session.user;return me;
+ me=session.user;var display=(me.user_metadata&&me.user_metadata.display_name)||'';if(display&&el('onlineName'))el('onlineName').value=display;if(el('onlineAuthStatus'))el('onlineAuthStatus').textContent=me.is_anonymous?'وارد حساب مهمان هستی؛ می‌توانی آن را به حساب دائمی تبدیل کنی.':'وارد حساب شدی: '+(me.email||display||'کاربر');return me;
 }
 function showRoom(){el('onlineSetup').style.display='none';el('onlineRoom').style.display='block';el('onlineCode').textContent=roomCode;}
 function subscribe(){
