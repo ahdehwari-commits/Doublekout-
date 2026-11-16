@@ -35,7 +35,7 @@ The SQL migration must be applied to the connected Supabase project before the n
 - The learning client stores no player name, auth user ID, device ID, email, phone, room ID, or stable player/session identifier.
 - It records compact game context, the legal cards and chosen card, then uploads the record after the trick winner is known.
 - Raw decision rows are not readable by browser clients. The summary RPC returns only action aggregates with at least five samples.
-- The first release builds an anonymized evidence dataset and aggregated action win rates. It does not yet change AI choices automatically; strategy updates require enough representative data and validation against the game's rules before enabling adaptive play.
+- The client now downloads aggregated action win rates. The four-player AI may use a learned action only when at least 12 examples exist and its observed trick-win rate is materially better than the current choice; player identity is never used for AI learning.
 - The new migration must be applied to the production Supabase project before uploads can succeed. GitHub Pages / APK deployment does not apply database migrations.
 
 
