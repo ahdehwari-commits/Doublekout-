@@ -14,6 +14,7 @@ on:
       - "manifest.webmanifest"
       - "sw.js"
       - "anonymous-learning.js"
+      - "central-progress.js"
       - "engine/**"
       - "engines/**"
       - "scripts/**"
@@ -52,6 +53,8 @@ jobs:
           node --check kuwaiti-six-player-ui.js
           node --check lan-multiplayer.js
           node --check anonymous-learning.js
+          node --check central-progress.js
+          cmp central-progress.js android/app/src/main/assets/central-progress.js
           cmp anonymous-learning.js android/app/src/main/assets/anonymous-learning.js
           cmp lan-multiplayer.js android/app/src/main/assets/lan-multiplayer.js
           cmp web-prototype.html android/app/src/main/assets/index.html
