@@ -711,7 +711,7 @@ function renderLocalRematchClock(){
 }
 setInterval(renderLocalRematchClock,200);
 function awardLocalAccountWin(winningTeam,mode){
- if(winningTeam!=='A'||playStyle!=='ai'||!humanSeats.has(0)||!window.DoubleKoutProgress)return;
+ if(winningTeam!=='A'||!humanSeats.has(0)||humanSeats.size!==1||!window.DoubleKoutProgress)return;
  const id=G.centralGameId||(G.centralGameId=(window.crypto&&crypto.randomUUID?crypto.randomUUID():('local-'+Date.now()+'-'+Math.random().toString(36).slice(2))));
  window.DoubleKoutProgress.awardLocalWin(id,mode).then(result=>window.DoubleKoutProgress.showAwardResult(result,'status'));
 }
