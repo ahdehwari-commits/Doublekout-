@@ -41,7 +41,8 @@ async function awardLocalWin(gameId,mode){
   return {status:data.awarded?'awarded':'duplicate',points:Number(data.points_added||0)};
  }catch(e){console.warn('Central win-point sync failed:',e&&e.message||e);return {status:'error',message:e.message||String(e)};}
 }
+function showAwardResult(result,containerId){const host=document.getElementById(containerId);if(!host)return;let n=document.getElementById('centralAwardNotice');if(!n){n=document.createElement('div');n.id='centralAwardNotice';n.style.cssText='margin-top:8px;padding:8px;border:1px solid #b99a5d;border-radius:8px;font-size:12px;line-height:1.8';host.appendChild(n);}n.innerHTML='';if(result&&result.status==='awarded'){n.textContent='یک امتیاز برد به حساب مرکزی اضافه شد.';}else if(result&&result.status==='duplicate'){n.textContent='امتیاز این بازی قبلاً ثبت شده است؛ امتیاز تکراری داده نشد.';}else if(result&&result.status==='no_account'){n.textContent='برای ثبت این برد و دریافت امتیاز، ابتدا وارد حساب دائمی شو. ';const b=document.createElement('button');b.textContent='ورود به حساب';b.onclick=openAccount;n.appendChild(b);}else{n.textContent='ثبت امتیاز انجام نشد: '+(result&&result.message||'اتصال مرکزی برقرار نیست.');}}
 function openAccount(){if(online())window.DoubleKoutOnline.open();setText('onlineAuthStatus','برای ثبت بردهای محلی و دیدن رتبه‌ات، وارد حساب دائمی شو.');}
-window.DoubleKoutProgress={refresh,awardLocalWin,openAccount};
-document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('onlineRefreshProgress');if(b)b.addEventListener('click',refresh);});
+window.DoubleKoutProgress={refresh,awardLocalWin,openAccount,showAwardResult};
+const bindRefresh=()=>{const b=document.getElementById('onlineRefreshProgress');if(b)b.onclick=refresh;};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindRefresh);else bindRefresh();
 })();
