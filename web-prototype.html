@@ -1539,8 +1539,8 @@ async function leave(){
  if(channel){await client.removeChannel(channel);channel=null;}
  roomId=null;roomCode='';myOnlineSeat=-1;myOnlineIsHost=false;lastGameRevision=-1;lastOnlineHandSignature='';confirmedPlayedCardIds=Object.create(null);onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
 }
-window.DoubleKoutOnline={open:open,leave:leave,getSession:async function(){await initClient();var r=await client.auth.getSession();if(r.error)throw r.error;return r.data.session||null;},rpc:async function(name,args){await initClient();return client.rpc(name,args||{});}};
+window.DoubleKoutOnline={open:open,leave:leave,getSession:async function(){await initClient();var r=await client.auth.getSession();if(r.error)throw r.error;return r.data.session||null;},rpc:async function(name,args){await initClient();return client.rpc(name,args||{});},invoke:async function(name,body){await initClient();return client.functions.invoke(name,{body:body||{}});}};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
 })();
 
-</script><script src="./central-progress.js"></script><script src="./central-store.js"></script><script>if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script><script src="./lan-multiplayer.js"></script></body></html>
+</script><script src="./central-progress.js"></script><script src="./central-store.js"></script><script src="./central-payments-admin.js"></script><script>if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script><script src="./lan-multiplayer.js"></script></body></html>
