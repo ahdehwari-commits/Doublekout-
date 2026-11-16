@@ -16,6 +16,7 @@ on:
       - "anonymous-learning.js"
       - "central-progress.js"
       - "central-store.js"
+      - "central-payments-admin.js"
       - "engine/**"
       - "engines/**"
       - "scripts/**"
@@ -56,6 +57,8 @@ jobs:
           node --check anonymous-learning.js
           node --check central-progress.js
           node --check central-store.js
+          node --check central-payments-admin.js
+          cmp central-payments-admin.js android/app/src/main/assets/central-payments-admin.js
           cmp central-store.js android/app/src/main/assets/central-store.js
           cmp central-progress.js android/app/src/main/assets/central-progress.js
           cmp anonymous-learning.js android/app/src/main/assets/anonymous-learning.js
