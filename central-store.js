@@ -12,6 +12,11 @@ let busy=false;
 const $=id=>document.getElementById(id);
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function ensure(){
+ if(!$('centralStoreThemeStyles')){
+  const style=document.createElement('style');style.id='centralStoreThemeStyles';
+  style.textContent='html[data-card-back="black-gold"] .card.back{background:linear-gradient(135deg,#090909,#35302a 52%,#080808)!important;border-color:#e8c66e!important;box-shadow:inset 0 0 0 2px #c9a34d55,0 8px 16px #000b!important}html[data-card-back="emerald"] .card.back{background:linear-gradient(135deg,#063c2c,#16845b 52%,#05291e)!important;border-color:#e9d49a!important}html[data-card-back="ruby"] .card.back{background:linear-gradient(135deg,#4a0715,#a51f3b 52%,#330611)!important;border-color:#f2d19a!important}html[data-card-back="violet"] .card.back{background:linear-gradient(135deg,#251044,#633a91 52%,#17092d)!important;border-color:#e9d49a!important}';
+  document.head.appendChild(style);
+ }
  if($('onlineStore'))return;
  const host=$('onlineProgress');if(!host)return;
  const box=document.createElement('section');box.id='onlineStore';
