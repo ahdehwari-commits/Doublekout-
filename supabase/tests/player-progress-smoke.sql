@@ -13,7 +13,7 @@ begin
  if first_award->>'awarded'<>'true' then raise exception 'first local win was not awarded'; end if;
  if duplicate_award->>'awarded'<>'false' then raise exception 'duplicate local win was awarded twice'; end if;
  p:=public.get_my_progress();
- if (p->>'points')::integer<>1 or (p->>'wins')::integer<>1 then raise exception 'local progress total is incorrect: %',p; end if;
+ if (p->>'points')::integer<>2 or (p->>'wins')::integer<>1 then raise exception 'local progress total is incorrect: %',p; end if;
  lb:=public.get_player_leaderboard(20);
  if jsonb_array_length(lb)<1 then raise exception 'leaderboard did not include winning player'; end if;
  insert into public.game_rooms(code,game_mode,player_count,host_user_id,status,public_state,revision)
@@ -26,8 +26,8 @@ begin
  update public.game_rooms set status='finished',revision=2,
  public_state='{"phase":"finished","challengeTeam":null,"scoreA":8,"scoreB":5}'::jsonb
  where id=room;
- if (select points from public.player_profiles where user_id='10000000-0000-4000-8000-000000000001')<>2 then
-  raise exception 'online winner did not receive a point';
+ if (select points from public.player_profiles where user_id='10000000-0000-4000-8000-000000000001')<>4 then
+  raise exception 'online winner did not receive two points';
  end if;
  if (select points from public.player_profiles where user_id='10000000-0000-4000-8000-000000000002')<>0 then
   raise exception 'online losing player received a point';
