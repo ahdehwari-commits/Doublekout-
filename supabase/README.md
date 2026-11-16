@@ -37,3 +37,14 @@ The SQL migration must be applied to the connected Supabase project before the n
 - Raw decision rows are not readable by browser clients. The summary RPC returns only action aggregates with at least five samples.
 - The first release builds an anonymized evidence dataset and aggregated action win rates. It does not yet change AI choices automatically; strategy updates require enough representative data and validation against the game's rules before enabling adaptive play.
 - The new migration must be applied to the production Supabase project before uploads can succeed. GitHub Pages / APK deployment does not apply database migrations.
+
+
+## User accounts (email/password and Google)
+
+- The online lobby supports Supabase Auth email/password registration and sign-in. The email address is the login username; a separate display name is saved in user metadata for the game table.
+- Existing anonymous sessions can be upgraded to an email/password account, preserving the current authenticated user where Supabase email confirmation settings permit it.
+- Password recovery uses Supabase's reset-password email flow.
+- Google OAuth is wired through Supabase Auth. Before it can work in production, enable the Google provider in Authentication > Providers, add the Google OAuth client ID/secret there, and allow the deployed callback URL under Authentication > URL Configuration: `https://ahdehwari-commits.github.io/Doublekout-/`. Add any custom domain or Android deep-link callback only after that redirect is implemented and verified.
+- Configure the Supabase Site URL to the deployed Pages URL. Email/password sign-up may require users to verify their email depending on the project's Authentication email-confirmation setting.
+- Never place a Google client secret or Supabase service-role key in this repository. The app uses only the public publishable key.
+- Anonymous guest play remains available. A Google sign-in or email/password sign-in creates a durable account that can be used across devices.
