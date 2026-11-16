@@ -38,6 +38,8 @@ jobs:
         run: node engines/test-central-store.cjs
       - name: Check central player progress module
         run: node --check central-progress.js
+      - name: Check payment and admin console module
+        run: node --check central-payments-admin.js
       - name: Test six-player Kuwaiti game lifecycle and auction handoff
         run: node engines/test-kuwaiti-six-player-game.cjs
       - name: Test six-player auction-to-card UI handoff
@@ -86,6 +88,8 @@ jobs:
         run: docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/player-progress-smoke.sql
       - name: Test cosmetic store purchases and card-back ownership
         run: docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/cosmetic-store-smoke.sql
+      - name: Test admin roles, manual payment approval and audit history
+        run: docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/admin-payments-smoke.sql
       - name: Play a complete four-seat game with two humans and two AI seats
         run: docker exec -i doublekout-pg psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/online-game-smoke.sql
 
