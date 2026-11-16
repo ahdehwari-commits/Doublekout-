@@ -622,7 +622,7 @@ function auctionTurn(){
   if(bid)submitBid(bid);else submitBid({type:'pass'});
  },500);
 }
-function aiCard(p){
+function aiCardBase(p){
  const trick=game.trick||[],trickNo=game.trickNo,difficulty=$('kDifficulty')?.value||'normal';
  const lead=K.effectiveLeadSuit(trick,{trickNo});
  const visibleTrump=(game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null;
@@ -753,6 +753,16 @@ function playHumanCard(card){
   setStatus('حکم هنوز مخفی است. ابتدا می‌توانی درخواست اعلام حکم بدهی یا بدون درخواست کارت مجاز بازی کنی.');
  }
  hotseatRevealed=false;playOne(p,card);
+}
+function aiCard(p){
+ const chosen=aiCardBase(p),difficulty=$('kDifficulty')?.value||'normal';
+ if(difficulty==='easy'||!window.DoubleKoutLearning||typeof window.DoubleKoutLearning.getSuggestion!=='function')return chosen;
+ const trick=game.trick||[],trickNo=game.trickNo,lead=K.effectiveLeadSuit(trick,{trickNo});
+ const visibleTrump=(game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:(trickNo===1?game.trumpSuit:null);
+ const legal=K.legalCards(game.hands[p],lead,{trickNo,isFirstPlay:trick.length===0,trumpSuit:trickNo===1?game.trumpSuit:visibleTrump,firstTrickNoCut:trickNo===1});
+ const trumpCount=visibleTrump?game.hands[p].filter(c=>c.kind==='normal'&&c.suit===visibleTrump).length:0;
+ const pattern=['kuwaiti',game.contract||'hokm',trickNo,lead||'-',legal.length,trumpCount,0,0].join('|');
+ try{return window.DoubleKoutLearning.getSuggestion(pattern,legal,chosen)||chosen;}catch(_){return chosen;}
 }
 function playOne(p,card,throwOnError=false){
  if(!game||game.done)return false;
