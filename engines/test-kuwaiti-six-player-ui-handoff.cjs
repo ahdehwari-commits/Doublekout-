@@ -27,6 +27,7 @@ const startActual = source.slice(source.indexOf('function startActualGame('), so
 assert.match(startActual, /\$\('kStatus'\)\.classList\.remove\('hidden'\)/,
   'the first-card prompt must be visible when play begins');
 
+assert.ok(source.includes('function aiCardBase(p)')&&source.includes('DoubleKoutLearning.getSuggestion')&&source.includes("['kuwaiti',game.contract||'hokm',trickNo,patternLead||'-',legal.length,trumpCount,0,0].join('|')"),'six-player AI must consume matching anonymous strategy evidence from the central database');
 console.log('PASS: six-player auction-to-contract-to-first-card UI handoff checks.');
 
 const playOne = source.slice(source.indexOf('function playOne('), source.indexOf('function cardLabel('));
