@@ -1,6 +1,8 @@
 name: Build Windows and iPhone web app
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -46,6 +48,8 @@ jobs:
         run: node --check central-payments-admin.js
       - name: Test six-player Kuwaiti game lifecycle and auction handoff
         run: node engines/test-kuwaiti-six-player-game.cjs
+      - name: Test six-player Malzoom mid-trick trump reveal
+        run: node engines/kuwaiti-six-player/test-malzoom-midtrick-trump.cjs
       - name: Test six-player auction-to-card UI handoff
         run: node engines/test-kuwaiti-six-player-ui-handoff.cjs
       - name: Check embedded browser JavaScript
