@@ -562,12 +562,16 @@ function startGame(){
  G.contract='hokm';G.trump='♠';G.trumpCode='S';G.waitingTrump=false;
  
  if(activeMode==='double-kout'){
-  $('challengePanel').style.display='block';$('status').textContent='بازی اول با حکم ثابت پیک آغاز می‌شود؛ بازی عادی یا چلنج را انتخاب کن.';render();return;
+  G.waitingChallenge=true;
+  $('status').textContent='بازی اول با حکم ثابت پیک آغاز می‌شود؛ بازی عادی یا چلنج را انتخاب کن.';
+  render();
+  $('challengePanel').style.display='block';
+  return;
  }
  $('status').textContent='بازی اول با حکم ثابت پیک آغاز شد.';render();runAI();
 }
 function beginNormalOrChallenge(challengerTeam){
- if(!G||G.done||activeMode!=='double-kout')return;
+ if(!G||G.done||activeMode!=='double-kout'||!G.waitingChallenge)return;
  G.challenge=challengerTeam==='A'?'A':null;
  G.waitingChallenge=false;hotseatRevealed=false;
  $('challengePanel').style.display='none';
