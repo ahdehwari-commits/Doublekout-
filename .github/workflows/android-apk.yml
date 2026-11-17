@@ -2,6 +2,8 @@ name: Build Android APK # Rebuild synced central-progress and online-enabled And
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -82,6 +84,7 @@ jobs:
           node engines/test-browser-engine-load-order.cjs
           node engines/test-double-kout-sequence.cjs
           node engines/test-double-kout-game.cjs
+          node engines/kuwaiti-six-player/test-malzoom-midtrick-trump.cjs
 
       # Seed a fixed debug signing key once; subsequent CI builds restore it.
       - name: Create Android signing key if absent
