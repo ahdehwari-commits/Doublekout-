@@ -170,7 +170,7 @@ begin
     raise exception 'not_trump_picker';
   end if;
 
-  if v_contract not in ('hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs',
+  if v_contract is null or v_contract not in ('hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs',
                         'naras','tak_naras','saras','partner_middle') then
     raise exception 'invalid_contract';
   end if;
