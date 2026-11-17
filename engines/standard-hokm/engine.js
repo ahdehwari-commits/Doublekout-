@@ -97,7 +97,18 @@ function chooseAICardBase(hand,plays,player,trumpSuit,difficulty='normal',contra
    const aceUnseen=unseen.some(c=>c.suit===lead&&c.rank==='A');
    if(opponentsStillToPlay&&king&&aceUnseen&&rankPower('K',contract)>rankPower(winningPlay.card.rank,contract))return king;
   }
-  return sorted[0];
+  // When our partner is already winning, discard cheaply without throwing
+  // away a side-suit ace. An off-suit ace cannot win this trick unless it is
+  // trump; preserve it for a later lead whenever any lower legal discard exists.
+  const partnerDiscards=[...legal].sort((a,b)=>{
+   const discardCost=card=>{
+    const offSuit=card.suit!==lead;
+    const wastedAce=offSuit&&card.rank==='A'&&!(contract==='hokm'&&card.suit===trumpSuit);
+    return cost(card)+(wastedAce?30:0);
+   };
+   return discardCost(a)-discardCost(b);
+  });
+  return partnerDiscards[0]||sorted[0];
  }
  // In sequence mode, do not save a winning card while an opponent is taking
  // the trick: stop their run with the cheapest card that overtakes the winner.
