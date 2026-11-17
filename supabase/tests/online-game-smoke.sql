@@ -78,7 +78,8 @@ begin
           or not exists(select 1 from jsonb_array_elements(v_cards) y where y->>'suit'=v_lead)
        order by random() limit 1;
       perform public.play_room_card(v_room_id,v_card_id);
-      if not v_duplicate_checked then
+      select public_state into v_state from public.game_rooms where id=v_room_id;
+      if not v_duplicate_checked and jsonb_array_length(v_state->'plays')>0 then
         v_duplicate_result:=public.play_room_card(v_room_id,v_card_id);
         if coalesce((v_duplicate_result->>'duplicate')::boolean,false) is not true then
           raise exception 'repeated accepted card must be idempotent within the active trick';
