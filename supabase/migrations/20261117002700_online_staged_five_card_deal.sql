@@ -251,7 +251,8 @@ begin
     v_state:=jsonb_set(v_state,'{challengeTeam}',to_jsonb(v_team),true);
     v_state:=jsonb_set(v_state,'{challengeInitiator}',to_jsonb(v_seat),true);
     v_state:=jsonb_set(v_state,'{phase}','"playing"'::jsonb,true);
-    v_state:=jsonb_set(v_state,'{turn}',to_jsonb(v_first_turn),true);
+    v_state:=jsonb_set(v_state,'{leader}',to_jsonb(v_seat),true);
+    v_state:=jsonb_set(v_state,'{turn}',to_jsonb(v_seat),true);
     v_state:=jsonb_set(v_state,'{turnDeadline}',to_jsonb(extract(epoch from clock_timestamp())+10),true);
     v_state:=jsonb_set(v_state,'{message}',to_jsonb('بازیکن اعلام‌کننده چالش مشخص شد؛ بازی آغاز شد'),true);
   else
@@ -261,6 +262,7 @@ begin
     if jsonb_array_length(v_passed)>=v_humans then
       v_state:=jsonb_set(v_state,'{phase}','"playing"'::jsonb,true);
       v_state:=jsonb_set(v_state,'{challengeTeam}','null'::jsonb,true);
+      v_state:=jsonb_set(v_state,'{leader}',to_jsonb(v_first_turn),true);
       v_state:=jsonb_set(v_state,'{turn}',to_jsonb(v_first_turn),true);
       v_state:=jsonb_set(v_state,'{turnDeadline}',to_jsonb(extract(epoch from clock_timestamp())+10),true);
       v_state:=jsonb_set(v_state,'{message}',to_jsonb('همه بازیکنان از چالش عبور کردند؛ بازی عادی آغاز شد'),true);
@@ -305,6 +307,7 @@ begin
   if jsonb_array_length(v_passed)>=v_humans then
     v_state:=jsonb_set(v_state,'{phase}','"playing"'::jsonb,true);
     v_state:=jsonb_set(v_state,'{challengeTeam}','null'::jsonb,true);
+    v_state:=jsonb_set(v_state,'{leader}',to_jsonb(v_first_turn),true);
     v_state:=jsonb_set(v_state,'{turn}',to_jsonb(v_first_turn),true);
     v_state:=jsonb_set(v_state,'{turnDeadline}',to_jsonb(extract(epoch from clock_timestamp())+10),true);
     v_state:=jsonb_set(v_state,'{message}',to_jsonb('مهلت همه بازیکنان تمام شد؛ بازی عادی آغاز شد'),true);
