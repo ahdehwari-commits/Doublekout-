@@ -12,6 +12,8 @@ create table if not exists public.room_game_action_log (
   phase text,
   hand_count integer,
   plays jsonb not null default '[]'::jsonb,
+  decision_reason text,
+  legal_move_count integer,
   created_at timestamptz not null default now()
 );
 alter table public.room_game_action_log enable row level security;
@@ -261,6 +263,10 @@ declare
   v_seat integer;
   v_cards jsonb;
   v_state jsonb;
+  v_hand_count integer;
+  v_legal_count integer;
+  v_reason text;
+  v_result jsonb;
   v_lead text;
   v_trump text;
   v_card jsonb;
@@ -284,6 +290,7 @@ begin
     where h.room_id=p_room_id and h.owner_user_id is null
       and h.seat=(v_state->>'turn')::integer for update;
   if v_seat is null then raise exception 'current_turn_is_not_ai'; end if;
+  v_hand_count:=jsonb_array_length(v_cards);
 
   v_lead:=v_state->'plays'->0->'card'->>'suit';
   v_trump:=v_state->>'trump';
@@ -313,13 +320,16 @@ begin
     select coalesce(jsonb_agg(c),'[]'::jsonb) into v_cards
       from jsonb_array_elements(v_cards) c where c->>'suit'=v_lead;
   end if;
+  v_legal_count:=jsonb_array_length(v_cards);
 
   if v_lead is null then
+    v_reason:='lead_long_suit_low_card';
     -- Lead from a long suit, using a low card first while retaining its controls.
     select c into v_card from jsonb_array_elements(v_cards) c
       order by (select count(*) from jsonb_array_elements(v_cards) x where x->>'suit'=c->>'suit') desc,
         array_position(v_rank_order,c->>'rank') asc limit 1;
   elsif v_partner_winning then
+    v_reason:='partner_winning_preserve_off_suit_ace';
     -- Do not throw away an off-suit ace when partner already controls the trick.
     select c into v_card from jsonb_array_elements(v_cards) c
       order by case when c->>'rank'='A' and c->>'suit'<>v_lead and c->>'suit'<>coalesce(v_trump,'') then 1 else 0 end,
@@ -332,6 +342,7 @@ begin
       or ((c->>'suit')=v_lead and v_best_suit<>v_trump and v_best_suit<>v_lead)
     ) into v_can_beat;
     if v_can_beat then
+      v_reason:='opponent_winning_play_cheapest_overtake';
       select c into v_card from jsonb_array_elements(v_cards) c where
         ((c->>'suit')=v_trump and v_best_suit<>v_trump)
         or ((c->>'suit')=v_best_suit and array_position(v_rank_order,c->>'rank')>array_position(v_rank_order,v_best_rank))
@@ -339,6 +350,7 @@ begin
         order by array_position(v_rank_order,c->>'rank') asc,
           case when c->>'suit'=v_trump then 1 else 0 end limit 1;
     else
+      v_reason:='cannot_overtake_preserve_off_suit_ace';
       select c into v_card from jsonb_array_elements(v_cards) c
         order by case when c->>'rank'='A' and c->>'suit'<>v_lead and c->>'suit'<>coalesce(v_trump,'') then 1 else 0 end,
           array_position(v_rank_order,c->>'rank') asc limit 1;
@@ -346,7 +358,17 @@ begin
   end if;
 
   if v_card is null then raise exception 'ai_no_legal_card'; end if;
-  return public.apply_room_card(p_room_id,v_seat::smallint,v_card->>'id',true);
+  v_result:=public.apply_room_card(p_room_id,v_seat::smallint,v_card->>'id',true);
+  insert into public.room_game_action_log(
+    room_id,actor_user_id,seat,action_type,card_id,outcome,state_revision,turn,phase,
+    hand_count,plays,decision_reason,legal_move_count
+  ) values(
+    p_room_id,v_user,v_seat,'ai_play_card',v_card->>'id','accepted',
+    coalesce((v_result->>'revision')::bigint,v_room.revision+1),
+    nullif(v_room.public_state->>'turn','')::integer,v_room.public_state->>'phase',
+    v_hand_count,coalesce(v_result->'state'->'plays','[]'::jsonb),v_reason,v_legal_count
+  );
+  return v_result;
 end;
 $$;
 
