@@ -20,6 +20,8 @@ declare
   v_start_result jsonb;
   v_human_count integer;
   v_ai_count integer;
+  v_duplicate_result jsonb;
+  v_duplicate_checked boolean:=false;
 begin
   insert into auth.users(id) values(v_host),(v_guest) on conflict do nothing;
   perform set_config('request.jwt.claim.sub',v_host::text,false);
@@ -76,6 +78,19 @@ begin
           or not exists(select 1 from jsonb_array_elements(v_cards) y where y->>'suit'=v_lead)
        order by random() limit 1;
       perform public.play_room_card(v_room_id,v_card_id);
+      select public_state into v_state from public.game_rooms where id=v_room_id;
+      if not v_duplicate_checked and jsonb_array_length(v_state->'plays')>0 then
+        v_duplicate_result:=public.play_room_card(v_room_id,v_card_id);
+        if coalesce((v_duplicate_result->>'duplicate')::boolean,false) is not true then
+          raise exception 'repeated accepted card must be idempotent within the active trick';
+        end if;
+        if (select count(*) from public.room_game_action_log
+            where room_id=v_room_id and seat=v_turn and card_id=v_card_id
+              and outcome in ('accepted','duplicate_accepted'))<>2 then
+          raise exception 'accepted and duplicate card actions must both be audited exactly once';
+        end if;
+        v_duplicate_checked:=true;
+      end if;
     end if;
   end loop;
 
@@ -87,6 +102,11 @@ begin
   end if;
   if (v_state->>'scoreA')::integer + (v_state->>'scoreB')::integer <> 13 then
     raise exception 'Hokm score must total 13 tricks';
+  end if;
+  if not exists(select 1 from public.room_game_action_log
+      where room_id=v_room_id and action_type='ai_play_card'
+        and decision_reason is not null and legal_move_count>0) then
+    raise exception 'AI card decision and strategy reason must be present in the audit trail';
   end if;
 
   -- A second room verifies the Double Kout challenge can resolve early or on trick 13.
