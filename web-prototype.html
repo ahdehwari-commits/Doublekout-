@@ -553,11 +553,21 @@ function startGame(){
  $('challengePanel').style.display='none';
  $('trumpPicker').classList.add('hidden');
  if(matchNo>1){
-  G.contract='hokm';G.trump=null;G.trumpCode=null;G.waitingTrump=true;
-  $('trumpPicker').classList.remove('hidden');
-  
-  $('status').textContent='پنج کارت اول پخش شد؛ نوع قرارداد را انتخاب کن. سپس هشت کارت باقی‌مانده پخش می‌شود.';
-  $('trumpBig').textContent='در انتظار انتخاب قرارداد';render();return;
+  // dealGame() may already have completed the contract when the hakem is AI.
+  // Never reset that completed state or ask for the contract a second time.
+  if(G.waitingTrump){
+   G.contract='hokm';G.trump=null;G.trumpCode=null;
+   $('trumpPicker').classList.remove('hidden');
+   $('status').textContent='پنج کارت اول پخش شد؛ نوع قرارداد را انتخاب کن. سپس هشت کارت باقی‌مانده پخش می‌شود.';
+   $('trumpBig').textContent='در انتظار انتخاب قرارداد';render();return;
+  }
+  if(G.waitingChallenge){
+   $('challengePanel').style.display='block';
+   render();return;
+  }
+  // AI hakem already selected the contract and confirmTrump() dealt the
+  // remaining eight cards. Preserve that contract and its initialized turn.
+  return;
  }
  G.contract='hokm';G.trump='♠';G.trumpCode='S';G.waitingTrump=false;
  
@@ -792,25 +802,29 @@ function aiChoose(p){
 }
 function runAI(){
   if(playStyle==='online')return;
-  if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||(playStyle==='hotseat'?humanSeats.has(G.turn):G.turn===0))return;
+  if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||G.aiThinking||(playStyle==='hotseat'?humanSeats.has(G.turn):G.turn===0))return;
+  const scheduledGame=G;
+  G.aiThinking=true;
   setTimeout(()=>{
+    if(G!==scheduledGame)return;
+    G.aiThinking=false;
     if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||(playStyle==='hotseat'?humanSeats.has(G.turn):G.turn===0))return;
     const p=G.turn;
     try{
+      if(!Number.isInteger(p)||p<0||p>3)throw new Error('شماره بازیکن در نوبت هوش مصنوعی نامعتبر است: '+p);
+      if(G.plays.some(x=>x.player===p))throw new Error('نوبت بازیکنی فراخوانی شد که در همین دست کارت انداخته است: '+p);
+      if(!Array.isArray(G.hands[p])||!G.hands[p].length)throw new Error('دست بازیکن '+p+' خالی است؛ وضعیت نوبت و کارت‌ها با هم سازگار نیست.');
       let c;
       try{c=aiChoose(p)}catch(aiError){
-        const lead=G.plays.length?G.plays[0].card.suit:null;
-        const legal=activeMode==='standard-hokm'
-          ?window.StandardHokmEngine.legalCards(G.hands[p],lead)
-          :legalCards(p);
+        const legal=legalCards(p);
         c=legal[0];
         console.warn('AI fallback card selected',aiError);
       }
-      if(!c)throw new Error('برای بازیکن '+p+' کارت مجاز پیدا نشد');
+      if(!c)throw new Error('برای بازیکن '+p+' کارت مجاز پیدا نشد؛ تعداد کارت‌های دست: '+G.hands[p].length+'، کارت‌های روی میز: '+G.plays.length);
       play(p,c);
     }catch(e){
-      $('status').textContent='خطای نوبت هوش مصنوعی: '+(e&&e.message?e.message:'نامشخص')+' · بازی متوقف شد؛ بازی جدید را آغاز کن.';
-      console.error('AI turn failed',e);
+      $('status').textContent='خطای نوبت هوش مصنوعی: '+(e&&e.message?e.message:'نامشخص')+' · وضعیت بازی حفظ شد؛ برای ادامه، بازی جدید را آغاز نکن و گزارش خطا را بفرست.';
+      console.error('AI turn failed',e,{turn:G&&G.turn,plays:G&&G.plays,hands:G&&G.hands&&G.hands.map(h=>h.length),trickNo:G&&G.trickNo});
     }
   },550)
 }
