@@ -219,7 +219,7 @@ begin
   else
     v_state:=jsonb_set(v_state,'{phase}','"playing"'::jsonb,true);
     v_state:=jsonb_set(v_state,'{turnDeadline}',to_jsonb(v_now+10),true);
-    v_state:=jsonb_set(v_state,'{message}',to_jsonb('قرارداد انتخاب شد؛ بازی آغاز شد'),true);
+    v_state:=jsonb_set(v_state,'{message}',to_jsonb('قرارداد انتخاب شد؛ بازی آغاز شد'::text),true);
   end if;
   update public.game_rooms set public_state=v_state,revision=revision+1,updated_at=now()
     where id=p_room_id;
@@ -254,7 +254,7 @@ begin
     v_state:=jsonb_set(v_state,'{leader}',to_jsonb(v_seat),true);
     v_state:=jsonb_set(v_state,'{turn}',to_jsonb(v_seat),true);
     v_state:=jsonb_set(v_state,'{turnDeadline}',to_jsonb(extract(epoch from clock_timestamp())+10),true);
-    v_state:=jsonb_set(v_state,'{message}',to_jsonb('بازیکن اعلام‌کننده چالش مشخص شد؛ بازی آغاز شد'),true);
+    v_state:=jsonb_set(v_state,'{message}',to_jsonb('بازیکن اعلام‌کننده چالش مشخص شد؛ بازی آغاز شد'::text),true);
   else
     v_passed:=coalesce(v_state->'challengePassed','[]'::jsonb)||jsonb_build_array(v_seat);
     select count(*) into v_humans from public.room_game_hands where room_id=p_room_id and owner_user_id is not null;
@@ -265,9 +265,9 @@ begin
       v_state:=jsonb_set(v_state,'{leader}',to_jsonb(v_first_turn),true);
       v_state:=jsonb_set(v_state,'{turn}',to_jsonb(v_first_turn),true);
       v_state:=jsonb_set(v_state,'{turnDeadline}',to_jsonb(extract(epoch from clock_timestamp())+10),true);
-      v_state:=jsonb_set(v_state,'{message}',to_jsonb('همه بازیکنان از چالش عبور کردند؛ بازی عادی آغاز شد'),true);
+      v_state:=jsonb_set(v_state,'{message}',to_jsonb('همه بازیکنان از چالش عبور کردند؛ بازی عادی آغاز شد'::text),true);
     else
-      v_state:=jsonb_set(v_state,'{message}',to_jsonb('انتخاب شما ثبت شد؛ منتظر تصمیم سایر بازیکنان هستیم'),true);
+      v_state:=jsonb_set(v_state,'{message}',to_jsonb('انتخاب شما ثبت شد؛ منتظر تصمیم سایر بازیکنان هستیم'::text),true);
     end if;
   end if;
   update public.game_rooms set public_state=v_state,revision=revision+1,updated_at=now() where id=p_room_id;
@@ -310,9 +310,9 @@ begin
     v_state:=jsonb_set(v_state,'{leader}',to_jsonb(v_first_turn),true);
     v_state:=jsonb_set(v_state,'{turn}',to_jsonb(v_first_turn),true);
     v_state:=jsonb_set(v_state,'{turnDeadline}',to_jsonb(extract(epoch from clock_timestamp())+10),true);
-    v_state:=jsonb_set(v_state,'{message}',to_jsonb('مهلت همه بازیکنان تمام شد؛ بازی عادی آغاز شد'),true);
+    v_state:=jsonb_set(v_state,'{message}',to_jsonb('مهلت همه بازیکنان تمام شد؛ بازی عادی آغاز شد'::text),true);
   else
-    v_state:=jsonb_set(v_state,'{message}',to_jsonb('مهلت یک بازیکن تمام شد؛ سایر بازیکنان همچنان فرصت انتخاب دارند'),true);
+    v_state:=jsonb_set(v_state,'{message}',to_jsonb('مهلت یک بازیکن تمام شد؛ سایر بازیکنان همچنان فرصت انتخاب دارند'::text),true);
   end if;
   update public.game_rooms set public_state=v_state,revision=revision+1,updated_at=now() where id=p_room_id;
   return jsonb_build_object('expired',true,'state',v_state);
