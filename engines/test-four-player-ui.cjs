@@ -51,7 +51,7 @@ for(const suit of ['hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs']){
 assert.ok(html.includes("const contract=$('nextContract').value;")&&html.includes("const noTrump=['naras','tak_naras','saras'].includes(contract)")&&!html.includes("id=\"nextTrump\""),'later four-player deals must select contract and trump suit as one unified option');
 assert.ok(html.includes("value=\"naras\"")&&html.includes("value=\"tak_naras\"")&&html.includes("value=\"saras\"")&&html.includes("value=\"partner_middle\""),'later four-player contract picker must offer Naras, Tak Naras, Saras and partner-middle');
 assert.ok(html.includes("const staged=typeof stagedOverride==='boolean'?stagedOverride:matchNo>1;")&&html.includes('dealGame(null);'),'all later four-player contracts must stage five cards by default, while allowing an explicit staged override');
-assert.ok(html.includes("function aiChooseFourPlayerContract(hand)")&&html.includes("const chosen=aiChooseFourPlayerContract(G.hands[starter])"),'AI hakim must choose among all supported contracts after seeing five cards');
+assert.ok(html.includes("function aiChooseFourPlayerContract(hand)")&&html.includes("$('nextContract').value=aiChooseFourPlayerContract(G.hands[starter])")&&html.includes("$('hakimPreview').innerHTML='';")&&html.includes("$('trumpPicker').classList.add('hidden');"),'AI hakim must choose a contract without briefly exposing its private five-card hand or flashing the picker');
 assert.ok(html.includes("liveSequenceScores(G.trickWinners||[])")&&html.includes("function liveSequenceScores(winners)")&&html.includes("scores[team(winners[close])]+=close-start+1")&&html.includes("function onlineLiveSequenceScores(winners)")&&html.includes("scores[side(winners[close])]+=close-start+1"),'live Double Kout counters must count completed sequence groups once, not each trick in a group');
 assert.ok(html.includes("globalStatsBtn")&&html.includes("function recordGlobalGame()")&&html.includes("localStorage.setItem(GLOBAL_STATS_KEY"),'four-player cumulative game statistics must be persisted and accessible from the mode menu');
 assert.ok(html.includes('id="gamesWonA"')&&html.includes('id="gamesWonB"')&&html.includes("globalStats.double.wins+globalStats.hokm.wins"),'the table must show a separate persistent counter for completed games won');
@@ -85,6 +85,7 @@ assert.ok(sixUi.includes("$('kTrickCards').style.display='';"),'six-player trick
 
 assert.ok(html.includes('id="visualCustomizer"')&&!html.includes('id="cardCustomizer"'),'design options must be visual thumbnails on the pre-game mode selection screen');
 assert.ok(html.includes('online-card-legal')&&html.includes('online-card-illegal')&&html.includes('id="onlineSortHand"'),'online hand must visually distinguish legal cards and provide sorting');
+assert.ok(html.includes('var onlineCardBusy=false')&&html.includes('if(b.disabled||onlineCardBusy)return;')&&html.includes("querySelectorAll('button').forEach(function(cardButton){cardButton.disabled=true;})"),'online card submission must be single-flight and lock the whole hand while a play is pending');
 assert.ok(html.includes('assets/card-back-black-gold.svg')&&html.includes('structural table redesign'),'four-player table must use the image card back and redesigned oval table layout');
 
 
