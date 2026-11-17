@@ -226,13 +226,53 @@ begin
   v_rematch_result := public.start_next_room_game(v_room_id);
   select status,public_state into v_status,v_state from public.game_rooms where id=v_room_id;
   if v_status<>'playing' then raise exception 'manual next game must restart the same room'; end if;
+  if v_state->>'phase'<>'trump_selection' then
+    raise exception 'next Double Kout game must begin with the five-card contract selection';
+  end if;
+  if exists(select 1 from public.room_game_hands where room_id=v_room_id and jsonb_array_length(cards)<>5) then
+    raise exception 'staged rematch must initially deal exactly five cards to every seat';
+  end if;
+  if (select jsonb_array_length(cards) from public.room_game_pending_decks where room_id=v_room_id)<>32 then
+    raise exception 'staged rematch must privately retain exactly 32 undealt cards';
+  end if;
+  if v_state ? 'hands' or v_state ? 'pendingDeck' then
+    raise exception 'private staged deck or hands leaked into public room state';
+  end if;
+
+  -- The winning side's last player is the picker. A human picker chooses;
+  -- an AI picker is resolved by the host through the server-side AI path.
+  select owner_user_id into v_owner from public.room_game_hands
+    where room_id=v_room_id and seat=(v_state->>'trumpPickerSeat')::integer;
+  if v_owner is null then
+    perform set_config('request.jwt.claim.sub',v_host::text,false);
+    perform public.select_room_trump(v_room_id,null);
+  else
+    perform set_config('request.jwt.claim.sub',v_owner::text,false);
+    perform public.select_room_trump(v_room_id,'hokm_hearts');
+  end if;
+  select status,public_state into v_status,v_state from public.game_rooms where id=v_room_id;
   if v_state->>'phase'<>'challenge_decision' then
-    raise exception 'next Double Kout game must reopen the challenge decision';
+    raise exception 'contract selection must open the all-player challenge decision';
   end if;
   if exists(select 1 from public.room_game_hands where room_id=v_room_id and jsonb_array_length(cards)<>13) then
-    raise exception 'next game must deal fresh 13-card hands';
+    raise exception 'contract selection must distribute eight remaining cards to every seat';
   end if;
-  raise notice 'PASS: rematch deadline, 15-second extension and next game restart';
+  if exists(select 1 from public.room_game_hands cross join lateral jsonb_array_elements(cards) c
+       where room_id=v_room_id group by room_id having count(distinct c->>'id')<>52) then
+    raise exception 'the completed deal must contain 52 unique cards';
+  end if;
+  if exists(select 1 from public.room_game_pending_decks where room_id=v_room_id) then
+    raise exception 'pending deck must be deleted after the remaining cards are dealt';
+  end if;
+
+  -- The guest (seat 1) is not the host and must still be allowed to challenge.
+  perform set_config('request.jwt.claim.sub',v_guest::text,false);
+  perform public.submit_room_challenge_choice(v_room_id,'challenge');
+  select public_state into v_state from public.game_rooms where id=v_room_id;
+  if (v_state->>'challengeInitiator')::integer<>1 or v_state->>'challengeTeam'<>'B' then
+    raise exception 'a non-host human must be able to initiate the challenge';
+  end if;
+  raise notice 'PASS: five-card rematch, private 32-card reserve, contract distribution and non-host challenge rights';
 
   -- A fourth room verifies that an expired HUMAN turn is automatically played
   -- by the host timeout worker using the latest migration's AI fallback path.
