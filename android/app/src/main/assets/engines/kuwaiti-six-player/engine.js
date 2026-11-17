@@ -95,16 +95,34 @@ function findTrickWinner(plays,contract,{trickNo=1,isMalzoom=false,trumpAnnounce
  if((contract==='naras'||contract==='tak_naras'||contract==='saras')&&trumpSuit)throw new Error('قرارداد بدون حکم نمی‌تواند خال حکم داشته باشد');
  if(!Array.isArray(plays)||plays.length!==6)throw new Error('برای تعیین برنده باید شش کارت بازی شده باشد');
  const leadSuit=effectiveLeadSuit(plays,{trickNo});
- const hasTrump=!!trumpSuit&&plays.some(p=>p.card.kind==='normal'&&p.card.suit===trumpSuit);
- const eligible=plays.filter((play,index)=>{
-   if(isJoker(play.card))return cardPower(play.card,contract,{trickNo,isLead:index===0,isMalzoom,trumpAnnounced})>0;
-   return hasTrump?play.card.suit===trumpSuit:play.card.suit===leadSuit;
+ // In hidden-trump Malzoom, remember whether each card was played before or
+ // after the reveal. A later reveal must never turn an earlier discard into trump.
+ const trumpWasActive=(play)=>{
+  if(!isMalzoom)return !!trumpSuit;
+  return typeof play.trumpAnnouncedAtPlay==='boolean'
+   ? play.trumpAnnouncedAtPlay
+   : !!trumpAnnounced;
+ };
+ // If the led suit itself becomes trump, it remains an ordinary led suit for
+ // this trick: do not let a later reveal promote cards of that suit retroactively.
+ const trumpCanCut=!!trumpSuit&&trumpSuit!==leadSuit;
+ const hasTrump=trumpCanCut&&plays.some(p=>
+  p.card.kind==='normal'&&p.card.suit===trumpSuit&&trumpWasActive(p)
+ );
+ const eligible=plays.filter((play)=>{
+   if(isJoker(play.card))return cardPower(play.card,contract,{
+    trickNo,isLead:play===plays[0],isMalzoom,
+    trumpAnnounced:trumpWasActive(play)
+   })>0;
+   if(hasTrump)return play.card.suit===trumpSuit&&trumpWasActive(play);
+   return play.card.suit===leadSuit;
  });
  if(!eligible.length)return plays[1]; // Ninth-trick joker lead has no power; second card sets suit.
  return eligible.reduce((best,current)=>{
-   const bestPower=best.card.kind==='normal'?normalPower(best.card,contract):cardPower(best.card,contract,{trickNo,isLead:best===plays[0],isMalzoom,trumpAnnounced});
-   const currentPower=current.card.kind==='normal'?normalPower(current.card,contract):cardPower(current.card,contract,{trickNo,isLead:current===plays[0],isMalzoom,trumpAnnounced});
-   return currentPower>bestPower?current:best;
+   const power=(play)=>play.card.kind==='normal'
+    ?normalPower(play.card,contract)
+    :cardPower(play.card,contract,{trickNo,isLead:play===plays[0],isMalzoom,trumpAnnounced:trumpWasActive(play)});
+   return power(current)>power(best)?current:best;
  });
 }
 
@@ -133,7 +151,7 @@ function playCard(game,player,card){
  if(!Array.isArray(game.playedCards))game.playedCards=[];
  game.playedCards.push({player,card:{...card},trickNo:game.trickNo});
  if(game.trick.length===0)game.lastTrick=[];
- game.trick.push({player,card});
+ game.trick.push({player,card,trumpAnnouncedAtPlay:!!(game.trumpAnnounced||player===game.auctionWinner)});
  if(game.trick.length<6){game.turn=(player+1)%6;return {completed:false,game};}
  const winner=findTrickWinner(game.trick,game.contract,{trickNo:game.trickNo,isMalzoom:game.isMalzoom,trumpAnnounced:game.trumpAnnounced,trumpSuit:game.trumpSuit});
  game.lastTrick=game.trick.map(p=>({...p}));game.lastWinner=winner.player;
