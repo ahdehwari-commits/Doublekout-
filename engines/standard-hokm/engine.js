@@ -58,6 +58,12 @@ function chooseAICardBase(hand,plays,player,trumpSuit,difficulty='normal',contra
  const threatCount=card=>unseen.filter(c=>c.suit===card.suit&&rankPower(c.rank,contract)>rankPower(card.rank,contract)).length;
  const value=card=>rankPower(card.rank,contract);
  const cost=card=>value(card)+(card.suit===trumpSuit&&contract==='hokm'?7:0);
+ const discardCost=card=>{
+  const offSuit=!!lead&&card.suit!==lead;
+  const wastedAce=offSuit&&card.rank==='A'&&!(contract==='hokm'&&card.suit===trumpSuit);
+  return cost(card)+(wastedAce?30:0);
+ };
+ const cheapestDiscard=cards=>[...cards].sort((a,b)=>discardCost(a)-discardCost(b))[0];
  const sorted=[...legal].sort((a,b)=>cost(a)-cost(b));
  if(!plays.length){
   const coordinated=cooperativeLeadCard(hand,lastTrick,lastWinner,player,contract);
@@ -97,18 +103,7 @@ function chooseAICardBase(hand,plays,player,trumpSuit,difficulty='normal',contra
    const aceUnseen=unseen.some(c=>c.suit===lead&&c.rank==='A');
    if(opponentsStillToPlay&&king&&aceUnseen&&rankPower('K',contract)>rankPower(winningPlay.card.rank,contract))return king;
   }
-  // When our partner is already winning, discard cheaply without throwing
-  // away a side-suit ace. An off-suit ace cannot win this trick unless it is
-  // trump; preserve it for a later lead whenever any lower legal discard exists.
-  const partnerDiscards=[...legal].sort((a,b)=>{
-   const discardCost=card=>{
-    const offSuit=card.suit!==lead;
-    const wastedAce=offSuit&&card.rank==='A'&&!(contract==='hokm'&&card.suit===trumpSuit);
-    return cost(card)+(wastedAce?30:0);
-   };
-   return discardCost(a)-discardCost(b);
-  });
-  return partnerDiscards[0]||sorted[0];
+  return cheapestDiscard(legal)||sorted[0];
  }
  // In sequence mode, do not save a winning card while an opponent is taking
  // the trick: stop their run with the cheapest card that overtakes the winner.
@@ -150,10 +145,10 @@ function chooseAICardBase(hand,plays,player,trumpSuit,difficulty='normal',contra
  if(difficulty==='hard'){
   const safeWinners=winning.sort((a,b)=>threatCount(a)-threatCount(b)||cost(a)-cost(b));
   if(safeWinners.length)return safeWinners[0];
-  return losing[0]||sorted[0];
+  return cheapestDiscard(losing.length?losing:legal)||sorted[0];
  }
  if(winning.length)return winning[0];
- return sorted[0];
+ return cheapestDiscard(legal)||sorted[0];
 }
 function chooseAICard(hand,plays,player,trumpSuit,difficulty='normal',contract='hokm',playedCards=[],initialHand=null,lastTrick=[],lastWinner=null,isHakemTeam=true,sequenceMode=false,gameMode='standard-hokm',trickNo=1){
  const chosen=chooseAICardBase(hand,plays,player,trumpSuit,difficulty,contract,playedCards,initialHand,lastTrick,lastWinner,isHakemTeam,sequenceMode);
