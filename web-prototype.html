@@ -553,11 +553,21 @@ function startGame(){
  $('challengePanel').style.display='none';
  $('trumpPicker').classList.add('hidden');
  if(matchNo>1){
-  G.contract='hokm';G.trump=null;G.trumpCode=null;G.waitingTrump=true;
-  $('trumpPicker').classList.remove('hidden');
-  
-  $('status').textContent='پنج کارت اول پخش شد؛ نوع قرارداد را انتخاب کن. سپس هشت کارت باقی‌مانده پخش می‌شود.';
-  $('trumpBig').textContent='در انتظار انتخاب قرارداد';render();return;
+  // dealGame() may already have completed the contract when the hakem is AI.
+  // Never reset that completed state or ask for the contract a second time.
+  if(G.waitingTrump){
+   G.contract='hokm';G.trump=null;G.trumpCode=null;
+   $('trumpPicker').classList.remove('hidden');
+   $('status').textContent='پنج کارت اول پخش شد؛ نوع قرارداد را انتخاب کن. سپس هشت کارت باقی‌مانده پخش می‌شود.';
+   $('trumpBig').textContent='در انتظار انتخاب قرارداد';render();return;
+  }
+  if(G.waitingChallenge){
+   $('challengePanel').style.display='block';
+   render();return;
+  }
+  // AI hakem already selected the contract and confirmTrump() dealt the
+  // remaining eight cards. Preserve that contract and its initialized turn.
+  return;
  }
  G.contract='hokm';G.trump='♠';G.trumpCode='S';G.waitingTrump=false;
  
