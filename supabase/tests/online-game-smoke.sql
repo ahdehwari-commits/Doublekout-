@@ -20,6 +20,8 @@ declare
   v_start_result jsonb;
   v_human_count integer;
   v_ai_count integer;
+  v_duplicate_result jsonb;
+  v_duplicate_checked boolean:=false;
 begin
   insert into auth.users(id) values(v_host),(v_guest) on conflict do nothing;
   perform set_config('request.jwt.claim.sub',v_host::text,false);
@@ -76,6 +78,18 @@ begin
           or not exists(select 1 from jsonb_array_elements(v_cards) y where y->>'suit'=v_lead)
        order by random() limit 1;
       perform public.play_room_card(v_room_id,v_card_id);
+      if not v_duplicate_checked then
+        v_duplicate_result:=public.play_room_card(v_room_id,v_card_id);
+        if coalesce((v_duplicate_result->>'duplicate')::boolean,false) is not true then
+          raise exception 'repeated accepted card must be idempotent within the active trick';
+        end if;
+        if (select count(*) from public.room_game_action_log
+            where room_id=v_room_id and seat=v_turn and card_id=v_card_id
+              and outcome in ('accepted','duplicate_accepted'))<>2 then
+          raise exception 'accepted and duplicate card actions must both be audited exactly once';
+        end if;
+        v_duplicate_checked:=true;
+      end if;
     end if;
   end loop;
 
