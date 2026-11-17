@@ -66,6 +66,7 @@ jobs:
           cmp web-prototype.html android/app/src/main/assets/index.html
           node scripts/check-inline-js.cjs web-prototype.html
           cmp engines/double-kout-game.js android/app/src/main/assets/engines/double-kout-game.js
+          cmp engines/standard-hokm/engine.js android/app/src/main/assets/engines/standard-hokm/engine.js
           node --check engines/kuwaiti-six-player/engine.js
           cmp kuwaiti-six-player-ui.js android/app/src/main/assets/kuwaiti-six-player-ui.js
           cmp engines/kuwaiti-six-player/engine.js android/app/src/main/assets/engines/kuwaiti-six-player/engine.js
