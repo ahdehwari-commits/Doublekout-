@@ -84,6 +84,12 @@ assert.equal(hokm.chooseAICard(partnerHand,[{player:0,card:{rank:'A',suit:'H'}}]
 const overtakeHand=[{id:'2H',rank:'2',suit:'H'},{id:'AH',rank:'A',suit:'H'}];
 assert.equal(hokm.chooseAICard(overtakeHand,[{player:0,card:{rank:'2',suit:'H'}}],3,'S').id,'AH');
 assert.equal(hokm.currentWinner([{player:0,card:{rank:'2',suit:'H'}},{player:1,card:{rank:'A',suit:'H'}}],'S'),1);
+const preserveOffSuitAce=[{id:'AC',rank:'A',suit:'C'},{id:'2D',rank:'2',suit:'D'}];
+assert.equal(hokm.chooseAICard(preserveOffSuitAce,[{player:0,card:{rank:'A',suit:'H'}}],2,'S').id,'2D',
+ 'AI must preserve an off-suit ace when partner is already winning');
+const losingOffSuitAce=[{id:'AC',rank:'A',suit:'C'},{id:'2D',rank:'2',suit:'D'}];
+assert.equal(hokm.chooseAICard(losingOffSuitAce,[{player:1,card:{rank:'A',suit:'H'}}],2,'S').id,'2D',
+ 'AI must preserve an off-suit ace when it cannot win the current trick');
 const game=hokm.newGame({starter:2,matchNumber:1,rng:()=>0.37});
 assert.equal(game.turn,2);assert.equal(game.trump,'S');assert.equal(game.hands.length,4);
 const learningHand=[{id:'AS',rank:'A',suit:'S'},{id:'2H',rank:'2',suit:'H'},{id:'KC',rank:'K',suit:'C'}];
