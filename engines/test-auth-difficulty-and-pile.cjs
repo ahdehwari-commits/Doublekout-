@@ -6,9 +6,9 @@ const androidHtml = fs.readFileSync('android/app/src/main/assets/index.html','ut
 const androidSix = fs.readFileSync('android/app/src/main/assets/kuwaiti-six-player-ui.js','utf8');
 const migration = fs.readFileSync('supabase/migrations/20261117003000_online_ai_difficulty.sql','utf8');
 
-assert.match(html, /id="difficulty"[^>]*>[\s\S]*?<option value="expert" selected>خیلی سخت<\/option>/);
+assert.match(html, /id="difficulty"[^>]*>[\\s\\S]*?<option value="expert" selected>خیلی سخت[^<]*<\\/option>/);
 assert.match(six, /<option value="expert" selected>خیلی سخت/);
-assert.match(html, /id="onlineAIDifficulty"[^>]*>[\s\S]*?<option value="expert" selected>خیلی سخت/);
+assert.match(html, /id="onlineAIDifficulty"[^>]*>[\\s\\S]*?<option value="expert" selected>خیلی سخت[^<]*<\\/option>/);
 assert.match(html, /p_ai_difficulty:\s*\(el\('onlineAIDifficulty'\)[\s\S]*?\|\|'expert'/);
 assert.match(html, /onAuthStateChange/);
 assert.match(html, /resend\(\{type:type,email:email/);
