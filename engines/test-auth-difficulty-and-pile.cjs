@@ -1,0 +1,23 @@
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const html = fs.readFileSync('web-prototype.html','utf8');
+const six = fs.readFileSync('kuwaiti-six-player-ui.js','utf8');
+const androidHtml = fs.readFileSync('android/app/src/main/assets/index.html','utf8');
+const androidSix = fs.readFileSync('android/app/src/main/assets/kuwaiti-six-player-ui.js','utf8');
+const migration = fs.readFileSync('supabase/migrations/20261117003000_online_ai_difficulty.sql','utf8');
+
+assert.match(html, /id="difficulty"[^>]*>[\s\S]*?<option value="expert" selected>خیلی سخت<\/option>/);
+assert.match(six, /<option value="expert" selected>خیلی سخت/);
+assert.match(html, /id="onlineAIDifficulty"[^>]*>[\s\S]*?<option value="expert" selected>خیلی سخت/);
+assert.match(html, /p_ai_difficulty:\s*\(el\('onlineAIDifficulty'\)[\s\S]*?\|\|'expert'/);
+assert.match(html, /onAuthStateChange/);
+assert.match(html, /resend\(\{type:type,email:email/);
+assert.match(html, /const col=i%9,row=Math\.floor\(i\/9\)/);
+assert.match(html, /\(col-4\)\*16/);
+assert.match(migration, /add column if not exists ai_difficulty text not null default 'expert'/);
+assert.match(migration, /easy_random_legal_card/);
+assert.match(migration, /normal_lowest_legal_card/);
+assert.match(migration, /expert_secure_second_consecutive_trick/);
+assert.equal(androidHtml, html, 'Android HTML asset must match web source');
+assert.equal(androidSix, six, 'Android six-player UI asset must match web source');
+console.log('PASS: default expert difficulty, online lobby setting, auth callback/resend, wider sequence pile and Android asset sync.');
