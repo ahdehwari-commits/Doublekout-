@@ -102,6 +102,11 @@ begin
   if (v_state->>'scoreA')::integer + (v_state->>'scoreB')::integer <> 13 then
     raise exception 'Hokm score must total 13 tricks';
   end if;
+  if not exists(select 1 from public.room_game_action_log
+      where room_id=v_room_id and action_type='ai_play_card'
+        and decision_reason is not null and legal_move_count>0) then
+    raise exception 'AI card decision and strategy reason must be present in the audit trail';
+  end if;
 
   -- A second room verifies the Double Kout challenge can resolve early or on trick 13.
   perform set_config('request.jwt.claim.sub',v_host::text,false);
