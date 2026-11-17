@@ -562,7 +562,8 @@ function startGame(){
  G.contract='hokm';G.trump='♠';G.trumpCode='S';G.waitingTrump=false;
  
  if(activeMode==='double-kout'){
-  $('challengePanel').style.display='block';$('status').textContent='بازی اول با حکم ثابت پیک آغاز می‌شود؛ بازی عادی یا چالش را انتخاب کن.';render();return;
+  G.waitingChallenge=true;
+  $('challengePanel').style.display='block';$('status').textContent='بازی اول با حکم ثابت پیک آغاز می‌شود؛ قبل از اولین کارت، بازی عادی یا چالش را انتخاب کن.';render();return;
  }
  $('status').textContent='بازی اول با حکم ثابت پیک آغاز شد.';render();runAI();
 }
