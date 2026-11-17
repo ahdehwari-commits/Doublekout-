@@ -257,8 +257,10 @@ begin
   if exists(select 1 from public.room_game_hands where room_id=v_room_id and jsonb_array_length(cards)<>13) then
     raise exception 'contract selection must distribute eight remaining cards to every seat';
   end if;
-  if exists(select 1 from public.room_game_hands cross join lateral jsonb_array_elements(cards) c
-       where room_id=v_room_id group by room_id having count(distinct c->>'id')<>52) then
+  if (select count(distinct card->>'id')
+        from public.room_game_hands h
+        cross join lateral jsonb_array_elements(h.cards) as x(card)
+       where h.room_id=v_room_id)<>52 then
     raise exception 'the completed deal must contain 52 unique cards';
   end if;
   if exists(select 1 from public.room_game_pending_decks where room_id=v_room_id) then
