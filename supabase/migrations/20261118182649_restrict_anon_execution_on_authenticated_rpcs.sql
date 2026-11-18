@@ -26,6 +26,12 @@ revoke execute on function public.start_next_room_game(uuid) from anon;
 revoke execute on function public.start_room_game(uuid,boolean,text) from anon;
 revoke execute on function public.start_room_game(uuid,boolean,text,text) from anon;
 revoke execute on function public.submit_room_challenge_choice(uuid,text) from anon;
-revoke all on function public.rls_auto_enable() from public, anon, authenticated;
+do $
+begin
+  if to_regprocedure('public.rls_auto_enable()') is not null then
+    execute 'revoke all on function public.rls_auto_enable() from public, anon, authenticated';
+  end if;
+end;
+$;
 revoke all on function public.sync_player_profile() from public, anon, authenticated;
 notify pgrst,'reload schema';
