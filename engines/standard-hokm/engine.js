@@ -130,10 +130,16 @@ function chooseAICardBase(hand,plays,player,trumpSuit,difficulty='normal',contra
     for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
     const simulated=[...plays,{player,card}];
     const hands=new Map();
-    const handSize=hand.length;
-    remainingPlayers.forEach((seat,index)=>{
-     hands.set(seat,pool.slice(index*handSize,(index+1)*handSize));
-    });
+    let cursor=0;
+    // Include even seats that already played this trick: their remaining
+    // cards are still part of the unseen pool and must not leak to others.
+    for(let step=1;step<4;step++){
+     const seat=(player+step)%4;
+     const seatSize=hand.length-(plays.some(x=>x.player===seat)?1:0);
+     hands.set(seat,pool.slice(cursor,cursor+seatSize));
+     cursor+=seatSize;
+    }
+    if(cursor!==pool.length)continue;
     for(const seat of remainingPlayers){
      const opponentHand=hands.get(seat)||[];
      const leadSuit=simulated[0].card.suit;
