@@ -21,7 +21,8 @@ begin
   end if;
 end;
 $$;
-revoke all on function public.require_verified_player() from public,anon,authenticated;
+revoke all on function public.require_verified_player() from public,anon;
+grant execute on function public.require_verified_player() to authenticated;
 
 -- Keep the existing room creation/join logic intact and insert the account gate
 -- immediately after its authentication check. The patch is idempotent.
