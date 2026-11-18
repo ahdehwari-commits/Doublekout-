@@ -1497,7 +1497,8 @@ async function refreshOnlineGame(startPayload){
    A:completedWinners.filter(function(seat){return Number(seat)%2===0;}).length,
    B:completedWinners.filter(function(seat){return Number(seat)%2===1;}).length
   };
-  var liveScoreText='گروه‌های توالی تکمیل‌شده · تیم '+teamAName+': '+faScore(liveTeamScores.A)+' · تیم '+teamBName+': '+faScore(liveTeamScores.B);
+  var rawTeamWins={A:completedWinners.filter(function(seat){return Number(seat)%2===0;}).length,B:completedWinners.filter(function(seat){return Number(seat)%2===1;}).length};
+  var liveScoreText=(mode==='double-kout'&&!state.challengeTeam?'امتیاز توالی تکمیل‌شده':'برد دست‌ها')+' · تیم '+teamAName+': '+faScore(liveTeamScores.A)+' · تیم '+teamBName+': '+faScore(liveTeamScores.B)+'  |  برد خام دست‌ها · تیم '+teamAName+': '+faScore(rawTeamWins.A)+' · تیم '+teamBName+': '+faScore(rawTeamWins.B);
   el('onlineLiveScoreTop').textContent=liveScoreText;
   el('onlineScore').textContent=liveScoreText;
   el('onlineHand').innerHTML='';
