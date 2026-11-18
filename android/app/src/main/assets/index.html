@@ -1053,16 +1053,6 @@ async function resendOnlineConfirmation(){
    authMessage('درخواست ارسال ایمیل به سامانه پذیرفته شد؛ تحویل واقعی ایمیل از داخل بازی قابل تأیید نیست. صندوق ورودی، هرزنامه و در صورت تأخیر محدودیت ارسال ایمیل Supabase را بررسی کن.');
   }catch(e){authMessage('ارسال مجدد ایمیل تأیید ناموفق بود: '+(e.message||e));}
  }
- async function googleOnlineAccount(){
-  try{await initClient();el('onlineGoogle').disabled=true;authMessage('در حال انتقال به صفحه امن Google…');
-   var current=await client.auth.getSession();if(current.error)throw current.error;
-   var redirectTo=PUBLIC_AUTH_REDIRECT;var result;
-   if(current.data.session&&current.data.session.user&&current.data.session.user.is_anonymous&&typeof client.auth.linkIdentity==='function'){
-    result=await client.auth.linkIdentity({provider:'google',options:{redirectTo:redirectTo}});
-   }else result=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:redirectTo}});
-   if(result.error)throw result.error;
-  }catch(e){authMessage('ورود Google فعلاً در دسترس نیست: '+(e.message||e)+'. مدیر سامانه باید Google Provider و نشانی بازگشت را در Supabase تنظیم کند.');el('onlineGoogle').disabled=false;}
- }
  async function appleOnlineAccount(){
  try{
   await initClient();el('onlineApple').disabled=true;authMessage('در حال انتقال به صفحه امن Apple…');
