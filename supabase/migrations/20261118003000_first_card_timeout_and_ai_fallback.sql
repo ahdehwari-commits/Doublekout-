@@ -148,7 +148,7 @@ begin
       v_state:=jsonb_set(v_state,'{challengeTeam}','null'::jsonb,true);
       v_state:=jsonb_set(v_state,'{leader}',to_jsonb(v_first_turn),true);
       v_state:=jsonb_set(v_state,'{turn}',to_jsonb(v_first_turn),true);
-      v_state:=jsonb_set(v_state,'{turnDeadline}',to_jsonb(extract(epoch from clock_timestamp())+10),true);
+      v_state:=v_state-'turnDeadline';
       v_state:=jsonb_set(v_state,'{message}',to_jsonb('همه بازیکنان از چالش عبور کردند؛ بازی عادی آغاز شد'::text),true);
     else
       v_state:=jsonb_set(v_state,'{message}',to_jsonb('انتخاب شما ثبت شد؛ منتظر تصمیم سایر بازیکنان هستیم'::text),true);
