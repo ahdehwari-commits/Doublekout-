@@ -1,0 +1,31 @@
+-- Restrict authenticated game RPCs and internal trigger helpers from the anon role.
+-- Public read/learning endpoints intentionally remain available to anon.
+revoke execute on function public.advance_room_turn_timeout(uuid) from anon;
+revoke execute on function public.apply_room_card(uuid,smallint,text,boolean) from anon;
+revoke execute on function public.create_game_room(text,smallint,text) from anon;
+revoke execute on function public.expire_room_challenge_turn(uuid,smallint) from anon;
+revoke execute on function public.extend_room_challenge_time(uuid) from anon;
+revoke execute on function public.extend_room_rematch_time(uuid) from anon;
+revoke execute on function public.get_room_roster(uuid) from anon;
+revoke execute on function public.get_room_snapshot(uuid) from anon;
+revoke execute on function public.host_decide_room_start(uuid,text) from anon;
+revoke execute on function public.is_room_member(uuid) from anon;
+revoke execute on function public.join_game_room(text,text) from anon;
+revoke execute on function public.join_game_room(text,text,smallint) from anon;
+revoke execute on function public.leave_game_room(uuid) from anon;
+revoke execute on function public.play_room_ai_turn(uuid) from anon;
+revoke execute on function public.play_room_card(uuid,text) from anon;
+revoke execute on function public.require_verified_player() from anon;
+revoke execute on function public.resolve_room_trick(uuid) from anon;
+revoke execute on function public.select_room_trump(uuid,text) from anon;
+revoke execute on function public.set_room_game_decision(uuid,text) from anon;
+revoke execute on function public.set_room_ready(uuid,boolean) from anon;
+revoke execute on function public.start_game_room(uuid) from anon;
+revoke execute on function public.start_initial_room_game_staged(uuid) from anon;
+revoke execute on function public.start_next_room_game(uuid) from anon;
+revoke execute on function public.start_room_game(uuid,boolean,text) from anon;
+revoke execute on function public.start_room_game(uuid,boolean,text,text) from anon;
+revoke execute on function public.submit_room_challenge_choice(uuid,text) from anon;
+revoke all on function public.rls_auto_enable() from public, anon, authenticated;
+revoke all on function public.sync_player_profile() from public, anon, authenticated;
+notify pgrst,'reload schema';
