@@ -2,6 +2,8 @@ do $$
 declare
   v_host uuid := '00000000-0000-0000-0000-000000000001';
   v_guest uuid := '00000000-0000-0000-0000-000000000002';
+  v_unverified uuid := '00000000-0000-0000-0000-000000000003';
+  v_apple uuid := '00000000-0000-0000-0000-000000000004';
   v_room jsonb;
   v_room_id uuid;
   v_code text;
@@ -23,7 +25,27 @@ declare
   v_duplicate_result jsonb;
   v_duplicate_checked boolean:=false;
 begin
-  insert into auth.users(id) values(v_host),(v_guest) on conflict do nothing;
+  insert into auth.users(id,email_confirmed_at,raw_app_meta_data,is_anonymous)
+  values
+    (v_host,now(),'{}'::jsonb,false),
+    (v_guest,now(),'{}'::jsonb,false),
+    (v_unverified,null,'{}'::jsonb,true),
+    (v_apple,null,'{"provider":"apple"}'::jsonb,false)
+  on conflict(id) do update set
+    email_confirmed_at=excluded.email_confirmed_at,
+    raw_app_meta_data=excluded.raw_app_meta_data,
+    is_anonymous=excluded.is_anonymous;
+
+  -- Unverified anonymous accounts cannot create rooms; Apple provider metadata is accepted.
+  perform set_config('request.jwt.claim.sub',v_unverified::text,false);
+  begin
+    perform public.create_game_room('double-kout',4::smallint,'Unverified');
+    raise exception 'unverified_account_unexpectedly_allowed';
+  exception when others then
+    if sqlerrm<>'verified_account_required' then raise; end if;
+  end;
+  perform set_config('request.jwt.claim.sub',v_apple::text,false);
+  perform public.require_verified_player();
   perform set_config('request.jwt.claim.sub',v_host::text,false);
   v_room := public.create_game_room('standard-hokm',4::smallint,'Host');
   v_room_id := (v_room->>'room_id')::uuid;
@@ -372,7 +394,30 @@ begin
   if v_human_count<>1 or v_ai_count<>3 then
     raise exception 'AI-only start must deal one human hand and three AI hands';
   end if;
-  raise notice 'PASS: host can end waiting alone and start with three AI seats';
+  if v_start_result->'state'->>'phase'<>'trump_selection' then
+    raise exception 'first online game must open the staged contract-selection phase';
+  end if;
+  if exists(select 1 from public.room_game_hands where room_id=v_room_id and jsonb_array_length(cards)<>5) then
+    raise exception 'first online game must deal exactly five cards to each seat';
+  end if;
+  if (select jsonb_array_length(cards) from public.room_game_pending_decks where room_id=v_room_id)<>32 then
+    raise exception 'first online game must retain exactly 32 cards before contract selection';
+  end if;
+  begin
+    perform public.select_room_trump(v_room_id,'hokm_hearts');
+    raise exception 'first_game_non_spade_contract_unexpectedly_allowed';
+  exception when others then
+    if sqlerrm<>'first_game_spades_required' then raise; end if;
+  end;
+  perform public.select_room_trump(v_room_id,'hokm_spades');
+  select public_state into v_state from public.game_rooms where id=v_room_id;
+  if v_state->>'contract'<>'hokm_spades' or v_state->>'phase'<>'challenge_decision' then
+    raise exception 'first online game must force spades and open the challenge window';
+  end if;
+  if exists(select 1 from public.room_game_hands where room_id=v_room_id and jsonb_array_length(cards)<>13) then
+    raise exception 'contract selection must complete each first-game hand to 13 cards';
+  end if;
+  raise notice 'PASS: host can start with three AI seats; first deal is five cards and first contract is forced spades';
 
   -- First guest is accepted without requiring a separate ready-button action.
   perform set_config('request.jwt.claim.sub',v_host::text,false);
@@ -393,7 +438,13 @@ begin
   if v_human_count<>2 or v_ai_count<>2 then
     raise exception 'human-accepted start must deal two human and two AI hands';
   end if;
-  raise notice 'PASS: host accepts first guest and fills remaining seats with two AI players';
+  if exists(select 1 from public.room_game_hands where room_id=v_room_id and jsonb_array_length(cards)<>5) then
+    raise exception 'two-human start must also use the staged five-card deal';
+  end if;
+  if (select jsonb_array_length(cards) from public.room_game_pending_decks where room_id=v_room_id)<>32 then
+    raise exception 'two-human start must retain the 32-card pending deck';
+  end if;
+  raise notice 'PASS: host accepts first guest and starts two humans plus two AI with five-card staged deal';
 
   raise notice 'PASS: room start, private hands, 2 humans + 2 AI, turn validation, legal cards, 13 tricks, final score and human timeout fallback';
 end;
