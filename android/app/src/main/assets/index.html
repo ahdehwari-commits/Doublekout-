@@ -1364,7 +1364,7 @@ async function refreshOnlineGame(startPayload){
   if(revision===lastGameRevision&&handSignature===lastOnlineHandSignature){
    // Re-check server-side turn automation even when the game revision is unchanged.
    // Otherwise a timeout checked once before its deadline is never checked again.
-   if(q.data.status==='playing'&&!((q.data.public_state||{}).phase==='challenge_decision')&&!q.data.public_state.trickPendingUntil&&!aiBusy){
+   if(q.data.status==='playing'&&(q.data.public_state||{}).phase==='playing'&&!q.data.public_state.trickPendingUntil&&!aiBusy){
     var sameState=q.data.public_state||{},sameTurn=Number(sameState.turn||0);
     syncStage='بررسی نقش میزبان برای ادامه نوبت';var sameHost=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
     if(sameHost.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+sameHost.error.message);
@@ -1546,7 +1546,7 @@ async function refreshOnlineGame(startPayload){
   lastGameRevision=revision;
   lastOnlineHandSignature=handSignature;
   if(!finished&&myOnlineSeat===-1)myOnlineSeat=-1;
-  if(!finished&&!decisionPending&&me.id&&!aiBusy){
+  if(!finished&&!decisionPending&&!trumpPending&&me.id&&!aiBusy){
    syncStage='بررسی دسترسی میزبان';var hostQ=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
    if(hostQ.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+hostQ.error.message);
    if(!hostQ.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
