@@ -292,7 +292,9 @@ begin
   v_loser_score:=case when v_loser_team='A' then v_score_a else v_score_b end;
   v_is_kout:=(v_loser_score=0 and greatest(v_score_a,v_score_b)=13);
 
-  if v_winner_team=v_hakem_team and not v_is_kout then
+  if v_winner_team=v_hakem_team and not v_is_kout
+     and coalesce(v_old->'challengeResult'->>'status','') not like 'success%'
+     and coalesce(v_old->'challengeResult'->>'status','') not like 'failed%' then
     -- The incumbent hakem's team won without kout: keep both roles.
     v_new_dealer:=v_old_dealer;
     v_new_picker:=v_old_hakem;
