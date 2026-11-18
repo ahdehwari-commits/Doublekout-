@@ -296,8 +296,9 @@ begin
   end if;
   raise notice 'PASS: five-card rematch, private 32-card reserve, contract distribution and non-host challenge rights';
 
-  -- A fourth room verifies that an expired HUMAN turn is automatically played
-  -- by the host timeout worker using the latest migration's AI fallback path.
+  -- The opening card is never auto-played for a human, even if a stale
+  -- deadline is present. Once that first card is manually played, the next
+  -- expired human turn is handled automatically by the host.
   perform set_config('request.jwt.claim.sub',v_host::text,false);
   v_room := public.create_game_room('double-kout',4::smallint,'Host');
   v_room_id := (v_room->>'room_id')::uuid;
@@ -312,8 +313,26 @@ begin
   perform public.submit_room_challenge_choice(v_room_id,'pass');
   perform set_config('request.jwt.claim.sub',v_host::text,false);
 
-  select jsonb_array_length(cards) into v_before_count
+  update public.game_rooms
+     set public_state=jsonb_set(public_state,'{turnDeadline}',
+       to_jsonb(extract(epoch from clock_timestamp())-1),true),
+         revision=revision+1,updated_at=now()
+   where id=v_room_id;
+  v_timeout_result := public.advance_room_turn_timeout(v_room_id);
+  if v_timeout_result->>'reason'<>'first_card_required' then
+    raise exception 'opening card must remain manual before timeout automation: %',v_timeout_result;
+  end if;
+  if (select jsonb_array_length(cards) from public.room_game_hands
+       where room_id=v_room_id and seat=0)<>13 then
+    raise exception 'opening human hand must remain unchanged before first manual card';
+  end if;
+
+  select cards->0->>'id' into v_card_id
     from public.room_game_hands where room_id=v_room_id and seat=0;
+  perform public.play_room_card(v_room_id,v_card_id);
+
+  select jsonb_array_length(cards) into v_before_count
+    from public.room_game_hands where room_id=v_room_id and seat=1;
   update public.game_rooms
      set public_state=jsonb_set(public_state,'{turnDeadline}',
        to_jsonb(extract(epoch from clock_timestamp())-1),true),
@@ -324,19 +343,19 @@ begin
   select status,public_state into v_status,v_state
     from public.game_rooms where id=v_room_id;
   if v_timeout_result->'state' is null then
-    raise exception 'expired human turn timeout did not return an advanced state: %',v_timeout_result;
+    raise exception 'expired human turn after opening card did not auto-advance: %',v_timeout_result;
   end if;
-  if jsonb_array_length(v_state->'plays')<>1 then
-    raise exception 'expired human turn must place exactly one card on the table';
+  if jsonb_array_length(v_state->'plays')<>2 then
+    raise exception 'expired second human turn must place exactly one additional card';
   end if;
-  if (v_state->>'turn')::integer<>1 then
+  if (v_state->>'turn')::integer<>2 then
     raise exception 'expired human turn must advance to the next seat';
   end if;
   if (select jsonb_array_length(cards) from public.room_game_hands
-       where room_id=v_room_id and seat=0)<>v_before_count-1 then
+       where room_id=v_room_id and seat=1)<>v_before_count-1 then
     raise exception 'expired human turn must remove one card from the human hand';
   end if;
-  raise notice 'PASS: expired human turn is auto-played, removed from hand, and advances turn';
+  raise notice 'PASS: first card remains manual; later expired human turn auto-plays legally';
 
   -- Host may end an indefinite lobby with no guest: one human plus three AI seats.
   perform set_config('request.jwt.claim.sub',v_host::text,false);
