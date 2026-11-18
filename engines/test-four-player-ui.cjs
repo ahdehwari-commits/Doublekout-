@@ -185,3 +185,13 @@ assert.ok(html.includes("easy:{saras:3,naras:2,tak:2}")&&html.includes("hard:{sa
 assert.ok(html.includes("activeMode==='standard-hokm'||activeMode==='double-kout'||difficulty==='hard'||difficulty==='expert'"),'four-player Double Kout and standard Hokm must use the dedicated tactical strategy engine');
 
 assert.ok(html.includes('expert:{saras:5,naras:4,tak:5}'),'expert contract selection must remain possible but highly selective with a five-card preview');
+
+
+// Regression checks for the requested difficulty order, challenge wording and card-back signature.
+assert.ok(/<select id="difficulty"><option value="expert" selected>خیلی سخت<\/option><option value="hard">سخت<\/option><option value="normal">معمولی<\/option><option value="easy">آسان<\/option><\/select>/.test(html),'difficulty must default to very hard and descend through hard, normal, easy');
+assert.ok(html.includes('هر بازیکن انسانی می‌تواند مستقل چلنج را اعلام کند یا از آن عبور کند'),'online challenge must be available to every human player, not only the host');
+assert.ok(html.includes('چلنج')&&!html.includes('چالش'),'visible challenge wording must consistently use چلنج');
+assert.ok(html.includes('Abdolhamid Dehvari')&&!html.includes('Abdulhamid'),'all four-player card backs must show the exact requested English signature');
+const blackBack=fs.readFileSync(require.resolve('../assets/card-back-black-gold.svg'),'utf8');
+assert.ok(blackBack.includes('Abdolhamid Dehvari')&&!blackBack.includes('Abdulhamid'),'black-gold SVG card back must carry the exact signature');
+assert.ok(html.includes('class="center-pile"')&&html.includes('class="online-center-pile"')&&html.includes("c.classList.add('pile-card')"),'collected cards must remain overlapped beneath the current trick in local and online tables');
