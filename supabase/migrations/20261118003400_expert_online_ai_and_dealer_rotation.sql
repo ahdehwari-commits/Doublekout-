@@ -39,7 +39,7 @@ declare
   v_j integer;
   v_i integer;
   v_sample integer;
-  v_samples integer:=128;
+  v_samples integer:=256;
   v_wins integer;
   v_partner_wins integer;
   v_best_score numeric:='-1e30';
@@ -47,7 +47,7 @@ declare
   v_rank_order text[];
   v_legal_count integer;
   v_hand_count integer;
-  v_reason text:='expert_monte_carlo_128';
+  v_reason text:='expert_monte_carlo_256';
   v_last_winner integer;
   v_challenge text;
   v_break_run_bonus numeric:=0;
