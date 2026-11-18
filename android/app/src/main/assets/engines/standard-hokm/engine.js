@@ -114,21 +114,50 @@ function chooseAICardBase(hand,plays,player,trumpSuit,difficulty='normal',contra
  if(difficulty==='expert'){
   // Monte-Carlo estimate: deal unseen cards to the remaining seats and
   // estimate whether each candidate can secure this trick for our team.
-  const remainingPlayers=[0,1,2,3].filter(p=>p!==player&&!plays.some(x=>x.player===p));
-  const samples=64;
+  // Simulate only seats that have not played yet, in real clockwise turn order.
+  // Unknown cards are first dealt into separate opponent hands; a player can only
+  // choose from their own hand, and must follow suit whenever possible.
+  const remainingPlayers=[];
+  for(let step=1;step<4;step++){
+   const seat=(player+step)%4;
+   if(!plays.some(x=>x.player===seat))remainingPlayers.push(seat);
+  }
+  const samples=128;
   const scored=legal.map(card=>{
    let teamWins=0,partnerWins=0;
    for(let sample=0;sample<samples;sample++){
     const pool=[...unseen];
     for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
     const simulated=[...plays,{player,card}];
-    remainingPlayers.forEach((seat,index)=>{
+    const hands=new Map();
+    let cursor=0;
+    // Include even seats that already played this trick: their remaining
+    // cards are still part of the unseen pool and must not leak to others.
+    for(let step=1;step<4;step++){
+     const seat=(player+step)%4;
+     const seatSize=hand.length-(plays.some(x=>x.player===seat)?1:0);
+     hands.set(seat,pool.slice(cursor,cursor+seatSize));
+     cursor+=seatSize;
+    }
+    if(cursor!==pool.length)continue;
+    for(const seat of remainingPlayers){
+     const opponentHand=hands.get(seat)||[];
      const leadSuit=simulated[0].card.suit;
-     const follow=pool.filter(c=>c.suit===leadSuit);
-     const options=follow.length?follow:pool;
-     const picked=options[Math.floor(Math.random()*options.length)];
-     if(picked){simulated.push({player:seat,card:picked});pool.splice(pool.findIndex(c=>c.id===picked.id),1);}
-    });
+     const follow=opponentHand.filter(c=>c.suit===leadSuit);
+     const options=follow.length?follow:opponentHand;
+     if(!options.length)continue;
+     const winningOptions=options.filter(c=>beats(c,simulated.reduce((best,p)=>beats(p.card,best.card,leadSuit,trumpSuit,contract)?p:best,simulated[0]).card,leadSuit,trumpSuit,contract));
+     const isOurTeam=teamOf(seat)===teamOf(player);
+     let picked;
+     if(isOurTeam&&teamOf(currentWinner(simulated,trumpSuit,contract))===teamOf(player)){
+      picked=[...options].sort((a,b)=>cost(a)-cost(b))[0];
+     }else if(winningOptions.length){
+      picked=[...winningOptions].sort((a,b)=>cost(a)-cost(b))[0];
+     }else{
+      picked=[...options].sort((a,b)=>cost(a)-cost(b))[0];
+     }
+     simulated.push({player:seat,card:picked});
+    }
     if(simulated.length===4){
      const win=currentWinner(simulated,trumpSuit,contract);
      if(teamOf(win)===teamOf(player)){teamWins++;if(win!==player)partnerWins++;}
