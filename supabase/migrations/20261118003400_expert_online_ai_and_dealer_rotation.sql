@@ -24,6 +24,7 @@ declare
   v_sim_card jsonb;
   v_card jsonb;
   v_best_card jsonb;
+  v_result jsonb;
   v_lead text;
   v_trump text;
   v_sim_lead text;
