@@ -1,6 +1,6 @@
 {
   "name": "double-kout-desktop",
-  "version": "0.8.56",
+  "version": "0.8.57",
   "private": true,
   "description": "Double Kout card game desktop build",
   "main": "desktop/main.cjs",
@@ -23,9 +23,14 @@
       "kuwaiti-six-player-ui.js",
       "three-d-scene.js",
       "IMG_3647.png",
+      "assets/**/*",
+      "lan-multiplayer.js",
+      "supabase-multiplayer.js",
       "engines/**/*",
       "anonymous-learning.js",
-      "central-progress.js"
+      "central-progress.js",
+      "central-store.js",
+      "central-payments-admin.js"
     ],
     "asar": true,
     "win": {
