@@ -102,7 +102,7 @@ async function refreshOnlineKuwaiti(){
   }else if(st.phase==='contract_selection'){
    $('kAuction').classList.add('hidden');$('kAuctionSummary').classList.remove('hidden');
    $('kAuctionSummary').textContent='مزایده پایان یافت · برنده: '+playerNames[game.auctionWinner]+' · پیشنهاد: '+(st.auctionBid&&st.auctionBid.label||'');
-   if(seat===game.auctionWinner){$('kContract').value='hokm_spades';$('kStatus').textContent='مزایده را بردی؛ قرارداد را انتخاب و تأیید کن.';renderContractChoiceHand(seat);}
+   if(seat===game.auctionWinner){setContractChoice('hokm_spades');$('kStatus').textContent='مزایده را بردی؛ قرارداد را انتخاب و تأیید کن.';renderContractChoiceHand(seat);}
    else{$('kHand').innerHTML='';$('kStatus').textContent='منتظر انتخاب قرارداد توسط '+playerNames[game.auctionWinner]+' هستیم.';}
    setScreen('game');
   }else if(st.phase==='malzoom_selection'){
@@ -289,20 +289,7 @@ function addStyle(){
 .k-table-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px 0;padding:8px 10px;border:1px solid #b99a5d;border-radius:12px;background:linear-gradient(120deg,#102f25,#061d17);color:#f4dfaa}
 .k-trump-badge{display:flex;align-items:center;gap:8px;font-size:12px}.k-trump-badge b{font-size:15px;color:#ffe19a}
 .k-live-tricks{display:flex!important;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;font-weight:700}.k-live-tricks b{font-size:20px;color:#ffe19a;margin-right:4px}
-.k-table-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px 0;padding:8px 10px;border:1px solid #b99a5d;border-radius:12px;background:linear-gradient(120deg,#102f25,#061d17);color:#f4dfaa}\n.k-trump-badge{display:flex;align-items:center;gap:8px;font-size:12px}.k-trump-badge b{font-size:15px;color:#ffe19a}\n.k-live-tricks{display:flex!important;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;font-weight:700}.k-live-tricks b{font-size:20px;color:#ffe19a;margin-right:4px}\n.k-auction.seat-auction-panel{position:absolute!important;z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);width:min(176px,42vw);max-width:176px;margin:0;padding:6px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#143e31f5,#061b16f8);box-shadow:0 8px 24px #000d;direction:rtl}
-.k-auction.seat-auction-panel #kAuctionTitle{display:block;font-size:10px;line-height:1.5;color:#ffe6a1;text-align:center}
-.k-auction.seat-auction-panel #kAuctionInfo,.k-auction.seat-auction-panel #kAuctionLog{display:none}
-.k-auction.seat-auction-panel .k-bids{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:5px}
-.k-auction.seat-auction-panel .k-bids button{min-width:0;padding:5px 2px;font-size:11px;border-radius:6px}
-.k-auction.seat-auction-panel #kMalzoom{margin-top:4px;padding:5px;font-size:10px}
-.k-seat{z-index:1}
-.k-seat:has(.seat-auction-panel){z-index:25}
-/* Auction controls stay visible on the human turn; card privacy is handled by the separate reveal gate. */
-.k-auction.seat-auction-panel #kHumanAuctionControls{display:block}
-.k-auction.seat-auction-panel #kHumanAuctionControls.hidden{display:none!important}
-.k-auction.seat-auction-panel .k-bids button{min-height:34px;font-weight:900;background:linear-gradient(145deg,#ffe7a5,#bd8c3b);color:#201708;border:1px solid #fff0b8}
-.k-auction.seat-auction-panel .k-bids button:disabled{opacity:.35;filter:grayscale(.8)}
-/* One large, curved hand for the player; opponent backs fan out at the table edges. */
+.k-table-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px 0;padding:8px 10px;border:1px solid #b99a5d;border-radius:12px;background:linear-gradient(120deg,#102f25,#061d17);color:#f4dfaa}\n.k-trump-badge{display:flex;align-items:center;gap:8px;font-size:12px}.k-trump-badge b{font-size:15px;color:#ffe19a}\n.k-live-tricks{display:flex!important;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;font-weight:700}.k-live-tricks b{font-size:20px;color:#ffe19a;margin-right:4px}\n/* One large, curved hand for the player; opponent backs fan out at the table edges. */
 .k-hand{direction:ltr;display:flex;justify-content:center;align-items:flex-end;flex-wrap:nowrap;gap:0;overflow-x:auto;overflow-y:visible;padding:24px 12px 32px;min-height:174px;scrollbar-width:thin}
 .k-hand button,.k-hand .k-auction-card{flex:0 0 78px;width:78px;height:117px;margin-left:-49px!important;transform-origin:50% 100%;position:relative}
 .k-hand button:first-child,.k-hand .k-auction-card:first-child{margin-left:0!important}
@@ -433,6 +420,32 @@ body.deck-back-classic .k-back{background:radial-gradient(ellipse,#1c5c92,#061b4
 `;
 s.textContent+=`body.deck-back-black .k-back{background-image:url("./assets/card-back-black-gold.svg")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
 body.deck-back-black .k-back:before,body.deck-back-black .k-back:after{content:none!important}`;
+s.textContent+=`
+#kPhaseModal{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(2,10,16,.78);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+#kPhaseModal:has(.k-phase-modal-content:not(.hidden)){display:flex}
+#kPhaseModal .k-phase-dialog{width:min(620px,100%);max-height:calc(100dvh - 36px);overflow:auto;padding:20px;border:1px solid #e8c978;border-radius:24px;background:linear-gradient(145deg,rgba(20,55,43,.97),rgba(5,19,16,.985));box-shadow:0 24px 70px #000d,0 0 34px #e7c87944,inset 0 1px 0 #fff3;color:#fff7df}
+#kPhaseModal .k-phase-dialog h3,#kPhaseModal .k-phase-dialog>b{display:block;margin:0 0 8px;color:#ffe4a0;font-size:19px;font-weight:900;text-align:center}
+#kPhaseModal .k-auction,#kPhaseModal .k-contract-setup,#kPhaseModal .k-auction-summary{width:100%;margin:8px 0;padding:15px;border:1px solid #c9a45e;border-radius:17px;background:linear-gradient(145deg,#153e31f5,#071b16f8);box-shadow:inset 0 1px 0 #fff2,0 12px 26px #0008}
+#kPhaseModal .k-auction .k-bids{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:13px}
+#kPhaseModal .k-auction .k-bids button{min-height:52px;padding:11px 8px;border:1px solid #f1d38d;border-radius:13px;background:linear-gradient(145deg,#ffe7a5,#b98532);color:#241a09;font-size:16px;font-weight:900;box-shadow:0 6px 14px #0006}
+#kPhaseModal #kPass{grid-column:1/-1;background:linear-gradient(145deg,#354d45,#182b24);color:#f8e8c2}
+#kPhaseModal #kMalzoom{width:100%;min-height:48px;margin-top:9px;border-radius:13px;font-weight:900}
+#kPhaseModal .k-auction-summary{font-size:12px;line-height:1.9;color:#ffe8b2}
+#kPhaseModal .k-contract-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
+#kPhaseModal .k-contract-choice{display:flex;min-height:104px;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 8px;border:1px solid #8b7953;border-radius:17px;background:linear-gradient(145deg,rgba(42,59,54,.95),rgba(7,20,17,.98));color:#f8edcf;box-shadow:0 8px 18px #0007,inset 0 1px 0 #fff2;transition:transform .18s,border-color .18s,box-shadow .18s}
+#kPhaseModal .k-contract-choice .k-choice-symbol{font:900 35px/1 Georgia,serif;color:#f7e9c3;text-shadow:0 2px 5px #000}
+#kPhaseModal .k-contract-choice .k-choice-symbol.red{color:#ff7378}
+#kPhaseModal .k-contract-choice b{font-size:14px}
+#kPhaseModal .k-contract-choice small{font-size:10px;color:#c8d8ce}
+#kPhaseModal .k-contract-choice.selected{border:2px solid #ffe29a;background:linear-gradient(145deg,#72552a,#263c31);box-shadow:0 0 0 2px #c18d3f,0 0 24px #e8c97877,0 12px 22px #0009;transform:translateY(-2px)}
+#kPhaseModal .k-contract-choice:active{transform:scale(.98)}
+#kPhaseModal .k-hide-trump{display:flex;align-items:center;gap:9px;margin:12px 0;padding:12px;border:1px solid #967b48;border-radius:12px;background:#0b281f;color:#ffe6ae}
+#kPhaseModal .k-hide-trump input{width:20px;height:20px;accent-color:#d9ad55}
+#kPhaseModal .primary{width:100%;min-height:48px;margin-top:8px;border:1px solid #ffe6a1;border-radius:14px;background:linear-gradient(145deg,#ffe7a5,#bd8c3b);color:#211708;font-weight:900;box-shadow:0 7px 18px #0008}
+#kPhaseModal:has(#kHotseatGate:not(.hidden)) #kAuction,#kPhaseModal:has(#kHotseatGate:not(.hidden)) #kAuctionSummary{display:none!important}
+#kPhaseModal #kHotseatGate{text-align:center;padding:22px}
+@media(max-width:520px){#kPhaseModal{padding:10px}#kPhaseModal .k-phase-dialog{padding:14px;max-height:calc(100dvh - 20px);border-radius:20px}#kPhaseModal .k-contract-choice{min-height:92px}#kPhaseModal .k-contract-choice .k-choice-symbol{font-size:31px}#kPhaseModal .k-auction .k-bids button{min-height:48px;font-size:14px}}
+`;
 document.head.appendChild(s);
  const cornerStyle=document.createElement('style');cornerStyle.textContent="/* 9.2 contract indicator fixed to upper-right table corner */\n.k-table{position:relative}\n.k-trump-corner{position:absolute;top:9px;right:9px;transform:none;z-index:30;min-width:76px;justify-content:center;padding:5px 9px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#09271fee,#031711f5);box-shadow:0 4px 12px #0009;text-align:center;pointer-events:none}\n.k-trump-corner span{font-size:10px;color:#e9d39a}\n.k-trump-corner b{font-size:14px!important;color:#ffe19a}\n.k-table .k-seat[data-p=\"2\"]{padding-top:30px}\n";cornerStyle.textContent+="\n/* Corner trump marker and two-layer trick pile: previous trick remains underneath current plays. */\n.k-table{position:relative!important;isolation:isolate!important;overflow:visible!important}\n.k-table>.k-seat{z-index:3!important}\n.k-table>.k-center{z-index:12!important;overflow:visible!important}\n.k-table>.k-table-card-layer{position:absolute!important;inset:0!important;z-index:24!important;pointer-events:none!important;overflow:visible!important}\n.k-trump-corner{position:absolute!important;top:8px!important;right:8px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:45!important;display:flex!important;align-items:center!important;gap:6px!important;max-width:34%!important;white-space:nowrap!important}\n.k-center{position:absolute!important}\n.k-previous-cards,.k-center-cards{position:absolute!important;left:50%!important;top:50%!important;width:100%!important;height:116px!important;min-height:0!important;transform:translate(-50%,-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;direction:ltr!important;overflow:visible!important;pointer-events:none!important}\n.k-previous-cards{z-index:2!important;opacity:.58!important;filter:brightness(.72) saturate(.78)!important}\n.k-center-cards{z-index:7!important}\n.k-previous-cards .k-pile-played{position:absolute!important;left:calc(50% - 30px)!important;top:calc(50% - 44px)!important;width:60px!important;height:88px!important;margin:0!important;transform:translate(var(--pile-x),var(--pile-y)) rotate(var(--pile-r))!important;box-shadow:0 8px 15px #000c!important}\n.k-center-cards .k-table-played{position:relative!important;z-index:8!important}\n@media(max-width:520px){.k-previous-cards,.k-center-cards{height:96px!important}.k-previous-cards .k-pile-played{width:49px!important;height:74px!important;left:calc(50% - 24px)!important;top:calc(50% - 37px)!important}.k-trump-corner{top:6px!important;right:6px!important;font-size:11px!important}}";
 document.head.appendChild(cornerStyle);
@@ -466,6 +479,8 @@ function cardNode(c,small=false){
  return d;
 }
 function setStatus(msg){const node=$('kStatus');if(!node){console.error('Kuwaiti status node is missing:',msg);const turn=$('kTurn');if(turn)turn.textContent=String(msg);return;}node.classList.remove('hidden');node.removeAttribute('hidden');node.style.cssText+=';display:block!important;visibility:visible!important;opacity:1!important;position:fixed!important;left:8px!important;right:8px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:2147483000!important;min-height:42px!important;max-height:25vh!important;overflow:auto!important;background:#09271f!important;color:#fff0c2!important;border:2px solid #e7c879!important;border-radius:12px!important;padding:10px!important;box-sizing:border-box!important;';node.setAttribute('role','status');node.setAttribute('aria-live','assertive');node.textContent=String(msg);const turn=$('kTurn');if(turn&&String(msg).includes('هوش'))turn.textContent=String(msg);console.info('[Kuwaiti status]',msg);}
+function setContractChoice(value){const select=$('kContract');if(select)select.value=value;document.querySelectorAll('#kContractChoices [data-contract]').forEach(b=>{const yes=b.dataset.contract===value;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes?'true':'false');});}
+function setMalzoomSuit(value){const select=$('kTrumpSuit');if(select)select.value=value;document.querySelectorAll('#kMalzoomChoices [data-trump-suit]').forEach(b=>{const yes=b.dataset.trumpSuit===value;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes?'true':'false');});}
 function setScreen(which){
  $('modePicker').classList.toggle('hidden',which!=='modes');
  $('setup').classList.add('hidden');$('game').classList.add('hidden');
@@ -484,21 +499,21 @@ function setupMarkup(){
  const g=document.createElement('section');g.className='panel hidden';g.id='kuwaitiGame';
  g.innerHTML=`<h2 class="section-title">کوت کویتی · میز شش‌نفره</h2>
  <div class="k-score"><div>امتیاز تیم شما <b id="kScoreA">۰</b></div><div>امتیاز تیم حریف <b id="kScoreB">۰</b></div><div>دست <b id="kTrickNo">۱</b> از ۹</div><div>بازی‌های برده تیم شما <b id="kGamesWonA">۰</b></div><div>بازی‌های برده حریف <b id="kGamesWonB">۰</b></div></div>
- <div id="kAuctionMount"></div><div id="kAuction" class="k-auction hidden"><b id="kAuctionTitle">مزایده</b><div class="k-small" id="kAuctionInfo"></div><div class="k-small" id="kAuctionLog"></div>
+ <div id="kPhaseModal" class="k-phase-modal" role="dialog" aria-modal="true" aria-label="تصمیم‌های بازی"><div class="k-phase-dialog"><div id="kAuctionMount"></div><div id="kAuction" class="k-auction k-phase-modal-content hidden"><b id="kAuctionTitle">مزایده</b><div class="k-small" id="kAuctionInfo"></div><div class="k-small" id="kAuctionLog"></div>
  <div id="kHumanAuctionControls">
  <div class="k-bids"><button data-bid="pass" id="kPass">پاس</button><button data-bid="6">۶</button><button data-bid="7">۷</button><button data-bid="8">۸</button><button data-bid="9">۹</button></div>
  <button id="kMalzoom" class="primary hidden">ملزوم</button></div></div>
- <div id="kAuctionSummary" class="k-auction-summary hidden">نتیجه مزایده هنوز مشخص نشده است.</div>
- <div id="kContractSetup" class="k-contract-setup hidden"><b>انتخاب قرارداد پس از پایان مزایده</b><label>نوع بازی و خال حکم</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option></select><button id="kConfirmContract" class="primary">تأیید قرارداد و شروع بازی</button></div>
- <div id="kMalzoomSetup" class="k-auction hidden"><b>تنظیم حکم ملزوم</b><label>خال حکم</label><select id="kTrumpSuit" class="k-select"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">گشنیز ♣</option></select><label><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
+ <div id="kAuctionSummary" class="k-auction-summary k-phase-modal-content hidden">نتیجه مزایده هنوز مشخص نشده است.</div>
+ <div id="kContractSetup" class="k-contract-setup k-phase-modal-content hidden"><h3>انتخاب قرارداد بازی</h3><p class="k-small">با توجه به کارت‌هایی که در اختیار داری، قرارداد مناسب را انتخاب کن.</p><select id="kContract" class="k-select" style="display:none"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option></select><div id="kContractChoices" class="k-contract-choice-grid"><button type="button" class="k-contract-choice selected" data-contract="hokm_spades" aria-pressed="true"><span class="k-choice-symbol">♠</span><b>حکم پیک</b><small>خال حکم‌دار</small></button><button type="button" class="k-contract-choice" data-contract="hokm_hearts" aria-pressed="false"><span class="k-choice-symbol red">♥</span><b>حکم دل</b><small>خال حکم‌دار</small></button><button type="button" class="k-contract-choice" data-contract="hokm_diamonds" aria-pressed="false"><span class="k-choice-symbol red">♦</span><b>حکم خشت</b><small>خال حکم‌دار</small></button><button type="button" class="k-contract-choice" data-contract="hokm_clubs" aria-pressed="false"><span class="k-choice-symbol">♣</span><b>حکم گشنیز</b><small>خال حکم‌دار</small></button><button type="button" class="k-contract-choice" data-contract="naras" aria-pressed="false"><span class="k-choice-symbol">✧</span><b>نرس</b><small>بدون حکم</small></button><button type="button" class="k-contract-choice" data-contract="tak_naras" aria-pressed="false"><span class="k-choice-symbol">Ⅱ</span><b>تک نرس</b><small>بدون حکم</small></button><button type="button" class="k-contract-choice" data-contract="saras" aria-pressed="false"><span class="k-choice-symbol">♛</span><b>سرس</b><small>بدون حکم</small></button></div><button id="kConfirmContract" class="primary">تأیید قرارداد و شروع بازی</button></div>
+ <div id="kMalzoomSetup" class="k-auction k-phase-modal-content hidden"><h3>انتخاب خال حکم ملزوم</h3><p class="k-small">خال حکم را انتخاب کن و سپس مشخص کن که حکم مخفی بماند یا نه.</p><select id="kTrumpSuit" class="k-select" style="display:none"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">گشنیز ♣</option></select><div id="kMalzoomChoices" class="k-contract-choice-grid k-suit-choice-grid"><button type="button" class="k-contract-choice selected" data-trump-suit="S" aria-pressed="true"><span class="k-choice-symbol">♠</span><b>پیک</b></button><button type="button" class="k-contract-choice" data-trump-suit="H" aria-pressed="false"><span class="k-choice-symbol red">♥</span><b>دل</b></button><button type="button" class="k-contract-choice" data-trump-suit="D" aria-pressed="false"><span class="k-choice-symbol red">♦</span><b>خشت</b></button><button type="button" class="k-contract-choice" data-trump-suit="C" aria-pressed="false"><span class="k-choice-symbol">♣</span><b>گشنیز</b></button></div><label class="k-hide-trump"><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
  <div class="k-table" id="kTable">${[0,1,2,3,4,5].map(p=>'<div class="k-seat" data-p="'+p+'"><div class="k-name" id="kName'+p+'">'+playerNames[p]+'</div><div class="k-count" id="kCount'+p+'">۹ کارت</div><div class="k-played" id="kPlayed'+p+'"></div></div>').join('')}
  <div class="k-trump-badge k-trump-corner"><span>حکم</span><b id="kTrumpDisplay">بدون حکم</b></div><div class="k-center"><div style="color:#f2d998;font-weight:bold">کوت کویتی</div><div id="kTrickCards" class="k-small">کارت‌های این دست: ۰ از ۶</div><div id="kTurn" class="k-small">در انتظار مزایده</div></div><div id="kTableCardLayer" class="k-table-card-layer" aria-label="کارت‌های بازی‌شده روی میز"><div id="kPreviousCards" class="k-previous-cards" aria-label="کارت‌های دست قبلی"></div><div id="kCenterCards" class="k-center-cards" aria-label="کارت‌های دست جاری"></div></div></div>
  <div class="k-table-meta"><div class="k-live-tricks" id="kLiveTricks"><span id="kOwnTricksLabel">دست‌های تیم مزایده‌برنده: <b id="kWonA">۰</b></span><span id="kOpponentTricksLabel">دست‌های تیم حریف: <b id="kWonB">۰</b></span></div></div>
  <div id="kStatus" class="k-status hidden">وضعیت بازی</div>
  <div class="k-actions"><button id="kAskTrump" class="hidden">درخواست اعلام حکم مخفی</button><button id="kAnnounceTrump" class="hidden">اعلام حکم</button></div>
  <div class="k-hand-tools"><h3 class="section-title">کارت‌های بازیکن نوبت‌دار</h3><button type="button" id="kSortHand" aria-label="مرتب‌سازی کارت‌ها">↕</button></div><div id="kHand" class="k-hand"></div>
- <div id="kResult" class="k-auction hidden"></div>
- <div id="kHotseatGate" class="k-auction hidden"><b id="kHotseatTitle">تحویل گوشی</b><p class="k-small" id="kHotseatText">گوشی را به بازیکن بعدی بدهید.</p><button id="kRevealHand" class="primary">کارت‌ها را نمایش بده</button></div><div class="k-actions"><button id="kNewGame" class="hidden">بازی بعدی</button><button id="kExit">بازگشت به انتخاب بازی</button></div>`;
+ <div id="kResult" class="k-auction k-phase-modal-content hidden"></div>
+ <div id="kHotseatGate" class="k-auction k-phase-modal-content hidden"><b id="kHotseatTitle">تحویل گوشی</b><p class="k-small" id="kHotseatText">گوشی را به بازیکن بعدی بدهید.</p><button id="kRevealHand" class="primary">کارت‌ها را نمایش بده</button></div></div></div><div class="k-actions"><button id="kNewGame" class="hidden">بازی بعدی</button><button id="kExit">بازگشت به انتخاب بازی</button></div>`;
  $('modePicker').insertAdjacentElement('afterend',s);s.insertAdjacentElement('afterend',g);
 }
 function renderHumanSeatChoices(){const host=$('kHumanSeatChoices');if(!host)return;host.innerHTML='';for(let p=0;p<6;p++){const l=document.createElement('label');l.style.cssText='display:flex;align-items:center;gap:5px;background:#09271f;border:1px solid #477a68;border-radius:9px;padding:7px;color:#f4dfaa;font-size:11px';const c=document.createElement('input');c.type='checkbox';c.value=String(p);c.checked=p===0;c.addEventListener('change',()=>{if(!host.querySelector('input:checked'))c.checked=true;});l.append(c,document.createTextNode('صندلی '+fa(p+1)));host.append(l);}}
@@ -533,7 +548,7 @@ function startAuction(){
  for(let p=0;p<6;p++){$('kPlayed'+p).innerHTML='';$('kCount'+p).textContent='۹ کارت';}
  const firstAuctionPlayer=firstGame?null:Number($('kFirstAuction').value);
  // Do not allow a prior deal's contract or trump display to leak into the new auction.
- $('kTrumpDisplay').textContent='در انتظار مزایده';$('kContract').value='hokm_spades';$('kAuctionSummary').classList.add('hidden');$('kContractSetup').classList.add('hidden');$('kWonA').textContent='۰';$('kWonB').textContent='۰';
+ $('kTrumpDisplay').textContent='در انتظار مزایده';setContractChoice('hokm_spades');setMalzoomSuit('S');$('kAuctionSummary').classList.add('hidden');$('kContractSetup').classList.add('hidden');$('kWonA').textContent='۰';$('kWonB').textContent='۰';
  $('kStatus').textContent='کارت‌ها پخش شدند؛ قرارداد این بازی هنوز تعیین نشده است.';
  game=K.newGame({firstGame,previousAuctionWinner,firstAuctionPlayer});
  game.contract=null;game.selectedContract=null;game.trumpSuit=null;game.trumpAnnounced=false;game.hiddenTrump=false;game.isMalzoom=false;
@@ -683,7 +698,7 @@ function finishAuction(){
   game.contract='hokm';
   $('kStatus').textContent='برنده مزایده: '+playerNames[win]+' · ملزوم';
   if(isHumanSeat(win)){
-   $('kMalzoomSetup').classList.remove('hidden');$('kTrumpDisplay').textContent='انتخاب حکم ملزوم';
+   setMalzoomSuit('S');$('kMalzoomSetup').classList.remove('hidden');$('kTrumpDisplay').textContent='انتخاب حکم ملزوم';
    setStatus('خال حکم ملزوم را انتخاب کن و مشخص کن مخفی بماند یا اعلام شود.');
   }else{
    const counts={S:0,H:0,D:0,C:0};game.hands[win].forEach(c=>{if(c.kind==='normal')counts[c.suit]++});
@@ -1150,6 +1165,8 @@ function bind(){
   submitBid({type:'normal',rank,label:n===9?'باون · ۹ دست':n+' دست',target:n});
  }));
  $('kMalzoom').onclick=()=>submitBid({type:'malzoom',rank:1,label:'ملزوم'});
+ $('kContractChoices').addEventListener('click',e=>{const b=e.target.closest('[data-contract]');if(b)setContractChoice(b.dataset.contract);});
+ $('kMalzoomChoices').addEventListener('click',e=>{const b=e.target.closest('[data-trump-suit]');if(b)setMalzoomSuit(b.dataset.trumpSuit);});
  $('kConfirmContract').onclick=confirmWinningContract;
  $('kConfirmMalzoom').onclick=()=>startActualGame($('kTrumpSuit').value,$('kHideTrump').checked);
  $('kAskTrump').onclick=()=>{if(isOnlineKuwaiti()){onlineKuwaitiRpc({type:'announce_trump'}).catch(e=>onlineKuwaitiStatus('درخواست اعلام حکم: '+e.message));return;}if(game&&isHumanSeat(game.turn)&&hotseatRevealed){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم مخفی اعلام شد.');renderGame();}};
