@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#103d32">
+<meta http-equiv="refresh" content="0;url=./web-prototype.html">
+<title>Double Kout</title>
+</head>
+<body>
+<p>در حال ورود به بازی دابل کوت…</p>
+<p><a href="./web-prototype.html">اگر بازی باز نشد، اینجا بزن.</a></p>
+<script>
+(function(){
+ var target=new URL('./web-prototype.html',window.location.href);
+ target.search=window.location.search;
+ target.hash=window.location.hash;
+ window.location.replace(target.href);
+})();
+</script>
+</body>
+</html>
