@@ -1,0 +1,1617 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#103d32"><meta name="description" content="نسخه آزمایشی کوت بومی با قانون جفت و چلنج"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./IMG_3647.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Double Kout"><title>Double Kout · نسخه ۹.۱</title>
+<style>
+#game{transform-style:flat;transform:none;transition:none}:root{--felt:#0c382d;--felt2:#145343;--gold:#e7c879;--cream:#fffaf0;--ink:#17251f;--muted:#c4d5cd;--red:#c83d43}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#071d18 0%,#0b3027 48%,#061b16 100%);color:#fff;font-family:Tahoma,Arial,sans-serif;min-height:100vh}.wrap{max-width:980px;margin:auto;padding:14px}.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.brand{font-size:24px;font-weight:900;color:var(--gold)}.pill{background:#09271f;border:1px solid #467565;padding:6px 11px;border-radius:30px;font-size:12px;color:var(--muted)}.panel{background:#0c2e26dd;border:1px solid #477a68;border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 12px 35px #001b1666}.setup{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end}label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}select,button{font:inherit;border:0;border-radius:12px;padding:11px 13px}select{width:100%;background:#f7f1df;color:#17251f}button{background:var(--gold);color:#17251f;font-weight:bold;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}
+/* Keep cards fully legible while the player considers challenge vs. normal play. */
+#hand.challenge-thinking button:disabled{opacity:1!important;filter:none!important;pointer-events:none!important}
+#hand.challenge-thinking .card{opacity:1!important;filter:none!important}
+#hand.challenge-thinking button{cursor:default}.primary{width:100%;margin-top:10px}.table{position:relative;cursor:grab;touch-action:pan-y;transform-style:preserve-3d;isolation:isolate;overflow:hidden;border:4px solid #b99045;border-radius:30px;padding:12px;background-color:#252523;background-image:radial-gradient(ellipse at 50% 45%,rgba(52,58,55,.72),rgba(20,21,20,.96) 68%),repeating-linear-gradient(18deg,rgba(255,255,255,.018) 0 2px,transparent 2px 7px),linear-gradient(135deg,#45423c,#151615 55%,#38342d);box-shadow:inset 0 0 0 2px rgba(255,226,158,.22),inset 0 0 55px rgba(0,0,0,.72),0 16px 38px #000b;display:grid;grid-template-columns:1fr 1.2fr 1fr;grid-template-rows:auto auto auto;gap:9px;align-items:center;text-align:center;min-height:350px}.seat{background:#0a291f;border:1px solid #497967;border-radius:13px;padding:9px;min-width:0}.seat.active{outline:2px solid var(--gold);box-shadow:0 0 15px #e7c87955}.seat .name{font-size:13px;color:var(--muted)}.seat .count{font-size:12px;color:#a8c4b7}.north{grid-column:2;grid-row:1}.west{grid-column:1;grid-row:2}.center{grid-column:2;grid-row:2;min-height:170px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;justify-items:center}.east{grid-column:3;grid-row:2}.south{grid-column:2;grid-row:3}.played{min-height:84px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}.card{width:61px;height:86px;background:var(--cream);color:#17251f;border-radius:9px;border:1px solid #d8d0bd;box-shadow:0 4px 10px #00140f88;display:flex;flex-direction:column;justify-content:space-between;padding:5px;font-family:Georgia,serif;font-size:20px;font-weight:bold;position:relative}.card.red{color:var(--red)}.card .suit{font-size:27px;align-self:center}.card.back{background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px);border:3px solid #f4e7c4}.card.small{width:44px;height:63px;font-size:16px}.card.small .suit{font-size:20px}.hand{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:12px 3px}.hand button{padding:0;background:none;border:0}.hand button:disabled{opacity:.35}.hand button:not(:disabled) .card{transform:translateY(-3px);border:2px solid var(--gold)}.hand button:active .card{transform:translateY(-9px)}.status{background:#09271f;border-radius:12px;padding:10px;margin-top:10px;color:#f8e9bd;font-size:14px;min-height:46px}.scores{display:flex;justify-content:space-around;gap:10px;flex-wrap:wrap}.score{font-size:14px}.score b{color:var(--gold);font-size:21px}.muted{color:var(--muted);font-size:12px;line-height:1.8}.hidden{display:none!important}.history{font-size:12px;max-height:110px;overflow:auto;color:#d5e4dc}.section-title{color:var(--gold);margin:2px 0 8px;font-size:16px}.rules{font-size:12px;color:var(--muted);line-height:1.9}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}.winner{color:#a8efbd;font-weight:bold}
+#modePicker{background-image:linear-gradient(120deg,rgba(4,20,16,.90),rgba(4,20,16,.58)),url("./IMG_3647.png");background-size:cover;background-position:center;min-height:260px}.mode-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.mode-card{min-height:108px;text-align:right;display:flex;flex-direction:column;gap:9px;justify-content:center;background:linear-gradient(145deg,#39352e,#090a09 70%);border:1px solid #d0a44d;color:#f4d58b;border-radius:14px;padding:16px;box-shadow:0 9px 20px #0009,inset 0 1px 0 #fff3;transform:perspective(700px) rotateX(3deg);transition:transform .2s,box-shadow .2s} .mode-card:active{transform:perspective(700px) rotateX(0deg) translateY(3px);box-shadow:0 3px 8px #0009}
+#hotseatGate{position:fixed;inset:0;z-index:9999;background:radial-gradient(ellipse at center,#174c3b,#061b15 75%);display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}#hotseatGate .gate-card{max-width:440px;width:100%;padding:28px 20px;border:1px solid #e7c879;border-radius:22px;background:#0a2a21;box-shadow:0 20px 60px #000b}#hotseatGate h2{color:#f3d58d}#hotseatGate p{line-height:2;color:#d5e5dc}#hotseatGate button{width:100%;margin-top:12px;font-size:17px}
+.mode-card strong{font-size:17px}.mode-card span{font-size:12px;line-height:1.7;color:#d4c5a4}
+.mode-card.pending{opacity:.78;border-style:dashed}
+.card.back{position:relative}
+.card.back:after{content:"Abdolhamid\A Dehvari";white-space:pre;position:absolute;left:15%;top:20%;width:70%;height:60%;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 700 3px/1.15 Georgia,"Times New Roman",serif;letter-spacing:0;color:#ffe8ae;text-shadow:0 1px 2px #071b32,0 0 3px #f2d58a;transform:rotate(-19deg) scale(.72);padding:0;border-radius:3px;background:transparent;overflow:hidden}
+/* 3D table and animated cards */
+#game{perspective:none;transform-style:flat}
+.table{transform:rotateX(5deg) translateZ(0);transform-style:preserve-3d;box-shadow:inset 0 0 0 2px #f8df9a55,inset 0 -24px 55px #0008,0 25px 42px #000b}
+.seat{transform:translateZ(18px);box-shadow:0 12px 18px #0008,inset 0 1px 0 #ffffff22;background:linear-gradient(145deg,#174d3d,#061c16)}
+.center{transform:translateZ(28px)}
+.card{transform-style:preserve-3d;backface-visibility:hidden;border:1px solid #fff9;box-shadow:0 9px 0 #c8bfa9,0 13px 22px #0009, inset 0 1px 0 white;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s}
+.card.red{box-shadow:0 9px 0 #d9a9a9,0 13px 22px #0009,inset 0 1px 0 white}
+.hand button:not(:disabled) .card{transform:translateY(-7px) rotateX(5deg) rotateY(-3deg) translateZ(12px)}
+.hand button:not(:disabled):hover .card{transform:translateY(-17px) rotateX(8deg) rotateY(-5deg) translateZ(28px) scale(1.06);box-shadow:0 12px 0 #c8bfa9,0 23px 28px #000b}
+
+@keyframes cardFly{0%{opacity:.45;transform:translateY(34px) rotateY(65deg) rotateZ(9deg) scale(.78)}70%{opacity:1;transform:translateY(-7px) rotateY(-8deg) rotateZ(-2deg) scale(1.08)}100%{transform:translateY(0) rotateY(0) rotateZ(0) scale(1)}}
+
+@keyframes dealFlip{0%{opacity:0;transform:translateY(-45px) rotateY(180deg) rotateZ(14deg) scale(.7)}100%{opacity:1;transform:translateY(0) rotateY(0) rotateZ(0) scale(1)}}
+.seat.active{transform:translateZ(30px) scale(1.025);box-shadow:0 0 0 2px #ffe19a,0 0 24px #f4d37b77}
+#trickMsg{color:#ffe7a5;text-shadow:0 2px 8px #000}
+#soundToggle{font-size:12px;padding:8px 10px}
+@media(max-width:520px){.card{box-shadow:0 6px 0 #c8bfa9,0 9px 14px #0009,inset 0 1px 0 white}.table{transform:rotateX(2deg)}}
+@media(max-width:520px){.wrap{padding:8px}.table{min-height:300px;gap:5px}.card{width:54px;height:77px}.center{min-height:140px}.panel{padding:10px}.brand{font-size:20px}.hand{gap:3px}.hand .card{width:43px;height:65px;font-size:15px}.hand .card .suit{font-size:20px}}
+.table{position:relative;background-color:#0b3c2d!important;background-image:radial-gradient(ellipse at 50% 35%,#1b7355,#0b3c2d 65%,#06251d)!important}
+
+
+#modePicker{background-image:linear-gradient(135deg,#071e19,#164b3b 55%,#071b16);border:1px solid #caa65a;box-shadow:0 18px 44px #0009,inset 0 1px 0 #fff2}
+.mode-grid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.mode-card{min-height:142px;background:linear-gradient(150deg,#275c49 0%,#102c24 48%,#071712 100%);border:1px solid #e2c078;border-radius:18px;padding:20px;box-shadow:0 12px 0 #06130f,0 20px 28px #0009,inset 0 2px 0 #ffffff30;transform:perspective(900px) rotateX(5deg) translateZ(0)}
+.mode-card strong{font-size:19px;color:#ffe6a6}.mode-card span{font-size:13px;color:#d7e5dc}
+.mode-card:active{transform:perspective(900px) rotateX(1deg) translateY(5px);box-shadow:0 5px 0 #06130f,0 9px 14px #0008}
+.table{transform:perspective(1100px) rotateX(4deg);transform-origin:center 60%;background-color:#0b3c2d;background-image:radial-gradient(ellipse at 50% 35%,#1b7355,#0b3c2d 65%,#06251d);box-shadow:inset 0 0 0 3px #f1d28a66,inset 0 -30px 50px #001b14aa,0 22px 32px #000b}
+.card{box-shadow:0 7px 0 #c8bfa9,0 12px 18px #0009,inset 0 1px 0 white}
+.seat{box-shadow:0 9px 16px #0008,inset 0 1px 0 #ffffff22}
+
+/* Premium large overlapping 3D card layout */
+.hand{direction:ltr;display:flex;flex-wrap:nowrap;justify-content:flex-start;align-items:flex-end;gap:0;overflow-x:auto;overflow-y:visible;padding:24px 16px 30px;min-height:164px;scrollbar-width:thin}
+.hand button{flex:0 0 auto;margin-left:-57px;position:relative;perspective:700px}
+.hand button:first-child{margin-left:0}
+.hand button .card{width:84px;height:126px;border-radius:12px;padding:7px 6px;font-size:25px;background:linear-gradient(145deg,#fffef8 0%,#f5edda 52%,#d8cdb4 100%);border:1px solid #fff9e8;box-shadow:inset 2px 2px 3px #fff, inset -3px -4px 8px #9e9277,0 8px 14px #0009,0 2px 2px #fff;transform:rotateY(-4deg) rotateX(2deg);transition:transform .18s,filter .18s}
+.hand button:nth-child(odd) .card{transform:rotateZ(-1.5deg) rotateY(-4deg)}
+.hand button:nth-child(even) .card{transform:rotateZ(1.5deg) rotateY(-4deg)}
+.hand button .card .suit{font-size:38px}
+.hand button:not(:disabled) .card{border:2px solid #f5d57e;filter:saturate(1.12)}
+.hand button:not(:disabled):hover .card,.hand button:not(:disabled):focus-visible .card{transform:translateY(-17px) rotateZ(0) rotateY(0) scale(1.05);z-index:5}
+.hand button:disabled .card{filter:saturate(.8) brightness(.9)}
+.card{background:linear-gradient(145deg,#fffef9,#f1e8d5 58%,#cfc3a8);border:1px solid #fff3d7;box-shadow:inset 2px 2px 3px #fff, inset -3px -4px 7px #9d9279,0 9px 16px #0009;transform:perspective(650px) rotateY(-5deg) translateZ(3px)}
+.card.red{color:#d52e43}
+.card.back{background:linear-gradient(135deg,#0a2850,#1f5c91 48%,#0a2446);border:3px solid #e9d49a;box-shadow:inset 0 0 0 2px #f9e7bb, inset 0 0 20px #72a9d6,0 8px 16px #000b;overflow:hidden}
+.card.back:before{content:"";position:absolute;inset:7px;border:1px solid #e9d49a;border-radius:6px;background:repeating-linear-gradient(45deg,transparent 0 5px,#f4d88a33 5px 7px),radial-gradient(circle at 50% 50%,#d8b86a44,transparent 55%)}
+.card.back:after{content:"Abdolhamid Dehvari";position:absolute;inset:36% 5% auto;height:24%;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 700 7px/1.2 Georgia,"Times New Roman",serif;letter-spacing:.1px;color:#ffe6a0;text-shadow:0 2px 3px #06172b;transform:rotate(-18deg);padding:2px}
+.opponent-fan{direction:ltr;display:flex;align-items:center;justify-content:center;height:68px;max-width:100%;overflow:visible;padding:2px}
+.opponent-fan .card.back{width:44px;height:66px;min-width:44px;padding:0;margin-left:-37px;border-width:2px;border-radius:5px;transform:rotate(calc((var(--fan-index) - 3)*3deg)) translateY(0);}
+.opponent-fan .card.back:first-child{margin-left:0}
+.center{position:relative;min-height:185px}
+.center-trick{position:absolute;left:50%;top:50%;transform:translate(-50%,-42%);display:flex;align-items:center;justify-content:center;direction:ltr;pointer-events:none;z-index:3;min-width:100%;height:118px}
+.center-trick .table-played{width:67px;height:99px;font-size:21px;margin-left:-28px;box-shadow:0 13px 22px #000b, inset 2px 2px 3px #fff;transform:rotate(calc((var(--play-index) - 1.5)*8deg)) translateY(0);}
+.center-trick .table-played:first-child{margin-left:0}
+.played{min-height:70px}
+.table{min-height:390px;background-image:radial-gradient(ellipse at 50% 45%,rgba(20,112,79,.94),rgba(5,48,34,.98) 68%),repeating-linear-gradient(18deg,rgba(255,255,255,.025) 0 2px,transparent 2px 7px),linear-gradient(135deg,#24704e,#0a3024 55%,#06231b);box-shadow:inset 0 0 0 2px #f8e2a355,inset 0 0 60px #001b12aa,0 22px 40px #000c;transform:perspective(1000px) rotateX(3deg);transform-style:preserve-3d}
+@media(max-width:520px){.hand button{margin-left:-61px}.hand button .card{width:79px;height:119px}.center-trick .table-played{width:59px;height:88px}.center{min-height:165px}}
+
+
+/* 0.8.13: readable dual-corner cards and compact overlapping hand */
+.card{position:relative;overflow:hidden}
+.card .corner{position:absolute;z-index:3;display:flex;flex-direction:column;align-items:center;gap:0;font:900 13px/1 Georgia,serif;letter-spacing:-.4px}
+.card .corner i{font-style:normal;font-size:12px;line-height:1}
+.card .corner-top{top:5px;left:5px}
+.card .corner-bottom{right:5px;bottom:5px;transform:rotate(180deg)}
+.card .royal-frame{position:absolute;inset:19px 12px 18px;display:flex;align-items:center;justify-content:center}
+.card .royal-art{width:100%;height:100%;max-height:82px}
+.hand{gap:0!important;padding-left:10px;padding-right:10px}
+.hand button{margin-left:-48px!important}
+.hand button:first-child{margin-left:0!important}
+.hand button .card{transform:rotateY(-3deg)!important}
+.hand button:nth-child(odd) .card,.hand button:nth-child(even) .card{transform:rotateY(-3deg)!important}
+.hand button:nth-child(n) .card{z-index:1}
+.hand button:focus-visible .card,.hand button:hover .card{z-index:20!important}
+.card.back{overflow:hidden}
+.card.back:after{font-size:9px!important;inset:36% 5% auto!important;height:24%!important;transform:rotate(-18deg)!important;white-space:normal!important;line-height:1.15!important}
+@media(max-width:520px){.hand button{margin-left:-52px!important}.hand button .card{width:79px;height:119px}.card .corner{font-size:12px}.card .corner i{font-size:11px}}
+
+
+/* Final fan layout: one readable hand, larger opponent backs and a legible gold signature. */
+.hand{display:flex;justify-content:center;align-items:flex-end;flex-wrap:nowrap;gap:0;overflow-x:auto;overflow-y:visible;min-height:166px;padding:22px 12px 30px;scrollbar-width:thin}
+.hand button{flex:0 0 72px;width:72px;height:108px;margin-left:-48px!important;transform-origin:50% 100%;position:relative}
+.hand button:first-child{margin-left:0!important}
+.hand button .card{width:72px;height:108px}
+.opponent-fan{height:86px;align-items:flex-end}
+.opponent-fan .card.back{width:52px;height:78px;min-width:52px;flex:0 0 52px;margin-left:-42px;border-width:2px;border-radius:6px;transform-origin:50% 100%;box-shadow:0 5px 12px #000c,inset 0 0 0 1px #fff5}
+.opponent-fan .card.back:first-child{margin-left:0}
+.card.back:after{content:"Abdolhamid\A Dehvari";white-space:pre;position:absolute;inset:35% 3% auto;height:30%;display:flex;align-items:center;justify-content:center;text-align:center;font:italic 900 8px/1.1 Georgia,"Times New Roman",serif;letter-spacing:.05px;color:#ffe7a0;text-shadow:0 1px 2px #06172b,0 0 4px #f2c86a;transform:rotate(-18deg);padding:1px;background:#102b4b55;border:1px solid #e8cf8d66;border-radius:4px;box-sizing:border-box}
+@media(max-width:520px){.hand{min-height:154px;padding-left:7px;padding-right:7px}.hand button{flex-basis:69px;width:69px;height:104px;margin-left:-46px!important}.hand button:first-child{margin-left:0!important}.hand button .card{width:69px;height:104px}.opponent-fan{height:82px}.opponent-fan .card.back{width:50px;height:75px;min-width:50px;flex-basis:50px;margin-left:-40px}}
+
+
+/* 0.8.15 responsive player hand and edge-aligned opponent fans */
+.hand{width:100%;max-width:100%;box-sizing:border-box;justify-content:center;overflow:hidden;overflow-y:visible;min-height:112px;padding:12px 3px 22px}
+.hand button{flex:0 0 44px;width:44px;height:66px;margin-left:-18px!important}
+.hand button:first-child{margin-left:0!important}
+.hand button .card{width:44px;height:66px;padding:3px;font-size:15px;border-radius:7px}
+.hand button .card .suit{font-size:22px}
+.opponent-fan{height:64px}
+.opponent-fan .card.back{width:36px;height:54px;min-width:36px;flex:0 0 36px;margin-left:-28px;border-radius:5px}
+.opponent-fan .card.back:first-child{margin-left:0}
+.west .opponent-fan,.east .opponent-fan{transform:rotate(90deg) scale(.76);transform-origin:center}
+@media(max-width:380px){
+ .hand{min-height:100px;padding:8px 2px 18px}
+ .hand button{flex-basis:40px;width:40px;height:60px;margin-left:-17px!important}
+ .hand button .card{width:40px;height:60px;font-size:14px}
+ .hand button .card .suit{font-size:19px}
+ .opponent-fan .card.back{width:33px;height:49px;min-width:33px;flex-basis:33px;margin-left:-26px}
+}
+/* 0.8.16: larger illustrated royal portraits */
+.royal-frame{inset:8px 5px 8px!important}
+.royal-art{display:block;width:100%;height:100%;max-height:none!important;filter:drop-shadow(0 2px 2px #49351f55)}
+.card .corner{z-index:6}
+
+/* Card customization: persistent user-selected back and face styles */
+.card.back{background-image:repeating-linear-gradient(45deg,#173e69 0 5px,#e4d6ad 5px 7px)}
+body.deck-back-red .card.back{background-color:#7f1726;background-image:repeating-linear-gradient(45deg,#8d1d2b 0 5px,#f0d7b1 5px 7px);border-color:#f3dfbd}
+body.deck-back-black .card.back{background-color:#151515;background-image:radial-gradient(circle at 50% 50%,#c9a45d 1px,transparent 2px),repeating-linear-gradient(45deg,#171717 0 6px,#b58b43 6px 8px);background-size:12px 12px;border-color:#d8bd78}
+body.deck-back-green .card.back{background-color:#0c4937;background-image:repeating-linear-gradient(45deg,#0c4937 0 5px,#d6bd78 5px 7px);border-color:#e7d6a4}
+body.deck-back-classic .card.back{background-color:#173e69;background-image:repeating-linear-gradient(45deg,#173e69 0 5px,#e4d6ad 5px 7px)}
+body.deck-face-jumbo .card:not(.back) .corner{font-size:1.28em}
+body.deck-face-jumbo .card:not(.back){font-size:22px}
+body.deck-face-minimal .card:not(.back) .royal-frame{display:none}
+body.deck-face-minimal .card:not(.back) .suit{font-size:34px}
+body.deck-face-vintage .card:not(.back){background:#f1e3c4;color:#493522;border-color:#b18a50;filter:sepia(.18)}
+.card-customizer{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;align-items:end}
+.card-customizer-preview{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px;background:#08271f;border:1px solid #477a68;border-radius:12px}
+.card-customizer-preview .card{flex:0 0 auto}
+.card-customizer small{display:block;color:var(--muted);font-size:11px;margin-top:5px}
+
+/* 0.8.44 premium signature backs: four coordinated colorways and maker engraving */
+.card.back{position:relative!important;isolation:isolate;overflow:hidden!important;border:2px solid #e5c36e!important;border-radius:9px!important;box-shadow:inset 0 0 0 2px #fff2c455,inset 0 0 16px #0008,0 7px 13px #000a!important}
+.card.back:before{content:"✥";position:absolute;z-index:1;inset:9% 9% 18%;display:flex;align-items:center;justify-content:center;border:1px solid #f5d987;border-radius:7px;color:#f7d77e;font:700 30px/1 Georgia,serif;text-shadow:0 1px 2px #2a1600,0 0 8px #f4d37b;background:radial-gradient(ellipse at center,rgba(255,222,139,.23),transparent 58%),repeating-linear-gradient(45deg,transparent 0 7px,rgba(255,222,139,.11) 7px 8px),repeating-linear-gradient(-45deg,transparent 0 7px,rgba(255,222,139,.09) 7px 8px);box-shadow:inset 0 0 0 3px #f5d98722,0 0 7px #0008;pointer-events:none}
+.card.back:after{content:"Abdolhamid Dehvari";position:absolute;z-index:2;left:5%;right:5%;bottom:5%;top:auto;height:13%;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;font:italic 700 6px/1 Georgia,"Times New Roman",serif;letter-spacing:.05px;color:#ffe8a5;text-shadow:0 1px 1px #392300,0 0 4px #f6d77e,0 0 7px #c18a25;background:linear-gradient(90deg,transparent,#091b2caa 14%,#091b2cdd 50%,#091b2caa 86%,transparent);border-top:1px solid #f4d27c;border-bottom:1px solid #f4d27c;padding:1px 0;transform:none!important;overflow:hidden}
+body.deck-back-classic .card.back{background-color:#082b5b!important;background-image:radial-gradient(circle at 50% 50%,#1d5a91 0,#0c376b 48%,#061d42 100%),repeating-linear-gradient(45deg,#f3d47d22 0 2px,transparent 2px 6px)!important;border-color:#f1d48a!important}
+body.deck-back-red .card.back{background-color:#651326!important;background-image:radial-gradient(circle at 50% 48%,#a72a39,#6d1429 65%,#310b19)!important;border-color:#f3d38a!important}
+body.deck-back-black .card.back{background-color:#111!important;background-image:radial-gradient(circle at 50% 50%,#34302a,#111 70%)!important;border-color:#e3c16b!important}
+body.deck-back-green .card.back{background-color:#06432f!important;background-image:radial-gradient(circle at 50% 50%,#18734c,#075037 58%,#02291d)!important;border-color:#e5ca79!important}
+body.deck-face-gold .card:not(.back){background:linear-gradient(145deg,#fff8df,#e9d39a 55%,#c39b4d)!important;color:#39280e!important;border:2px solid #b88a32!important;box-shadow:inset 0 0 0 2px #fff4c9,0 7px 0 #8b672d,0 12px 18px #0009!important}
+body.deck-face-gold .card:not(.back) .corner{color:#694513!important}
+.card-customizer-preview .card.back{width:61px;height:86px}
+.opponent-fan .card.back:after{font-size:3.6px!important;letter-spacing:-.12px!important;bottom:5%!important;height:14%!important}
+@media(max-width:520px){.card.back:after{font-size:5.2px}.opponent-fan .card.back:after{font-size:3.25px!important}}
+
+
+/* 0.8.45: ornate Rider-inspired backs + clearly italic gold maker signature */
+.card.back{border:2px solid #f0d58e!important;outline:1px solid #fff1c866;outline-offset:-5px;background-size:100% 100%,100% 100%,100% 100%!important}
+.card.back:before{content:"♙"!important;inset:12% 12% 24%!important;border:2px double #f8df9b!important;border-radius:48% 48% 12% 12%!important;color:#ffe7a2!important;font:900 23px/1 Georgia,serif!important;letter-spacing:1px;background:radial-gradient(ellipse at 50% 50%,#f5d88933,transparent 60%),repeating-radial-gradient(ellipse at center,transparent 0 7px,#f5d88925 8px 9px),repeating-linear-gradient(45deg,transparent 0 5px,#f5d88918 5px 6px)!important;box-shadow:inset 0 0 0 3px #f5d98722,0 0 7px #0008!important}
+.card.back:after{content:"Abdolhamid Dehvari"!important;left:4%!important;right:4%!important;bottom:5%!important;top:auto!important;height:15%!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;white-space:nowrap!important;font:italic 900 7px/1 Georgia,"Times New Roman",serif!important;letter-spacing:-.1px!important;color:#ffe8a5!important;text-shadow:0 1px 1px #392300,0 0 4px #f6d77e,0 0 7px #c18a25!important;background:linear-gradient(90deg,transparent,#091b2cee 12%,#091b2cee 88%,transparent)!important;border-top:1px solid #f4d27c!important;border-bottom:1px solid #f4d27c!important;padding:1px 0!important;transform:rotate(-13deg) skewX(-5deg)!important;overflow:hidden!important}
+.card-customizer-preview .card.back:after{font-size:7.5px!important;transform:rotate(-13deg) skewX(-5deg)!important}
+.opponent-fan .card.back:after{font-size:3.4px!important;transform:rotate(-13deg) skewX(-5deg)!important}
+@media(max-width:520px){.card.back:after{font-size:5.8px!important}.opponent-fan .card.back:after{font-size:3.1px!important}}
+
+/* 0.8.46: centered, larger two-line italic gold maker engraving */
+.card.back:after{content:"Abdolhamid\\A Dehvari"!important;left:9%!important;right:9%!important;bottom:5%!important;top:auto!important;height:23%!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;white-space:pre!important;font:italic 900 8.2px/1.08 Georgia,"Times New Roman",serif!important;letter-spacing:.05px!important;color:#ffe8a5!important;text-shadow:0 1px 1px #392300,0 0 4px #f6d77e,0 0 7px #c18a25!important;background:linear-gradient(90deg,transparent,#091b2cee 12%,#091b2cee 88%,transparent)!important;border-top:1px solid #f4d27c!important;border-bottom:1px solid #f4d27c!important;padding:2px 0!important;transform:rotate(-13deg) skewX(-5deg)!important;overflow:visible!important}
+.card-customizer-preview .card.back:after{font-size:9px!important;line-height:1.05!important;bottom:5%!important;height:24%!important;transform:rotate(-13deg) skewX(-5deg)!important}
+.opponent-fan .card.back:after{font-size:3.1px!important;line-height:1.05!important;bottom:5%!important;height:23%!important;transform:rotate(-13deg) skewX(-5deg)!important}
+@media(max-width:520px){.card.back:after{font-size:6.6px!important;line-height:1.05!important}.opponent-fan .card.back:after{font-size:3px!important}}
+
+/* 0.8.47: faithful slanted two-line signature and selectable table surfaces; keep seat/card layout intact */
+.card.back:after{content:"Abdolhamid\\A Dehvari"!important;position:absolute!important;z-index:8!important;left:9%!important;right:9%!important;top:38%!important;bottom:auto!important;width:82%!important;height:28%!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;white-space:pre!important;font:italic 900 8px/1.02 Georgia,"Times New Roman",serif!important;letter-spacing:0!important;color:#ffe7a0!important;text-shadow:0 1px 1px #251300,0 0 3px #f8d77b,0 0 7px #c28a27!important;background:linear-gradient(90deg,transparent,#091b2ce8 12%,#091b2ce8 88%,transparent)!important;border-top:1px solid #f4d27c!important;border-bottom:1px solid #f4d27c!important;border-radius:2px!important;padding:1px 0!important;transform:rotate(-18deg)!important;transform-origin:center center!important;overflow:visible!important;box-sizing:border-box!important}
+.card-customizer-preview .card.back:after{font-size:9px!important;line-height:1.02!important;top:38%!important;height:28%!important;transform:rotate(-18deg)!important}
+.opponent-fan .card.back:after{font-size:3.1px!important;line-height:1.02!important;top:38%!important;height:28%!important;transform:rotate(-18deg)!important}
+@media(max-width:520px){.card.back:after{font-size:6.2px!important}.opponent-fan .card.back:after{font-size:2.9px!important}}
+.table-theme-parquet .table{background-color:#8a4c1d!important;background-image:repeating-linear-gradient(90deg,transparent 0 47px,rgba(35,16,5,.52) 48px 50px,transparent 51px 98px),repeating-linear-gradient(0deg,rgba(255,222,157,.10) 0 2px,transparent 2px 38px),repeating-linear-gradient(90deg,#9a5b27 0 48px,#6f3918 49px 50px,#b87937 51px 96px,#633116 97px 99px),linear-gradient(135deg,#c18442,#603316)!important;box-shadow:inset 0 0 0 3px #e7bd79,inset 0 0 55px #24100599,0 16px 38px #000b!important;border-color:#d7a65e!important}
+.table-theme-parquet .seat{background:linear-gradient(135deg,#d7b77aee,#9b713eee)!important;border:1px solid #f0d7a0!important;color:#34200e!important;box-shadow:inset 0 0 0 2px #6e451c55,0 2px 8px #24130688!important}
+.table-theme-parquet .seat .name,.table-theme-parquet .seat .count{color:#3a2614!important;text-shadow:0 1px #f7e5bd}
+.table-theme-persian .table{background-color:#8d1825!important;background-image:radial-gradient(ellipse at center,transparent 0 23%,#d7b66a22 24% 25%,transparent 26% 34%,#d7b66a33 35% 36%,transparent 37%),repeating-conic-gradient(from 45deg at 50% 50%,#8d1825 0deg 10deg,#a72b31 10deg 20deg,#15385a 20deg 30deg,#8d1825 30deg 40deg),repeating-linear-gradient(45deg,transparent 0 12px,#e4c77b22 12px 14px)!important;background-blend-mode:normal,overlay,normal!important;border:7px double #d9b96c!important;box-shadow:inset 0 0 0 3px #f0d99a,inset 0 0 0 9px #8d1825,inset 0 0 0 12px #e2c477,inset 0 0 50px #24080c99,0 16px 38px #000b!important}
+.table-theme-persian .table:before{content:"";position:absolute;inset:7px;z-index:0;pointer-events:none;border:2px solid #e7cc83;outline:1px solid #e7cc83;outline-offset:4px;border-radius:18px;box-shadow:inset 0 0 0 5px #8d182588,inset 0 0 0 7px #e7cc8355}
+.table-theme-persian .seat{background:linear-gradient(135deg,#12385beF,#0a2448ed)!important;border:2px solid #d9b96c!important;box-shadow:inset 0 0 0 2px #e9d18a55,0 3px 10px #17090a99!important}
+.table-theme-persian .seat .name,.table-theme-persian .seat .count{color:#f6e4b4!important}
+.table-theme-parquet .center,.table-theme-persian .center,.table-theme-parquet .seat,.table-theme-persian .seat{position:relative;z-index:1}
+
+/* 0.8.47b: player names sit on small wooden nameplates like the reference table */
+.table-theme-parquet .seat .name,.table-theme-persian .seat .name{display:inline-block;padding:3px 12px;margin:1px auto 4px;border-radius:5px;background:linear-gradient(180deg,#f4e3b7,#c6a36b 55%,#e7d2a0)!important;border:1px solid #76501f!important;box-shadow:inset 0 1px 1px #fff8,0 2px 3px #160b0588!important;color:#392411!important;font-weight:800;text-shadow:0 1px #fff2!important}
+.table-theme-parquet .seat .count,.table-theme-persian .seat .count{color:#f5e6c2!important}
+
+/* 0.8.50: use the actual Double Kout crest cropped from the supplied menu art; crop begins below the lamp */
+.table-theme-felt .table:after,.table-theme-parquet .table:after{
+ content:""!important;position:absolute!important;z-index:0!important;pointer-events:none!important;
+ left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;
+ width:78%!important;height:47%!important;display:block!important;
+ background-image:url("./IMG_3647.png")!important;
+ background-repeat:no-repeat!important;background-size:394% 407%!important;
+ background-position:50.6% 13.5%!important;
+ filter:drop-shadow(0 3px 5px #100800aa)!important;opacity:.76!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important
+}
+.table-theme-felt .table>* ,.table-theme-parquet .table>*{position:relative;z-index:1}
+.table-theme-persian .table:after,.table-theme-persian .table:before{content:none!important}
+/* Maker engraving: large, genuinely diagonal, centered and split over two lines */
+.card.back:after{
+ content:"Abdolhamid\\A Dehvari"!important;position:absolute!important;z-index:8!important;
+ left:7%!important;right:7%!important;top:39%!important;bottom:auto!important;
+ width:86%!important;height:25%!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;text-align:center!important;
+ white-space:pre!important;font:italic 900 9.2px/1.04 Georgia,"Times New Roman",serif!important;
+ letter-spacing:0!important;color:#ffe7a0!important;
+ text-shadow:0 1px 1px #251300,0 0 4px #f8d77b,0 0 8px #c28a27!important;
+ background:linear-gradient(90deg,transparent,#091b2cf0 10%,#091b2cf0 90%,transparent)!important;
+ border-top:1px solid #f4d27c!important;border-bottom:1px solid #f4d27c!important;
+ border-radius:2px!important;padding:2px 0!important;transform:rotate(-18deg)!important;
+ transform-origin:center center!important;overflow:visible!important;box-sizing:border-box!important
+}
+.card-customizer-preview .card.back:after{font-size:10px!important;line-height:1.02!important}
+.opponent-fan .card.back:after{font-size:2.9px!important;line-height:1.02!important}
+@media(max-width:520px){.card.back:after{font-size:6.5px!important}.opponent-fan .card.back:after{font-size:2.7px!important}}
+
+/* 0.8.48: regal Double Kout emblem watermark on felt and parquet only */
+.table{position:relative!important;isolation:isolate;overflow:hidden}
+.table-emblem{position:absolute;left:50%;top:50%;width:min(72%,390px);height:auto;transform:translate(-50%,-50%);z-index:0;pointer-events:none;opacity:.30;filter:drop-shadow(0 2px 5px #000b)}
+.table-emblem svg{display:block;width:100%;height:auto;overflow:visible}
+.table .center,.table .seat{z-index:1}
+.table-theme-felt .table-emblem{opacity:.28}
+.table-theme-parquet .table-emblem{opacity:.34}
+.table-theme-persian .table-emblem{display:none!important}
+@media(max-width:520px){.table-emblem{width:76%;opacity:.25}.table-theme-parquet .table-emblem{opacity:.28}}
+
+/* 0.8.51: shared sequence pile and sequence-clear animation */
+.center-pile,.online-center-pile{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:94px;height:122px;z-index:2;pointer-events:none}
+.center-pile .pile-card,.online-center-pile .pile-card{position:absolute;width:48px;height:70px;left:50%;top:50%;margin:-35px 0 0 -24px;transform:translate(var(--px),var(--py)) rotate(var(--pr));box-shadow:0 5px 11px #000b}
+.center-pile.clearing .pile-card,.online-center-pile.clearing .pile-card{animation:pileCollect .85s ease-in forwards}
+@keyframes pileCollect{0%{opacity:1;transform:translate(var(--px),var(--py)) rotate(var(--pr)) scale(1)}65%{opacity:.95;transform:translate(0,0) rotate(0) scale(.82)}100%{opacity:0;transform:translate(0,-18px) rotate(0) scale(.18)}}
+#onlineLobbyDecision{display:none;background:#153d2f;border:1px solid #e4c477;border-radius:12px;padding:10px;margin:10px 0;text-align:center}#onlineLobbyDecision .onrow{display:flex;gap:8px;margin-top:8px}#onlineLobbyDecision button{flex:1}
+
+/* Apply the same ornate black-and-gold spade back to four-player cards. */
+.card.back{border:3px solid #e7c777!important;outline:1px solid #fff1c866!important;outline-offset:-5px;background-color:#101010!important}
+.card.back:before{content:"♠"!important;position:absolute!important;z-index:1!important;inset:8% 9% 19%!important;display:flex!important;align-items:center!important;justify-content:center!important;border:2px double #f4d78e!important;border-radius:42% 42% 10% 10%!important;color:#f8dfa0!important;font:900 34px/1 Georgia,serif!important;text-shadow:0 1px 3px #241500,0 0 9px #e9bd5a!important;background:radial-gradient(ellipse at 50% 48%,#e4bd6530,transparent 62%),repeating-linear-gradient(45deg,transparent 0 6px,#f4d88a18 6px 7px),repeating-linear-gradient(-45deg,transparent 0 6px,#f4d88a15 6px 7px)!important;box-shadow:inset 0 0 0 3px #f5d98722,0 0 8px #0008!important}
+/* 0.8.52: image-inspired premium table collections and shared black-gold card backs */
+body.table-theme-marble{background:radial-gradient(ellipse at 50% 8%,#3b3a39 0,#171717 42%,#050505 100%)!important}
+body.table-theme-marble .table,body.table-theme-marble .k-table{
+ background-color:#171717!important;
+ background-image:radial-gradient(ellipse at 48% 38%,#55534f88 0,transparent 48%),repeating-linear-gradient(12deg,transparent 0 36px,#ffffff0a 37px 39px,transparent 40px 76px),repeating-linear-gradient(97deg,#161616 0 54px,#292725 55px 58px,#0d0d0d 59px 110px),linear-gradient(145deg,#35322e,#080808 70%)!important;
+ border:4px solid #c7a45e!important;border-radius:28px!important;
+ box-shadow:inset 0 0 0 2px #ffe7a044,inset 0 0 65px #000e,0 22px 44px #000e!important
+}
+body.table-theme-marble .seat,body.table-theme-marble .k-seat{background:linear-gradient(145deg,#242321,#080808)!important;border:1px solid #c8a65f!important;box-shadow:0 10px 20px #000c,inset 0 1px 0 #fff2!important;color:#f7e4b5!important}
+body.table-theme-marble .seat .name,body.table-theme-marble .seat .count,body.table-theme-marble .k-seat .k-name,body.table-theme-marble .k-seat .k-count{color:#f3dfaa!important}
+body.table-theme-royal{background:radial-gradient(ellipse at 50% 10%,#4b3922 0,#17130e 43%,#050505 100%)!important}
+body.table-theme-royal .table,body.table-theme-royal .k-table{
+ background-color:#111!important;background-image:radial-gradient(ellipse at 50% 45%,#38342d 0,#151411 62%,#050505 100%),repeating-linear-gradient(35deg,#ffffff08 0 2px,transparent 2px 8px)!important;
+ border:7px double #d8b36a!important;border-radius:32px!important;
+ box-shadow:inset 0 0 0 3px #fff1b044,inset 0 0 0 10px #8e652d55,inset 0 0 70px #000e,0 22px 48px #000e!important
+}
+body.table-theme-royal .seat,body.table-theme-royal .k-seat{background:linear-gradient(145deg,#171614,#030303)!important;border:2px solid #d9b66d!important;border-radius:15px!important;box-shadow:inset 0 0 0 2px #ffe8a022,0 12px 22px #000c!important}
+body.table-theme-royal .seat .name,body.table-theme-royal .k-seat .k-name{color:#ffe6a1!important}
+body.table-theme-casino{background:radial-gradient(ellipse at 50% 12%,#3a1015 0,#10090c 48%,#020203 100%)!important}
+body.table-theme-casino .table,body.table-theme-casino .k-table{
+ background-color:#080809!important;background-image:radial-gradient(ellipse at 50% 42%,#29252a 0,#0b0a0c 64%,#020203 100%),repeating-linear-gradient(0deg,transparent 0 35px,#ff26331a 36px 38px,transparent 39px 72px)!important;
+ border:5px solid #9e2631!important;border-radius:34px!important;
+ box-shadow:inset 0 0 0 2px #f6d78b88,inset 0 0 34px #d3192b55,0 0 18px #e01d2b88,0 24px 48px #000e!important
+}
+body.table-theme-casino .seat,body.table-theme-casino .k-seat{background:linear-gradient(145deg,#1d1014,#050507)!important;border:1px solid #e0b76c!important;box-shadow:0 0 12px #d21c2b55,inset 0 0 0 1px #fff2!important}
+body.table-theme-casino .seat .name,body.table-theme-casino .k-seat .k-name{color:#ffe0a0!important}
+body.deck-back-black .k-card.k-back{background:radial-gradient(ellipse at 50% 50%,#30291d,#090909 72%,#020202)!important;border-color:#e7c777!important}
+body.deck-back-red .k-card.k-back{background:radial-gradient(ellipse at 50% 50%,#a52a38,#4c0716 75%,#17030a)!important;border-color:#f2d38b!important}
+body.deck-back-green .k-card.k-back{background:radial-gradient(ellipse at 50% 50%,#1a7652,#06412f 70%,#02241a)!important;border-color:#e7d6a4!important}
+body.deck-back-classic .k-card.k-back{background:radial-gradient(ellipse at 50% 50%,#1d5a91,#0c376b 58%,#061d42)!important;border-color:#f1d48a!important}
+.k-card.k-back{position:relative!important;isolation:isolate;overflow:hidden!important;border:3px solid #e7c777!important;border-radius:8px!important;box-shadow:inset 0 0 0 2px #fff2c455,inset 0 0 18px #0009,0 8px 15px #000c!important}
+.k-card.k-back:before{content:"♠"!important;position:absolute!important;z-index:1!important;inset:8% 9% 19%!important;display:flex!important;align-items:center!important;justify-content:center!important;border:2px double #f4d78e!important;border-radius:42% 42% 10% 10%!important;color:#f8dfa0!important;font:900 34px/1 Georgia,serif!important;text-shadow:0 1px 3px #241500,0 0 9px #e9bd5a!important;background:radial-gradient(ellipse at 50% 48%,#e4bd6530,transparent 62%),repeating-linear-gradient(45deg,transparent 0 6px,#f4d88a18 6px 7px),repeating-linear-gradient(-45deg,transparent 0 6px,#f4d88a15 6px 7px)!important;box-shadow:inset 0 0 0 3px #f5d98722,0 0 8px #0008!important}
+.k-card.k-back:after{content:"Abdolhamid\\A Dehvari"!important;position:absolute!important;z-index:3!important;left:5%!important;right:5%!important;top:38%!important;width:90%!important;height:27%!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;white-space:pre!important;font:italic 900 7px/1.02 Georgia,"Times New Roman",serif!important;color:#ffe7a0!important;text-shadow:0 1px 2px #160d00,0 0 5px #e9bd5a!important;background:linear-gradient(90deg,transparent,#080808ed 10%,#080808ed 90%,transparent)!important;border-top:1px solid #f4d27c!important;border-bottom:1px solid #f4d27c!important;transform:rotate(-18deg)!important;overflow:visible!important}
+body.six-layout-hex .k-table{min-height:650px!important}
+body.six-layout-hex .k-table>.k-seat[data-p="3"]{top:0!important;left:36%!important;width:28%!important}
+body.six-layout-hex .k-table>.k-seat[data-p="2"]{top:19%!important;right:0!important;width:27%!important}
+body.six-layout-hex .k-table>.k-seat[data-p="1"]{bottom:19%!important;right:0!important;width:27%!important}
+body.six-layout-hex .k-table>.k-seat[data-p="0"]{bottom:0!important;left:36%!important;width:28%!important}
+body.six-layout-hex .k-table>.k-seat[data-p="5"]{bottom:19%!important;left:0!important;width:27%!important}
+body.six-layout-hex .k-table>.k-seat[data-p="4"]{top:19%!important;left:0!important;width:27%!important}
+body.six-layout-hex .k-table>.k-center{left:28%!important;right:28%!important;top:34%!important;bottom:34%!important}
+body.six-layout-wide .k-table{min-height:690px!important}
+body.six-layout-wide .k-table>.k-seat{width:31%!important;min-height:126px!important}
+body.six-layout-wide .k-table>.k-seat[data-p="3"]{top:0!important;left:34.5%!important}
+body.six-layout-wide .k-table>.k-seat[data-p="2"]{top:23%!important;right:0!important}
+body.six-layout-wide .k-table>.k-seat[data-p="1"]{bottom:23%!important;right:0!important}
+body.six-layout-wide .k-table>.k-seat[data-p="0"]{bottom:0!important;left:34.5%!important}
+body.six-layout-wide .k-table>.k-seat[data-p="5"]{bottom:23%!important;left:0!important}
+body.six-layout-wide .k-table>.k-seat[data-p="4"]{top:23%!important;left:0!important}
+body.six-layout-wide .k-table>.k-center{left:30%!important;right:30%!important;top:36%!important;bottom:36%!important}
+@media(max-width:520px){body.six-layout-hex .k-table{min-height:610px!important}body.six-layout-wide .k-table{min-height:650px!important}}
+/* Visual pre-game selectors */
+.visual-customizer{display:grid;gap:10px;margin:10px 0 16px;padding:10px;border:1px solid #caa65a;border-radius:16px;background:linear-gradient(145deg,#171714,#070908);box-shadow:inset 0 1px 0 #fff2,0 10px 24px #0008}
+.visual-row{display:grid;grid-template-columns:84px 1fr;align-items:center;gap:8px}.visual-label{font-size:12px;font-weight:900;color:#e8cd8a;text-align:center}.visual-choices{display:flex;align-items:center;gap:8px;overflow-x:auto;padding:5px 3px;scrollbar-width:none}
+.visual-choice{flex:0 0 auto;display:flex;align-items:center;justify-content:center;padding:4px;width:68px;height:78px;border:1px solid #887044;border-radius:10px;background:linear-gradient(145deg,#292720,#080909);box-shadow:0 4px 0 #030403,0 7px 12px #0009;transition:transform .16s,border-color .16s,box-shadow .16s}
+.visual-choice.selected{border:2px solid #ffe39a;box-shadow:0 0 0 2px #c18e39,0 0 18px #edc56a88,0 4px 0 #030403;transform:translateY(-3px)}
+.mini-card{display:block;width:40px;height:61px;border:2px solid #e7c777;border-radius:6px;position:relative;overflow:hidden;box-shadow:inset 0 0 0 2px #fff2,0 4px 8px #000b;background:radial-gradient(ellipse,#393124,#090909 70%)}
+.mini-card:before{content:"";position:absolute;inset:4px;border:1px double #f1d58e;border-radius:3px;background:repeating-radial-gradient(ellipse at center,transparent 0 4px,#f0d38a44 5px 6px),repeating-linear-gradient(45deg,transparent 0 4px,#f0d38a24 4px 5px)}
+.mini-card i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:900 23px Georgia,serif;color:#ffe6a0;text-shadow:0 0 5px #e3b34e}
+.mini-blue{background:radial-gradient(ellipse,#1e5b91,#071b40 72%)}.mini-red{background:radial-gradient(ellipse,#b62d40,#370715 72%)}.mini-green{background:radial-gradient(ellipse,#1b8058,#03281b 72%)}
+.mini-table,.mini-layout{display:block;width:58px;height:58px;position:relative;border:4px solid #d3b16a;border-radius:48%/40%;box-shadow:inset 0 0 0 2px #fff3,0 4px 8px #000a}
+.mini-table:before,.mini-layout:before{content:"";position:absolute;inset:8px;border:1px solid #f4dc9d66;border-radius:50%}.mini-table i,.mini-layout i{position:absolute;width:13px;height:9px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:#d8b96c;box-shadow:-19px 0 0 -2px #d8b96c,19px 0 0 -2px #d8b96c,0 -18px 0 -2px #d8b96c,0 18px 0 -2px #d8b96c}.mini-table b{position:absolute;inset:40% 38%;border-radius:50%;background:#e4c67e}
+.mini-table.marble{background:radial-gradient(ellipse,#55534e,#171717 70%,#050505)}.mini-table.royal{border-width:5px;background:radial-gradient(ellipse,#423322,#0a0806 70%);box-shadow:inset 0 0 0 3px #c09045,0 4px 8px #000a}.mini-table.casino{border-color:#c33a46;background:radial-gradient(ellipse,#3c2529,#070607 70%);box-shadow:inset 0 0 0 2px #f4d28c,0 0 9px #d22b3888}.mini-table.parquet{border-color:#c78b43;background:repeating-linear-gradient(90deg,#b16e2d 0 7px,#6c3818 8px 10px)}.mini-table.persian{border-color:#e0c17b;background:repeating-conic-gradient(#8c1829 0 12deg,#163b5d 12deg 24deg,#b52b32 24deg 36deg)}.mini-table.felt{background:radial-gradient(ellipse,#1c7655,#052c20 75%)}
+.mini-layout{border-width:2px;border-color:#d5b46b;background:#111;border-radius:45%/35%}.mini-layout:before{inset:7px}.mini-layout i{width:9px;height:7px;box-shadow:-16px -12px 0 -1px #d8b96c,16px -12px 0 -1px #d8b96c,-19px 4px 0 -1px #d8b96c,19px 4px 0 -1px #d8b96c,-10px 17px 0 -1px #d8b96c,10px 17px 0 -1px #d8b96c}.mini-layout.hex{border-radius:12px;transform:rotate(30deg) scale(.88)}.mini-layout.wide{width:64px;border-radius:50%}
+@media(max-width:520px){.visual-row{grid-template-columns:70px 1fr}.visual-choice{width:60px;height:72px}.mini-table,.mini-layout{width:53px;height:53px}}
+/* Ornate black-gold approved back: no text */
+.card.back{background:radial-gradient(ellipse at 50% 45%,#393124 0,#15130f 50%,#050505 100%)!important;border:3px solid #e8c978!important;outline:1px solid #fff2c866!important;outline-offset:-6px;box-shadow:inset 0 0 0 2px #fff2c455,inset 0 0 22px #000c,0 8px 14px #000b!important}
+.card.back:before{content:""!important;position:absolute!important;inset:5px!important;border:2px double #f4d78e!important;border-radius:5px!important;background:repeating-radial-gradient(ellipse at 50% 50%,transparent 0 6px,#f1d58c20 7px 8px),repeating-linear-gradient(45deg,transparent 0 5px,#f4d88a18 5px 6px),repeating-linear-gradient(-45deg,transparent 0 5px,#f4d88a18 5px 6px)!important;box-shadow:inset 0 0 0 4px #f5d98722!important}
+.card.back:after{content:"♠"!important;position:absolute!important;inset:0!important;display:flex!important;align-items:center!important;justify-content:center!important;width:auto!important;height:auto!important;border:0!important;border-radius:0!important;background:none!important;color:#f9dfa0!important;font:900 36px/1 Georgia,serif!important;text-shadow:0 1px 3px #160d00,0 0 8px #e7bd5a!important;transform:none!important;overflow:visible!important}
+body.deck-back-classic .card.back{background:radial-gradient(ellipse,#1c5c92,#061b40 78%)!important}body.deck-back-red .card.back{background:radial-gradient(ellipse,#a92d3c,#260511 78%)!important}body.deck-back-green .card.back{background:radial-gradient(ellipse,#18724c,#03251a 78%)!important}
+.online-hand-tools{display:flex;align-items:center;justify-content:space-between;gap:8px}#onlineSortHand{width:42px;height:38px;padding:0;border:1px solid #e7c879;background:linear-gradient(#3b3424,#111);color:#ffe5a0;font-size:23px}
+#onlinePanel #onlineHand button.online-card-legal{opacity:1!important;filter:none!important;z-index:30!important}#onlinePanel #onlineHand button.online-card-legal .card{transform:translateY(-13px) scale(1.07)!important;outline:3px solid #ffe39a!important;border:2px solid #fff0b3!important;box-shadow:0 0 0 3px #b27d2c,0 14px 24px #000e,0 0 18px #f3d07899!important;filter:brightness(1.08) saturate(1.2)!important}
+#onlinePanel #onlineHand button.online-card-illegal{opacity:.38!important;filter:grayscale(.55) brightness(.72)!important}#onlinePanel #onlineHand button.online-card-illegal .card{transform:translateY(2px) scale(.96)!important;outline:1px solid #756b59!important;box-shadow:0 3px 6px #0008!important}#onlinePanel #onlineHand button.online-card-inactive{opacity:.72!important}
+/* 0.8.53 structural table redesign: oval tabletop, raised perimeter seats and central medallion */
+.table,#onlineTable{display:block!important;position:relative!important;min-height:460px!important;padding:0!important;border-width:12px!important;border-radius:48%/31%!important;box-shadow:inset 0 0 0 3px #f6dc9a88,inset 0 0 0 9px #342416,inset 0 0 60px #000d,0 20px 34px #000d!important;overflow:hidden!important}
+.table:before,#onlineTable:before{content:""!important;position:absolute!important;inset:8px!important;border:2px solid #e2c27c!important;border-radius:48%/31%!important;box-shadow:inset 0 0 0 5px #fff1,inset 0 0 30px #0009!important;pointer-events:none!important;z-index:0!important}
+.table>.seat,#onlineTable>.seat{position:absolute!important;width:25%!important;min-height:90px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;padding:7px 4px!important;border:2px solid #c9a45e!important;border-radius:14px!important;background:linear-gradient(145deg,#1c1b18,#050505)!important;box-shadow:0 10px 18px #000c,inset 0 1px 0 #fff3!important;z-index:3!important}
+.table>.north,#onlineTable>.north{top:2%!important;left:37.5%!important;right:auto!important;bottom:auto!important}
+.table>.south,#onlineTable>.south{bottom:2%!important;left:37.5%!important;right:auto!important;top:auto!important}
+.table>.west,#onlineTable>.west{left:1%!important;top:38%!important;right:auto!important;bottom:auto!important}
+.table>.east,#onlineTable>.east{right:1%!important;top:38%!important;left:auto!important;bottom:auto!important}
+.table>.center,#onlineTable>.center{position:absolute!important;left:28%!important;right:28%!important;top:27%!important;bottom:27%!important;min-height:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;border:1px solid #c9a45e!important;border-radius:50%!important;background:radial-gradient(ellipse,#27231b99,#05050577)!important;box-shadow:inset 0 0 24px #000b,0 0 0 5px #d1ad6544!important;z-index:2!important}
+.table>.center .table-emblem{width:90%!important;opacity:.38!important}.table>.center .center-trick{top:55%!important;z-index:4!important}.table>.center .center-pile{top:55%!important;z-index:3!important}
+.table>.seat .name,#onlineTable>.seat .name{display:inline-block!important;padding:3px 8px!important;border-radius:5px!important;background:linear-gradient(#f4e3b7,#b88c4a)!important;color:#261a0d!important;font-weight:900!important;border:1px solid #f5d58b!important}
+.table>.seat .count,#onlineTable>.seat .count{color:#f5dfaa!important}
+@media(max-width:520px){.table,#onlineTable{min-height:440px!important;border-width:8px!important;border-radius:44%/25%!important}.table>.seat,#onlineTable>.seat{width:28%!important;min-height:78px!important;padding:5px 2px!important}.table>.north,#onlineTable>.north,.table>.south,#onlineTable>.south{left:36%!important;width:28%!important}.table>.west,#onlineTable>.west{left:0!important;top:39%!important}.table>.east,#onlineTable>.east{right:0!important;top:39%!important}.table>.center,#onlineTable>.center{left:27%!important;right:27%!important;top:29%!important;bottom:29%!important}.table>.seat .name,#onlineTable>.seat .name{font-size:10px!important;padding:2px 4px!important}}
+.mini-card img{display:block;width:100%;height:100%;object-fit:cover}
+body.deck-back-black .card.back{background-image:url("./assets/card-back-black-gold.svg")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
+body.deck-back-black .card.back:before,body.deck-back-black .card.back:after{content:none!important}
+
+/* Full-screen visual customization: large image rail, one category per screen */
+.customize-open{display:block;width:100%;margin:8px 0 14px;padding:13px 16px;border:1px solid #e7c777;border-radius:14px;background:linear-gradient(135deg,#292116,#090909);color:#f6d98f;box-shadow:inset 0 1px 0 #fff3,0 5px 16px #0009;font-weight:900}
+.visual-customizer-full{position:fixed;inset:0;z-index:10000;background:radial-gradient(ellipse at 50% 0,#292116,#090909 62%);display:flex;flex-direction:column;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom);color:#f8e5b3}
+.visual-customizer-full.hidden{display:none!important}
+.customizer-top{height:58px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #9b783e}
+.customizer-top button,.customizer-bottom button,.customizer-tabs button{border:1px solid #b99652;border-radius:11px;background:linear-gradient(145deg,#f1d99b,#9c7131);color:#1b1308;padding:10px 13px;font-weight:900}
+#customizerTitle{font-size:19px;font-weight:900;color:#ffdf94}
+#customizerStep{font-size:13px;color:#c9b17d}
+.customizer-tabs{display:flex;justify-content:center;gap:8px;padding:12px 0}
+.customizer-tabs button{background:#17130d;color:#e9d49e;opacity:.72}
+.customizer-tabs button.active{opacity:1;border:2px solid #ffe2a0;box-shadow:0 0 15px #d6a64d66}
+.customizer-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.customizer-page{width:100%;height:100%;display:flex;align-items:center}
+.customizer-page.hidden{display:none}
+.customizer-rail{display:flex;align-items:center;gap:22px;width:100%;overflow-x:auto;overflow-y:hidden;padding:24px max(24px,calc((100vw - 340px)/2));scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#b58b43 #18130c}
+.large-choice{width:230px;height:330px;scroll-snap-align:center;border:2px solid #80622f;border-radius:18px;background:linear-gradient(145deg,#211d16,#080808);flex:0 0 230px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px #000b,inset 0 1px 0 #fff2}
+.large-choice.selected{border:3px solid #ffe39a;box-shadow:0 0 0 3px #bb8d3d,0 0 32px #e9bd5e88,0 15px 30px #000c;transform:translateY(-5px)}
+.back-art{width:190px;height:285px;object-fit:contain;filter:drop-shadow(0 8px 10px #000c)}
+.large-card{width:184px;height:276px;border:5px double #e7c777;border-radius:13px;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 5px #fff2,0 8px 18px #000b;overflow:hidden}
+.large-card:before{content:"";position:absolute;inset:12px;border:2px solid #f5d987;border-radius:7px;background:repeating-radial-gradient(ellipse,transparent 0 8px,#f0d38a33 9px 10px),repeating-linear-gradient(45deg,transparent 0 8px,#f0d38a2a 8px 9px)}
+.large-card i{font:900 80px Georgia;color:#ffe3a0;text-shadow:0 2px 5px #000;z-index:1}
+.large-card b{position:absolute;bottom:24px;font:700 12px Georgia;color:#ffe3a0;letter-spacing:1px}
+.table-rail .large-choice{width:300px;height:240px;flex-basis:300px}
+.table-rail .mini-table{width:245px;height:165px;border-width:8px;border-radius:48%/40%;box-shadow:inset 0 0 0 5px #fff3,0 10px 22px #000b}
+.table-rail .mini-table:before{inset:18px;border-width:2px}
+.table-rail .mini-table i{width:38px;height:25px;box-shadow:-82px 0 0 -5px #d8b96c,82px 0 0 -5px #d8b96c,0 -55px 0 -5px #d8b96c,0 55px 0 -5px #d8b96c}
+.table-rail .mini-table b{inset:40% 38%}
+.layout-rail .large-choice{width:250px;height:250px;flex-basis:250px}
+.layout-rail .mini-layout{width:190px;height:190px;border-width:5px}
+.layout-rail .mini-layout i{width:22px;height:17px;box-shadow:-52px -38px 0 -2px #d8b96c,52px -38px 0 -2px #d8b96c,-62px 15px 0 -2px #d8b96c,62px 15px 0 -2px #d8b96c,-32px 56px 0 -2px #d8b96c,32px 56px 0 -2px #d8b96c}
+.customizer-bottom{display:flex;justify-content:center;gap:10px;padding:14px 0 max(14px,env(safe-area-inset-bottom))}
+.customizer-bottom button{min-width:220px}
+@media(max-width:520px){.customizer-rail{gap:14px;padding:18px 28px}.large-choice{width:205px;height:300px;flex-basis:205px}.back-art{width:165px;height:250px}.table-rail .large-choice{width:270px;height:215px;flex-basis:270px}.table-rail .mini-table{width:220px;height:145px}.layout-rail .large-choice{width:220px;height:220px;flex-basis:220px}.layout-rail .mini-layout{width:165px;height:165px}.customizer-bottom button{min-width:0;flex:1;font-size:13px}}
+
+html{background-color:#061b16!important;min-height:100%;}body{background-color:#061b16!important;min-height:100vh;min-height:100dvh;overscroll-behavior-y:none;}@supports(padding:env(safe-area-inset-top)){html,body{background-color:#061b16!important;}}
+.hand:not(.has-legal-restrictions) button:not(:disabled) .card{border:1px solid #fff9!important;filter:none!important;transform:none!important}#onlinePanel #onlineHand button.online-card-unrestricted{opacity:1!important;filter:none!important;z-index:auto!important}#onlinePanel #onlineHand button.online-card-unrestricted .card{transform:none!important;outline:none!important;border:1px solid #fff9!important;box-shadow:0 9px 0 #c8bfa9,0 13px 22px #0009!important;filter:none!important}
+/* 9.1 — curved compact fan, card-face redesign and lower hand rail */
+.hand{position:relative;z-index:2;overflow:visible!important;overflow-y:visible!important;min-height:112px;padding:16px 5px 22px;gap:0!important}
+.hand button{flex:0 0 44px!important;width:44px!important;height:66px!important;margin-left:-25px!important;transform-origin:50% 100%!important}
+.hand button:first-child{margin-left:0!important}
+.hand button .card{width:44px!important;height:66px!important}
+.hand button .card .suit{font-size:23px!important}
+@media(max-width:380px){.hand{min-height:112px;padding:16px 4px 22px}.hand button{flex-basis:44px!important;width:44px!important;height:66px!important;margin-left:-25px!important}.hand button .card{width:44px!important;height:66px!important}}
+.hand-rail{height:11px;margin:-20px 13px 9px;position:relative;z-index:1;border-radius:999px;background:linear-gradient(180deg,#f6dfa0 0%,#b68a3f 35%,#5d3c1a 72%,#e6c77c 100%);border:1px solid #f8e6b6;box-shadow:0 4px 8px #0009,inset 0 1px 2px #fff9,inset 0 -2px 3px #442b12;pointer-events:none}
+.card:not(.back){isolation:isolate;overflow:hidden!important;position:relative;background:radial-gradient(ellipse at 50% 42%,#fffef8 0%,#f8f0dc 58%,#e5d7b9 100%)!important;border:1px solid #f6e7c4!important;border-radius:8px!important;box-shadow:inset 0 0 0 1px #fff, inset 0 0 0 3px #d5bd83, inset 0 -5px 10px #8e795633,0 7px 0 #a99877,0 10px 14px #0009!important}
+.card:not(.back):after{content:"";position:absolute;inset:5px;border:1px solid #b99754;border-radius:5px;pointer-events:none;z-index:0}
+.card .face-border{position:absolute;inset:9px 7px;border:1px solid #d9c28e;border-radius:5px;opacity:.9;pointer-events:none;z-index:0}
+.card .corner{z-index:4;color:inherit;text-shadow:0 1px #fff8;font-family:Georgia,serif;font-weight:900}
+.card .corner-top{top:5px;left:5px}.card .corner-bottom{right:5px;bottom:5px}
+.card .face-center{position:absolute;inset:19px 8px;display:flex;align-items:center;justify-content:center;z-index:2;border-radius:50%;background:radial-gradient(circle,#fffdf4 0%,#eee1c2 62%,#d6c18d 100%);box-shadow:inset 0 0 0 1px #b9944d,0 0 0 2px #fff8;}
+.card .face-center:before{content:"";position:absolute;inset:4px;border:1px dotted #a98749;border-radius:50%;opacity:.85}
+.card .face-center .suit{font-size:30px!important;line-height:1;align-self:center;filter:drop-shadow(0 2px 1px #8e795566);transform:translateY(-1px)}
+.card.red .face-center{background:radial-gradient(circle,#fff7f2 0%,#f2d8cf 65%,#d8aaa0 100%);box-shadow:inset 0 0 0 1px #bd6970,0 0 0 2px #fff8}
+.card .royal-frame{position:absolute!important;inset:2px 1px!important;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:4px}
+.card .royal-frame svg{max-width:100%;max-height:100%;filter:drop-shadow(0 1px 1px #5b4934)}
+.card .face-bottom-mark{position:absolute;z-index:4;left:50%;bottom:5px;transform:translateX(-50%);font:700 8px/1 Georgia,serif;opacity:.58}
+.card.small .face-center{inset:17px 6px}.card.small .face-center .suit{font-size:23px!important}
+#currentGroupCounter{color:#f5dfaa}
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۱ · هوش پیشرفته و کارت‌های بازطراحی‌شده</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+<section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
+<button id="openVisualCustomizer" class="customize-open" type="button">✦ سفارشی‌سازی ظاهر بازی</button>
+<div id="visualCustomizer" class="visual-customizer-full hidden" aria-modal="true" role="dialog" aria-label="سفارشی‌سازی ظاهر بازی">
+ <div class="customizer-top"><button id="customizerClose" type="button">بازگشت</button><div id="customizerTitle">پشت کارت‌ها</div><div id="customizerStep">۱ از ۳</div></div>
+ <div class="customizer-tabs"><button type="button" data-go-step="0" class="active">پشت کارت</button><button type="button" data-go-step="1">میز بازی</button><button type="button" data-go-step="2">چینش ۶ نفره</button></div>
+ <div class="customizer-stage">
+  <section class="customizer-page" data-step="0"><div class="customizer-rail" data-kind="back">
+   <button type="button" class="visual-choice large-choice" data-value="black" aria-label="مشکی طلایی"><img class="back-art" src="./assets/card-back-black-gold.svg" alt="پشت کارت مشکی طلایی"></button>
+   <button type="button" class="visual-choice large-choice" data-value="classic" aria-label="آبی طلایی"><span class="large-card mini-blue"><i>♠</i><b>DOUBLE KOUT</b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="red" aria-label="قرمز طلایی"><span class="large-card mini-red"><i>♠</i><b>DOUBLE KOUT</b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="green" aria-label="سبز طلایی"><span class="large-card mini-green"><i>♠</i><b>DOUBLE KOUT</b></span></button>
+  </div></section>
+  <section class="customizer-page hidden" data-step="1"><div class="customizer-rail table-rail" data-kind="table">
+   <button type="button" class="visual-choice large-choice" data-value="marble" aria-label="مرمر"><span class="mini-table marble"><i></i><b></b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="royal" aria-label="سلطنتی"><span class="mini-table royal"><i></i><b></b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="casino" aria-label="کازینو"><span class="mini-table casino"><i></i><b></b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="parquet" aria-label="پارکت"><span class="mini-table parquet"><i></i><b></b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="persian" aria-label="فرش ایرانی"><span class="mini-table persian"><i></i><b></b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="felt" aria-label="مخمل"><span class="mini-table felt"><i></i><b></b></span></button>
+  </div></section>
+  <section class="customizer-page hidden" data-step="2"><div class="customizer-rail layout-rail" data-kind="layout">
+   <button type="button" class="visual-choice large-choice" data-value="arc" aria-label="قوسی"><span class="mini-layout arc"><i></i></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="hex" aria-label="شش ضلعی"><span class="mini-layout hex"><i></i></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="wide" aria-label="گسترده"><span class="mini-layout wide"><i></i></span></button>
+  </div></section>
+ </div>
+ <div class="customizer-bottom"><button id="customizerNext" type="button">تأیید و مرحله بعد</button><button id="customizerDone" type="button" class="hidden">تأیید نهایی و بازگشت به انتخاب میزها</button></div>
+</div>
+<div class="mode-grid">
+<button class="mode-card" id="modeDouble"><strong>♠ میز چهار نفره</strong><span>دابل کوت توالی · نسخه قابل‌بازی</span></button>
+<button class="mode-card" id="modeHokm"><strong>♥ میز چهار نفره</strong><span>حکم معمولی · موتور مستقل متصل</span></button>
+<button class="mode-card" id="modeKuwaiti"><strong>♦ میز شش نفره</strong><span>کوت کویتی · میز شش‌نفره، مزایده و هوش مصنوعی</span></button>
+</div>
+<p class="muted" id="modeMessage">حالت شش‌نفره فقط با نام «کوت کویتی» نمایش داده می‌شود.</p><div class="actions" style="margin-top:12px"><button id="globalStatsBtn" type="button">آمار کل بازی‌ها</button><button id="exitAppBtn" type="button">خروج از برنامه</button></div>
+<section class="panel hidden" id="globalStatsPanel"><h3 class="section-title">آمار کل بازی‌ها</h3><div id="globalStatsReport" class="rules"></div><div class="actions"><button id="closeGlobalStats" type="button">بستن آمار</button><button id="resetGlobalStats" type="button">پاک‌کردن آمار</button></div></section></section>
+<section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><select id="hokmContract" class="hidden" aria-hidden="true"><option value="hokm_spades" selected>پیک</option><option value="hokm_hearts">دل</option><option value="hokm_diamonds">خشت</option><option value="hokm_clubs">گشنیز</option></select><div id="hokmContractPicker" class="hidden"></div><div class="setup"><div><label>شیوه بازی</label><select id="playStyle"><option value="ai">یک نفر در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با چهار گوشی (اتاق اینترنتی)</option></select></div><div id="humanSeatSetup" style="grid-column:1/-1"><label>صندلی بازیکنان انسانی (صندلی‌های خالی با هوش مصنوعی پر می‌شوند)</label><div id="humanSeatChoices" class="actions"></div><p class="muted">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="expert" selected>خیلی سخت</option><option value="hard">سخت</option><option value="normal">معمولی</option><option value="easy">آسان</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><div id="onlineSetupInfo" class="status hidden">برای بازی آنلاین، ابتدا اتاق بساز یا با کد وارد اتاق بازیکن دیگری شو. پنجره اتاق آنلاین با انتخاب این گزینه باز می‌شود.</div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
+<section class="panel hidden" id="game"><div id="hotseatGate" class="hidden"><div class="gate-card"><div style="font-size:42px">♠ ♥ ♦ ♣</div><h2>تحویل گوشی به بازیکن بعدی</h2><p id="hotseatGateText">گوشی را به بازیکن بعدی بدهید. مطمئن شوید نفر قبلی دیگر صفحه را نمی‌بیند؛ سپس کارت‌های خود را نمایش دهید.</p><button id="revealHotseatHand" type="button">کارت‌های من را نمایش بده</button></div></div><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">بازی‌های برده تیم شما: <b id="gamesWonA">۰</b></div><div class="score">بازی‌های برده تیم حریف: <b id="gamesWonB">۰</b></div><div class="score" id="currentGroupCounter">دست‌های انجام‌شده در گروه جاری: <b id="groupTricksPlayed">۰</b></div></div>
+<div class="k-live-tricks" style="display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:13px;font-weight:bold"><span>دست‌های گروه‌های توالی · تیم شما: <b id="liveWonA">۰</b></span><span>تیم حریف: <b id="liveWonB">۰</b></span></div>
+<div id="challengePanel" class="status" style="display:none"><b>چلنج تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چلنج را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چلنج فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چلنج علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب قرارداد بازی بعدی</b><p class="muted">پس از دیدن پنج کارت اول، می‌توانی یکی از چهار خال حکم، نرس، تک نرس، سرس یا برگ وسط یار را انتخاب کنی. هشت کارت باقی‌مانده بعد از انتخاب پخش می‌شود.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><div><label>نوع قرارداد</label><select id="nextContract"><option value="" selected disabled>ابتدا حکم را انتخاب کن…</option><option value="hokm_spades">حکم پیک ♠</option><option value="hokm_hearts">حکم دل ♥</option><option value="hokm_diamonds">حکم خشت ♦</option><option value="hokm_clubs">حکم گشنیز ♣</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار</option></select></div><button id="confirmTrump">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div class="table-emblem" aria-hidden="true">
+<svg viewBox="0 0 520 210" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="dkGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0b2"/><stop offset=".32" stop-color="#f6ce68"/><stop offset=".62" stop-color="#b87924"/><stop offset="1" stop-color="#ffe7a0"/></linearGradient><filter id="dkGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<g fill="none" stroke="url(#dkGold)" stroke-width="3" stroke-linecap="round" filter="url(#dkGlow)">
+<path d="M28 64 Q95 10 170 43 Q208 58 238 32 Q260 12 282 32 Q312 58 350 43 Q425 10 492 64"/>
+<path d="M38 145 Q110 194 180 163 Q220 145 260 174 Q300 145 340 163 Q410 194 482 145"/>
+<path d="M55 64 Q27 44 17 61 Q36 88 62 80 M465 64 Q493 44 503 61 Q484 88 458 80"/>
+<path d="M92 43 Q76 18 61 29 Q66 51 92 53 M428 43 Q444 18 459 29 Q454 51 428 53"/>
+<path d="M80 158 Q63 181 46 165 Q48 145 72 148 M440 158 Q457 181 474 165 Q472 145 448 148"/>
+<path d="M195 30 Q215 8 236 25 M325 30 Q305 8 284 25"/>
+</g>
+<path d="M260 15 C238 42 222 53 260 77 C298 53 282 42 260 15Z" fill="url(#dkGold)" stroke="#6c4318" stroke-width="2"/>
+<text x="260" y="111" text-anchor="middle" font-family="Georgia,Times New Roman,serif" font-size="63" font-weight="bold" font-style="italic" fill="url(#dkGold)" stroke="#4b2a0c" stroke-width="1.5" paint-order="stroke" filter="url(#dkGlow)">Double</text>
+<text x="260" y="166" text-anchor="middle" font-family="Georgia,Times New Roman,serif" font-size="62" font-weight="bold" font-style="italic" fill="url(#dkGold)" stroke="#4b2a0c" stroke-width="1.5" paint-order="stroke" filter="url(#dkGlow)">Kout</text>
+<path d="M212 181 Q260 199 308 181" fill="none" stroke="url(#dkGold)" stroke-width="3"/>
+<path d="M260 178 l-8 9 8 9 8-9Z" fill="url(#dkGold)"/>
+</svg></div><div><div class="muted">حکم</div><div id="trumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div id="trickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div><div id="centerPile" class="center-pile"></div><div id="centerTrick" class="center-trick"></div></div><div class="seat east" id="seat1"><div class="name">شرق · حریف</div><div class="count" id="count1"></div><div class="played" id="played1"></div></div><div class="seat south" id="seat0"><div class="name">شما · جنوب</div><div class="count" id="count0"></div><div class="played" id="played0"></div></div></div>
+<h3 class="section-title">کارت‌های شما</h3><div class="hand" id="hand"></div><div class="hand-rail" aria-hidden="true"></div><div class="status" id="status">بازی شروع شد.</div><div class="actions" style="margin-top:10px"><button id="newGame">بازی جدید</button><button id="sortHand">مرتب‌سازی کارت‌ها</button><button id="backToModes">بازگشت به انتخاب بازی</button></div><div id="localRematchPanel" style="display:none;background:#09271f;border:1px solid #d7b66d;border-radius:12px;padding:10px;margin-top:10px;text-align:center"><div style="font-weight:900;color:#ffe3a0">بازی بعدی به‌صورت خودکار آغاز می‌شود</div><div id="localRematchClock" style="font-size:28px;font-weight:900;color:#ffe39a;margin:5px">۱۵</div><div class="actions"><button id="localNextGame">بازی بعدی</button><button id="localExtendRematch" class="secondary">تمدید ۱۵ ثانیه</button></div></div><p class="muted">گروه اول از دست اول آغاز می‌شود: اولین توالی معتبرِ برد دو دست پیاپی توسط یک بازیکن، از توالی دست سوم و چهارم به بعد، کل دست‌های انجام‌شده تا همان لحظه را به تیم او می‌دهد؛ مثلاً اگر توالی در دست چهارم و پنجم رخ دهد، هر پنج دست گروه اول محسوب می‌شود. گروه‌های بعدی نیز از دست بعدی آغاز می‌شوند. اگر تا پایان دست سیزدهم توالی معتبری شکل نگیرد، برنده دست سیزدهم تمام دست‌های باقی‌مانده را می‌برد.</p><div class="history" id="history"></div></section>
+<section class="panel"><h3 class="section-title">محدوده این نسخه آزمایشی</h3><div class="rules">این نسخه شامل میز چهار نفره و میز شش نفره کوت کویتی است. در حالت شش نفره، مزایده، قراردادهای نرس و تک نرس و سرس، ملزوم، حکم مخفی، جوکرها، بازی ۹ دست و بازیکنان هوش مصنوعی فعال هستند. بازی آنلاین چندنفره هنوز فعال نیست.</div></section>
+</main>
+<script src="./engines/standard-hokm/engine.js"></script>
+<script src="./anonymous-learning.js"></script>
+<script src="./engines/kuwaiti-six-player/engine.js"></script>
+<script src="./engines/double-kout-sequence.js"></script>
+<script src="./engines/double-kout-game.js"></script>
+<script>
+const suits=['♠','♥','♦','♣'],ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'],rankVal=Object.fromEntries(ranks.map((r,i)=>[r,i]));
+let G=null, matchNo=1, previousWinner=null, previousStarter=null, activeMode='double-kout', playStyle='ai', hotseatRevealed=false, humanSeats=new Set([0]), KuwaitiPreviewGame=null, challengeStats={winA:0,loseA:0,winB:0,loseB:0},localRematchDeadline=0,lastLocalRematchBeep=-1,localRematchBusy=false;
+const $=id=>document.getElementById(id), fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]), team=p=>p%2===0?'A':'B';
+const names=['شما · جنوب','شرق · حریف','هم‌تیمی · شمال','غرب · حریف'];
+// Audio and Persian player voice. Audio starts after the first user tap (mobile browser policy).
+let soundEnabled=true,audioCtx=null,lastVoiceAt=0;
+function audioReady(){if(!soundEnabled)return null;try{const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return null;audioCtx=audioCtx||new Ctx();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx}catch(e){return null}}
+function tone(freq=520,duration=.075,wave='triangle',volume=.045,delay=0){const ctx=audioReady();if(!ctx)return;const osc=ctx.createOscillator(),gain=ctx.createGain(),t=ctx.currentTime+delay;osc.type=wave;osc.frequency.setValueAtTime(freq,t);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.008);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(ctx.destination);osc.start(t);osc.stop(t+duration+.02)}
+function shortNoise(duration=.075,volume=.075,frequency=1100){
+ const ctx=audioReady();if(!ctx)return;
+ const length=Math.max(1,Math.floor(ctx.sampleRate*duration)),buffer=ctx.createBuffer(1,length,ctx.sampleRate),data=buffer.getChannelData(0);
+ for(let i=0;i<length;i++)data[i]=(Math.random()*2-1)*(1-i/length);
+ const src=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
+ src.buffer=buffer;filter.type='lowpass';filter.frequency.value=frequency;
+ gain.gain.setValueAtTime(volume,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+duration);
+ src.connect(filter);filter.connect(gain);gain.connect(ctx.destination);src.start();src.stop(ctx.currentTime+duration);
+}
+function playCardSound(){shortNoise(.085,.10,1450);tone(190,.075,'sine',.07,.008);tone(620,.035,'triangle',.018,.02)}
+function shuffleSound(){shortNoise(.22,.055,2200);[0,1,2,3].forEach((n)=>tone(280+n*70,.07,'triangle',.025,n*.045))}
+const voiceLines={
+ ace:['بگیر که اومد!'],
+ aceCut:['تک منو می‌بری؟'],
+ collect:['دارم براتون!'],
+ win:['گرفتمش!','اینم از این دست!','دیدی گفتم می‌برم؟'],
+ lose:['این یکی از دستم در رفت!','باشه، دست بعدی!']
+};
+function speakPlayer(kind='play',player=1){
+ if(!soundEnabled||!('speechSynthesis'in window)||Date.now()-lastVoiceAt<1100)return;
+ try{
+   const requested=voiceLines&&voiceLines[kind];
+   const fallback=voiceLines&&voiceLines.play;
+   const pool=Array.isArray(requested)&&requested.length?requested:(Array.isArray(fallback)&&fallback.length?fallback:['کارت بازی شد!']);
+   const line=pool[Math.floor(Math.random()*pool.length)];
+   const voices=window.speechSynthesis.getVoices();
+   const voice=voices.find(v=>/^fa([-_]|$)/i.test(v.lang))||voices.find(v=>/persian|farsi/i.test(v.name));
+   const u=new SpeechSynthesisUtterance(line);u.lang=voice?voice.lang:'fa-IR';if(voice)u.voice=voice;
+   u.rate=.98;u.pitch=player%2?1.08:.91;u.volume=1;
+   window.speechSynthesis.speak(u);lastVoiceAt=Date.now();
+ }catch(e){console.warn('Player voice announcement skipped:',e);}
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function bestTrump(hand){let counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));return [...suits].sort((a,b)=>counts[b]-counts[a])[0]}
+function dealGame(trump,stagedOverride){
+ let starter=matchNo>1&&previousStarter!==null?previousStarter:Number($('starter').value),hands=[],pendingDeck=[];
+ const selected=$('hokmContract').value;
+ const staged=typeof stagedOverride==='boolean'?stagedOverride:matchNo>1;
+ let deck=window.StandardHokmEngine.shuffle(window.StandardHokmEngine.createDeck());
+ if(staged){
+  hands=[[],[],[],[]];
+  for(let i=0;i<20;i++)hands[i%4].push({...deck[i],s:({'S':'♠','H':'♥','D':'♦','C':'♣'})[deck[i].suit],r:deck[i].rank});
+  pendingDeck=deck.slice(20).map(c=>({...c,s:({'S':'♠','H':'♥','D':'♦','C':'♣'})[c.suit],r:c.rank}));
+ }else{
+  hands=[[],[],[],[]];
+  deck.forEach((c,i)=>hands[i%4].push({...c,s:({'S':'♠','H':'♥','D':'♦','C':'♣'})[c.suit],r:c.rank}));
+ }
+ const initialHands=hands.map(hand=>hand.slice());
+ hands.forEach(hand=>hand.sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]));
+ G={mode:activeMode,hands,initialHands,pendingDeck,cardHistory:[],trump:staged?null:trump,contract:'hokm',trumpCode:null,leader:starter,hakemPlayer:starter,turn:starter,trickNo:1,plays:[],trickWinners:[],groupCards:[],groupStartIndex:0,sequenceClearCards:[],sequenceClearUntil:0,scoreA:0,scoreB:0,challenge:null,challengeResult:null,challengeResolved:false,history:[],done:false,waitingChallenge:false,waitingTrump:staged};
+ $('setup').classList.add('hidden');$('game').classList.remove('hidden');
+ $('trumpBig').textContent=staged?'در انتظار انتخاب حکم':(trump||'♠');
+ $('trumpBig').style.color='#e7c879';
+ $('challengePanel').style.display='none';$('trumpPicker').classList.toggle('hidden',!staged);
+ 
+ $('status').textContent=staged?'پنج کارت اول پخش شد؛ حاکم کارت‌های خود را می‌بیند و حکم را انتخاب می‌کند.':'کارت‌ها پخش شدند.';
+ if(staged){
+  $('hakimPreview').innerHTML='';
+  G.hands[starter].forEach(c=>$('hakimPreview').append(cardEl(c,true)));
+  $('trumpPicker').classList.remove('hidden');
+  const humanHakem=starter===0||(playStyle==='hotseat'&&humanSeats.has(starter));
+  if(!humanHakem){
+   // Never flash an AI player's private five cards or leave a visible picker.
+   $('hakimPreview').innerHTML='';
+   $('trumpPicker').classList.add('hidden');
+   $('nextContract').value=aiChooseFourPlayerContract(G.hands[starter]);
+   confirmTrump();
+  }else{
+   $('nextContract').value='';
+   $('status').textContent=starter===0?'پنج کارت اول شما نمایش داده شد؛ حکم را انتخاب کن.':'پنج کارت اول حاکم نمایش داده شد؛ گوشی را به او بده تا حکم را انتخاب کند.';
+  }
+ }else{
+  $('trumpPicker').classList.add('hidden');render();
+  if(activeMode==='double-kout'){G.waitingChallenge=true;$('challengePanel').style.display='block';$('status').textContent='حکم بازی اول پیک است؛ بازی عادی یا چلنج را انتخاب کن.';}
+  else { $('status').textContent='حکم بازی اول پیک است؛ بازی آغاز شد.';runAI(); }
+ }
+ updateChallengeStats();
+}
+function aiChooseFourPlayerContract(hand){
+ const difficulty=$('difficulty').value;
+ const suits=['♠','♥','♦','♣'],counts=Object.fromEntries(suits.map(s=>[s,hand.filter(c=>c.s===s).length]));
+ const power=c=>({A:5,K:4,Q:3,J:2,10:1.2,9:.5}[c.r]||0);
+ const suitScores=suits.map(s=>({s,count:counts[s],score:counts[s]*1.7+hand.filter(c=>c.s===s).reduce((n,c)=>n+power(c),0)})).sort((a,b)=>b.score-a.score);
+ const highs=hand.filter(c=>['A','K','Q'].includes(c.r)).length;
+ const twos=hand.filter(c=>c.r==='2').length;
+ const balanced=Math.max(...Object.values(counts))<=2;
+ // Four-player mode has no numeric auction: the AI selects its contract
+ // after seeing five cards. Difficulty changes how readily it chooses
+ // a no-trump contract rather than a trump suit.
+ const thresholds={
+  easy:{saras:3,naras:2,tak:2},
+  normal:{saras:4,naras:3,tak:3},
+  hard:{saras:5,naras:4,tak:4},
+  expert:{saras:5,naras:4,tak:5}
+ }[difficulty]||{saras:4,naras:3,tak:3};
+ if(highs>=thresholds.saras&&balanced)return 'saras';
+ if(twos>=thresholds.naras)return 'naras';
+ if(highs>=thresholds.tak&&balanced)return 'tak_naras';
+ return ({'♠':'hokm_spades','♥':'hokm_hearts','♦':'hokm_diamonds','♣':'hokm_clubs'})[suitScores[0].s];
+}
+function startGame(){
+ playStyle=$('playStyle').value;hotseatRevealed=false;
+ humanSeats=playStyle==='hotseat'?new Set([...document.querySelectorAll('#humanSeatChoices input:checked')].map(x=>Number(x.value))):new Set([0]);
+ if(playStyle==='hotseat'&&!humanSeats.size){$('status').textContent='برای شروع، دست‌کم یک صندلی انسانی انتخاب کن.';return;}
+ if(playStyle==='online'){ if(window.DoubleKoutOnline&&typeof window.DoubleKoutOnline.open==='function'){window.DoubleKoutOnline.open();}else{$('onlineSetupInfo').classList.remove('hidden');$('onlineSetupInfo').textContent='ماژول اتاق آنلاین بارگذاری نشده است؛ صفحه را تازه‌سازی کن.';}return;}
+ $('onlineSetupInfo').classList.add('hidden');
+ const starterSelect=$('starter');
+ if(matchNo>1&&previousStarter!==null){starterSelect.value=String(previousStarter);starterSelect.disabled=true;}else starterSelect.disabled=false;
+ let selected=$('hokmContract').value;
+ if(matchNo===1){selected='hokm_spades';$('hokmContract').value=selected;$('hokmContract').disabled=true;}
+ else {$('nextContract').value='';/* Hakem must choose after seeing the first five cards. */}
+ const selectedName={hokm_spades:'پیک',hokm_hearts:'دل',hokm_diamonds:'خشت',hokm_clubs:'گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',partner_middle:'برگ وسط یار'}[selected]||'حکم';
+ dealGame(null);
+ $('challengePanel').style.display='none';
+ $('trumpPicker').classList.add('hidden');
+ if(matchNo>1){
+  G.contract='hokm';G.trump=null;G.trumpCode=null;G.waitingTrump=true;
+  $('trumpPicker').classList.remove('hidden');
+  
+  $('status').textContent='پنج کارت اول پخش شد؛ نوع قرارداد را انتخاب کن. سپس هشت کارت باقی‌مانده پخش می‌شود.';
+  $('trumpBig').textContent='در انتظار انتخاب قرارداد';render();return;
+ }
+ G.contract='hokm';G.trump='♠';G.trumpCode='S';G.waitingTrump=false;
+ 
+ if(activeMode==='double-kout'){
+  $('challengePanel').style.display='block';$('status').textContent='بازی اول با حکم ثابت پیک آغاز می‌شود؛ بازی عادی یا چلنج را انتخاب کن.';render();return;
+ }
+ $('status').textContent='بازی اول با حکم ثابت پیک آغاز شد.';render();runAI();
+}
+function beginNormalOrChallenge(challengerTeam){
+ if(!G||G.done||activeMode!=='double-kout')return;
+ G.challenge=challengerTeam==='A'?'A':null;
+ G.waitingChallenge=false;hotseatRevealed=false;
+ $('challengePanel').style.display='none';
+ $('status').textContent=G.challenge?'چلنج آغاز شد؛ تیم شما باید شرط چلنج را کامل کند.':'بازی عادی آغاز شد.';
+ render();runAI();
+}
+function confirmTrump(){
+ if(!G||!G.waitingTrump)return;
+ const contract=$('nextContract').value;
+ if(!contract){$('status').textContent='ابتدا پس از دیدن پنج کارت، حکم یا نوع قرارداد را انتخاب کن.';return;}
+ const noTrump=['naras','tak_naras','saras'].includes(contract);
+ let suit=null;
+ if(contract.startsWith('hokm_'))suit=({'hokm_spades':'♠','hokm_hearts':'♥','hokm_diamonds':'♦','hokm_clubs':'♣'})[contract];
+ else if(contract==='partner_middle'){
+  const partner=(G.leader+2)%4,mid=G.initialHands[partner][2];
+  suit=mid?mid.s:'♠';
+ }
+ G.contract=noTrump?contract:'hokm';
+ G.trump=suit;G.trumpCode=suit?({'♠':'S','♥':'H','♦':'D','♣':'C'})[suit]:null;
+ G.hands.forEach(hand=>{G.pendingDeck.splice(0,8).forEach(c=>hand.push(c));hand.sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rankVal[a.r]-rankVal[b.r]);});
+ G.pendingDeck=[];G.initialHands=G.hands.map(hand=>hand.slice());G.cardHistory=[];G.waitingTrump=false;$('trumpPicker').classList.add('hidden');
+ 
+ $('trumpBig').textContent=noTrump?'بدون حکم · '+({naras:'نرس',tak_naras:'تک نرس',saras:'سرس'})[contract]:(contract==='partner_middle'?'برگ وسط یار · '+suit:suit);
+ $('trumpBig').style.color=suit&&['♥','♦'].includes(suit)?'#f17b7b':'#e7c879';
+ if(activeMode==='double-kout'){
+  G.waitingChallenge=true;$('challengePanel').style.display='block';
+  $('status').textContent='قرارداد '+({hokm_spades:'حکم پیک',hokm_hearts:'حکم دل',hokm_diamonds:'حکم خشت',hokm_clubs:'حکم گشنیز',naras:'نرس',tak_naras:'تک نرس',saras:'سرس',partner_middle:'برگ وسط یار'})[contract]+' انتخاب شد؛ بازی عادی یا چلنج را انتخاب کن.';
+  render();return;
+ }
+ $('status').textContent='قرارداد '+contract+' انتخاب شد؛ بازی آغاز شد.';
+ render();runAI();
+}
+function legalCards(p){let h=G.hands[p];if(activeMode==='standard-hokm'){const lead=G.plays.length?G.plays[0].card.suit:null;return window.StandardHokmEngine.legalCards(h,lead)}if(!G.plays.length)return h;let lead=G.plays[0].card.s;let follow=h.filter(c=>c.s===lead);return follow.length?follow:h}
+function cardRank(c){if(!c)return undefined;if(c.r!==undefined)return c.r;if(c.rank!==undefined)return c.rank;return typeof c.id==='string'?c.id.slice(0,-1):undefined}
+function cardSuit(c){if(!c)return undefined;if(c.s!==undefined)return c.s;if(c.suit)return ({'S':'♠','H':'♥','D':'♦','C':'♣'})[c.suit];return typeof c.id==='string'?({'S':'♠','H':'♥','D':'♦','C':'♣'})[c.id.slice(-1)]:undefined}
+function beats(a,b,lead){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.beats({suit:code[cardSuit(a)],rank:cardRank(a)},{suit:code[cardSuit(b)],rank:cardRank(b)},code[lead],G.trumpCode,G.contract||'hokm')}
+function winner(plays){const code={'♠':'S','♥':'H','♦':'D','♣':'C'};return window.StandardHokmEngine.resolveTrick(plays.map(p=>({player:p.player,card:{suit:code[cardSuit(p.card)],rank:cardRank(p.card)}})),G.trumpCode,G.contract||'hokm')}
+function play(p,card){
+  if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||p!==G.turn)return;
+  if(playStyle==='hotseat'&&humanSeats.has(p)&&!hotseatRevealed)return;
+  try{
+    let allowed=legalCards(p);
+    if(!allowed.some(c=>c.id===card.id))return;
+    if(window.DoubleKoutLearning&&(playStyle==='hotseat'?humanSeats.has(p):p===0)){
+      const legalNow=legalCards(p),own=team(p)==='A';
+      const current=G.plays.length?G.plays.reduce((best,x)=>beats(x.card,best.card,G.plays[0].card.s)?x:best):null;
+      window.DoubleKoutLearning.capture({mode:activeMode==='standard-hokm'?'standard-hokm':'double-kout',playerCount:4,player:p,
+       hand:G.hands[p],legalCards:legalNow,chosen:card,plays:G.plays,contract:G.contract||'hokm',trumpSuit:G.trumpCode,
+       trickNo:G.trickNo,ownScore:own?G.scoreA:G.scoreB,opponentScore:own?G.scoreB:G.scoreA,
+       sequenceMode:activeMode==='double-kout',partnerWinning:!!(current&&team(current.player)===team(p))});
+    }
+    G.hands[p]=G.hands[p].filter(c=>c.id!==card.id);
+    if(!Array.isArray(G.cardHistory))G.cardHistory=[];
+    G.cardHistory.push({player:p,card:{...card},trickNo:G.trickNo});
+    G.plays.push({player:p,card});
+    playCardSound();if(p!==0&&card.r==='A')speakPlayer('ace',p);
+    if(G.plays.length===4){
+      G.trickCompletePending=true;G.turn=null;render();
+      setTimeout(()=>{try{resolveTrick()}catch(e){G.trickCompletePending=false;$('status').textContent='خطا در تعیین برنده دست: '+(e&&e.message?e.message:'نامشخص');console.error(e)}},2800);
+    }else{
+      G.turn=(p+1)%4;hotseatRevealed=false;render();runAI();
+    }
+  }catch(e){
+    $('status').textContent='خطا در اجرای کارت: '+(e&&e.message?e.message:'نامشخص');
+    console.error('Card play failed',e);
+  }
+}
+function resolveTrick(){
+ if(!G||G.done||G.plays.length!==4||G.resolvingTrick)return;
+ G.resolvingTrick=true;G.trickCompletePending=false;
+ let w=winner(G.plays),n=G.trickNo;
+ const leadCard=G.plays[0]?.card,winningPlay=G.plays.find(x=>x.player===w),winningCard=winningPlay?.card;
+ const aceCut=leadCard?.r==='A'&&winningCard&&cardSuit(winningCard)!==cardSuit(leadCard)&&cardSuit(winningCard)===G.trump;
+ if(team(w)==='B'&&aceCut)speakPlayer('aceCut',w);
+ else if(team(w)==='B')speakPlayer('collect',w);
+ G.trickWinners.push(w);
+ if(window.DoubleKoutLearning)window.DoubleKoutLearning.complete(w,G.lastTrick,4);
+ G.lastTrick=G.plays.map(x=>({player:x.player,card:{...x.card}}));
+ let msg=`دست ${fa(n)} را ${names[w]} برد.`;tone(590,.09,'sine',.035);tone(790,.12,'triangle',.025,.08);
+ G.history.push(msg);
+ if(activeMode==='double-kout'){
+  G.groupCards=(G.groupCards||[]).concat(G.plays.map(x=>({player:x.player,card:{...x.card}})));
+  const wi=G.trickWinners.length-1,minimum=Math.max(3,(G.groupStartIndex||0)+1);
+  const repeated=wi>0&&wi>=minimum&&G.trickWinners[wi]===G.trickWinners[wi-1];
+  const closes=G.challenge?repeated&&team(w)!==G.challenge:repeated;
+  if(closes){G.sequenceClearCards=G.groupCards.slice();G.groupCards=[];G.groupStartIndex=wi+1;G.sequenceClearUntil=Date.now()+900;setTimeout(()=>{if(G){G.sequenceClearCards=[];G.sequenceClearUntil=0;render();}},950);}
+ }
+ G.plays=[];G.trickNo++;G.leader=w;G.turn=w;G.resolvingTrick=false;hotseatRevealed=false;$('status').textContent=msg;render();
+ if(G.challenge){
+   const outcome=window.DoubleKoutSequence.evaluateChallenge(G.trickWinners,G.challenge);
+   if(outcome.status==='failed-opponent-sequence'||outcome.status==='success'||outcome.status==='failed-last-trick'){
+     G.challengeResult=outcome;finishGame();return;
+   }
+ }
+ if(G.trickNo>13){finishGame();return}runAI();
+}
+function addScore(t,n){if(t==='A')G.scoreA+=n;else G.scoreB+=n}
+function scoreNormal(){
+ if(activeMode==='standard-hokm'){if(G.trickWinners.length!==13)throw new Error('برای پایان بازی باید هر ۱۳ دست کامل شده باشد؛ تعداد فعلی: '+G.trickWinners.length);G.scoreA=G.trickWinners.filter(p=>team(p)==='A').length;G.scoreB=G.trickWinners.filter(p=>team(p)==='B').length;G.history.push('امتیاز بر اساس تعداد واقعی دست‌های برده‌شده محاسبه شد.');return;}
+ const result=window.DoubleKoutSequence.scoreSequence(G.trickWinners);
+ G.scoreA=result.scores.A;G.scoreB=result.scores.B;
+ const teamName=t=>t==='A'?'تیم شما':'تیم حریف';
+ result.groups.forEach(g=>{
+   const reason=g.reason==='sequence'?'با اولین توالی معتبر':'به دلیل برنده شدن دست سیزدهم';
+   G.history.push(`دست‌های ${g.from} تا ${g.to} (${g.count} دست) به ${teamName(g.team)} رسید؛ ${reason}.`);
+ });
+}
+const GLOBAL_STATS_KEY='doubleKout.globalStats.v1';
+function readGlobalStats(){try{return JSON.parse(localStorage.getItem(GLOBAL_STATS_KEY))||{double:{played:0,wins:0,losses:0,draws:0},hokm:{played:0,wins:0,losses:0,draws:0},challenge:{played:0,wins:0,losses:0}}}catch(e){return {double:{played:0,wins:0,losses:0,draws:0},hokm:{played:0,wins:0,losses:0,draws:0},challenge:{played:0,wins:0,losses:0}}}}
+function writeGlobalStats(x){try{localStorage.setItem(GLOBAL_STATS_KEY,JSON.stringify(x))}catch(e){console.warn('Could not save global stats',e)}}
+function recordGlobalGame(){
+ if(!G||G.statsRecorded)return;
+ const st=readGlobalStats(),key=activeMode==='standard-hokm'?'hokm':'double';
+ if(G.challenge){st.challenge.played++;const ok=G.challengeResult&&G.challengeResult.status==='success';if(ok)st.challenge.wins++;else st.challenge.losses++;}
+ else{st[key].played++;const a=G.scoreA,b=G.scoreB;if(a===b)st[key].draws++;else if(a>b)st[key].wins++;else st[key].losses++;}
+ G.statsRecorded=true;writeGlobalStats(st);
+}
+function showGlobalStats(){
+ const st=readGlobalStats(),fmt=x=>fa(x||0);
+ $('globalStatsReport').innerHTML='<b>دابل کوت توالی</b><br>بازی‌ها: '+fmt(st.double.played)+' · برد: '+fmt(st.double.wins)+' · باخت: '+fmt(st.double.losses)+' · مساوی: '+fmt(st.double.draws)+'<hr><b>حکم معمولی</b><br>بازی‌ها: '+fmt(st.hokm.played)+' · برد: '+fmt(st.hokm.wins)+' · باخت: '+fmt(st.hokm.losses)+' · مساوی: '+fmt(st.hokm.draws)+'<hr><b>چلنج</b><br>تعداد: '+fmt(st.challenge.played)+' · موفق: '+fmt(st.challenge.wins)+' · ناموفق: '+fmt(st.challenge.losses);
+ $('globalStatsPanel').classList.remove('hidden');
+}
+function hideLocalRematch(){
+ localRematchDeadline=0;lastLocalRematchBeep=-1;
+ const panel=$('localRematchPanel');if(panel)panel.style.display='none';
+}
+function startNextLocalGame(){
+ if(!G||!G.done||localRematchBusy)return;
+ localRematchBusy=true;hideLocalRematch();
+ matchNo++;G=null;startGame();
+ localRematchBusy=false;
+}
+function renderLocalRematchClock(){
+ const panel=$('localRematchPanel'),clock=$('localRematchClock');
+ if(!panel||!clock)return;
+ if(!localRematchDeadline){panel.style.display='none';return;}
+ panel.style.display='block';
+ const left=Math.max(0,Math.ceil((localRematchDeadline-Date.now())/1000));
+ clock.textContent=fa(left)+' ثانیه';
+ clock.style.color=left<=5?'#ff7777':'#ffe39a';
+ if(left>0&&left<=15&&left!==lastLocalRematchBeep){lastLocalRematchBeep=left;tone(880,.09,'sine',.07,0);}
+ if(left===0)startNextLocalGame();
+}
+setInterval(renderLocalRematchClock,200);
+function awardLocalAccountWin(winningTeam,mode){
+ const humanSeat=humanSeats.size===1?Array.from(humanSeats)[0]:-1;const humanTeam=humanSeat>=0?(humanSeat%2===0?'A':'B'):null;
+ if(!humanTeam||winningTeam!==humanTeam||!window.DoubleKoutProgress)return;
+ const id=G.centralGameId||(G.centralGameId=(window.crypto&&crypto.randomUUID?crypto.randomUUID():('local-'+Date.now()+'-'+Math.random().toString(36).slice(2))));
+ window.DoubleKoutProgress.awardLocalWin(id,mode).then(result=>window.DoubleKoutProgress.showAwardResult(result,'status'));
+}
+function finishGame(){
+ if(G.done)return;G.done=true;let centralWinningTeam=null;
+ if(activeMode==='double-kout'&&(G.groupCards||[]).length){G.sequenceClearCards=G.groupCards.slice();G.groupCards=[];G.sequenceClearUntil=Date.now()+900;setTimeout(()=>{if(G){G.sequenceClearCards=[];G.sequenceClearUntil=0;render();}},950);}
+ if(G.challenge){
+   const outcome=G.challengeResult||window.DoubleKoutSequence.evaluateChallenge(G.trickWinners,G.challenge);
+   G.challengeResult=outcome;
+   if(outcome.status==='success'){
+     challengeStats.winA++;
+     G.history.push('چلنج با موفقیت انجام شد؛ یک امتیاز مستقل برای تیم شما ثبت شد.');
+     $('status').innerHTML='<span class="winner">چلنج موفق شد؛ تیم شما هر ۱۳ دست را کامل کرد.</span>';
+     previousWinner='A';previousStarter=lastPlayerOfTeam(G.trickWinners,'A',G.leader);centralWinningTeam='A';
+   }else{
+     challengeStats.loseA++;
+     const reason=outcome.status==='failed-opponent-sequence'
+       ?`حریف در دست ${fa(outcome.endedAtTrick)} توالی معتبر ساخت؛ چلنج همان لحظه شکست خورد.`
+       :'تیم شما دست سیزدهم را نبرد؛ چلنج ناموفق شد.';
+     G.history.push(reason);
+     $('status').innerHTML='<span class="winner">چلنج شکست خورد؛ امتیاز مستقل چلنج ثبت شد.</span> '+reason;
+     previousWinner='B';previousStarter=lastPlayerOfTeam(G.trickWinners,'B',G.leader);centralWinningTeam='B';
+   }
+ }else{
+   scoreNormal();
+   const winnerTeam=G.scoreA===G.scoreB?'مساوی':G.scoreA>G.scoreB?'تیم شما':'تیم حریف';
+   const kout=activeMode==='standard-hokm'?window.StandardHokmEngine.koutMessage(G.scoreA,G.scoreB,G.hakemPlayer):null;
+   if(kout)G.history.push(kout+'؛ نتیجه ۱۳ بر صفر ثبت شد.');
+   $('status').innerHTML=`بازی تمام شد. <span class="winner">${kout||winnerTeam} · ${fa(G.scoreA)} دست به ${fa(G.scoreB)} دست</span>`;
+   const winningTeam=G.scoreA===G.scoreB?previousWinner:(G.scoreA>G.scoreB?'A':'B');
+   if(winningTeam){previousWinner=winningTeam;previousStarter=lastPlayerOfTeam(G.trickWinners,winningTeam,G.leader);if(G.scoreA!==G.scoreB)centralWinningTeam=winningTeam;}
+ }
+ recordGlobalGame();updateChallengeStats();render();if(centralWinningTeam)awardLocalAccountWin(centralWinningTeam,activeMode);
+ $('history').innerHTML=G.history.slice(-18).reverse().join('<br>');
+ $('newGame').textContent='بازی بعدی';
+ localRematchDeadline=Date.now()+15000;lastLocalRematchBeep=-1;renderLocalRematchClock();
+}
+function lastPlayerOfTeam(winners,winningTeam,fallback){
+ for(let i=(winners||[]).length-1;i>=0;i--){if(team(winners[i])===winningTeam)return winners[i];}
+ return fallback??(winningTeam==='A'?0:1);
+}
+function updateChallengeStats(){
+ const winA=$('challengeWinA'),loseA=$('challengeLoseA'),winB=$('challengeWinB'),loseB=$('challengeLoseB');
+ if(winA)winA.textContent=fa(challengeStats.winA);if(loseA)loseA.textContent=fa(challengeStats.loseA);
+ if(winB)winB.textContent=fa(challengeStats.winB);if(loseB)loseB.textContent=fa(challengeStats.loseB);
+}
+function aiChoose(p){
+  const legal=legalCards(p),difficulty=$('difficulty').value;
+  if(difficulty==='easy')return legal[Math.floor(Math.random()*legal.length)];
+  if(activeMode==='standard-hokm'||activeMode==='double-kout'||difficulty==='hard'||difficulty==='expert'){
+    const code={'♠':'S','♥':'H','♦':'D','♣':'C'};
+    const plays=G.plays.map(x=>({player:x.player,card:{suit:code[cardSuit(x.card)],rank:cardRank(x.card)}}));
+    return window.StandardHokmEngine.chooseAICard(G.hands[p],plays,p,G.trumpCode,difficulty,G.contract||'hokm',G.cardHistory||[],G.initialHands[p],G.lastTrick||[],G.trickWinners?.[G.trickWinners.length-1],team(p)===team(G.hakemPlayer),activeMode==='double-kout',activeMode,G.trickNo);
+  }
+  const lead=G.plays.length?G.plays[0].card.s:null;
+  const current=G.plays.length?G.plays.reduce((best,x)=>beats(x.card,best.card,lead)?x:best):null;
+  const partnerWinning=current!==null&&team(current.player)===team(p);
+  const original=new Set((G.initialHands[p]||G.hands[p]).map(c=>c.id));
+  const seen=new Set((G.cardHistory||[]).map(x=>x.card.id));
+  const unseen=window.StandardHokmEngine.createDeck().filter(c=>!original.has(c.id)&&!seen.has(c.id));
+  const power=c=>window.StandardHokmEngine.rankPower(cardRank(c),G.contract||'hokm');
+  const threatCount=c=>unseen.filter(x=>x.suit===({'♠':'S','♥':'H','♦':'D','♣':'C'})[cardSuit(c)]&&window.StandardHokmEngine.rankPower(x.rank,G.contract||'hokm')>power(c)).length;
+  const sorted=[...legal].sort((a,b)=>power(a)-power(b));
+  if(!lead){
+   const choices=legal.map(c=>{const length=G.hands[p].filter(x=>cardSuit(x)===cardSuit(c)).length;const threats=threatCount(c);return {c,score:power(c)-(length>=3?length*2:0)-(threats===0?14:threats===1?6:0)};}).sort((a,b)=>a.score-b.score);
+   return choices[0].c;
+  }
+  const top=G.plays.reduce((best,x)=>beats(x.card,best.card,lead)?x:best).card;
+  const winners=sorted.filter(c=>beats(c,top,lead,G.trumpCode,G.contract||'hokm'));
+  const losers=sorted.filter(c=>!beats(c,top,lead,G.trumpCode,G.contract||'hokm'));
+  if(partnerWinning)return losers[0]||sorted[0];
+  if(winners.length)return winners.sort((a,b)=>threatCount(a)-threatCount(b)||power(a)-power(b))[0];
+  return sorted[0];
+}
+function runAI(){
+  if(playStyle==='online')return;
+  if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||(playStyle==='hotseat'?humanSeats.has(G.turn):G.turn===0))return;
+  setTimeout(()=>{
+    if(!G||G.done||G.waitingChallenge||G.waitingTrump||G.trickCompletePending||G.plays.length>=4||(playStyle==='hotseat'?humanSeats.has(G.turn):G.turn===0))return;
+    const p=G.turn;
+    try{
+      let c;
+      try{c=aiChoose(p)}catch(aiError){
+        const lead=G.plays.length?G.plays[0].card.suit:null;
+        const legal=activeMode==='standard-hokm'
+          ?window.StandardHokmEngine.legalCards(G.hands[p],lead)
+          :legalCards(p);
+        c=legal[0];
+        console.warn('AI fallback card selected',aiError);
+      }
+      if(!c)throw new Error('برای بازیکن '+p+' کارت مجاز پیدا نشد');
+      play(p,c);
+    }catch(e){
+      $('status').textContent='خطای نوبت هوش مصنوعی: '+(e&&e.message?e.message:'نامشخص')+' · بازی متوقف شد؛ بازی جدید را آغاز کن.';
+      console.error('AI turn failed',e);
+    }
+  },550)
+}
+function royalPortrait(rank){
+ const p=rank==='K'?{coat:'#173e72',light:'#d9b45d',hair:'#49301f'}:rank==='Q'?{coat:'#8c2854',light:'#f0c66c',hair:'#38233b'}:{coat:'#17644e',light:'#e0b85d',hair:'#57351f'};
+ const head=rank==='K'
+  ? '<path d="M20 34Q16 14 32 13Q48 14 44 34L41 46Q32 54 23 46Z" fill="#e9b98d" stroke="#6b402d" stroke-width="1.2"/><path d="M20 34Q17 18 25 14Q36 7 44 20L43 35L39 29L35 33L30 28L24 34Z" fill="'+p.hair+'"/><path d="M22 42Q32 49 42 42L40 53Q32 61 24 53Z" fill="'+p.hair+'"/><path d="M25 37h5M35 37h5" stroke="#34251e" stroke-width="1.7" stroke-linecap="round"/><path d="M29 45Q32 47 35 45" stroke="#8d4939" fill="none" stroke-width="1"/>'
+  : rank==='Q'
+  ? '<path d="M19 34Q15 13 32 13Q49 13 45 35L43 51Q32 61 21 51Z" fill="#f0c39e" stroke="#80543b" stroke-width="1.2"/><path d="M19 39Q12 22 20 15Q30 5 42 14Q52 22 45 43L41 31L37 24L31 30L25 24L22 34Z" fill="'+p.hair+'"/><path d="M26 38h4M35 38h4" stroke="#402b29" stroke-width="1.6" stroke-linecap="round"/><path d="M29 47Q32 49 35 47" stroke="#a34c56" fill="none" stroke-width="1.2"/><path d="M23 52Q32 59 41 52" stroke="#e7bd91" stroke-width="3" fill="none"/>'
+  : '<path d="M21 34Q17 15 32 14Q47 15 43 35L41 48Q32 56 23 48Z" fill="#efc39b" stroke="#76513a" stroke-width="1.2"/><path d="M20 31Q17 16 30 12Q43 8 46 23L42 29L36 22L29 27L24 23Z" fill="'+p.hair+'"/><path d="M25 38h4M35 38h4" stroke="#34251e" stroke-width="1.6" stroke-linecap="round"/><path d="M26 45Q32 50 38 45" stroke="#8d4939" fill="none" stroke-width="1.2"/>';
+ const crown=rank==='K'
+  ? '<path d="M17 20L14 6L24 14L32 3L40 14L50 6L47 21Z" fill="#e7bf55" stroke="#78521f" stroke-width="1.8"/><circle cx="32" cy="8" r="2" fill="#b52f48"/>'
+  : rank==='Q'
+  ? '<path d="M17 20Q16 5 25 12L32 3L39 12Q48 5 47 20Z" fill="#e7bf55" stroke="#78521f" stroke-width="1.8"/><circle cx="32" cy="12" r="3" fill="#bd3c64"/><circle cx="22" cy="15" r="2" fill="#4c8bb5"/><circle cx="42" cy="15" r="2" fill="#4c8bb5"/>'
+  : '<path d="M17 22Q13 7 29 9Q42 4 48 17L45 24L34 18L24 24Z" fill="#d7b05a" stroke="#765024" stroke-width="1.8"/><path d="M39 13Q52 1 51 5Q49 18 43 23" fill="#b33e47" stroke="#76252c" stroke-width="1.2"/>';
+ return '<svg class="royal-art" viewBox="0 0 64 76" role="img" aria-label="'+({K:'شاه',Q:'بی‌بی',J:'سرباز'})[rank]+'"><defs><linearGradient id="robe'+rank+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+p.coat+'"/><stop offset="1" stop-color="#101b2c"/></linearGradient></defs><rect x="2" y="2" width="60" height="72" rx="8" fill="#f4e7c8" stroke="#a37a3c" stroke-width="1.8"/><path d="M7 70Q9 53 21 49L32 55L43 49Q55 53 57 70Z" fill="url(#robe'+rank+')" stroke="#4b3928" stroke-width="1.5"/><path d="M21 50L32 61L43 50L40 70H24Z" fill="'+p.light+'" opacity=".9"/><path d="M15 69Q18 57 24 56L32 65L40 56Q47 58 49 69" fill="none" stroke="#f6df9a" stroke-width="2"/>'+head+crown+'<path d="M28 52L32 57L36 52" fill="none" stroke="#fff0c4" stroke-width="2"/><path d="M9 9H55M9 66H55" stroke="#b48b4a" stroke-width=".8" opacity=".75"/><circle cx="12" cy="12" r="2" fill="#c9a45d"/><circle cx="52" cy="12" r="2" fill="#c9a45d"/><circle cx="12" cy="64" r="2" fill="#c9a45d"/><circle cx="52" cy="64" r="2" fill="#c9a45d"/></svg>';
+}
+
+var visualChoice={back:'black',table:'marble',layout:'arc'};
+function setCardCustomization(){
+ document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','six-layout-arc','six-layout-hex','six-layout-wide');
+ document.body.classList.add('deck-back-'+visualChoice.back,'table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
+ try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({back:visualChoice.back,table:visualChoice.table,layout:visualChoice.layout,v:2}));}catch(e){}
+ document.querySelectorAll('#visualCustomizer .visual-choice').forEach(function(b){b.classList.toggle('selected',visualChoice[b.parentElement.dataset.kind]===b.dataset.value);});
+}
+function resetCardCustomization(){visualChoice={back:'black',table:'marble',layout:'arc'};setCardCustomization();}
+(function loadCardCustomization(){
+ let saved={};try{saved=JSON.parse(localStorage.getItem('doubleKoutCardStyle')||'{}')||{};}catch(e){}
+ visualChoice.back=saved.v===2&&['classic','red','black','green'].includes(saved.back)?saved.back:'black';
+ visualChoice.table=['felt','parquet','persian','marble','royal','casino'].includes(saved.table)?saved.table:'marble';
+ visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';setCardCustomization();
+})();
+(function(){
+ const modal=document.getElementById('visualCustomizer'),title=document.getElementById('customizerTitle'),stepLabel=document.getElementById('customizerStep');
+ const titles=['پشت کارت‌ها','میز بازی','چینش ۶ نفره'];
+ let step=0;
+ function showStep(n){step=Math.max(0,Math.min(2,n));modal.querySelectorAll('.customizer-page').forEach(p=>p.classList.toggle('hidden',Number(p.dataset.step)!==step));modal.querySelectorAll('[data-go-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.goStep)===step));title.textContent=titles[step];stepLabel.textContent=(step+1)+' از ۳';document.getElementById('customizerNext').classList.toggle('hidden',step===2);document.getElementById('customizerDone').classList.toggle('hidden',step!==2);modal.querySelectorAll('.customizer-rail .visual-choice').forEach(b=>{const rail=b.closest('[data-kind]');b.classList.toggle('selected',visualChoice[rail.dataset.kind]===b.dataset.value);});}
+ document.getElementById('openVisualCustomizer').addEventListener('click',()=>{modal.classList.remove('hidden');document.body.style.overflow='hidden';showStep(0);});
+ function close(){modal.classList.add('hidden');document.body.style.overflow='';}
+ document.getElementById('customizerClose').addEventListener('click',close);
+ modal.querySelectorAll('[data-go-step]').forEach(b=>b.addEventListener('click',()=>showStep(Number(b.dataset.goStep))));
+ modal.addEventListener('click',e=>{const b=e.target.closest('.customizer-rail .visual-choice');if(!b)return;const kind=b.closest('[data-kind]').dataset.kind;visualChoice[kind]=b.dataset.value;setCardCustomization();showStep(step);});
+ document.getElementById('customizerNext').addEventListener('click',()=>showStep(step+1));
+ document.getElementById('customizerDone').addEventListener('click',()=>{setCardCustomization();close();const picker=document.getElementById('modePicker');if(picker)picker.classList.remove('hidden');});
+})();
+function cardEl(c,small=false){
+ let d=document.createElement('div');
+ const rank=String(c.r||'');
+ d.className='card '+(['♥','♦'].includes(c.s)?'red':'')+(small?' small':'');
+ const corner='<span class="corner corner-top"><b>'+rank+'</b><i>'+c.s+'</i></span><span class="corner corner-bottom"><b>'+rank+'</b><i>'+c.s+'</i></span>';
+ let art='';
+  if(['K','Q','J'].includes(rank))art=royalPortrait(rank);
+ d.innerHTML='<span class="face-border" aria-hidden="true"></span>'+corner+'<span class="face-center">'+(art?'<span class="royal-frame">'+art+'</span>':'<span class="suit">'+c.s+'</span>')+'</span><span class="face-bottom-mark" aria-hidden="true">'+c.s+'</span>';
+ return d;
+}
+function liveSequenceScores(winners){
+ const scores={A:0,B:0};let start=0,searchFrom=3;
+ while(start<winners.length){let close=-1;for(let i=searchFrom;i<winners.length;i++){if(winners[i]===winners[i-1]){close=i;break;}}
+ if(close>=0){scores[team(winners[close])]+=close-start+1;start=close+1;searchFrom=start+1;}else{if(winners.length===13)scores[team(winners[12])]+=winners.length-start;break;}}
+ return scores;
+}
+function render(){
+ if(!G)return;
+ const gate=$('hotseatGate');if(gate){const hide=playStyle==='hotseat'&&humanSeats.has(G.turn)&&!hotseatRevealed&&!G.done;gate.classList.toggle('hidden',!hide);if(hide)$('hotseatGateText').textContent='گوشی را به '+(['بازیکن جنوب','بازیکن شرق','بازیکن شمال','بازیکن غرب'][G.turn]||'بازیکن بعدی')+' بدهید. پس از اینکه نفر قبلی دیگر صفحه را نمی‌بیند، دکمه زیر را بزنید.';}
+ const liveResult=activeMode==='double-kout'&&!G.challenge?liveSequenceScores(G.trickWinners||[]):null;
+ const liveA=liveResult?liveResult.A:(G.trickWinners||[]).filter(p=>team(p)==='A').length;
+ const liveB=liveResult?liveResult.B:(G.trickWinners||[]).filter(p=>team(p)==='B').length;
+ $('liveWonA').textContent=fa(liveA);$('liveWonB').textContent=fa(liveB);
+ $('scoreA').textContent=fa(liveA);$('scoreB').textContent=fa(liveB);const groupTricks=activeMode==='double-kout'?Math.max(0,(G.trickWinners||[]).length-Number(G.groupStartIndex||0)):Math.max(0,Math.min(13,G.trickNo)-1);$('groupTricksPlayed').textContent=fa(groupTricks);
+ const globalStats=readGlobalStats();$('gamesWonA').textContent=fa(globalStats.double.wins+globalStats.hokm.wins);$('gamesWonB').textContent=fa(globalStats.double.losses+globalStats.hokm.losses);
+ const handPlayer=playStyle==='hotseat'?G.turn:0;
+ for(let p=0;p<4;p++){
+  const seatName=$('seat'+p).querySelector('.name');if(seatName)seatName.textContent=playStyle==='hotseat'?(humanSeats.has(p)?'بازیکن انسانی':'هوش مصنوعی')+' · '+(['جنوب · هم‌تیمی','شرق · حریف','شمال · هم‌تیمی','غرب · حریف'][p]):names[p];
+  $('seat'+p).classList.toggle('active',G.turn===p);$('count'+p).textContent=p===0?'کارت شما: '+fa(G.hands[p].length):fa(G.hands[p].length)+' کارت';
+  let slot=$('played'+p);slot.innerHTML='';
+  if((playStyle==='hotseat'?(!humanSeats.has(p)||p!==G.turn):p!==0)&&G.hands[p].length){const fan=document.createElement('div');fan.className='opponent-fan';const n=G.hands[p].length;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='card back';const offset=j-(n-1)/2;back.style.transform='rotate('+(offset*2.8)+'deg) translateY('+(Math.abs(offset)*1.35)+'px)';back.style.zIndex=String(10+j);fan.append(back);}slot.append(fan);}
+ }
+ $('hand').innerHTML='';
+ $('hand').classList.toggle('challenge-thinking',!!G.waitingChallenge);
+ const centerTrick=$('centerTrick');if(centerTrick){centerTrick.innerHTML='';G.plays.forEach((x,i)=>{const played=cardEl(x.card,true);played.classList.add('table-played');played.style.setProperty('--play-index',i);centerTrick.append(played);});}
+ const pileNode=$('centerPile');if(pileNode){pileNode.innerHTML='';const clearing=Date.now()<Number(G.sequenceClearUntil||0);pileNode.classList.toggle('clearing',clearing);const pile=clearing?(G.sequenceClearCards||[]):(G.groupCards||[]);pile.forEach((x,i)=>{const c=cardEl(x.card||x,true);c.classList.add('pile-card');c.style.setProperty('--px',(((i%5)-2)*3)+'px');c.style.setProperty('--py',(((i%7)-3)*2)+'px');c.style.setProperty('--pr',((((i*17)%13)-6)*1.25)+'deg');c.style.zIndex=String(i+1);pileNode.append(c);});}
+ const handTitle=document.querySelector('#game h3.section-title');if(handTitle)handTitle.textContent=playStyle==='hotseat'?'کارت‌های بازیکن نوبت‌دار':'کارت‌های شما';
+ const handLegalCards=legalCards(handPlayer);
+ (playStyle==='hotseat'&&!humanSeats.has(G.turn)?[]:(G.hands[handPlayer]||[])).forEach((c,i,arr)=>{let b=document.createElement('button'),offset=i-(arr.length-1)/2;b.style.transform='rotate('+(offset*4.8)+'deg) translateY('+(-Math.abs(offset)*2.2)+'px)';b.style.zIndex=String(10+i);let legal=(playStyle==='hotseat'?humanSeats.has(G.turn)&&hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&handLegalCards.some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
+ $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
+ $('trickMsg').textContent=G.trickCompletePending?'در حال اعلام برنده دست…':G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
+}
+$('revealHotseatHand').onclick=()=>{if(playStyle!=='hotseat'||!G||G.done||!humanSeats.has(G.turn))return;hotseatRevealed=true;render();};
+function renderHumanSeatChoices(){const host=$('humanSeatChoices');if(!host)return;host.innerHTML='';[['جنوب',0],['شرق',1],['شمال',2],['غرب',3]].forEach(([n,p])=>{const l=document.createElement('label');l.style.cssText='display:flex;align-items:center;gap:5px;background:#09271f;border:1px solid #477a68;border-radius:9px;padding:8px;color:#f4dfaa';const c=document.createElement('input');c.type='checkbox';c.value=String(p);c.checked=p===0;c.addEventListener('change',()=>{if(!host.querySelector("input:checked"))c.checked=true;});l.append(c,document.createTextNode(n));host.append(l);});}
+renderHumanSeatChoices();
+$('playStyle').onchange=()=>{const online=$('playStyle').value==='online';$('onlineSetupInfo').classList.toggle('hidden',!online);$('humanSeatSetup').classList.toggle('hidden',$('playStyle').value!=='hotseat');if(online){if(window.DoubleKoutOnline&&typeof window.DoubleKoutOnline.open==='function'){window.DoubleKoutOnline.open();}else{$('onlineSetupInfo').textContent='ماژول اتاق آنلاین بارگذاری نشده است؛ صفحه را تازه‌سازی کن.';}}};$('humanSeatSetup').classList.toggle('hidden',$('playStyle').value!=='hotseat');
+$('globalStatsBtn').onclick=showGlobalStats;
+$('closeGlobalStats').onclick=()=>$('globalStatsPanel').classList.add('hidden');
+$('resetGlobalStats').onclick=()=>{if(confirm('تمام آمار ذخیره‌شده پاک شود؟')){localStorage.removeItem(GLOBAL_STATS_KEY);showGlobalStats();}};
+$('exitAppBtn').onclick=()=>{if(window.AndroidApp&&typeof window.AndroidApp.exitApp==='function'){window.AndroidApp.exitApp();return;}try{window.close();}catch(e){}$('modeMessage').textContent='برای خروج از بازی، پنجره یا برنامه را از مدیریت برنامه‌های دستگاه ببندید.';};
+$('modeDouble').onclick=()=>{audioReady();matchNo=1;previousWinner=null;previousStarter=null;activeMode='double-kout';$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
+$('modeHokm').onclick=()=>{audioReady();matchNo=1;previousWinner=null;previousStarter=null;activeMode='standard-hokm';$('hokmContractPicker').classList.remove('hidden');$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');$('modeMessage').textContent='حکم چهار نفره: قرارداد را انتخاب کن.';};
+$('modeKuwaiti').onclick=()=>{audioReady();if(typeof window.openKuwaitiMode==='function')window.openKuwaitiMode();else $('modeMessage').textContent='رابط میز شش‌نفره بارگذاری نشده است؛ صفحه را یک‌بار ببند و باز کن.';};
+$('start').onclick=()=>{audioReady();shuffleSound();startGame()};$('confirmTrump').onclick=confirmTrump;$('nextContract').onchange=()=>{/* contract and suit are a single selection */};
+$('soundToggle').onclick=()=>{soundEnabled=!soundEnabled;$('soundToggle').textContent=soundEnabled?'🔊 صدا روشن':'🔇 صدا خاموش';if(soundEnabled){audioReady();playCardSound()}else if('speechSynthesis'in window)window.speechSynthesis.cancel()};
+$('takeChallenge').onclick=()=>beginNormalOrChallenge('A');$('skipChallenge').onclick=()=>beginNormalOrChallenge(null);
+$('localNextGame').onclick=startNextLocalGame;$('localExtendRematch').onclick=()=>{if(!G||!G.done||!localRematchDeadline)return;localRematchDeadline=Date.now()+15000;lastLocalRematchBeep=-1;renderLocalRematchClock();};
+$('newGame').onclick=()=>{if(G&&G.done){hideLocalRematch();matchNo++;G=null;startGame();return;}hideLocalRematch();matchNo=1;previousWinner=null;previousStarter=null;G=null;$('game').classList.add('hidden');$('setup').classList.remove('hidden');$('hokmContract').disabled=false;$('starter').disabled=false;$('newGame').textContent='بازی جدید';$('start').textContent='پخش کارت و شروع بازی'};
+$('backToModes').onclick=()=>{hideLocalRematch();G=null;matchNo=1;previousWinner=null;previousStarter=null;$('game').classList.add('hidden');$('setup').classList.add('hidden');$('modePicker').classList.remove('hidden');$('modeMessage').textContent='یک حالت بازی را انتخاب کن.'};
+function normalizedSuit(c){const x=c&&((c.s!==undefined?c.s:c.suit)||'');return ({S:'♠',H:'♥',D:'♦',C:'♣','♠':'♠','♥':'♥','♦':'♦','♣':'♣'})[x]||'';}
+function normalizedRank(c){const x=c&&(c.r!==undefined?c.r:c.rank),m={'2':0,'3':1,'4':2,'5':3,'6':4,'7':5,'8':6,'9':7,'10':8,J:9,Q:10,K:11,A:12};return m[x]===undefined?99:m[x];}
+function sortCardArray(cards){const o={'♠':0,'♥':1,'♦':2,'♣':3};return cards.sort((x,y)=>(o[normalizedSuit(x)]??9)-(o[normalizedSuit(y)]??9)||normalizedRank(x)-normalizedRank(y));}
+$('sortHand').onclick=()=>{if(!G)return;const p=playStyle==='hotseat'?G.turn:0;if(playStyle==='hotseat'&&!humanSeats.has(p))return;sortCardArray(G.hands[p]);render()};
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script><script src="./kuwaiti-six-player-ui.js"></script><script>
+(function(){
+'use strict';
+var PUBLIC_AUTH_REDIRECT='https://ahdehwari-commits.github.io/Doublekout-/';
+var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
+var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,onlineRosterRows=[],lastLobbyGuestId='',gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastOnlineHandSignature='',onlineChallengeDeadline=0,onlineChallengeExpired=false,confirmedPlayedCardIds=Object.create(null),onlineRematchDeadline=0,lastRematchBeep=-1,rematchBusy=false,myOnlineIsHost=false,rematchAutoAttemptedDeadline=0;
+function el(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
+function onlineRequest(promise,label,limit){
+ var timer;
+ return Promise.race([promise,new Promise(function(_,reject){
+  timer=setTimeout(function(){reject(new Error('online_request_timeout: '+label));},limit||12000);
+ })]).finally(function(){if(timer)clearTimeout(timer);});
+}
+function ensureUI(){
+ if(el('onlineButton'))return;
+ var grid=document.querySelector('#modePicker .mode-grid');if(!grid)return;
+ var b=document.createElement('button');b.id='onlineButton';b.className='mode-card';b.innerHTML='<strong>🏆 حساب کاربری، امتیاز و بازی آنلاین</strong><span>ثبت‌نام، ورود، امتیاز بردها، رتبه‌بندی و بازی با گوشی‌های مختلف</span>';b.onclick=open;grid.appendChild(b);
+ var style=document.createElement('style');style.textContent=
+ '#onlineOverlay{position:fixed;inset:0;z-index:100000;background:#03140ff5;display:none;align-items:center;justify-content:center;padding:14px;direction:rtl;font-family:Tahoma,Arial,sans-serif}'+
+ '#onlineOverlay.open{display:flex}#onlinePanel{width:min(560px,100%);max-height:92vh;overflow:auto;background:linear-gradient(145deg,#164333,#071d17);border:2px solid #d7b66d;border-radius:20px;padding:16px;color:#fff;box-shadow:0 20px 55px #000c}'+
+ '#onlinePanel h2{color:#f4d58b;margin:0 0 8px}#onlinePanel p{font-size:12px;line-height:1.9;color:#d1e1d8}'+
+ '#onlinePanel label{display:block;font-size:12px;color:#d8e7de;margin:10px 0 4px}'+
+ '#onlinePanel input,#onlinePanel select{width:100%;padding:11px;border-radius:9px;border:1px solid #7b9d8b;background:#f7f2e5;color:#13251d;font:inherit}'+
+ '#onlinePanel button{padding:10px 12px;border-radius:10px;border:1px solid #e6ce92;background:linear-gradient(145deg,#f5dfaa,#bd9144);color:#211808;font-weight:bold;font:inherit;cursor:pointer}'+
+ '#onlinePanel button.secondary{background:#193b30;color:#f5e8c4;border-color:#688d7d}'+
+ '#onlineAuth{background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:12px;margin:12px 0}#onlineAuth input{width:100%;padding:11px;border-radius:9px;border:1px solid #7b9d8b;background:#f7f2e5;color:#13251d;font:inherit;margin-top:5px}#onlineAuth .auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}#onlineAuth .auth-note{font-size:11px;line-height:1.8;color:#d1e1d8;margin:7px 0}#onlineAuthStatus{font-size:12px;line-height:1.8;color:#ffe3a0;margin-top:8px;white-space:pre-wrap}'+
+  '#onlinePanel button:disabled{opacity:.45;cursor:not-allowed}#onlinePanel .onrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}#onlinePanel .onrow>*{flex:1;min-width:120px}'+
+ '#onlineStatus{background:#071b15;border-radius:9px;padding:10px;font-size:12px;line-height:1.9;color:#f3dfaa;margin-top:10px;white-space:pre-wrap}'+
+ '#onlineCode{direction:ltr;text-align:center;font-size:27px;letter-spacing:5px;color:#ffe09a;padding:12px;border:1px dashed #c9a65f;border-radius:10px;margin:10px 0}'+
+ '#onlineRoster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}#onlineRoster div{background:#0b2a20;border:1px solid #537e6a;border-radius:9px;padding:9px;font-size:12px}'+
+ '#onlineTable .center{grid-column:2;grid-row:2;min-height:165px}#onlineTable .seat{padding:5px}#onlineTable .played{min-height:58px}'+
+ '#onlinePanel #onlineHand{display:flex;flex-wrap:nowrap;align-items:flex-end;justify-content:center;direction:ltr;gap:0;overflow-x:auto;overflow-y:visible;min-height:128px;padding:18px 8px 24px;scrollbar-width:thin}'+
+ '#onlinePanel #onlineHand button{padding:0!important;background:none!important;border:0!important;flex:0 0 58px;width:58px;height:88px;margin-left:-33px!important;position:relative;transform-origin:50% 100%;opacity:1!important}'+
+ '#onlinePanel #onlineHand button:first-child{margin-left:0!important}#onlinePanel #onlineHand button .card{width:58px;height:88px;padding:4px;font-size:17px}'+
+ '#onlinePanel #onlineHand button:disabled{opacity:1!important;filter:none!important;cursor:default}#onlinePanel #onlineHand button:disabled .card{opacity:1!important;filter:none!important}#onlinePanel #onlineHand button:not(:disabled) .card{border:2px solid #e7c879}'+
+ '#onlinePanel #onlineHand.challenge-hand{min-height:166px;padding:22px 8px 32px;justify-content:center;overflow-x:auto;overflow-y:visible;background:linear-gradient(180deg,#123d30,#071e18);border:1px solid #f0d18b;border-radius:14px;margin:8px 0 12px;box-shadow:inset 0 0 22px #0008,0 8px 18px #0007}'+
+ '#onlinePanel #onlineHand.challenge-hand button{flex-basis:52px;width:52px;height:82px;margin-left:-27px!important;filter:none!important;transform-origin:50% 100%;}'+
+ '#onlinePanel #onlineHand.challenge-hand button:first-child{margin-left:0!important}#onlinePanel #onlineHand.challenge-hand button:last-child{margin-right:0!important}'+
+ '#onlinePanel #onlineHand.challenge-hand button .card{width:52px;height:82px;font-size:17px;opacity:1!important;filter:none!important;background:linear-gradient(145deg,#fffefb,#f4e8cb 58%,#cdbb91);border:2px solid #f4d58b;box-shadow:inset 2px 2px 4px #fff,0 6px 0 #a99a79,0 10px 16px #000b;transform:perspective(700px) rotateY(-9deg) rotateX(5deg) translateZ(10px)}'+
+ '@media(max-width:380px){#onlinePanel #onlineHand.challenge-hand button{flex-basis:46px;width:46px;height:74px;margin-left:-25px!important}#onlinePanel #onlineHand.challenge-hand button:first-child{margin-left:0!important}#onlinePanel #onlineHand.challenge-hand button .card{width:46px;height:74px;font-size:15px}}'+
+ '#onlinePanel #onlineHand.challenge-hand button .card .suit{font-size:30px}'+
+ '#onlinePanel .challenge-hand-title{margin:12px 0 4px;text-align:center;color:#ffe3a0;font-weight:900}'+
+ '#onlinePanel #onlineHand button:not(:disabled):hover{transform:translateY(-12px) scale(1.04)!important;z-index:50!important}'+
+ '#onlineTable .center-trick .table-played{width:54px;height:80px;font-size:17px;margin-left:-23px}'+
+ '@media(max-width:520px){#onlineTable{min-height:320px;padding:7px;gap:5px}#onlineTable .center{min-height:140px}#onlinePanel #onlineHand{min-height:120px;overflow-x:auto;justify-content:center;padding:12px 8px 22px}#onlinePanel #onlineHand button{flex-basis:56px;width:56px;height:84px;margin-left:-32px!important}#onlinePanel #onlineHand button:first-child{margin-left:0!important}#onlinePanel #onlineHand button .card{width:56px;height:84px}#onlineTable .center-trick .table-played{width:45px;height:67px;margin-left:-19px}}';
+ document.head.appendChild(style);
+ var root=document.createElement('div');root.id='onlineOverlay';root.innerHTML=
+ '<section id="onlinePanel"><button id="onlineClose" class="secondary" style="float:left">بستن</button><h2>اتاق آنلاین دابل کوت</h2>'+
+ '<p>بازیکنان با گوشی‌های جداگانه وارد اتاق می‌شوند؛ پس از آماده‌شدن بازیکنان، کارت‌ها پخش می‌شود و هر نفر دست خودش را می‌بیند. پس از انتخاب قرارداد، هر بازیکن انسانی می‌تواند مستقل چلنج را اعلام کند یا از آن عبور کند.</p>'+
+ '<div id="onlineAuth"><b style="color:#f4d58b">حساب کاربری</b><div class="auth-note" id="onlineAuthIntro">برای نگهداری حساب روی گوشی‌های مختلف، با هر ایمیل معتبری (از جمله Yahoo، iCloud، Gmail و Outlook) و یک رمز جداگانه برای بازی ثبت‌نام کن؛ رمز ایمیل خودت را وارد نکن. یا با Apple ID وارد شو. برای ثبت امتیاز و رتبه‌بندی، حساب تأییدشده لازم است.</div><label>ایمیل / نام کاربری</label><input id="onlineAuthEmail" type="email" autocomplete="username" placeholder="name@example.com" dir="ltr"><label>رمز عبور</label><input id="onlineAuthPassword" type="password" autocomplete="current-password" placeholder="حداقل ۸ نویسه" dir="ltr"><label>نام نمایشی (برای ثبت‌نام)</label><input id="onlineAuthDisplayName" maxlength="24" placeholder="نامی که دیگران در بازی می‌بینند"><div class="auth-grid"><button id="onlineRegister">ثبت‌نام</button><button id="onlineLogin" class="secondary">ورود با رمز</button><button id="onlineForgotPassword" class="secondary" style="grid-column:1/-1">بازیابی رمز عبور</button><button id="onlineResendConfirmation" class="secondary" style="grid-column:1/-1">ارسال مجدد ایمیل تأیید</button><button id="onlineApple" class="secondary" style="grid-column:1/-1">ورود با Apple ID</button><button id="onlineLogout" class="secondary" style="grid-column:1/-1">خروج از حساب</button></div><div id="onlineAuthStatus">برای بازی امتیازی، ورود با حساب تأییدشده یا Apple ID لازم است.</div><div id="onlineProgress" style="border-top:1px solid #668c78;margin-top:10px;padding-top:10px"><div id="onlineMyPoints">برای دیدن امتیازها وارد حساب شو.</div><button id="onlineRefreshProgress" class="secondary" style="width:100%;margin-top:8px">بروزرسانی امتیاز و رتبه‌بندی</button><div id="onlineLeaderboard" style="font-size:12px;line-height:2;margin-top:8px"></div></div></div>'+
+ '<div id="onlineSetup"><label>نوع بازی</label><select id="onlineMode"><option value="double-kout">دابل کوت توالی · چهار نفره</option><option value="standard-hokm">حکم معمولی · چهار نفره</option><option value="kuwaiti" disabled>کوت کویتی · آنلاین شش‌نفره (در حال توسعه)</option></select>'+
+ '<label>نام نمایشی</label><input id="onlineName" maxlength="24" value="بازیکن">'+
+ '<div class="onrow"><button id="onlineCreate">ساخت اتاق جدید</button><button id="onlineShowJoin" class="secondary">ورود با کد</button></div>'+
+ '<div id="onlineJoinBox" style="display:none"><label>کد اتاق</label><input id="onlineJoinCode" maxlength="6" placeholder="مثلاً A1B2C3" style="text-transform:uppercase;direction:ltr;text-align:center"><label>جایگاه تیمی شما</label><select id="onlinePreferredTeam"><option value="1">حریف میزبان (تیم مقابل)</option><option value="2">هم‌تیمی میزبان</option></select><button id="onlineJoin" style="width:100%;margin-top:8px">ورود به اتاق</button></div></div>'+
+ '<div id="onlineRoom" style="display:none"><div id="onlineCode"></div><div id="onlineRoster"></div><div id="onlineLobbyDecision"><b id="onlineLobbyNotice">بازیکن جدید وارد اتاق شد.</b><div class="onrow"><button id="onlineAcceptHuman">شروع با بازیکن واقعی</button><button id="onlineUseAI">ادامه با هوش مصنوعی</button></div></div><div class="onrow"><button id="onlineReady">آماده‌ام</button><button id="onlineStart" style="display:none">پایان انتظار</button><button id="onlineLeave" class="secondary">خروج از اتاق</button></div><div id="onlineGame" style="display:none;background:#061b15;border:1px solid #648a73;border-radius:12px;padding:12px;margin-top:12px"><h3 style="margin:0 0 8px;color:#f4d58b">میز آنلاین</h3><div id="onlineGameStatus" style="font-size:12px;line-height:1.8"></div><div id="onlineLiveScoreTop" style="font-size:13px;font-weight:900;color:#ffe3a0;text-align:center;background:#09271f;border:1px solid #b99a5d;border-radius:9px;padding:8px;margin:8px 0">دست‌های برده‌شده در این بازی · در انتظار شروع</div><div id="onlineTurnTimer" style="display:none;text-align:center;font-size:24px;font-weight:900;color:#ffe39a;padding:5px">۱۰</div><div id="onlineDecision" style="display:none;background:#123b2d;border:1px solid #d7b66d;border-radius:10px;padding:10px;margin:10px 0"><b style="color:#f4d58b">فرصت مستقل اعلام چلنج برای همه بازیکنان انسانی</b><p id="onlineDecisionHint" style="font-size:13px;line-height:1.9"></p><div id="onlineChallengeClock" style="font-size:22px;font-weight:bold;color:#ffe39a;text-align:center;margin:6px">۱۰</div><div class="onrow"><button id="onlineChooseChallenge">اعلام چلنج</button><button id="onlineChooseNormal">عبور / بازی عادی</button></div><button id="onlineChallengeExtend" style="width:100%;margin-top:8px;background:#d6e4dc">۱۵ ثانیه وقت بیشتر</button></div><div id="onlineTrumpSelection" style="display:none;background:#123b2d;border:1px solid #d7b66d;border-radius:10px;padding:10px;margin:10px 0"><b style="color:#f4d58b">انتخاب قرارداد پس از پخش پنج کارت</b><p id="onlineTrumpHint" style="font-size:13px;line-height:1.9">منتظر حاکم...</p><select id="onlineTrumpContract" style="display:none;width:100%;margin:8px 0"><option value="" selected disabled>نوع قرارداد را انتخاب کن...</option><option value="hokm_spades">حکم پیک ♠</option><option value="hokm_hearts">حکم دل ♥</option><option value="hokm_diamonds">حکم خشت ♦</option><option value="hokm_clubs">حکم گشنیز ♣</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار</option></select><button id="onlineTrumpConfirm" style="display:none;width:100%">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div><div id="onlineTable" class="table" style="margin:12px 0;min-height:350px"><div class="seat north" id="onlineSeatNorth"><div class="name" id="onlineNameNorth">شمال</div><div class="count" id="onlineCountNorth"></div><div class="played" id="onlinePlayedNorth"></div></div><div class="seat west" id="onlineSeatWest"><div class="name" id="onlineNameWest">غرب</div><div class="count" id="onlineCountWest"></div><div class="played" id="onlinePlayedWest"></div></div><div class="center"><div><div class="muted">حکم</div><div id="onlineTrumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div id="onlineTrickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div><div id="onlineCenterPile" class="online-center-pile"></div><div id="onlineTrick" class="center-trick"></div></div><div class="seat east" id="onlineSeatEast"><div class="name" id="onlineNameEast">شرق</div><div class="count" id="onlineCountEast"></div><div class="played" id="onlinePlayedEast"></div></div><div class="seat south" id="onlineSeatSouth"><div class="name" id="onlineNameSouth">شما</div><div class="count" id="onlineCountSouth"></div><div class="played" id="onlinePlayedSouth"></div></div></div><div class="online-hand-tools"><h3 class="section-title" id="onlineHandTitle">کارت‌های شما</h3><button type="button" id="onlineSortHand" aria-label="مرتب‌سازی کارت‌ها">↕</button></div><div class="hand" id="onlineHand"></div><div id="onlineScore" style="font-size:12px;text-align:center;margin-top:10px"></div><div id="onlineRematchPanel" style="display:none;background:#09271f;border:1px solid #d7b66d;border-radius:12px;padding:10px;margin-top:12px;text-align:center"><div id="onlineRematchText" style="font-weight:900;color:#ffe3a0">بازی تمام شد</div><div id="onlineRematchClock" style="font-size:30px;font-weight:900;color:#ffe39a;margin:5px">۱۵</div><div class="onrow"><button id="onlineNextGame">بازی بعدی</button><button id="onlineExtendRematch" class="secondary">تمدید ۱۵ ثانیه</button></div></div></div></div>'+
+ '<div id="onlineStatus">برای شروع، ساخت اتاق یا ورود با کد را انتخاب کن.</div></section>';
+ document.body.appendChild(root);
+ el('onlineClose').onclick=close;el('onlineRegister').onclick=registerOnlineAccount;el('onlineLogin').onclick=loginOnlineAccount;el('onlineForgotPassword').onclick=resetOnlinePassword;el('onlineResendConfirmation').onclick=resendOnlineConfirmation;el('onlineApple').onclick=appleOnlineAccount;el('onlineLogout').onclick=logoutOnlineAccount;el('onlineCreate').onclick=createRoom;el('onlineShowJoin').onclick=function(){el('onlineJoinBox').style.display='block';};
+ el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=function(){if(onlineRosterRows.some(function(x){return x.user_id!==me.id;})){el('onlineLobbyDecision').style.display='block';say('میزبان می‌تواند بازیکن واقعی را بپذیرد یا بازی را با هوش مصنوعی آغاز کند.');}else startOnlineGame('ai');};el('onlineAcceptHuman').onclick=function(){startOnlineGame('human');};el('onlineUseAI').onclick=function(){startOnlineGame('ai');};el('onlineChooseNormal').onclick=function(){submitOnlineChallengeChoice('pass')};el('onlineChooseChallenge').onclick=function(){submitOnlineChallengeChoice('challenge')};el('onlineChallengeExtend').onclick=extendOnlineChallengeTime;el('onlineTrumpConfirm').onclick=function(){submitOnlineTrumpSelection(el('onlineTrumpContract').value,false);};el('onlineNextGame').onclick=function(){startNextOnlineGame(false)};el('onlineExtendRematch').onclick=extendOnlineRematchTime;el('onlineSortHand').onclick=function(){onlineHandSorted=!onlineHandSorted;lastGameRevision=-1;refreshOnlineGame();};el('onlineLeave').onclick=leave;
+ root.addEventListener('click',function(e){if(e.target===root)close();});
+}
+function open(preselect){ensureUI();if(preselect&&el('onlineMode'))el('onlineMode').value=preselect;el('onlineOverlay').classList.add('open');}
+function close(){if(el('onlineOverlay'))el('onlineOverlay').classList.remove('open');}
+var supabaseLoadPromise=null;
+function loadSupabaseScript(url){
+ return new Promise(function(resolve,reject){
+  var script=document.createElement('script'),settled=false,timer=setTimeout(function(){finish(new Error('مهلت بارگذاری کتابخانه تمام شد.'));},15000);
+  function finish(error){if(settled)return;settled=true;clearTimeout(timer);script.onload=script.onerror=null;if(error){script.remove();reject(error);}else resolve();}
+  script.src=url;script.async=true;script.onload=function(){if(window.supabase&&window.supabase.createClient)finish();else finish(new Error('فایل بارگذاری شد اما کتابخانه معتبر نبود.'));};script.onerror=function(){finish(new Error('دریافت فایل از این میزبان ناموفق بود.'));};document.head.appendChild(script);
+ });
+}
+async function initClient(){
+ if(client)return true;
+ if(!window.supabase||!window.supabase.createClient){
+  if(!supabaseLoadPromise)supabaseLoadPromise=(async function(){
+   var sources=[
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
+    'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
+   ],lastError;
+   for(var i=0;i<sources.length;i++){try{await loadSupabaseScript(sources[i]);return;}catch(e){lastError=e;}}
+   throw new Error('بارگذاری کتابخانه Supabase از هر دو میزبان ناموفق بود. اتصال اینترنت یا مسدودبودن CDN را بررسی کن. '+(lastError&&lastError.message||''));
+  })();
+  await supabaseLoadPromise;
+ }
+ if(!window.supabase||!window.supabase.createClient)throw new Error('کتابخانه Supabase در دسترس نیست.');
+ client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ return true;
+}
+function authMessage(message){var n=el('onlineAuthStatus');if(n)n.textContent=message;}
+function authFields(){return {email:(el('onlineAuthEmail').value||'').trim().toLowerCase(),password:el('onlineAuthPassword').value||'',displayName:(el('onlineAuthDisplayName').value||'').trim()};}
+function validateAuthFields(v,needName){if(!v.email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email))throw new Error('ایمیل معتبر وارد کن؛ ایمیل نقش نام کاربری حساب را دارد.');if(v.password.length<8)throw new Error('رمز عبور باید دست‌کم ۸ نویسه داشته باشد.');if(needName&&!v.displayName)throw new Error('یک نام نمایشی برای بازی وارد کن.');}
+async function registerOnlineAccount(){
+ try{await initClient();var v=authFields();validateAuthFields(v,true);el('onlineRegister').disabled=true;authMessage('در حال ساخت حساب…');
+  var current=await client.auth.getSession();if(current.error)throw current.error;var result;
+  if(current.data.session&&current.data.session.user&&current.data.session.user.is_anonymous){
+   result=await client.auth.updateUser({email:v.email,password:v.password,data:{display_name:v.displayName}},{emailRedirectTo:PUBLIC_AUTH_REDIRECT});
+  }else{
+   result=await client.auth.signUp({email:v.email,password:v.password,options:{data:{display_name:v.displayName},emailRedirectTo:PUBLIC_AUTH_REDIRECT}});
+  }
+  if(result.error)throw result.error;
+  session=result.data.session||null;me=result.data.user||null;
+  if(session){authMessage('حساب ساخته شد و وارد بازی شدی.');if(el('onlineName'))el('onlineName').value=v.displayName;if(window.DoubleKoutProgress){window.DoubleKoutProgress.refresh();window.DoubleKoutProgress.flushPending();}}
+  else authMessage('درخواست ثبت‌نام ثبت شد. ایمیل تأیید را باز کن و سپس با ایمیل و رمز وارد شو. اگر حساب مهمان داشتی، تبدیل حساب پس از تأیید ایمیل کامل می‌شود.');
+ }catch(e){var msg=e&& (e.message||e.msg)||String(e);if(/already registered|user already exists|already been registered/i.test(msg))msg='این ایمیل قبلاً حساب دارد؛ از دکمه «ورود با رمز» استفاده کن یا رمزت را بازیابی کن.';else if(/email not confirmed/i.test(msg))msg='ایمیل هنوز تأیید نشده است؛ صندوق ورودی و پوشه هرزنامه را بررسی کن.';else if(/invalid email/i.test(msg))msg='ساختار ایمیل معتبر نیست؛ نشانی را دوباره بررسی کن.';else if(/password.*(weak|short)|weak password/i.test(msg))msg='رمز عبور ضعیف است؛ یک رمز قوی‌تر با حداقل ۸ نویسه انتخاب کن.';authMessage('ثبت‌نام انجام نشد: '+msg);}
+ finally{el('onlineRegister').disabled=false;}
+}
+async function loginOnlineAccount(){
+ try{await initClient();var v=authFields();validateAuthFields(v,false);el('onlineLogin').disabled=true;authMessage('در حال ورود…');
+  var r=await client.auth.signInWithPassword({email:v.email,password:v.password});if(r.error)throw r.error;
+  session=r.data.session;me=r.data.user;var display=(me.user_metadata&&me.user_metadata.display_name)||v.displayName||'بازیکن';if(el('onlineName'))el('onlineName').value=display;
+  authMessage('با موفقیت وارد شدی: '+v.email);if(window.DoubleKoutProgress){window.DoubleKoutProgress.refresh();window.DoubleKoutProgress.flushPending();}
+ }catch(e){var msg=e&&(e.message||e.msg)||String(e);if(/invalid login credentials|user not found/i.test(msg))msg='حسابی با این ایمیل و رمز پیدا نشد؛ اگر قبلاً ثبت‌نام نکرده‌ای، ابتدا ثبت‌نام کن. اگر حساب داری، رمز را بررسی یا بازیابی کن.';else if(/email not confirmed/i.test(msg))msg='ایمیل حساب هنوز تأیید نشده است؛ ایمیل تأیید را باز کن و سپس دوباره وارد شو.';authMessage('ورود ناموفق بود: '+msg);}
+ finally{el('onlineLogin').disabled=false;}
+}
+async function resetOnlinePassword(){
+ try{await initClient();var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');authMessage('در حال ارسال لینک بازیابی…');var r=await client.auth.resetPasswordForEmail(email,{redirectTo:PUBLIC_AUTH_REDIRECT});if(r.error)throw r.error;authMessage('اگر این ایمیل در سامانه ثبت شده باشد، لینک بازیابی رمز برای آن ارسال می‌شود. صندوق ورودی و هرزنامه را بررسی کن.');}
+ catch(e){authMessage('ارسال لینک بازیابی ناموفق بود: '+(e.message||e));}
+}
+async function resendOnlineConfirmation(){
+  try{
+   await initClient();
+   var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();
+   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');
+   authMessage('در حال بررسی و ارسال دوباره ایمیل تأیید…');
+   var first=await client.auth.resend({type:'email_change',email:email,options:{emailRedirectTo:PUBLIC_AUTH_REDIRECT}});
+   var r=first;
+   if(first.error)r=await client.auth.resend({type:'signup',email:email,options:{emailRedirectTo:PUBLIC_AUTH_REDIRECT}});
+   if(r.error)throw new Error('ارسال برای حالت ثبت‌نام و پیوند حساب هر دو ناموفق بود: '+(r.error.message||r.error));
+   authMessage('درخواست ارسال ایمیل به سامانه پذیرفته شد؛ تحویل واقعی ایمیل از داخل بازی قابل تأیید نیست. صندوق ورودی، هرزنامه و در صورت تأخیر محدودیت ارسال ایمیل Supabase را بررسی کن.');
+  }catch(e){authMessage('ارسال مجدد ایمیل تأیید ناموفق بود: '+(e.message||e));}
+ }
+ async function appleOnlineAccount(){
+ try{
+  await initClient();el('onlineApple').disabled=true;authMessage('در حال انتقال به صفحه امن Apple…');
+  var current=await client.auth.getSession();if(current.error)throw current.error;
+  var redirectTo=PUBLIC_AUTH_REDIRECT,result;
+  if(current.data.session&&current.data.session.user&&current.data.session.user.is_anonymous&&typeof client.auth.linkIdentity==='function'){
+   result=await client.auth.linkIdentity({provider:'apple',options:{redirectTo:redirectTo,scopes:'name email'}});
+  }else result=await client.auth.signInWithOAuth({provider:'apple',options:{redirectTo:redirectTo,scopes:'name email'}});
+  if(result.error)throw result.error;
+ }catch(e){
+  authMessage('ورود با Apple فعلاً فعال نیست: '+(e.message||e)+'. مدیر سامانه باید Apple Provider را در Supabase با اطلاعات Apple Developer فعال کند. اگر ایمیل iCloud داری، می‌توانی همین حالا با ایمیل و رمز ثبت‌نام کنی.');
+  el('onlineApple').disabled=false;
+ }
+}
+
+async function logoutOnlineAccount(){
+ try{await initClient();var r=await client.auth.signOut();if(r.error)throw r.error;session=null;me=null;authMessage('از حساب خارج شدی؛ برای بازی آنلاین بعدی می‌توانی مهمان بمانی یا دوباره وارد شوی.');}
+ catch(e){authMessage('خروج از حساب انجام نشد: '+(e.message||e));}
+}
+async function authenticate(setStage){
+ setStage('بارگذاری کتابخانه اتصال');
+ await initClient();
+ setStage('بررسی نشست حساب');
+ var got=await client.auth.getSession();if(got.error)throw got.error;
+ session=got.data&&got.data.session;
+ if(!session)throw new Error('برای بازی امتیازی، ابتدا با ایمیل تأییدشده یا Apple ID ثبت‌نام و وارد حساب شو.');
+ me=session.user;
+ if(!me||me.is_anonymous)throw new Error('حساب مهمان برای بازی امتیازی مجاز نیست؛ با ایمیل تأییدشده یا Apple ID وارد شو.');
+ var provider=me.app_metadata&&me.app_metadata.provider||'';
+ if(!me.email_confirmed_at&&provider!=='apple')throw new Error('ایمیل حساب هنوز تأیید نشده است؛ ایمیل تأیید Supabase را باز کن و دوباره وارد شو.');
+ var display=(me.user_metadata&&me.user_metadata.display_name)||'';
+ if(display&&el('onlineName'))el('onlineName').value=display;
+ if(window.DoubleKoutProgress)window.DoubleKoutProgress.refresh();
+ if(el('onlineAuthStatus'))el('onlineAuthStatus').textContent='حساب تأییدشده فعال است: '+(me.email||display||'Apple ID');
+ return me;
+}
+function showRoom(){el('onlineSetup').style.display='none';el('onlineRoom').style.display='block';el('onlineCode').textContent=roomCode;}
+function subscribe(){
+ if(rosterTimer){clearInterval(rosterTimer);rosterTimer=null;}
+ if(channel){client.removeChannel(channel);channel=null;}
+ channel=client.channel('doublekout-room-'+roomId)
+ .on('postgres_changes',{event:'*',schema:'public',table:'room_members',filter:'room_id=eq.'+roomId},refreshRoster)
+ .on('postgres_changes',{event:'*',schema:'public',table:'game_rooms',filter:'id=eq.'+roomId},function(){refreshOnlineGame();})
+ .subscribe(function(state){
+  if(state==='SUBSCRIBED'){say('اتصال زنده برقرار است.');refreshRoster();refreshOnlineGame();}
+  else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'||state==='CLOSED')say('اتصال زنده برقرار نشد؛ فهرست بازیکنان به‌صورت دوره‌ای به‌روزرسانی می‌شود.');
+ });
+ refreshRoster();
+ rosterTimer=setInterval(refreshRoster,5000);
+ if(gameTimer)clearInterval(gameTimer);
+ gameTimer=setInterval(refreshOnlineGame,3000);
+ if(!window.__doubleKoutRosterFocus){
+  window.__doubleKoutRosterFocus=true;
+  window.addEventListener('focus',function(){refreshRoster();});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshRoster();});
+ }
+}
+async function refreshRoster(){
+ if(!roomId||!client)return;
+ if(rosterBusy){rosterRefreshQueued=true;return;}
+ rosterBusy=true;
+ try{
+  var r=await client.rpc('get_room_roster',{p_room_id:roomId});
+  if(r.error)throw r.error;
+  var rows=Array.isArray(r.data)?r.data:[],cap=count,html='';onlineRosterRows=rows;
+  for(var i=0;i<cap;i++){var p=rows.find(function(x){return Number(x.seat)===i;});html+='<div>'+(i+1)+'. '+(p?esc(p.display_name)+' · '+Number(p.points||0)+' امتیاز'+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
+  el('onlineRoster').innerHTML=html;
+  var allReady=rows.length>=2&&rows.every(function(x){return x.ready===true;});
+  var mine=rows.find(function(x){return x.user_id===me.id;});
+  myOnlineSeat=mine?Number(mine.seat):-1;myOnlineIsHost=!!(mine&&mine.is_host);
+  el('onlineReady').textContent=mine&&mine.ready?'لغو آمادگی':'آماده‌ام';
+  el('onlineReady').dataset.ready=mine&&mine.ready?'true':'false';
+  el('onlineReady').disabled=!mine;
+  el('onlineStart').style.display=mine&&mine.is_host&&mode!=='kuwaiti'?'block':'none';
+  el('onlineStart').textContent=rows.length>1?'پایان انتظار · انتخاب میزبان':'پایان انتظار · شروع با هوش مصنوعی';
+  var guest=rows.find(function(x){return !x.is_host;});
+  if(mine&&mine.is_host&&guest){el('onlineLobbyDecision').style.display='block';el('onlineLobbyNotice').textContent='بازیکن واقعی «'+guest.display_name+'» وارد اتاق شد؛ شروع را انتخاب کن.';if(lastLobbyGuestId!==guest.user_id){lastLobbyGuestId=guest.user_id;say('بازیکن واقعی وارد اتاق شد. برای انتخاب نوع شروع آماده‌ای.');}}
+  else if(!guest){el('onlineLobbyDecision').style.display='none';lastLobbyGuestId='';}
+  if(!allReady&&rows.length>1&&!guest)say(rows.length+' بازیکن وارد شده‌اند؛ میزبان می‌تواند همین حالا تصمیم بگیرد.');
+  if(mine&&!mine.is_host)say('به اتاق میزبان متصل شدی؛ جایگاه تیمی انتخاب‌شده ثبت شده است.');
+ }catch(e){if(/not_a_room_member|not a room member/i.test(String(e&&e.message||e)))say('میزبان اتاق را با هوش مصنوعی آغاز کرد؛ ورود شما پذیرفته نشد.');else say('به‌روزرسانی فهرست بازیکنان: '+(e.message||e));}
+ finally{rosterBusy=false;if(rosterRefreshQueued){rosterRefreshQueued=false;Promise.resolve().then(refreshRoster);}}
+}
+async function createRoom(){
+ var stage='آماده‌سازی';try{
+  say('در حال ورود مهمان و ساخت اتاق...');
+  await authenticate(function(s){stage=s;});mode=el('onlineMode').value;count=mode==='kuwaiti'?6:4;
+  stage='فراخوانی create_game_room';var r=await client.rpc('create_game_room',{p_game_mode:mode,p_player_count:count,p_display_name:el('onlineName').value.trim()||'بازیکن'});
+  if(r.error)throw r.error;
+  roomId=r.data.room_id;roomCode=r.data.code;showRoom();subscribe();
+ }catch(e){say('ساخت اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
+}
+async function joinRoom(){
+ var stage='آماده‌سازی';try{
+  say('در حال ورود به اتاق...');
+  await authenticate(function(s){stage=s;});var code=el('onlineJoinCode').value.trim().toUpperCase();
+  if(!/^[A-F0-9]{6}$/.test(code))throw new Error('کد اتاق باید شش حرف یا عدد باشد.');
+  stage='فراخوانی join_game_room';var preferredSeat=Number(el('onlinePreferredTeam').value||1);var r=await client.rpc('join_game_room',{p_code:code,p_display_name:el('onlineName').value.trim()||'بازیکن',p_preferred_seat:preferredSeat});
+  if(r.error)throw r.error;
+  roomId=r.data.room_id;roomCode=r.data.code;mode=r.data.game_mode;count=Number(r.data.player_count);showRoom();say('وارد اتاق شدی؛ منتظر تصمیم میزبان بمان.');await refreshRoster();subscribe();
+ }catch(e){say('ورود به اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
+}
+async function toggleReady(){
+ try{
+  if(!roomId)return;
+  var b=el('onlineReady'),current=b.dataset.ready==='true',target=!current;
+  b.disabled=true;say(target?'در حال ثبت آمادگی...':'در حال لغو آمادگی...');
+  var r=await client.rpc('set_room_ready',{p_room_id:roomId,p_ready:target});
+  if(r.error)throw r.error;
+  await refreshRoster();
+  say(target?'آمادگی ثبت شد.':'آمادگی لغو شد؛ میزبان باید فهرست را به‌روزرسانی‌شده ببیند.');
+ }catch(e){say('تغییر وضعیت آمادگی انجام نشد: '+(e.message||e));}
+ finally{if(el('onlineReady'))el('onlineReady').disabled=false;}
+}
+async function startOnlineGame(choice){
+ try{
+  if(!roomId||mode==='kuwaiti')return;
+  el('onlineStart').disabled=true;el('onlineAcceptHuman').disabled=true;el('onlineUseAI').disabled=true;
+  confirmedPlayedCardIds=Object.create(null);lastGameRevision=-1;lastOnlineHandSignature='';onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;
+  say('در حال آماده‌سازی کارت‌ها و صندلی‌های ربات...');
+  var r=await client.rpc('host_decide_room_start',{p_room_id:roomId,p_choice:choice||'ai'});
+  if(r.error)throw r.error;
+  el('onlineGame').style.display='block';
+  el('onlineStart').style.display='none';el('onlineLobbyDecision').style.display='none';
+  say(choice==='human'?'بازیکن واقعی پذیرفته شد؛ دو جایگاه دیگر با هوش مصنوعی تکمیل شدند.':'انتظار پایان یافت؛ سه جایگاه با هوش مصنوعی تکمیل شدند.');
+  await refreshOnlineGame(r.data);
+ }catch(e){say('شروع بازی انجام نشد: '+(e.message||e));}
+ finally{if(el('onlineStart'))el('onlineStart').disabled=false;if(el('onlineAcceptHuman'))el('onlineAcceptHuman').disabled=false;if(el('onlineUseAI'))el('onlineUseAI').disabled=false;}
+}
+async function submitOnlineChallengeChoice(choice){
+ if(!roomId||!client)return;
+ var normal=el('onlineChooseNormal'),challenge=el('onlineChooseChallenge'),extend=el('onlineChallengeExtend');
+ try{
+  normal.disabled=true;challenge.disabled=true;extend.disabled=true;
+  say(choice==='challenge'?'در حال ثبت اعلام چلنج...':'در حال ثبت عبور از چلنج...');
+  var timer,request=client.rpc('submit_room_challenge_choice',{p_room_id:roomId,p_choice:choice});
+  var r=await Promise.race([request,new Promise(function(_,reject){timer=setTimeout(function(){reject(new Error('server_response_timeout'));},12000);})]);
+  clearTimeout(timer);
+  if(r.error)throw r.error;
+  await refreshOnlineGame();
+  say('');
+ }catch(e){
+  if(e&&e.message==='server_response_timeout'){
+   try{
+    var snap=await client.rpc('get_room_snapshot',{p_room_id:roomId});
+    if(!snap.error&&snap.data&&snap.data.public_state){
+     var passed=snap.data.public_state.challengePassed||[];
+     if(passed.includes(Number(myOnlineSeat))){await refreshOnlineGame();say('عبور از چلنج در سرور ثبت شده است.');}
+     else{say('سرور هنوز پاسخ ثبت انتخاب را نداده؛ وضعیت اتاق به‌روزرسانی شد. دوباره انتخاب نکن و چند لحظه صبر کن.');await refreshOnlineGame();}
+    }else say('پاسخ سرور دریافت نشد؛ اتصال اینترنت را بررسی و اتاق را تازه‌سازی کن.');
+   }catch(checkError){say('پاسخ سرور دریافت نشد؛ اتصال اینترنت را بررسی و اتاق را تازه‌سازی کن.');}
+  }else say('ثبت انتخاب انجام نشد: '+(e.message||e));
+ }finally{
+  if(normal)normal.disabled=false;if(challenge)challenge.disabled=false;if(extend)extend.disabled=false;
+ }
+}
+async function extendOnlineChallengeTime(){
+ try{el('onlineChallengeExtend').disabled=true;var r=await client.rpc('extend_room_challenge_time',{p_room_id:roomId});if(r.error)throw r.error;say('۱۵ ثانیه زمان اضافه شد.');await refreshOnlineGame();}
+ catch(e){say('افزایش زمان انجام نشد: '+(e.message||e));if(el('onlineChallengeExtend'))el('onlineChallengeExtend').disabled=false;}
+}
+async function expireOnlineChallengeTurn(seat){
+ if(!roomId||challengeExpiryBusySeats[seat])return;challengeExpiryBusySeats[seat]=true;
+ try{var r=await client.rpc('expire_room_challenge_turn',{p_room_id:roomId,p_expected_seat:seat});if(r.error)throw r.error;if(r.data&&r.data.expired)refreshOnlineGame();}
+ catch(e){/* another device may already have advanced the turn */}
+ finally{delete challengeExpiryBusySeats[seat];}
+}
+function checkExpiredChallengeSeats(){
+ if(!roomId||!client||!el('onlineDecision')||el('onlineDecision').style.display==='none')return;
+ // Any connected room member may advance expired seats, so a disconnected player cannot freeze the decision phase.
+ var deadlines=window.__doubleKoutChallengeDeadlines||{},passed=window.__doubleKoutChallengePassed||[],now=Date.now()/1000;
+ Object.keys(deadlines).forEach(function(key){var seat=Number(key);if(Number(deadlines[key])>0&&Number(deadlines[key])<=now&&!passed.includes(seat))expireOnlineChallengeTurn(seat);});
+}
+function renderOnlineChallengeClock(){
+ var node=el('onlineChallengeClock');if(!node||!onlineChallengeDeadline)return;
+ var left=Math.max(0,Math.ceil(onlineChallengeDeadline-Date.now()/1000));
+ node.textContent=left+' ثانیه';node.style.color=left<=3?'#ff7777':'#ffe39a';
+ if(left<=0){el('onlineChooseNormal').disabled=true;el('onlineChooseChallenge').disabled=true;el('onlineChallengeExtend').disabled=true;}
+ if(left<=0&&!onlineChallengeExpired){onlineChallengeExpired=true;expireOnlineChallengeTurn(myOnlineSeat);}
+ checkExpiredChallengeSeats();
+}
+setInterval(renderOnlineChallengeClock,200);
+var onlineTurnDeadline=0,onlineTurnTimerHandle=null,lastTurnBeep=-1,turnAudio=null,onlineTrickDeadline=0,lastTrickBeep=-1;var onlineTrickResolveTimer=null,onlineTrickResolveScheduled=false,lastOnlineVoiceTrickCount=null,lastOnlineFourPlays=null;
+function unlockTurnAudio(){try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;if(!turnAudio)turnAudio=new AC();if(turnAudio.state==='suspended')turnAudio.resume();}catch(e){}}
+document.addEventListener('pointerdown',unlockTurnAudio,{passive:true});
+function playTurnBeep(){try{if(!turnAudio||turnAudio.state!=='running')return;var o=turnAudio.createOscillator(),g=turnAudio.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.0001,turnAudio.currentTime);g.gain.exponentialRampToValueAtTime(.12,turnAudio.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,turnAudio.currentTime+.16);o.connect(g);g.connect(turnAudio.destination);o.start();o.stop(turnAudio.currentTime+.17);}catch(e){}}
+function renderOnlineTurnClock(){
+ var trickNode=el('onlineTrickMsg');
+ if(onlineTrickDeadline>0&&trickNode){
+  var trickLeft=Math.max(0,Math.ceil(onlineTrickDeadline-Date.now()/1000));
+  trickNode.textContent='همه کارت‌ها روی میز؛ فرصت دیدن دست: '+trickLeft+' ثانیه';
+  if(trickLeft>0&&trickLeft<=3&&trickLeft!==lastTrickBeep){lastTrickBeep=trickLeft;playTurnBeep();}
+  if(trickLeft===0)lastTrickBeep=-1;
+ }
+ var node=el('onlineTurnTimer');if(!node)return;
+ if(!onlineTurnDeadline){node.style.display='none';return;}
+ var left=Math.max(0,Math.ceil(onlineTurnDeadline-Date.now()/1000));
+ node.style.display='block';node.textContent=left+' ثانیه تا پایان نوبت';
+ node.style.color=left<=3?'#ff7777':'#ffe39a';
+ if(left>0&&left<=5&&left!==lastTurnBeep){lastTurnBeep=left;playTurnBeep();}
+ if(left===0)lastTurnBeep=0;
+}
+if(!onlineTurnTimerHandle)onlineTurnTimerHandle=setInterval(renderOnlineTurnClock,200);
+function onlineLiveSequenceScores(winners){
+ var scores={A:0,B:0},start=0,searchFrom=3,side=function(seat){return Number(seat)%2===0?'A':'B';};
+ while(start<winners.length){var close=-1;for(var i=searchFrom;i<winners.length;i++){if(Number(winners[i])===Number(winners[i-1])){close=i;break;}}
+ if(close>=0){scores[side(winners[close])]+=close-start+1;start=close+1;searchFrom=start+1;}else{if(winners.length===13)scores[side(winners[12])]+=winners.length-start;break;}}
+ return scores;
+}
+var onlineTrumpBusy=false;var onlineCardBusy=false;var onlineRematchTimerHandle=null;
+function renderOnlineRematchClock(){
+ var panel=el('onlineRematchPanel'),clock=el('onlineRematchClock');
+ if(!panel||!clock)return;
+ if(!onlineRematchDeadline){panel.style.display='none';return;}
+ panel.style.display='block';
+ var left=Math.max(0,Math.ceil(onlineRematchDeadline-Date.now()/1000));
+ clock.textContent=String(left).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];})+' ثانیه';
+ clock.style.color=left<=5?'#ff7777':'#ffe39a';
+ if(left>0&&left<=15&&left!==lastRematchBeep){lastRematchBeep=left;playTurnBeep();}
+ if(left===0&&myOnlineIsHost&&!rematchBusy&&rematchAutoAttemptedDeadline!==onlineRematchDeadline){
+  rematchAutoAttemptedDeadline=onlineRematchDeadline;
+  startNextOnlineGame(true);
+ }
+}
+if(!onlineRematchTimerHandle)onlineRematchTimerHandle=setInterval(renderOnlineRematchClock,200);
+async function startNextOnlineGame(automatic){
+ if(!roomId||!client||!myOnlineIsHost||rematchBusy)return;
+ rematchBusy=true;
+ var next=el('onlineNextGame'),extend=el('onlineExtendRematch');
+ if(next)next.disabled=true;if(extend)extend.disabled=true;
+ say(automatic?'زمان تمام شد؛ در حال آغاز خودکار بازی بعدی...':'در حال آغاز بازی بعدی...');
+ try{
+  var r=await onlineRequest(client.rpc('start_next_room_game',{p_room_id:roomId}),'شروع بازی بعدی',15000);
+  if(r.error)throw r.error;
+  confirmedPlayedCardIds=Object.create(null);
+  lastGameRevision=-1;lastOnlineHandSignature='';
+  onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;
+  var nextState=r.data&&r.data.state;
+  if(!nextState)throw new Error('سرور وضعیت بازی بعدی را برنگرداند.');
+  await refreshOnlineGame({status:r.data.status||'playing',state:nextState,revision:r.data.revision});
+  say('پنج کارت اول پخش شد؛ حاکم باید قرارداد را انتخاب کند.');
+ }catch(e){say('شروع بازی بعدی انجام نشد: '+(e.message||e));}
+ finally{
+  rematchBusy=false;
+  if(next)next.disabled=!myOnlineIsHost;
+  if(extend)extend.disabled=!myOnlineIsHost;
+ }
+}
+async function extendOnlineRematchTime(){
+ if(!roomId||!client||!myOnlineIsHost)return;
+ var button=el('onlineExtendRematch');if(button)button.disabled=true;
+ try{
+  var r=await onlineRequest(client.rpc('extend_room_rematch_time',{p_room_id:roomId}),'تمدید زمان بازی بعدی',12000);
+  if(r.error)throw r.error;
+  if(r.data&&r.data.state&&r.data.state.nextGameDeadline)onlineRematchDeadline=Number(r.data.state.nextGameDeadline);
+  lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;lastGameRevision=-1;
+  await refreshOnlineGame();
+  say('۱۵ ثانیه به زمان بازی بعدی اضافه شد.');
+ }catch(e){say('تمدید زمان انجام نشد: '+(e.message||e));}
+ finally{if(button)button.disabled=!myOnlineIsHost;}
+}
+async function submitOnlineTrumpSelection(contract,automatic){
+ if(!roomId||!client||onlineTrumpBusy)return;
+ var button=el('onlineTrumpConfirm');onlineTrumpBusy=true;if(button)button.disabled=true;
+ try{
+  if(!automatic&&!contract)throw new Error('ابتدا نوع قرارداد را انتخاب کن.');
+  say(automatic?'حاکم هوش مصنوعی در حال انتخاب قرارداد است...':'در حال ثبت قرارداد و پخش هشت کارت باقی‌مانده...');
+  var r=await onlineRequest(client.rpc('select_room_trump',{p_room_id:roomId,p_contract:automatic?null:contract}),'ثبت قرارداد و پخش کارت‌ها',15000);
+  if(r.error)throw r.error;
+  confirmedPlayedCardIds=Object.create(null);lastGameRevision=-1;lastOnlineHandSignature='';
+  await refreshOnlineGame(r.data&&r.data.state?{status:'playing',state:r.data.state,revision:r.data.revision}:null);
+  if(!automatic)say('قرارداد ثبت شد؛ کارت‌ها پخش شدند.');
+ }catch(e){say('انتخاب قرارداد انجام نشد: '+(e.message||e));}
+ finally{onlineTrumpBusy=false;if(button)button.disabled=false;}
+}
+function cardText(c){
+ var suit=({S:'♠',H:'♥',D:'♦',C:'♣'})[c.suit]||c.suit;
+ var rank=({A:'A',K:'K',Q:'Q',J:'J'})[c.rank]||c.rank;
+ return rank+suit;
+}
+async function refreshOnlineGame(startPayload){
+ if(!roomId||!client)return;
+ if(gameBusy){gameRefreshQueued=true;if(startPayload)gameStartSnapshot=startPayload;return;}
+ gameBusy=true;
+ var syncStage='خواندن وضعیت بازی';
+ try{
+  var q;
+  if(startPayload&&startPayload.status==='playing')q={data:{status:startPayload.status,public_state:startPayload.state,revision:startPayload.revision},error:null};
+  else{syncStage='دریافت وضعیت اتاق از سرور';q=await client.rpc('get_room_snapshot',{p_room_id:roomId});}
+  if(q.error)throw q.error;
+  if(q.data.status!=='playing'&&q.data.status!=='finished'){showRoom();el('onlineGame').style.display='none';say('اتاق باز است؛ منتظر شروع میزبان هستیم · وضعیت سرور: '+q.data.status);return;}
+  showRoom();
+  var state=q.data.public_state||{},revision=Number(q.data.revision||0);
+  // Always re-read the private hand, even when the public room revision is unchanged.
+  // A hand update can arrive before/after its room notification; compare its signature
+  // so cards already played never remain as tappable stale cards on screen.
+  syncStage='دریافت کارت‌های خصوصی بازیکن';var mine=await client.from('room_game_hands').select('seat,cards').eq('room_id',roomId).eq('owner_user_id',me.id).maybeSingle();
+  if(mine.error)throw mine.error;
+  if(mine.data&&Number.isInteger(Number(mine.data.seat)))myOnlineSeat=Number(mine.data.seat);
+  var hand=mine.data&&mine.data.cards||[];
+  // iOS PWA can briefly return a stale private-hand snapshot after a successful RPC.
+  // Keep server-confirmed plays hidden until the server hand catches up.
+  Object.keys(confirmedPlayedCardIds).forEach(function(cardId){
+   if(!hand.some(function(card){return card&&String(card.id)===cardId;}))delete confirmedPlayedCardIds[cardId];
+  });
+  hand=hand.filter(function(card){return !confirmedPlayedCardIds[String(card.id)];});
+  var handSignature=JSON.stringify(hand);
+  if(revision===lastGameRevision&&handSignature===lastOnlineHandSignature){
+   // Re-check server-side turn automation even when the game revision is unchanged.
+   // Otherwise a timeout checked once before its deadline is never checked again.
+   if(q.data.status==='playing'&&(q.data.public_state||{}).phase==='playing'&&!q.data.public_state.trickPendingUntil&&!aiBusy){
+    var sameState=q.data.public_state||{},sameTurn=Number(sameState.turn||0);
+    syncStage='بررسی نقش میزبان برای ادامه نوبت';var sameHost=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
+    if(sameHost.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+sameHost.error.message);
+    if(!sameHost.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
+    if(sameHost.data.is_host){
+     if(sameState.seatPlayers&&sameState.seatPlayers[String(sameTurn)]&&sameState.seatPlayers[String(sameTurn)].human===false){
+      aiBusy=true;try{syncStage='اجرای نوبت هوش مصنوعی';var retryAi=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(retryAi.error)throw retryAi.error;setTimeout(refreshOnlineGame,150);}catch(e){say('اجرای خودکار ربات دوباره تلاش می‌شود: '+(e.message||e));}finally{aiBusy=false;}
+     }else{
+      // Let PostgreSQL decide whether the deadline has passed. Never gate this
+      // RPC on the phone clock: device clock skew can leave an expired turn stuck.
+      try{
+       syncStage='پیش‌برد خودکار نوبت پس از پایان زمان';var retryTimeout=await onlineRequest(client.rpc('advance_room_turn_timeout',{p_room_id:roomId}),'اجرای خودکار پس از پایان نوبت',12000);
+       if(retryTimeout.error)throw retryTimeout.error;
+       if(retryTimeout.data&&retryTimeout.data.state)setTimeout(refreshOnlineGame,150);
+      }catch(e){say('خطای اجرای خودکار پس از پایان نوبت: '+(e.message||e));}
+     }
+    }
+   }
+   return;
+  }
+  el('onlineGame').style.display='block';
+  // The private hand was fetched before the revision fast-path above.
+  var players=state.seatPlayers||{},names=[0,1,2,3].map(function(i){return players[String(i)]&&players[String(i)].name||('بازیکن '+(i+1));});
+  var trickPending=!!state.trickPendingUntil;
+  var turn=Number(state.turn||0),finished=state.phase==='finished',decisionPending=state.phase==='challenge_decision',trumpPending=state.phase==='trump_selection';
+  onlineTrickDeadline=trickPending?Number(state.trickPendingUntil):0;
+  if(trickPending&&!onlineTrickResolveScheduled){
+   onlineTrickResolveScheduled=true;
+   onlineTrickResolveTimer=setTimeout(function(){
+    onlineTrickResolveScheduled=false;onlineTrickResolveTimer=null;
+    refreshOnlineGame();
+   },3100);
+  }else if(!trickPending&&onlineTrickResolveTimer){
+   clearTimeout(onlineTrickResolveTimer);onlineTrickResolveTimer=null;onlineTrickResolveScheduled=false;
+  }
+  var challengeDeadlines=state.challengeDeadlines||{},myDeadline=Number(challengeDeadlines[String(myOnlineSeat)]||0),isMyChallengeTurn=decisionPending&&myOnlineSeat>=0&&myDeadline>0&&!(state.challengePassed||[]).includes(myOnlineSeat);
+  onlineChallengeDeadline=decisionPending&&isMyChallengeTurn?myDeadline:0;onlineChallengeExpired=false;
+  window.__doubleKoutChallengeDeadlines=challengeDeadlines;window.__doubleKoutChallengePassed=state.challengePassed||[];
+  // Clear stale challenge-submission text as soon as the server leaves the challenge phase.
+  if(!decisionPending&&el('onlineStatus')&&/^در حال ثبت (?:عبور از چلنج|اعلام چلنج)|^عبور از چلنج در سرور ثبت شده است/.test(el('onlineStatus').textContent||''))say('');
+  var result=state.challengeResult;
+  if(finished){
+   var serverRematchDeadline=Number(state.nextGameDeadline||0);
+   if(serverRematchDeadline>0)onlineRematchDeadline=serverRematchDeadline;
+   else if(!onlineRematchDeadline)onlineRematchDeadline=Date.now()/1000+15;
+  }else{
+   onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;
+  }
+  var status=trumpPending?'پنج کارت اول پخش شده؛ حاکم باید قرارداد را انتخاب کند.':(trickPending?'چهار کارت روی میز است؛ تا پایان فرصت نمایش، دست بعدی شروع نمی‌شود.':(decisionPending?'همه بازیکنان انسانی، میزبان و مهمان، فرصت مستقل انتخاب چلنج دارند':'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳'));
+  if(state.challengeTeam){var myTeam=(myOnlineSeat%2===0?'A':'B');status+=(state.challengeTeam===myTeam?' · بازیکن هم‌تیمی وارد چلنج شد':' · حریف علیه شما اعلام چلنج کرد');}
+  if(finished)status=result?(result.status==='success'?'چلنج با موفقیت انجام شد':result.status==='failed-opponent-sequence'?'چلنج با توالی حریف شکست خورد':'چلنج در دست آخر ناموفق شد'):'بازی تمام شد · نتیجه '+(state.scoreA||0)+' به '+(state.scoreB||0);
+  el('onlineGameStatus').textContent=status;
+  var rematchPanel=el('onlineRematchPanel');
+  rematchPanel.style.display=finished?'block':'none';
+  el('onlineRematchText').textContent=myOnlineIsHost
+   ?'بازی بعدی پس از پایان شمارش معکوس خودکار آغاز می‌شود.'
+   :'منتظر میزبان برای آغاز بازی بعدی بمانید.';
+  el('onlineNextGame').disabled=!myOnlineIsHost||rematchBusy;
+  el('onlineExtendRematch').disabled=!myOnlineIsHost||rematchBusy;
+  renderOnlineRematchClock();
+  onlineTurnDeadline=(!finished&&!decisionPending&&!trickPending)?Number(state.turnDeadline||0):0;
+  renderOnlineTurnClock();
+  var decision=el('onlineDecision');decision.style.display=decisionPending?'block':'none';var trumpPanel=el('onlineTrumpSelection');trumpPanel.style.display=trumpPending?'block':'none';
+  var handTitle=el('onlineHandTitle'),handArea=el('onlineHand'),onlineTable=el('onlineTable');
+  if(decisionPending||trumpPending){
+   decision.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
+   handTitle.classList.add('challenge-hand-title');handArea.classList.add('challenge-hand');
+  }else{
+   onlineTable.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
+   handTitle.classList.remove('challenge-hand-title');handArea.classList.remove('challenge-hand');
+  }
+  if(trumpPending){
+   var pickerSeat=Number(state.trumpPickerSeat),picker=players[String(pickerSeat)]||{},canPick=myOnlineSeat===pickerSeat&&picker.human!==false;
+   el('onlineTrumpHint').textContent=canPick?'پنج کارت خودت را بررسی کن و قرارداد را انتخاب کن؛ پس از تأیید، هشت کارت باقی‌مانده برای همه پخش می‌شود.':(picker.human===false?'حاکم هوش مصنوعی در حال بررسی پنج کارت و انتخاب قرارداد است.':'منتظر انتخاب قرارداد توسط '+(picker.name||'حاکم')+' هستیم.');
+   el('onlineTrumpContract').style.display=canPick?'block':'none';el('onlineTrumpConfirm').style.display=canPick?'block':'none';el('onlineTrumpConfirm').disabled=!canPick;
+  }else{el('onlineTrumpContract').style.display='none';el('onlineTrumpConfirm').style.display='none';}
+  if(decisionPending){
+   var remaining=Math.max(0,Math.ceil(myDeadline-Date.now()/1000));
+   var alreadyPassed=(state.challengePassed||[]).includes(myOnlineSeat);
+   el('onlineDecisionHint').textContent=alreadyPassed?'انتخاب شما ثبت شد؛ منتظر تصمیم دیگر بازیکنان هستیم.':isMyChallengeTurn?'همه بازیکنان هم‌زمان فرصت دارند؛ اگر دست مناسبی دارید چلنج کنید یا عبور کنید.':'در حال انتظار برای تکمیل انتخاب بازیکنان...';
+   el('onlineChallengeClock').textContent=alreadyPassed?'ثبت شد':remaining+' ثانیه';
+   el('onlineChooseNormal').style.display=isMyChallengeTurn?'block':'none';
+   el('onlineChooseChallenge').style.display=isMyChallengeTurn?'block':'none';
+   el('onlineChallengeExtend').style.display=isMyChallengeTurn?'block':'none';
+   el('onlineChooseNormal').disabled=!isMyChallengeTurn||remaining<=0;
+   el('onlineChooseChallenge').disabled=!isMyChallengeTurn||remaining<=0;
+   el('onlineChallengeExtend').disabled=!isMyChallengeTurn||remaining<=0||(state.challengeExtendedSeats||[]).includes(myOnlineSeat);
+   if(isMyChallengeTurn&&remaining<=0)expireOnlineChallengeTurn(myOnlineSeat);
+  }
+  var suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'},rankGlyph={A:'A',K:'K',Q:'Q',J:'J'};
+  var visualCard=function(c){return {r:rankGlyph[c.rank||c.r]||(c.rank||c.r),s:suitGlyph[c.suit||c.s]||(c.suit||c.s),id:c.id};};
+  var seatDefs=[{key:'South',offset:0},{key:'East',offset:1},{key:'North',offset:2},{key:'West',offset:3}];
+  var playBySeat={};(state.plays||[]).forEach(function(p){playBySeat[Number(p.seat)]=p;});
+  var completedTricks=Array.isArray(state.trickWinners)?state.trickWinners.length:Math.max(0,(Number(state.trickNo)||1)-1);
+  seatDefs.forEach(function(def){
+   var seat=(myOnlineSeat+def.offset)%4,player=players[String(seat)]||{},left=trumpPending?5:Math.max(0,13-completedTricks-((playBySeat[seat])?1:0));
+   var visibleCount=def.offset===0?hand.length:left;
+   var scoreRow=onlineRosterRows.find(function(x){return Number(x.seat)===seat;});
+   el('onlineName'+def.key).textContent=(def.offset===0?'شما · ':'')+(player.name||('بازیکن '+(seat+1)))+(scoreRow?' · '+Number(scoreRow.points||0)+' امتیاز':'');
+   el('onlineCount'+def.key).textContent=visibleCount+' کارت';
+   el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&!trickPending&&turn===seat);
+   var slot=el('onlinePlayed'+def.key);slot.innerHTML='';
+   if(def.offset!==0&&left>0){
+    var fan=document.createElement('div');fan.className='opponent-fan';
+    for(var k=0;k<Math.min(left,13);k++){var back=document.createElement('div');back.className='card back';back.style.zIndex=String(k+1);fan.appendChild(back);}
+    slot.appendChild(fan);
+   }
+  });
+  el('onlineTrick').innerHTML='';
+  (state.plays||[]).forEach(function(p,i){var played=cardEl(visualCard(p.card),true);played.classList.add('table-played');played.style.setProperty('--play-index',i);el('onlineTrick').appendChild(played);});
+  var onlinePile=el('onlineCenterPile');if(onlinePile){onlinePile.innerHTML='';var clearing=Number(state.sequenceClearUntil||0)>Date.now()/1000;onlinePile.classList.toggle('clearing',clearing);var pile=clearing?(state.sequenceClearCards||[]):(state.groupCards||[]);pile.forEach(function(x,i){var c=cardEl(visualCard(x.card||x),true);c.classList.add('pile-card');c.style.setProperty('--px',(((i%5)-2)*3)+'px');c.style.setProperty('--py',(((i%7)-3)*2)+'px');c.style.setProperty('--pr',((((i*17)%13)-6)*1.25)+'deg');c.style.zIndex=String(i+1);onlinePile.appendChild(c);});if(clearing){var remain=Math.max(50,Number(state.sequenceClearUntil)*1000-Date.now());setTimeout(function(){if(onlinePile&&Number(state.sequenceClearUntil)*1000<=Date.now()){onlinePile.innerHTML='';onlinePile.classList.remove('clearing');}},remain+30);}}
+  el('onlineTrickMsg').textContent=trumpPending?'پنج کارت اول پخش شد؛ منتظر انتخاب قرارداد':(trickPending?'همه کارت‌ها روی میز؛ فرصت دیدن دست: '+Math.max(0,Math.ceil(onlineTrickDeadline-Date.now()/1000))+' ثانیه':(decisionPending?'در حال انتخاب چلنج':('نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳')));
+  el('onlineTrumpBig').textContent=state.trump?(suitGlyph[state.trump]||'♠'):(trumpPending?'؟':'♠');
+  var teamAName=[players['0']&&players['0'].name,players['2']&&players['2'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۱ و ۳';
+  var teamBName=[players['1']&&players['1'].name,players['3']&&players['3'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۲ و ۴';
+  var faScore=function(n){return String(n).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];});};
+  var completedWinners=Array.isArray(state.trickWinners)?state.trickWinners:[];
+  if(lastOnlineVoiceTrickCount===null)lastOnlineVoiceTrickCount=completedWinners.length;
+  else if(completedWinners.length>lastOnlineVoiceTrickCount){
+   var voiceWinner=Number(completedWinners[completedWinners.length-1]);
+   if(voiceWinner%2!==myOnlineSeat%2){
+    var lastPlays=lastOnlineFourPlays||[],leadVoiceCard=lastPlays[0]&&lastPlays[0].card,winVoicePlay=lastPlays.find(function(p){return Number(p.seat)===voiceWinner;}),winVoiceCard=winVoicePlay&&winVoicePlay.card;
+    var trumpGlyph=({S:'♠',H:'♥',D:'♦',C:'♣','♠':'♠','♥':'♥','♦':'♦','♣':'♣'})[state.trump]||'♠';
+    var aceWasCut=leadVoiceCard&&(leadVoiceCard.rank||leadVoiceCard.r)==='A'&&winVoiceCard&&normalizedSuit(winVoiceCard)!==normalizedSuit(leadVoiceCard)&&normalizedSuit(winVoiceCard)===trumpGlyph;
+    speakPlayer(aceWasCut?'aceCut':'collect',voiceWinner);
+   }
+   lastOnlineVoiceTrickCount=completedWinners.length;lastOnlineFourPlays=null;
+  }
+  if((state.plays||[]).length===4)lastOnlineFourPlays=(state.plays||[]).map(function(p){return {seat:Number(p.seat),card:p.card};});
+  var liveTeamScores=(mode==='double-kout'&&!state.challengeTeam)?onlineLiveSequenceScores(completedWinners):{
+   A:completedWinners.filter(function(seat){return Number(seat)%2===0;}).length,
+   B:completedWinners.filter(function(seat){return Number(seat)%2===1;}).length
+  };
+  var rawTeamWins={A:completedWinners.filter(function(seat){return Number(seat)%2===0;}).length,B:completedWinners.filter(function(seat){return Number(seat)%2===1;}).length};
+  var liveScoreText=(mode==='double-kout'&&!state.challengeTeam?'امتیاز توالی تکمیل‌شده':'برد دست‌ها')+' · تیم '+teamAName+': '+faScore(liveTeamScores.A)+' · تیم '+teamBName+': '+faScore(liveTeamScores.B)+'  |  برد خام دست‌ها · تیم '+teamAName+': '+faScore(rawTeamWins.A)+' · تیم '+teamBName+': '+faScore(rawTeamWins.B);
+  el('onlineLiveScoreTop').textContent=liveScoreText;
+  el('onlineScore').textContent=liveScoreText;
+  el('onlineHand').innerHTML='';
+  el('onlineHandTitle').textContent='کارت‌های شما · '+hand.length+' کارت';
+  var leadOnlineCard=(state.plays||[])[0]&&((state.plays||[])[0].card||{}),leadOnlineSuit=leadOnlineCard&&(leadOnlineCard.suit||leadOnlineCard.s);
+   leadOnlineSuit=({'S':'♠','H':'♥','D':'♦','C':'♣','♠':'♠','♥':'♥','♦':'♦','♣':'♣'})[leadOnlineSuit]||'';
+   var followsLead=!!leadOnlineSuit&&hand.some(function(card){return normalizedSuit(card)===leadOnlineSuit;}),hasForcedSuit=!!leadOnlineSuit&&followsLead&&hand.some(function(card){return normalizedSuit(card)!==leadOnlineSuit;});
+   var myPlayTurn=turn===myOnlineSeat&&!finished&&!decisionPending&&!trumpPending&&!trickPending;
+   hand.forEach(function(c,i){
+    var b=document.createElement('button'),fanOffset=i-(hand.length-1)/2;b.type='button';b.style.transform='rotate('+(fanOffset*4.2)+'deg) translateY('+(Math.abs(fanOffset)*1.45)+'px)';b.style.zIndex=String(i+1);
+    var legalCard=!followsLead||normalizedSuit(c)===leadOnlineSuit;b.classList.add(myPlayTurn?(hasForcedSuit?(legalCard?'online-card-legal':'online-card-illegal'):'online-card-unrestricted'):'online-card-inactive');b.appendChild(cardEl(visualCard(c)));
+    b.disabled=!myPlayTurn||!legalCard;
+    b.onclick=async function(){
+    if(b.disabled||onlineCardBusy)return;
+    onlineCardBusy=true;
+    // A turn is a single server transaction: disable the entire hand so a
+    // second rapid tap cannot submit a stale card while the first is pending.
+    el('onlineHand').querySelectorAll('button').forEach(function(cardButton){cardButton.disabled=true;});
+    say('در حال ثبت کارت روی میز...');
+    try{
+     var played=await onlineRequest(client.rpc('play_room_card',{p_room_id:roomId,p_card_id:c.id}),'ثبت کارت روی میز',12000);
+     if(played.error)throw played.error;
+     if(played.data&&played.data.error)throw new Error(played.data.error);
+     // The server confirmed this card. Remove it immediately on iPhone instead
+     // of waiting for the private-hand query to refresh.
+     confirmedPlayedCardIds[String(c.id)]=true;
+     b.remove();
+     el('onlineHandTitle').textContent='کارت‌های شما · '+el('onlineHand').querySelectorAll('button').length+' کارت';
+     lastGameRevision=-1;
+     var playedState=played.data&&played.data.state;
+     if((c.rank||c.r)==='A')speakPlayer('ace',myOnlineSeat);
+     await refreshOnlineGame(playedState?{status:played.data.done?'finished':'playing',state:playedState,revision:played.data.revision}:null);
+     say('');
+    }catch(e){
+     var msg=String(e&&e.message||e);lastGameRevision=-1;
+     try{await refreshOnlineGame();}catch(refreshError){}
+     if(/turn_time_expired|card_not_in_hand|card no(t)? in hand/i.test(msg)){say('مهلت این نوبت تمام شده یا کارت قبلاً ثبت شده بود؛ وضعیت دست از سرور تازه شد.');}
+     else if(/online_request_timeout/.test(msg)){say('پاسخ سرور برای ثبت کارت دیر رسید؛ وضعیت دست دوباره از سرور خوانده شد. اگر کارت ثبت شده باشد، از دست حذف می‌شود.');}
+     else{say('اجرای کارت ناموفق بود: '+msg);}
+    }finally{
+     onlineCardBusy=false;
+    }
+   };
+   el('onlineHand').appendChild(b);
+  });
+  lastGameRevision=revision;
+  lastOnlineHandSignature=handSignature;
+  if(!finished&&myOnlineSeat===-1)myOnlineSeat=-1;
+  if(!finished&&!decisionPending&&!trumpPending&&me.id&&!aiBusy){
+   syncStage='بررسی دسترسی میزبان';var hostQ=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
+   if(hostQ.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+hostQ.error.message);
+   if(!hostQ.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
+   if(trickPending){
+    try{
+     syncStage='ثبت برنده و جمع‌کردن دست';var trickResolve=await onlineRequest(client.rpc('resolve_room_trick',{p_room_id:roomId}),'جمع‌کردن دست پس از نمایش',12000);
+     if(trickResolve.error&&trickResolve.error.message!=='trick_display_pending')throw trickResolve.error;
+     if(trickResolve.data&&trickResolve.data.resolved)setTimeout(refreshOnlineGame,120);
+    }catch(e){if(!/trick_display_pending/.test(String(e&&e.message||e)))say('جمع‌کردن دست: '+(e.message||e));}
+   }
+   if(hostQ.data.is_host){
+    if(!trickPending&&players[String(turn)]&&players[String(turn)].human===false){
+     aiBusy=true;try{syncStage='اجرای نوبت هوش مصنوعی';var ai=await onlineRequest(client.rpc('play_room_ai_turn',{p_room_id:roomId}),'اجرای نوبت ربات',12000);if(ai.error)throw ai.error;setTimeout(refreshOnlineGame,150);}catch(e){say('نوبت ربات: '+(e.message||e));}finally{aiBusy=false;}
+    }else{
+     var timeout=await onlineRequest(client.rpc('advance_room_turn_timeout',{p_room_id:roomId}),'اجرای خودکار پس از پایان نوبت',12000);
+     if(timeout.error&&timeout.error.message!=='time_remaining')say('بررسی پایان زمان نوبت: '+timeout.error.message);
+     else if(timeout.data&&timeout.data.state)setTimeout(refreshOnlineGame,150);
+    }
+   }
+  }
+  if(trumpPending&&myOnlineIsHost&&players[String(Number(state.trumpPickerSeat))]&&players[String(Number(state.trumpPickerSeat))].human===false)submitOnlineTrumpSelection(null,true);
+  if(finished)say('بازی پایان یافت. '+status);
+ }catch(e){say('همگام‌سازی بازی · مرحله: '+syncStage+' · '+(e.name?e.name+': ':'')+(e.message||e));}
+ finally{
+  gameBusy=false;
+  if(gameStartSnapshot){var snapshot=gameStartSnapshot;gameStartSnapshot=null;gameRefreshQueued=false;Promise.resolve().then(function(){refreshOnlineGame(snapshot);});}
+  else if(gameRefreshQueued){gameRefreshQueued=false;Promise.resolve().then(refreshOnlineGame);}
+ }
+}
+async function leave(){
+ var leavingRoom=roomId;
+ if(rosterTimer){clearInterval(rosterTimer);rosterTimer=null;}
+ if(gameTimer){clearInterval(gameTimer);gameTimer=null;}
+ if(leavingRoom&&client){
+  try{var left=await client.rpc('leave_game_room',{p_room_id:leavingRoom});if(left.error)throw left.error;}
+  catch(e){say('خروج محلی انجام شد، اما حذف عضویت از اتاق انجام نشد: '+(e.message||e));}
+ }
+ if(channel){await client.removeChannel(channel);channel=null;}
+ roomId=null;roomCode='';myOnlineSeat=-1;myOnlineIsHost=false;lastGameRevision=-1;lastOnlineHandSignature='';confirmedPlayedCardIds=Object.create(null);onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
+}
+window.DoubleKoutOnline={open:open,leave:leave,getSession:async function(){await initClient();var r=await client.auth.getSession();if(r.error)throw r.error;return r.data.session||null;},rpc:async function(name,args){await initClient();return client.rpc(name,args||{});},invoke:async function(name,body){await initClient();return client.functions.invoke(name,{body:body||{}});}};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
+})();
+
+</script><script src="./central-progress.js"></script><script src="./central-store.js"></script><script src="./central-payments-admin.js"></script><script>if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script><script src="./lan-multiplayer.js"></script></body></html>
