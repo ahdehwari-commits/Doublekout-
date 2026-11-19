@@ -1154,6 +1154,9 @@ function ensureUI(){
 #onlineGame #onlineHand.challenge-hand button .card{visibility:visible!important;opacity:1!important;filter:none!important}
 #game #currentGroupCounter,#game .k-live-tricks{display:none!important}
 #onlineGame #onlineLiveScoreTop,#onlineGame #onlineScore{display:none!important}
+#onlineTable .online-seat-tricks{display:block!important;position:relative!important;z-index:8!important;margin:2px auto 0!important;padding:2px 6px!important;min-width:46px!important;border:1px solid #c9a45e!important;border-radius:7px!important;background:linear-gradient(145deg,#171512ee,#080807f2)!important;color:#ffe3a0!important;font-size:10px!important;font-weight:900!important;line-height:1.25!important;text-align:center!important;white-space:nowrap!important;box-shadow:0 2px 6px #0008!important}
+#onlineTable>.seat.active .online-seat-tricks{border-color:#ffe6a1!important;box-shadow:0 0 8px #e7c87999!important}
+@media(max-width:520px){#onlineTable .online-seat-tricks{font-size:9px!important;padding:2px 4px!important;margin-top:1px!important}}
 /* Dark stone tabletop with a raised brass edge, matching the approved 3D table direction. */
 .table{background-color:#242522!important;background-image:radial-gradient(ellipse at 50% 42%,#55534b 0%,#302f2b 58%,#171816 100%),repeating-linear-gradient(14deg,#ffffff08 0 2px,transparent 2px 8px)!important;border-color:#b9944f!important;box-shadow:inset 0 0 0 3px #f5d99588,inset 0 -24px 48px #000b,0 22px 38px #000d!important}
 .table>.seat{position:absolute!important;z-index:18!important}.table>.center{position:absolute!important;z-index:20!important}
@@ -1728,6 +1731,10 @@ async function refreshOnlineGame(startPayload){
    var scoreRow=onlineRosterRows.find(function(x){return Number(x.seat)===seat;});
    var identity=splitAvatarName((scoreRow&&scoreRow.display_name)||player.name||('بازیکن '+(seat+1)));var nameNode=el('onlineName'+def.key);nameNode.textContent='';var avatarNode=document.createElement('span');avatarNode.className='online-avatar-mini';avatarNode.textContent=identity.avatar;var nameText=document.createElement('span');nameText.textContent=(def.offset===0?'شما · ':'')+identity.name+(scoreRow?' · '+Number(scoreRow.points||0)+' امتیاز':'');nameNode.appendChild(nameText);nameNode.appendChild(avatarNode);
    el('onlineCount'+def.key).textContent=visibleCount+' کارت';
+   var trickBadge=el('onlineTricks'+def.key);
+   if(!trickBadge){trickBadge=document.createElement('div');trickBadge.id='onlineTricks'+def.key;trickBadge.className='online-seat-tricks';el('onlineCount'+def.key).insertAdjacentElement('afterend',trickBadge);}
+   var seatWonTricks=(state.trickWinners||[]).filter(function(winnerSeat){return Number(winnerSeat)===seat;}).length;
+   trickBadge.textContent=faScore(seatWonTricks)+' دست برده';
    el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&!trickPending&&turn===seat);
    var slot=el('onlinePlayed'+def.key);slot.innerHTML='';
    if(def.offset!==0&&left>0){
