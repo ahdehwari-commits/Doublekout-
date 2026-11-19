@@ -1189,7 +1189,7 @@ async function resendOnlineConfirmation(){
    authMessage('درخواست ارسال ایمیل به سامانه پذیرفته شد؛ تحویل واقعی ایمیل از داخل بازی قابل تأیید نیست. صندوق ورودی، هرزنامه و در صورت تأخیر محدودیت ارسال ایمیل Supabase را بررسی کن.');
   }catch(e){authMessage('ارسال مجدد ایمیل تأیید ناموفق بود: '+(e.message||e));}
  }
- function logoutOnlineAccount(){
+ async function logoutOnlineAccount(){
  try{await initClient();var r=await client.auth.signOut();if(r.error)throw r.error;session=null;me=null;authMessage('از حساب خارج شدی؛ برای بازی آنلاین بعدی می‌توانی مهمان بمانی یا دوباره وارد شوی.');}
  catch(e){authMessage('خروج از حساب انجام نشد: '+(e.message||e));}
 }
