@@ -188,7 +188,7 @@ declare
   v_state jsonb;
 begin
   if v_user is null then raise exception 'authentication_required'; end if;
-  if p_match_limit not in (54,-54,108,-108) then raise exception 'invalid_match_limit'; end if;
+  if p_match_limit is null or p_match_limit not in (54,-54,108,-108) then raise exception 'invalid_match_limit'; end if;
 
   select * into v_room from public.game_rooms where id=p_room_id for update;
   if not found then raise exception 'room_not_found'; end if;
@@ -301,7 +301,8 @@ begin
     v_legal:=public.kuwaiti_online_legal_card_ids(
       v_hand,coalesce(v_state->'plays','[]'::jsonb),
       (v_state->>'trickNo')::integer,
-      case when not coalesce((v_state->>'hiddenTrump')::boolean,false)
+      case when (v_state->>'trickNo')::integer=1
+             or not coalesce((v_state->>'hiddenTrump')::boolean,false)
              or coalesce((v_state->>'trumpAnnounced')::boolean,false)
              or v_seat=(v_state->>'auctionWinner')::integer
            then v_secret else null end,
@@ -472,7 +473,7 @@ begin
     if coalesce((v_state->>'turn')::integer,-1)<>v_seat then raise exception 'not_your_auction_turn'; end if;
     v_kind:=p_action->>'kind';
     v_passes:=coalesce((v_state->>'passes')::integer,0);
-    v_highest:=v_state->'highest';
+    v_highest:=nullif(v_state->'highest','null'::jsonb);
     v_highest_rank:=coalesce((v_state->>'highestRank')::integer,0);
     v_highest_player:=nullif(v_state->>'highestPlayer','')::integer;
 
@@ -576,7 +577,7 @@ begin
     v_plays:=coalesce(v_state->'plays','[]'::jsonb);
     v_trick_no:=(v_state->>'trickNo')::integer;
     v_legal:=public.kuwaiti_online_legal_card_ids(
-      v_hand,v_plays,v_trick_no,v_secret,v_seat,(v_state->>'auctionWinner')::integer
+      v_hand,v_plays,v_trick_no,case when v_trick_no=1 or not coalesce((v_state->>'hiddenTrump')::boolean,false) or coalesce((v_state->>'trumpAnnounced')::boolean,false) or v_seat=(v_state->>'auctionWinner')::integer then v_secret else null end,v_seat,(v_state->>'auctionWinner')::integer
     );
     if not (v_card->>'id'=any(v_legal)) then raise exception 'illegal_card_for_kuwaiti_rules'; end if;
 
