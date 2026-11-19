@@ -1128,6 +1128,7 @@ function playAITurn(){
 }
 function renderGame(){
  if(!game)return;
+ $('kTable')?.classList.remove('auction-orbit-active');
  $('kHand').classList.remove('k-contract-thinking');
  $('kScoreA').textContent=fa(points.A);$('kScoreB').textContent=fa(points.B);$('kGamesWonA').textContent=fa(matchGamesWon.A);$('kGamesWonB').textContent=fa(matchGamesWon.B);
  $('kTrickNo').textContent=fa(Math.min(game.trickNo,9));
