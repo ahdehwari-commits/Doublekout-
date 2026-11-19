@@ -1687,7 +1687,8 @@ async function refreshOnlineGame(startPayload){
   var decision=el('onlineDecision');decision.style.display=decisionPending?'block':'none';var trumpPanel=el('onlineTrumpSelection');trumpPanel.style.display=trumpPending?'block':'none';
   var handTitle=el('onlineHandTitle'),handArea=el('onlineHand'),onlineTable=el('onlineTable');
   if(decisionPending||trumpPending){
-   decision.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
+   var activePhasePanel=decisionPending?decision:trumpPanel;
+   activePhasePanel.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
    handTitle.classList.add('challenge-hand-title');handArea.classList.add('challenge-hand');
   }else{
    onlineTable.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
