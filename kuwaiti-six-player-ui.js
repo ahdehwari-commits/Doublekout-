@@ -49,15 +49,23 @@ function scheduleKuwaitiOnlineAI(){
 async function refreshOnlineKuwaiti(){
  if(!isOnlineKuwaiti()||!window.DoubleKoutOnline)return false;
  if(onlineKuwaitiBusy){onlineKuwaitiRefreshQueued=true;return true;}
+ const requestContext=onlineKuwaiti,requestRoomId=requestContext.roomId;
  onlineKuwaitiBusy=true;let refreshOk=false;
  try{
-  const r=await window.DoubleKoutOnline.rpc('kuwaiti_online_snapshot',{p_room_id:onlineKuwaiti.roomId});
+  const r=await window.DoubleKoutOnline.rpc('kuwaiti_online_snapshot',{p_room_id:requestRoomId});
   if(r.error)throw r.error;
-  const d=r.data||{},st=d.state||{},seat=Number(d.seat);
+  if(onlineKuwaiti!==requestContext||!isOnlineKuwaiti()||onlineKuwaiti.roomId!==requestRoomId)return false;
+  const d=r.data||{},incomingRevision=Number(d.revision||0),seat=Number(d.seat);
+  if(Number.isFinite(incomingRevision)&&incomingRevision<Number(requestContext.revision||0))return true;
+  const incomingHand=Array.isArray(d.hand)?d.hand:[],incomingHandSignature=JSON.stringify(incomingHand);
+  const sameRevision=incomingRevision===Number(requestContext.revision||0);
+  if(sameRevision&&incomingHandSignature===requestContext.handSignature)return true;
+  const st=sameRevision?(requestContext.state||{}):(d.state||{});
   if(!Number.isInteger(seat)||seat<0||seat>5)throw new Error('صندلی حساب در اتاق پیدا نشد');
-  onlineKuwaiti.seat=seat;onlineKuwaiti.revision=Number(d.revision||0);
+  if(onlineKuwaiti!==requestContext||!isOnlineKuwaiti()||onlineKuwaiti.roomId!==requestRoomId)return false;
+  onlineKuwaiti.seat=seat;if(incomingRevision>Number(onlineKuwaiti.revision||0))onlineKuwaiti.revision=incomingRevision;
   onlineKuwaiti.state=st;onlineKuwaiti.legalCardIds=Array.isArray(d.legal_card_ids)?d.legal_card_ids:[];
-  onlineKuwaiti.hand=Array.isArray(d.hand)?d.hand:[];
+  onlineKuwaiti.hand=incomingHand;onlineKuwaiti.handSignature=incomingHandSignature;
   onlineKuwaiti.status=d.status;
   onlineKuwaiti.trumpSuit=d.trump_suit||null;
   $('kPlayStyle').value='online';humanSeats=new Set([seat]);hotseatRevealed=true;
@@ -176,7 +184,7 @@ async function attachOnlineKuwaitiRoom(info){
   const ok=await refreshOnlineKuwaiti();if(!ok)throw new Error('بازی آنلاین پیدا شد، اما دریافت میز کامل نشد؛ اتصال را دوباره امتحان کن.');
   return true;
  }
- onlineKuwaiti={roomId:info.roomId,code:info.code,seat:Number(info.seat),isHost:!!info.isHost,roster:info.roster||[],revision:-1,legalCardIds:[]};
+ onlineKuwaiti={roomId:info.roomId,code:info.code,seat:Number(info.seat),isHost:!!info.isHost,roster:info.roster||[],revision:-1,handSignature:null,legalCardIds:[]};
  if($('kPlayStyle'))$('kPlayStyle').value='online';
  setScreen('game');
  $('kExit').textContent='بازگشت به اتاق آنلاین';
@@ -194,6 +202,8 @@ window.addEventListener('doublekout:kuwaiti-room-update',e=>{
   else if(info.roomId===onlineKuwaiti.roomId)refreshOnlineKuwaiti();
  }
 });
+window.addEventListener('online',()=>{if(isOnlineKuwaiti())refreshOnlineKuwaiti();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&isOnlineKuwaiti())refreshOnlineKuwaiti();});
 window.addEventListener('doublekout:kuwaiti-left',()=>{
  $('kExit').textContent='بازگشت به انتخاب بازی';
  if(onlineKuwaitiAiTimer){clearTimeout(onlineKuwaitiAiTimer);onlineKuwaitiAiTimer=null;}
