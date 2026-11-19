@@ -104,6 +104,7 @@ async function refreshOnlineKuwaiti(){
   $('kScoreA').textContent=fa(points.A);$('kScoreB').textContent=fa(points.B);
   $('kMatchProgress').textContent='حد امتیاز مسابقه: '+(matchLimit>0?'+':'')+fa(matchLimit)+' · تیم الف: '+fa(points.A)+' · تیم ب: '+fa(points.B);
   if(st.phase!=='auction'){
+   $('kTable')?.classList.remove('auction-orbit-active');
    const mount=$('kAuctionMount'),panel=$('kAuction');
    document.querySelectorAll('.k-seat.auction-panel-active').forEach(x=>x.classList.remove('auction-panel-active'));
    if(mount&&panel&&panel.parentElement!==mount){panel.classList.remove('seat-auction-panel');mount.appendChild(panel);}
@@ -449,6 +450,11 @@ s.textContent+=`
 @media(max-width:520px){#kPhaseModal{padding:10px}#kPhaseModal .k-phase-dialog{padding:14px;max-height:calc(100dvh - 20px);border-radius:20px}#kPhaseModal .k-contract-choice{min-height:92px}#kPhaseModal .k-contract-choice .k-choice-symbol{font-size:31px}#kPhaseModal .k-auction .k-bids button{min-height:48px;font-size:14px}}
 `;
 s.textContent+=`
+/* 9.33: restore the decorative gold orbit around the whole table only during auction. */
+#kTable{position:relative!important}
+#kTable.auction-orbit-active:after{content:""!important;position:absolute!important;inset:-9px!important;z-index:90!important;border-radius:36px!important;padding:4px!important;pointer-events:none!important;background:conic-gradient(from 0deg,transparent 0deg 205deg,#8e6828 225deg,#f9e7ac 244deg,#c89535 260deg,#fff2c2 276deg,transparent 300deg 360deg)!important;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0)!important;-webkit-mask-composite:xor!important;mask-composite:exclude!important;filter:drop-shadow(0 0 5px #e9c46caa)!important;animation:kTableGoldOrbit 6s linear infinite!important}
+@keyframes kTableGoldOrbit{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#kTable.auction-orbit-active:after{animation:none!important}}
 /* 9.30: calmer active-seat indicator; no rotating orbit or flashing ring. */
 .k-seat.active{animation:none!important;outline:2px solid #f2d18a!important;box-shadow:0 0 16px #e7c87966,inset 0 0 0 1px #ffe9b2!important}
 .k-seat.active:after{content:none!important;display:none!important;animation:none!important}
@@ -470,7 +476,10 @@ s.textContent+=`
 /* Keep the game name out of the auction/card-play area: compact upper-left table marker. */
  .k-game-corner-label{position:absolute!important;top:10px!important;left:12px!important;right:auto!important;z-index:45!important;pointer-events:none!important;padding:4px 8px!important;border:1px solid #c9a45e!important;border-radius:8px!important;background:linear-gradient(145deg,#171512ee,#080807f2)!important;color:#f2d998!important;font-size:10px!important;font-weight:800!important;letter-spacing:.1px!important;box-shadow:0 3px 9px #0009!important;white-space:nowrap!important}
  @media(max-width:520px){.k-game-corner-label{top:8px!important;left:9px!important;padding:3px 6px!important;font-size:9px!important}}
- #kTrickCards{display:none!important}
+ #kTrickCards,#kTable>.k-center #kTeamTricks{display:none!important}
+  #kTable>.k-center{pointer-events:none!important}
+  #kTable>.k-center #kTurn{font-size:10px!important;line-height:1.3!important;opacity:.78!important;text-align:center!important}
+  #kTable>.k-game-corner-label{top:9px!important;left:10px!important;right:auto!important;z-index:55!important}
  /* 3D direction: charcoal stone surface, raised brass rim and black/gold card backs. */
 .k-table{background-color:#282722!important;background-image:radial-gradient(ellipse at 50% 40%,#5b584f 0%,#34332e 56%,#171815 100%),repeating-linear-gradient(13deg,#ffffff08 0 2px,transparent 2px 8px)!important;border-color:#c19a50!important;box-shadow:inset 0 0 0 3px #f5d99588,inset 0 -26px 50px #000c,0 24px 42px #000d!important}
 .k-table:before{content:"";position:absolute;inset:6px;border:2px solid #e2c27c;border-radius:18px;box-shadow:inset 0 0 0 4px #ffffff12,inset 0 0 28px #000b;pointer-events:none;z-index:0}
@@ -599,7 +608,7 @@ function resetSetup(){
  game=null;auction=null;locked=false;trickView=[];hotseatRevealed=false;$('kHotseatGate')?.classList.add('hidden');
  $('kAuction').classList.add('hidden');$('kAuctionSummary').classList.add('hidden');$('kContractSetup').classList.add('hidden');$('kMalzoomSetup').classList.add('hidden');$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');
  $('kHand').innerHTML='';$('kPreviousCards').innerHTML='';$('kCenterCards').innerHTML='';$('kTrumpDisplay').textContent='بدون حکم';$('kTrickCards').textContent='کارت‌های این دست: ۰ از ۶';$('kTurn').textContent='در انتظار مزایده';$('kStatus').textContent='میز پاک و آماده بازی جدید است.';
- for(let p=0;p<6;p++){$('kPlayed'+p).innerHTML='';$('kCount'+p).textContent='۹ کارت';$('kSeat'+p)?.classList?.remove('active');}
+ for(let p=0;p<6;p++){$('kPlayed'+p).innerHTML='';$('kCount'+p).textContent='۹ کارت';$('kSeatTricks'+p).textContent='۰ دست تیم';$('kSeat'+p)?.classList?.remove('active');}
  if(firstGame){playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;}
  $('kMatchProgress').textContent='حد امتیاز مسابقه: '+(matchLimit>0?'+':'')+fa(matchLimit)+' · مجموع الف: '+fa(points.A)+' · مجموع ب: '+fa(points.B);
  renderHumanSeatChoices();$('kHumanSeatSetup').classList.toggle('hidden',$('kPlayStyle').value!=='hotseat');
@@ -634,6 +643,7 @@ function startAuction(){
 }
 function renderAuction(){
  if(!auction)return;
+ $('kTable')?.classList.add('auction-orbit-active');
  const activeSeat=document.querySelector('.k-seat[data-p="'+auction.current+'"]');
  const auctionPanel=$('kAuction');
  const isHuman=isHumanSeat(auction.current),forced=auction.passes>=5&&!auction.highest;
@@ -1137,7 +1147,8 @@ function renderGame(){
   const seat=document.querySelector('.k-seat[data-p="'+p+'"]');
   seat.classList.toggle('active',game.turn===p&&!game.done);
   $('kCount'+p).textContent=fa(game.hands[p].length)+' کارت';
-  $('kSeatTricks'+p).textContent=fa(game.trickWinners.filter(w=>Number(w)===p).length)+' دست';
+  const teamTricks=game.trickWinners.filter(w=>team(Number(w))===team(p)).length;
+  $('kSeatTricks'+p).textContent=fa(teamTricks)+' دست تیم';
   const slot=$('kPlayed'+p);slot.innerHTML='';
   const played=currentPlays.find(x=>x.player===p);
   if(p!==game.turn&&game.hands[p].length&&(isOnlineKuwaiti()?p!==onlineKuwaiti.seat:!($('kPlayStyle').value!=='hotseat'&&p===0))){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=game.hands[p].length;const side=p===1||p===2||p===4||p===5;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';const offset=j-(n-1)/2;back.style.setProperty('--fan-index',String(j));back.style.setProperty('--fan-count',String(n));back.style.zIndex=String(10+j);const toward=side?Math.abs(offset)*1.25:-Math.abs(offset)*1.25;const angle=offset*(side?5.2:6.2);back.style.transform='translateY('+toward+'px) rotate('+angle+'deg) translateZ('+(Math.max(0,5-Math.abs(offset))*2)+'px)';back.style.marginLeft=j===0?'0':'-54px';back.style.width='62px';back.style.height='93px';back.style.minWidth='62px';back.style.flex='0 0 62px';back.style.transformOrigin='50% 100%';back.style.boxShadow='0 12px 18px #000b, inset 0 0 0 1px #fff6';fan.append(back);}slot.append(fan);}
