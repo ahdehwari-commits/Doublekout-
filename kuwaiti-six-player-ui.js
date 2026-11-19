@@ -47,7 +47,7 @@ function scheduleKuwaitiOnlineAI(){
 }
 async function refreshOnlineKuwaiti(){
  if(!isOnlineKuwaiti()||!window.DoubleKoutOnline)return false;
- if(onlineKuwaitiBusy){onlineKuwaitiRefreshQueued=true;return;}
+ if(onlineKuwaitiBusy){onlineKuwaitiRefreshQueued=true;return true;}
  onlineKuwaitiBusy=true;let refreshOk=false;
  try{
   const r=await window.DoubleKoutOnline.rpc('kuwaiti_online_snapshot',{p_room_id:onlineKuwaiti.roomId});
@@ -168,6 +168,7 @@ async function attachOnlineKuwaitiRoom(info){
   onlineKuwaiti.code=info.code||onlineKuwaiti.code;
   onlineKuwaiti.roster=info.roster||onlineKuwaiti.roster||[];
   if($('kPlayStyle'))$('kPlayStyle').value='online';
+  $('kExit').textContent='بازگشت به اتاق آنلاین';
   setScreen('game');
   const ok=await refreshOnlineKuwaiti();if(!ok)throw new Error('بازی آنلاین پیدا شد، اما دریافت میز کامل نشد؛ اتصال را دوباره امتحان کن.');
   return true;
@@ -185,7 +186,7 @@ window.addEventListener('doublekout:kuwaiti-room-update',e=>{
  if(!window.DoubleKoutOnline||!window.DoubleKoutOnline.getRoomInfo)return;
  const info=window.DoubleKoutOnline.getRoomInfo();
  if(info&&info.mode==='kuwaiti'&&info.roomId){
-  if(!isOnlineKuwaiti())attachOnlineKuwaitiRoom(info);
+  if(!isOnlineKuwaiti())attachOnlineKuwaitiRoom(info).catch(e=>onlineKuwaitiStatus('ورود به میز آنلاین: '+(e.message||e)));
   else if(info.roomId===onlineKuwaiti.roomId)refreshOnlineKuwaiti();
  }
 });
