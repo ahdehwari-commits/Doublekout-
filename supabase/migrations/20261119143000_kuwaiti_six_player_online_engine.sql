@@ -93,7 +93,7 @@ declare
 begin
   if v_count>0 then
     v_first := p_plays->0->'card';
-    if p_trick_no=9 and v_first->>'kind'='joker' then
+    if v_first->>'kind'='joker' then
       if v_count>1 then
         v_second := p_plays->1->'card';
         if v_second->>'kind'='normal' then v_lead:=v_second->>'suit'; end if;
@@ -120,6 +120,10 @@ begin
     select coalesce(array_agg(x->>'id' order by ord),'{}'::text[])
       into v_result from jsonb_array_elements(p_hand) with ordinality t(x,ord)
       where x->>'kind'='normal';
+    if cardinality(v_result)=0 then
+      select coalesce(array_agg(x->>'id' order by ord),'{}'::text[])
+        into v_result from jsonb_array_elements(p_hand) with ordinality t(x,ord);
+    end if;
     return v_result;
   end if;
 
@@ -127,6 +131,10 @@ begin
     select coalesce(array_agg(x->>'id' order by ord),'{}'::text[])
       into v_result from jsonb_array_elements(p_hand) with ordinality t(x,ord)
       where x->>'kind'='normal';
+    if cardinality(v_result)=0 then
+      select coalesce(array_agg(x->>'id' order by ord),'{}'::text[])
+        into v_result from jsonb_array_elements(p_hand) with ordinality t(x,ord);
+    end if;
     return v_result;
   end if;
 
@@ -293,7 +301,7 @@ begin
 
   if v_state->>'phase'='playing' and (v_state->>'turn')::integer=v_seat then
     if jsonb_array_length(coalesce(v_state->'plays','[]'::jsonb))>0 then
-      if (v_state->>'trickNo')::integer=9 and v_state->'plays'->0->'card'->>'kind'='joker' then
+      if v_state->'plays'->0->'card'->>'kind'='joker' then
         if jsonb_array_length(v_state->'plays')>1 and v_state->'plays'->1->'card'->>'kind'='normal' then
           v_lead:=v_state->'plays'->1->'card'->>'suit';
         end if;
@@ -598,7 +606,7 @@ begin
       v_state:=v_state||jsonb_build_object('plays',v_plays,'turn',(v_seat+1)%6,
         'message','کارت ثبت شد؛ نوبت بازیکن بعدی است');
     else
-      if v_trick_no=9 and v_plays->0->'card'->>'kind'='joker' then
+      if v_plays->0->'card'->>'kind'='joker' then
         v_lead:=case when v_plays->1->'card'->>'kind'='normal' then v_plays->1->'card'->>'suit' else null end;
       else
         v_lead:=case when v_plays->0->'card'->>'kind'='normal' then v_plays->0->'card'->>'suit' else null end;
