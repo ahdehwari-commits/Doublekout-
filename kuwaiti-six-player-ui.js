@@ -103,7 +103,11 @@ async function refreshOnlineKuwaiti(){
   }:null;
   $('kScoreA').textContent=fa(points.A);$('kScoreB').textContent=fa(points.B);
   $('kMatchProgress').textContent='حد امتیاز مسابقه: '+(matchLimit>0?'+':'')+fa(matchLimit)+' · تیم الف: '+fa(points.A)+' · تیم ب: '+fa(points.B);
-  if(st.phase!=='auction'){const mount=$('kAuctionMount'),panel=$('kAuction');if(mount&&panel&&panel.parentElement!==mount){panel.classList.remove('seat-auction-panel');mount.appendChild(panel);}}
+  if(st.phase!=='auction'){
+   const mount=$('kAuctionMount'),panel=$('kAuction');
+   document.querySelectorAll('.k-seat.auction-panel-active').forEach(x=>x.classList.remove('auction-panel-active'));
+   if(mount&&panel&&panel.parentElement!==mount){panel.classList.remove('seat-auction-panel');mount.appendChild(panel);}
+  }
   $('kAuction').classList.toggle('hidden',st.phase!=='auction');
   $('kContractSetup').classList.toggle('hidden',st.phase!=='contract_selection'||seat!==game.auctionWinner);
   $('kMalzoomSetup').classList.toggle('hidden',st.phase!=='malzoom_selection'||seat!==game.auctionWinner);
@@ -114,13 +118,13 @@ async function refreshOnlineKuwaiti(){
    $('kAuction').classList.add('hidden');$('kAuctionSummary').classList.remove('hidden');
    $('kAuctionSummary').textContent='مزایده پایان یافت · برنده: '+playerNames[game.auctionWinner]+' · پیشنهاد: '+(st.auctionBid&&st.auctionBid.label||'');
    if(seat===game.auctionWinner){setContractChoice('hokm_spades');$('kStatus').textContent='مزایده را بردی؛ قرارداد را انتخاب و تأیید کن.';renderContractChoiceHand(seat);}
-   else{$('kHand').innerHTML='';$('kStatus').textContent='منتظر انتخاب قرارداد توسط '+playerNames[game.auctionWinner]+' هستیم.';}
+   else{$('kStatus').textContent='منتظر انتخاب قرارداد توسط '+playerNames[game.auctionWinner]+' هستیم.';renderContractChoiceHand(seat);}
    setScreen('game');
   }else if(st.phase==='malzoom_selection'){
    $('kAuction').classList.add('hidden');$('kAuctionSummary').classList.remove('hidden');
    $('kAuctionSummary').textContent='برنده مزایده: '+playerNames[game.auctionWinner]+' · ملزوم';
    if(seat===game.auctionWinner){$('kStatus').textContent='خال حکم ملزوم را انتخاب کن و مخفی‌بودن آن را مشخص کن.';renderContractChoiceHand(seat);}
-   else{$('kStatus').textContent='منتظر انتخاب حکم ملزوم توسط '+playerNames[game.auctionWinner]+' هستیم.';$('kHand').innerHTML='';}
+   else{$('kStatus').textContent='منتظر انتخاب حکم ملزوم توسط '+playerNames[game.auctionWinner]+' هستیم.';renderContractChoiceHand(seat);}
    setScreen('game');
   }else if(st.phase==='playing'){
    $('kAuction').classList.add('hidden');$('kContractSetup').classList.add('hidden');$('kMalzoomSetup').classList.add('hidden');
@@ -435,6 +439,33 @@ s.textContent+=`
 @media(max-width:520px){.k-table{min-height:460px!important}.k-table>.k-seat{min-height:104px!important}.k-table>.k-center{left:28%!important;right:28%!important;top:35%!important;bottom:35%!important}}
 @media(max-width:520px){#kPhaseModal{padding:10px}#kPhaseModal .k-phase-dialog{padding:14px;max-height:calc(100dvh - 20px);border-radius:20px}#kPhaseModal .k-contract-choice{min-height:92px}#kPhaseModal .k-contract-choice .k-choice-symbol{font-size:31px}#kPhaseModal .k-auction .k-bids button{min-height:48px;font-size:14px}}
 `;
+s.textContent+=`
+/* 9.30: calmer active-seat indicator; no rotating orbit or flashing ring. */
+.k-seat.active{animation:none!important;outline:2px solid #f2d18a!important;box-shadow:0 0 16px #e7c87966,inset 0 0 0 1px #ffe9b2!important}
+.k-seat.active:after{content:none!important;display:none!important;animation:none!important}
+/* Approved auction placement: compact controls beside the active player's chair. */
+.k-table{position:relative!important;overflow:visible!important}
+.k-seat{position:relative!important;overflow:visible!important}
+.k-seat.auction-panel-active{z-index:120!important}
+.k-seat .seat-auction-panel{position:absolute!important;z-index:140!important;width:min(238px,66vw)!important;max-width:238px!important;min-width:190px!important;max-height:48vh!important;overflow:auto!important;box-sizing:border-box!important;margin:0!important;padding:10px!important;transform:none!important;border:1px solid #e3c27c!important;border-radius:13px!important;background:linear-gradient(145deg,#292722f7,#080a09f7)!important;box-shadow:0 15px 28px #000d,inset 0 1px 0 #fff3!important}
+.k-seat[data-p="4"] .seat-auction-panel,.k-seat[data-p="5"] .seat-auction-panel{left:calc(100% + 8px)!important;right:auto!important;top:50%!important;bottom:auto!important;transform:translateY(-50%)!important}
+.k-seat[data-p="1"] .seat-auction-panel,.k-seat[data-p="2"] .seat-auction-panel{right:calc(100% + 8px)!important;left:auto!important;top:50%!important;bottom:auto!important;transform:translateY(-50%)!important}
+.k-seat[data-p="3"] .seat-auction-panel{left:50%!important;right:auto!important;top:calc(100% + 8px)!important;bottom:auto!important;transform:translateX(-50%)!important}
+.k-seat[data-p="0"] .seat-auction-panel{left:50%!important;right:auto!important;bottom:calc(100% + 8px)!important;top:auto!important;transform:translateX(-50%)!important}
+.k-seat .seat-auction-panel .k-bids{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:4px!important}
+.k-seat .seat-auction-panel .k-bids button{min-height:42px!important;padding:6px 2px!important;font-size:12px!important}
+@media(max-width:520px){
+ .k-seat .seat-auction-panel{width:min(214px,62vw)!important;min-width:174px!important;max-height:42vh!important;padding:8px!important}
+ .k-seat .seat-auction-panel .k-bids{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+/* 3D direction: charcoal stone surface, raised brass rim and black/gold card backs. */
+.k-table{background-color:#282722!important;background-image:radial-gradient(ellipse at 50% 40%,#5b584f 0%,#34332e 56%,#171815 100%),repeating-linear-gradient(13deg,#ffffff08 0 2px,transparent 2px 8px)!important;border-color:#c19a50!important;box-shadow:inset 0 0 0 3px #f5d99588,inset 0 -26px 50px #000c,0 24px 42px #000d!important}
+.k-table:before{content:"";position:absolute;inset:6px;border:2px solid #e2c27c;border-radius:18px;box-shadow:inset 0 0 0 4px #ffffff12,inset 0 0 28px #000b;pointer-events:none;z-index:0}
+.k-seat{background:linear-gradient(145deg,#24231f,#080909)!important;border-color:#b18d4d!important;box-shadow:0 10px 18px #000b,inset 0 1px 0 #fff2!important}
+.k-back{background:linear-gradient(145deg,#050607,#27241d 52%,#050607)!important;border:3px solid #c6a45f!important;box-shadow:inset 0 0 0 2px #f8e2a5,inset 0 0 18px #000,0 9px 16px #000c!important}
+.k-back:before{background:repeating-linear-gradient(45deg,transparent 0 6px,#e6c77825 6px 8px),radial-gradient(circle at 50% 50%,#d7b45a33,transparent 58%)!important;border:1px solid #e4c477!important}
+.k-back:after{color:#ffe6a0!important;text-shadow:0 2px 3px #000!important}
+`;
 document.head.appendChild(s);
  const cornerStyle=document.createElement('style');cornerStyle.textContent="/* 9.2 contract indicator fixed to upper-right table corner */\n.k-table{position:relative}\n.k-trump-corner{position:absolute;top:9px;right:9px;transform:none;z-index:30;min-width:76px;justify-content:center;padding:5px 9px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#09271fee,#031711f5);box-shadow:0 4px 12px #0009;text-align:center;pointer-events:none}\n.k-trump-corner span{font-size:10px;color:#e9d39a}\n.k-trump-corner b{font-size:14px!important;color:#ffe19a}\n.k-table .k-seat[data-p=\"2\"]{padding-top:30px}\n";cornerStyle.textContent+="\n/* Seat labels sit below the card fans; individual trick wins stay on each chair. */\n.k-seat{display:flex!important;flex-direction:column!important;align-items:center!important;gap:3px!important}\n.k-seat .k-played{order:-1!important;position:relative!important;z-index:8!important;min-height:88px!important;margin:0 0 3px!important;overflow:visible!important;transform:translateY(-3px)!important}\n.k-seat .k-opponent-fan{position:relative!important;z-index:9!important}\n .k-seat .k-name{order:0!important;position:relative!important;z-index:10!important;width:100%;margin-top:20px!important;padding:7px 2px 3px!important;border-top:1px solid #d9bd78aa!important;background:linear-gradient(180deg,#0b3025,#061b15)!important;border-radius:7px 7px 10px 10px!important}\n.k-seat .k-count{order:1!important;margin:0!important;font-size:9px!important;line-height:1.1!important}\n/* Remaining cards are already counted on each chair; hide the duplicate oversized trick-card counter. */\n#kTrickCards{display:none!important}\n.k-seat .k-seat-tricks{order:2!important;font-size:10px!important;font-weight:900!important;color:#ffe5a1!important;line-height:1.3!important}\n.k-team-tricks{font-size:11px;font-weight:900;color:#ffe5a1;background:#09271f;border:1px solid #b99a5d;border-radius:8px;padding:4px 8px;margin:1px auto;max-width:max-content}\n/* Corner trump marker and two-layer trick pile: previous trick remains underneath current plays. */\n.k-table{position:relative!important;isolation:isolate!important;overflow:visible!important}\n.k-table>.k-seat{z-index:3!important}\n.k-table>.k-center{z-index:12!important;overflow:visible!important}\n.k-table>.k-table-card-layer{position:absolute!important;inset:0!important;z-index:24!important;pointer-events:none!important;overflow:visible!important}\n .k-trump-corner{position:absolute!important;top:9px!important;right:9px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:45!important;display:flex!important;align-items:center!important;gap:6px!important;max-width:34%!important;white-space:nowrap!important}\n.k-center{position:absolute!important}\n.k-previous-cards,.k-center-cards{position:absolute!important;left:50%!important;top:50%!important;width:100%!important;height:116px!important;min-height:0!important;transform:translate(-50%,-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;direction:ltr!important;overflow:visible!important;pointer-events:none!important}\n.k-previous-cards{z-index:2!important;opacity:.58!important;filter:brightness(.72) saturate(.78)!important}\n.k-center-cards{z-index:7!important}\n.k-previous-cards .k-pile-played{position:absolute!important;left:calc(50% - 30px)!important;top:calc(50% - 44px)!important;width:60px!important;height:88px!important;margin:0!important;transform:translate(var(--pile-x),var(--pile-y)) rotate(var(--pile-r))!important;box-shadow:0 8px 15px #000c!important}\n.k-center-cards .k-table-played{position:relative!important;z-index:8!important}\n@media(max-width:520px){.k-previous-cards,.k-center-cards{height:96px!important}.k-previous-cards .k-pile-played{width:49px!important;height:74px!important;left:calc(50% - 24px)!important;top:calc(50% - 37px)!important} .k-trump-corner{top:118px!important;right:118px!important;font-size:11px!important}.k-seat .k-played{min-height:60px!important}.k-seat-tricks{font-size:9px!important}}";
 document.head.appendChild(cornerStyle);
@@ -496,7 +527,7 @@ function setupMarkup(){
  <div id="kContractSetup" class="k-contract-setup k-phase-modal-content hidden"><h3>انتخاب قرارداد بازی</h3><p class="k-small">با توجه به کارت‌هایی که در اختیار داری، قرارداد مناسب را انتخاب کن.</p><select id="kContract" class="k-select" style="display:none"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option></select><div id="kContractChoices" class="k-contract-choice-grid"><button type="button" class="k-contract-choice selected" data-contract="hokm_spades" aria-pressed="true"><span class="k-choice-symbol">♠</span><b>حکم پیک</b><small>خال حکم‌دار</small></button><button type="button" class="k-contract-choice" data-contract="hokm_hearts" aria-pressed="false"><span class="k-choice-symbol red">♥</span><b>حکم دل</b><small>خال حکم‌دار</small></button><button type="button" class="k-contract-choice" data-contract="hokm_diamonds" aria-pressed="false"><span class="k-choice-symbol red">♦</span><b>حکم خشت</b><small>خال حکم‌دار</small></button><button type="button" class="k-contract-choice" data-contract="hokm_clubs" aria-pressed="false"><span class="k-choice-symbol">♣</span><b>حکم گشنیز</b><small>خال حکم‌دار</small></button><button type="button" class="k-contract-choice" data-contract="naras" aria-pressed="false"><span class="k-choice-symbol">✧</span><b>نرس</b><small>بدون حکم</small></button><button type="button" class="k-contract-choice" data-contract="tak_naras" aria-pressed="false"><span class="k-choice-symbol">Ⅱ</span><b>تک نرس</b><small>بدون حکم</small></button><button type="button" class="k-contract-choice" data-contract="saras" aria-pressed="false"><span class="k-choice-symbol">♛</span><b>سرس</b><small>بدون حکم</small></button></div><button id="kConfirmContract" class="primary">تأیید قرارداد و شروع بازی</button></div>
  <div id="kMalzoomSetup" class="k-auction k-phase-modal-content hidden"><h3>انتخاب خال حکم ملزوم</h3><p class="k-small">خال حکم را انتخاب کن و سپس مشخص کن که حکم مخفی بماند یا نه.</p><select id="kTrumpSuit" class="k-select" style="display:none"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">گشنیز ♣</option></select><div id="kMalzoomChoices" class="k-contract-choice-grid k-suit-choice-grid"><button type="button" class="k-contract-choice selected" data-trump-suit="S" aria-pressed="true"><span class="k-choice-symbol">♠</span><b>پیک</b></button><button type="button" class="k-contract-choice" data-trump-suit="H" aria-pressed="false"><span class="k-choice-symbol red">♥</span><b>دل</b></button><button type="button" class="k-contract-choice" data-trump-suit="D" aria-pressed="false"><span class="k-choice-symbol red">♦</span><b>خشت</b></button><button type="button" class="k-contract-choice" data-trump-suit="C" aria-pressed="false"><span class="k-choice-symbol">♣</span><b>گشنیز</b></button></div><label class="k-hide-trump"><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
  <div class="k-table" id="kTable">${[0,1,2,3,4,5].map(p=>'<div class="k-seat" data-p="'+p+'"><div class="k-name" id="kName'+p+'">'+playerNames[p]+'</div><div class="k-count" id="kCount'+p+'">۹ کارت</div><div class="k-seat-tricks" id="kSeatTricks'+p+'">۰ دست</div><div class="k-played" id="kPlayed'+p+'"></div></div>').join('')}
- <div class="k-trump-badge k-trump-corner"><span>حکم</span><b id="kTrumpDisplay">بدون حکم</b></div><div class="k-center"><div style="color:#f2d998;font-weight:bold">کوت کویتی</div><div id="kTrickCards" class="hidden" aria-hidden="true">۰</div><div id="kTeamTricks" class="k-team-tricks">دست‌های گروه جاری: ۰</div><div id="kTurn" class="k-small">در انتظار مزایده</div></div><div id="kTableCardLayer" class="k-table-card-layer" aria-label="کارت‌های بازی‌شده روی میز"><div id="kPreviousCards" class="k-previous-cards" aria-label="کارت‌های دست قبلی"></div><div id="kCenterCards" class="k-center-cards" aria-label="کارت‌های دست جاری"></div></div></div>
+ <div class="k-trump-badge k-trump-corner"><span>حکم</span><b id="kTrumpDisplay">بدون حکم</b></div><div class="k-center"><div style="color:#f2d998;font-weight:bold">کوت کویتی</div><div id="kTrickCards" class="hidden" aria-hidden="true">۰</div><div id="kTurn" class="k-small">در انتظار مزایده</div></div><div id="kTableCardLayer" class="k-table-card-layer" aria-label="کارت‌های بازی‌شده روی میز"><div id="kPreviousCards" class="k-previous-cards" aria-label="کارت‌های دست قبلی"></div><div id="kCenterCards" class="k-center-cards" aria-label="کارت‌های دست جاری"></div></div></div>
  <div class="hidden" id="kLiveTricks"><span id="kWonA">۰</span><span id="kWonB">۰</span></div>
  <div id="kStatus" class="k-status hidden">وضعیت بازی</div>
  <div class="k-actions"><button id="kAskTrump" class="hidden">درخواست اعلام حکم مخفی</button><button id="kAnnounceTrump" class="hidden">اعلام حکم</button></div>
@@ -552,8 +583,15 @@ function renderAuction(){
  const activeSeat=document.querySelector('.k-seat[data-p="'+auction.current+'"]');
  const auctionPanel=$('kAuction');
  const isHuman=isHumanSeat(auction.current),forced=auction.passes>=5&&!auction.highest;
- if(isHuman&&activeSeat&&auctionPanel){auctionPanel.classList.remove('hidden');if(auctionPanel.parentElement!==activeSeat)activeSeat.appendChild(auctionPanel);}
- else if(auctionPanel){auctionPanel.classList.add('hidden');}
+ document.querySelectorAll('.k-seat.auction-panel-active').forEach(seat=>seat.classList.remove('auction-panel-active'));
+ if(isHuman&&activeSeat&&auctionPanel){
+  activeSeat.classList.add('auction-panel-active');
+  auctionPanel.classList.remove('hidden');auctionPanel.classList.add('seat-auction-panel');
+  if(auctionPanel.parentElement!==activeSeat)activeSeat.appendChild(auctionPanel);
+ }else if(auctionPanel){
+  auctionPanel.classList.add('hidden');auctionPanel.classList.remove('seat-auction-panel');
+  const mount=$('kAuctionMount');if(mount&&auctionPanel.parentElement!==mount)mount.appendChild(auctionPanel);
+ }
  $('kAuctionSummary').classList.add('hidden');
  $('kAuctionTitle').textContent=isHuman?'نوبت مزایده شما · پیشنهاد یا پاس':'نوبت مزایده هوش مصنوعی';
  $('kAuctionInfo').classList.toggle('hidden',!isHuman);
@@ -670,6 +708,7 @@ function finishAuction(){
   el.querySelector('.k-bid-chip')?.remove();
   el.classList.remove('auction-winner');
   el.classList.remove('active');
+  el.classList.remove('auction-panel-active');
  });
  const winningSeat=document.querySelector('.k-seat[data-p="'+win+'"]');
  if(winningSeat){
@@ -1024,13 +1063,14 @@ function playAITurn(){
 }
 function renderGame(){
  if(!game)return;
+ $('kHand').classList.remove('k-contract-thinking');
  $('kScoreA').textContent=fa(points.A);$('kScoreB').textContent=fa(points.B);$('kGamesWonA').textContent=fa(matchGamesWon.A);$('kGamesWonB').textContent=fa(matchGamesWon.B);
  $('kTrickNo').textContent=fa(Math.min(game.trickNo,9));
  const bidderTeam=Number.isInteger(game.auctionWinner)?team(game.auctionWinner):'A';
  const ownTricks=game.trickWinners.filter(p=>team(p)===bidderTeam).length;
  const opponentTricks=game.trickWinners.length-ownTricks;
  $('kWonA').textContent=fa(ownTricks);$('kWonB').textContent=fa(opponentTricks);
- $('kTeamTricks').textContent='دست‌های گروه جاری: '+fa(ownTricks);
+ if($('kTeamTricks'))$('kTeamTricks').textContent='دست‌های گروه جاری: '+fa(ownTricks);
  const currentPlays=game.trick||[];
  const previousPlays=game.lastTrick||[];
  const previousCards=$('kPreviousCards');if(previousCards){previousCards.innerHTML='';previousPlays.forEach((x,i)=>{const card=cardNode(x.card,true);card.classList.add('k-pile-played');const angle=(Math.sin(i*1.73)*13)+'deg';const radius=4+Math.sqrt(i+1)*4;card.style.setProperty('--pile-x',(Math.cos(i*2.3999632297)*radius)+'px');card.style.setProperty('--pile-y',(Math.sin(i*2.3999632297)*radius*.72)+'px');card.style.setProperty('--pile-r',angle);card.style.zIndex=String(i+1);previousCards.append(card);});}
