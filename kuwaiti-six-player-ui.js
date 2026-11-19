@@ -48,7 +48,7 @@ async function refreshOnlineKuwaiti(){
   const last=Array.isArray(st.lastTrick)?st.lastTrick.map(x=>({player:Number(x.player),card:x.card})):[];
   game={
    mode:'kuwaiti-six-player',players:6,hands,contract:st.contract||null,selectedContract:st.selectedContract||null,
-   auctionWinner:Number.isInteger(Number(st.auctionWinner))?Number(st.auctionWinner):null,
+   auctionWinner:st.auctionWinner===null||st.auctionWinner===undefined?null:Number(st.auctionWinner),
    auctionBid:st.auctionBid||null,isMalzoom:!!st.isMalzoom,hiddenTrump:!!st.hiddenTrump,
    trumpAnnounced:!!st.trumpAnnounced,trumpSuit:onlineKuwaiti.trumpSuit,target:st.target===null?null:Number(st.target),
    turn:Number(st.turn||0),leader:Number(st.leader||0),trick:plays,trickNo:Number(st.trickNo||1),
@@ -64,7 +64,7 @@ async function refreshOnlineKuwaiti(){
    starter:Number(st.auctionStarter||0),current:Number(st.turn||0),
    highest:st.highest&&st.highest!=='null'?st.highest:null,
    highestRank:Number(st.highestRank||0),
-   highestPlayer:st.highestPlayer===null?null:Number(st.highestPlayer),
+   highestPlayer:st.highestPlayer===null||st.highestPlayer===undefined?null:Number(st.highestPlayer),
    passes:Number(st.passes||0),bids:Array.isArray(st.bids)?st.bids:[],lastBidder:null
   }:null;
   $('kScoreA').textContent=fa(points.A);$('kScoreB').textContent=fa(points.B);
@@ -471,7 +471,7 @@ function setupMarkup(){
  $('modePicker').insertAdjacentElement('afterend',s);s.insertAdjacentElement('afterend',g);
 }
 function renderHumanSeatChoices(){const host=$('kHumanSeatChoices');if(!host)return;host.innerHTML='';for(let p=0;p<6;p++){const l=document.createElement('label');l.style.cssText='display:flex;align-items:center;gap:5px;background:#09271f;border:1px solid #477a68;border-radius:9px;padding:7px;color:#f4dfaa;font-size:11px';const c=document.createElement('input');c.type='checkbox';c.value=String(p);c.checked=p===0;c.addEventListener('change',()=>{if(!host.querySelector('input:checked'))c.checked=true;});l.append(c,document.createTextNode('صندلی '+fa(p+1)));host.append(l);}}
-function isHumanSeat(p){return $('kPlayStyle')&&$('kPlayStyle').value!=='hotseat'?p===0:humanSeats.has(p);}
+function isHumanSeat(p){if(isOnlineKuwaiti())return Number(p)===onlineKuwaiti.seat;return $('kPlayStyle')&&$('kPlayStyle').value!=='hotseat'?p===0:humanSeats.has(p);}
 function revealCurrentHuman(){hotseatRevealed=true;$('kHotseatGate').classList.add('hidden');if(auction){renderAuction();renderAuctionHand();}else renderGame();}
 function isMatchOver(){return matchLimit>=0?(points.A>=matchLimit||points.B>=matchLimit):(points.A<=matchLimit||points.B<=matchLimit);}
 function resetSetup(){
@@ -518,7 +518,7 @@ function renderAuction(){
  if(activeSeat){$('kAuction').classList.add('seat-auction-panel');activeSeat.appendChild($('kAuction'));}
 
  const isHuman=isHumanSeat(auction.current),forced=auction.passes>=5&&!auction.highest;
- $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':' · هوش مصنوعی در حال تصمیم‌گیری');
+ $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':(isOnlineKuwaiti()?' · بازیکن آنلاین':' · هوش مصنوعی در حال تصمیم‌گیری'));
  const obligated=game.obligatedPlayer;
  $('kAuctionInfo').textContent='ملزوم‌کننده: '+(obligated===null?'نامشخص':playerNames[obligated])+' · بالاترین پیشنهاد: '+(auction.highest?playerNames[auction.highestPlayer]+' · '+auction.highest.label:'هنوز پیشنهادی ثبت نشده')+' · پاس‌های پیاپی: '+auction.passes+' از ۵';
  $('kAuctionSummary').classList.remove('hidden');
@@ -555,7 +555,7 @@ function renderAuctionHand(){
  // In solo-vs-AI mode the human's own cards remain visible throughout the auction,
  // regardless of whose bid turn it is. Hotseat keeps the private handoff gate.
  const hotseat=$('kPlayStyle').value==='hotseat';
- const p=hotseat?(auction?auction.current:game.turn):0;
+ const p=isOnlineKuwaiti()?onlineKuwaiti.seat:(hotseat?(auction?auction.current:game.turn):0);
  const gate=$('kHotseatGate'),hide=hotseat&&isHumanSeat(p)&&!hotseatRevealed;
  gate.classList.toggle('hidden',!!hide);if(hide){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[p];$('kHotseatText').textContent='گوشی را به '+playerNames[p]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
  if(!isHumanSeat(p)||hide)return;
@@ -598,6 +598,7 @@ function aiBid(p){
 }
 function submitBid(bid){
  if(!auction||locked)return;
+ if(isOnlineKuwaiti()){submitOnlineKuwaitiBid(bid);return;}
  const p=auction.current;
  if(bid.type==='malzoom'&&(p!==game.obligatedPlayer||auction.highest||auction.highestRank>0)){setStatus('ملزوم فقط زمانی مجاز است که هنوز هیچ بازیکنی پیشنهاد دست نداده باشد؛ اکنون باید پیشنهاد قبلی را بالاتر ببری یا پاس بدهی.');return;}
  if(bid.type==='pass'){
@@ -713,9 +714,11 @@ function beginWinningContract(contract){
 }
 function confirmWinningContract(){
  if(!game||!game.auctionBid||!isHumanSeat(game.auctionWinner))return;
+ if(isOnlineKuwaiti()){onlineKuwaitiRpc({type:'select_contract',contract:$('kContract').value}).catch(e=>onlineKuwaitiStatus('ثبت قرارداد انجام نشد: '+e.message));return;}
  beginWinningContract($('kContract').value);
 }
 function startActualGame(trumpSuit,hidden){
+ if(isOnlineKuwaiti()){onlineKuwaitiRpc({type:'select_malzoom',trump_suit:trumpSuit,hidden:!!hidden}).catch(e=>onlineKuwaitiStatus('ثبت حکم ملزوم انجام نشد: '+e.message));return;}
  try{
   if(!game||!game.auctionBid||!Number.isInteger(game.auctionWinner))throw new Error('اطلاعات برنده مزایده ثبت نشده است؛ بازی آغاز نشد.');
   if(!Array.isArray(game.hands)||game.hands.length!==6||game.hands.some(h=>!Array.isArray(h)))throw new Error('کارت‌های شش بازیکن آماده نیستند.');
@@ -894,6 +897,7 @@ function aiCardBase(p){
 }
 function playHumanCard(card){
  if(!game||game.done||locked||!isHumanSeat(game.turn)||($('kPlayStyle').value==='hotseat'&&!hotseatRevealed))return;
+ if(isOnlineKuwaiti()){if(game.turn!==onlineKuwaiti.seat)return;onlineKuwaitiRpc({type:'play_card',card_id:card.id}).catch(e=>onlineKuwaitiStatus('ثبت کارت ناموفق بود: '+e.message));return;}
  const p=game.turn;
  const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
  const allowed=K.legalCards(game.hands[p],lead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||p===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});
@@ -999,17 +1003,17 @@ function renderGame(){
   $('kCount'+p).textContent=fa(game.hands[p].length)+' کارت';
   const slot=$('kPlayed'+p);slot.innerHTML='';
   const played=currentPlays.find(x=>x.player===p);
-  if(p!==game.turn&&game.hands[p].length&&!($('kPlayStyle').value!=='hotseat'&&p===0)){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=game.hands[p].length;const side=p===1||p===2||p===4||p===5;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';const offset=j-(n-1)/2;back.style.setProperty('--fan-index',String(j));back.style.setProperty('--fan-count',String(n));back.style.zIndex=String(10+j);const toward=side?Math.abs(offset)*1.25:-Math.abs(offset)*1.25;const angle=offset*(side?5.2:6.2);back.style.transform='translateY('+toward+'px) rotate('+angle+'deg) translateZ('+(Math.max(0,5-Math.abs(offset))*2)+'px)';back.style.marginLeft=j===0?'0':'-54px';back.style.width='62px';back.style.height='93px';back.style.minWidth='62px';back.style.flex='0 0 62px';back.style.transformOrigin='50% 100%';back.style.boxShadow='0 12px 18px #000b, inset 0 0 0 1px #fff6';fan.append(back);}slot.append(fan);}
+  if(p!==game.turn&&game.hands[p].length&&(isOnlineKuwaiti()?p!==onlineKuwaiti.seat:!($('kPlayStyle').value!=='hotseat'&&p===0))){const fan=document.createElement('div');fan.className='k-opponent-fan';const n=game.hands[p].length;const side=p===1||p===2||p===4||p===5;for(let j=0;j<n;j++){const back=document.createElement('div');back.className='k-card k-back';const offset=j-(n-1)/2;back.style.setProperty('--fan-index',String(j));back.style.setProperty('--fan-count',String(n));back.style.zIndex=String(10+j);const toward=side?Math.abs(offset)*1.25:-Math.abs(offset)*1.25;const angle=offset*(side?5.2:6.2);back.style.transform='translateY('+toward+'px) rotate('+angle+'deg) translateZ('+(Math.max(0,5-Math.abs(offset))*2)+'px)';back.style.marginLeft=j===0?'0':'-54px';back.style.width='62px';back.style.height='93px';back.style.minWidth='62px';back.style.flex='0 0 62px';back.style.transformOrigin='50% 100%';back.style.boxShadow='0 12px 18px #000b, inset 0 0 0 1px #fff6';fan.append(back);}slot.append(fan);}
  }
  $('kHand').innerHTML='';
  const turnPlayer=game.turn;
- const displayPlayer=$('kPlayStyle').value==='hotseat'?turnPlayer:0;
+ const displayPlayer=isOnlineKuwaiti()?onlineKuwaiti.seat:($('kPlayStyle').value==='hotseat'?turnPlayer:0);
  const isTurnHuman=isHumanSeat(turnPlayer),displayHuman=isHumanSeat(displayPlayer),gate=$('kHotseatGate');
  const hideGate=$('kPlayStyle').value==='hotseat'&&isTurnHuman&&!hotseatRevealed&&!game.done;
  gate.classList.toggle('hidden',!hideGate);
  if(hideGate){$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[turnPlayer];$('kHotseatText').textContent='گوشی را به '+playerNames[turnPlayer]+' بدهید؛ سپس کارت‌ها را نمایش دهید.';}
  const canRevealHand=displayHuman&&($('kPlayStyle').value!=='hotseat'||(displayPlayer===turnPlayer&&hotseatRevealed));
-  const displayLead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});const displayLegalCards=K.legalCards(game.hands[displayPlayer],displayLead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||displayPlayer===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});$('kHand').classList.toggle('k-has-legal-restrictions',displayLegalCards.length<game.hands[displayPlayer].length);
+  const displayLead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});const displayLegalCards=isOnlineKuwaiti()?game.hands[displayPlayer].filter(x=>onlineKuwaiti.legalCardIds.includes(x.id)):K.legalCards(game.hands[displayPlayer],displayLead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||displayPlayer===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});$('kHand').classList.toggle('k-has-legal-restrictions',displayLegalCards.length<game.hands[displayPlayer].length);
  if(canRevealHand)game.hands[displayPlayer].forEach((c,i,arr)=>{
   const b=document.createElement('button');
   const offset=i-(arr.length-1)/2;
@@ -1076,6 +1080,12 @@ function applyScore(success,won,bidderTeam,provided){
  if(humanTeam&&gameWinner===humanTeam&&window.DoubleKoutProgress){const gameId=game.centralGameId||(game.centralGameId=(window.crypto&&crypto.randomUUID?crypto.randomUUID():('kuwaiti-'+Date.now()+'-'+Math.random().toString(36).slice(2))));window.DoubleKoutProgress.awardLocalWin(gameId,'kuwaiti').then(result=>window.DoubleKoutProgress.showAwardResult(result,'kResult'));}
 }
 function startNewMatch(){
+ if(isOnlineKuwaiti()){
+  const st=onlineKuwaiti.state||{};const picker=$('kOnlineNextPicker');
+  const action={type:'next_game'};
+  if(!st.matchOver){if(!picker){onlineKuwaitiStatus('تیم برنده باید نفر اول مزایده را انتخاب کند.');return;}action.first_auction_player=Number(picker.value);}
+  onlineKuwaitiRpc(action).catch(e=>onlineKuwaitiStatus('شروع بازی بعدی انجام نشد: '+e.message));return;
+ }
  hotseatRevealed=false;
  if(isMatchOver()){firstGame=true;previousAuctionWinner=null;previousWinningTeam=null;points={A:0,B:0};matchGamesWon={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;resetSetup();return;}
  locked=false;
@@ -1087,13 +1097,13 @@ function startNewMatch(){
  startAuction();
 }
 function bind(){
- $('kPlayStyle').onchange=()=>{const style=$('kPlayStyle').value;$('kHumanSeatSetup').classList.toggle('hidden',style!=='hotseat');if(style==='online'){$('kStatus').textContent='بازی آنلاین شش‌نفره هنوز آماده نیست؛ تا تکمیل موتور سرور، از حالت آفلاین یا چندنفره با یک گوشی استفاده کن.';$('kPlayStyle').value='ai';$('kHumanSeatSetup').classList.add('hidden');return;}};
+ $('kPlayStyle').onchange=()=>{const style=$('kPlayStyle').value;$('kHumanSeatSetup').classList.toggle('hidden',style!=='hotseat');if(style==='online'){openOnlineKuwaiti();$('kHumanSeatSetup').classList.add('hidden');return;}};
  $('kRevealHand').onclick=()=>{if((auction&&isHumanSeat(auction.current))||(game&&isHumanSeat(game.turn)))revealCurrentHuman();};
  $('kSortHand').onclick=()=>{if(!game||game.done)return;const p=$('kPlayStyle').value==='hotseat'?game.turn:0;if(!isHumanSeat(p))return;const order={S:0,H:1,D:2,C:3},rank={2:0,3:1,4:2,5:3,6:4,7:5,8:6,9:7,10:8,J:9,Q:10,K:11,A:12};game.hands[p].sort((a,b)=>{if(a.kind==='joker'||b.kind==='joker'){if(a.kind!=='joker')return -1;if(b.kind!=='joker')return 1;return (a.color==='red'?0:1)-(b.color==='red'?0:1);}return (order[a.suit]??9)-(order[b.suit]??9)||(rank[a.rank]??99)-(rank[b.rank]??99);});renderGame();};
  $('modeKuwaiti').onclick=()=>{try{if(window.audioReady)audioReady();if(!initialized&&!init())throw new Error('راه‌اندازی میز کامل نشد');resetSetup();}catch(e){$('modeMessage').textContent='خطا در باز کردن میز شش‌نفره: '+(e&&e.message?e.message:'خطای ناشناخته');console.error(e);}};
  $('kStartAuction').onclick=()=>{if(firstGame){points={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;$('kMatchProgress').textContent='حد امتیاز مسابقه: '+(matchLimit>0?'+':'')+fa(matchLimit)+' · مجموع الف: ۰ · مجموع ب: ۰';}startAuction();};
  $('kBackModes').onclick=()=>setScreen('modes');
- $('kExit').onclick=()=>setScreen('modes');
+ $('kExit').onclick=()=>{if(isOnlineKuwaiti()){window.DoubleKoutOnline.leave().catch(e=>onlineKuwaitiStatus('خروج از اتاق: '+e.message));onlineKuwaiti=null;}setScreen('modes');};
  $('kNewGame').onclick=()=>startNewMatch();
  $('kPass').onclick=()=>submitBid({type:'pass'});
  document.querySelectorAll('#kAuction [data-bid]').forEach(b=>b.addEventListener('click',()=>{
@@ -1104,8 +1114,8 @@ function bind(){
  $('kMalzoom').onclick=()=>submitBid({type:'malzoom',rank:1,label:'ملزوم'});
  $('kConfirmContract').onclick=confirmWinningContract;
  $('kConfirmMalzoom').onclick=()=>startActualGame($('kTrumpSuit').value,$('kHideTrump').checked);
- $('kAskTrump').onclick=()=>{if(game&&isHumanSeat(game.turn)&&hotseatRevealed){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم مخفی اعلام شد.');renderGame();}};
- $('kAnnounceTrump').onclick=()=>{if(game&&isHumanSeat(game.turn)&&hotseatRevealed){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم اعلام شد.');renderGame();}};
+ $('kAskTrump').onclick=()=>{if(isOnlineKuwaiti()){onlineKuwaitiRpc({type:'announce_trump'}).catch(e=>onlineKuwaitiStatus('درخواست اعلام حکم: '+e.message));return;}if(game&&isHumanSeat(game.turn)&&hotseatRevealed){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم مخفی اعلام شد.');renderGame();}};
+ $('kAnnounceTrump').onclick=()=>{if(isOnlineKuwaiti()){onlineKuwaitiRpc({type:'announce_trump'}).catch(e=>onlineKuwaitiStatus('اعلام حکم: '+e.message));return;}if(game&&isHumanSeat(game.turn)&&hotseatRevealed){game.trumpAnnounced=true;$('kTrumpDisplay').textContent='حکم اعلام شد: '+suitGlyph[game.trumpSuit]+' '+suitName[game.trumpSuit];setStatus('حکم اعلام شد.');renderGame();}};
 }
 let initialized=false,engineLoading=false;
 function loadEngine(){
