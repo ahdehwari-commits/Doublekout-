@@ -1088,7 +1088,7 @@ function normalizedRank(c){const x=c&&(c.r!==undefined?c.r:c.rank),m={'2':0,'3':
 function sortCardArray(cards){const o={'♠':0,'♥':1,'♦':2,'♣':3};return cards.sort((x,y)=>(o[normalizedSuit(x)]??9)-(o[normalizedSuit(y)]??9)||normalizedRank(x)-normalizedRank(y));}
 $('sortHand').onclick=()=>{if(!G)return;const p=playStyle==='hotseat'?G.turn:0;if(playStyle==='hotseat'&&!humanSeats.has(p))return;sortCardArray(G.hands[p]);render()};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script><script src="./kuwaiti-six-player-ui.js?v=0.8.21-20261119-layer-order"></script><script>
+</script><script src="./kuwaiti-six-player-ui.js?v=0.8.22-20261119-layout-restore"></script><script>
 (function(){
 'use strict';
 var PUBLIC_AUTH_REDIRECT='https://ahdehwari-commits.github.io/Doublekout-/';
@@ -1381,7 +1381,7 @@ async function ensureKuwaitiUiListener(){
  if(window.__doubleKoutKuwaitiOnlineListenerReady)return;
  await new Promise((resolve,reject)=>{
   const script=document.createElement('script');
-  script.src='./kuwaiti-six-player-ui.js?v=0.8.21-20261119-layer-order';
+  script.src='./kuwaiti-six-player-ui.js?v=0.8.22-20261119-layout-restore';
   script.onload=()=>window.__doubleKoutKuwaitiOnlineListenerReady?resolve():reject(new Error('فایل رابط دریافت شد اما شنونده شروع آنلاین ثبت نشد.'));
   script.onerror=()=>reject(new Error('دریافت فایل رابط شش‌نفره ناموفق بود؛ اتصال یا مسیر فایل را بررسی کن.'));
   document.head.appendChild(script);
