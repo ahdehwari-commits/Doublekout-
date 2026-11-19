@@ -1485,7 +1485,7 @@ async function refreshOnlineGame(startPayload){
   }
   var suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'},rankGlyph={A:'A',K:'K',Q:'Q',J:'J'};
   var avatarChoices=['🦊','🐼','🐯','🦁','🐺','🐸','🐵','🐻','🐨','🐙','🦉','🐲','⚽','👑','🎯','🚀'];
-  var splitAvatarName=function(value){var raw=String(value||'بازیکن '+(seat+1));var av=avatarChoices.find(function(x){return raw.indexOf(x+' ')===0;});return {avatar:av||'👤',name:av?raw.slice(av.length+1):raw};};
+  var splitAvatarName=function(value){var raw=String(value||'بازیکن');var av=avatarChoices.find(function(x){return raw.indexOf(x+' ')===0;});return {avatar:av||'👤',name:av?raw.slice(av.length+1):raw};};
   var visualCard=function(c){return {r:rankGlyph[c.rank||c.r]||(c.rank||c.r),s:suitGlyph[c.suit||c.s]||(c.suit||c.s),id:c.id};};
   var seatDefs=[{key:'South',offset:0},{key:'East',offset:1},{key:'North',offset:2},{key:'West',offset:3}];
   var playBySeat={};(state.plays||[]).forEach(function(p){playBySeat[Number(p.seat)]=p;});
@@ -1494,7 +1494,7 @@ async function refreshOnlineGame(startPayload){
    var seat=(myOnlineSeat+def.offset)%4,player=players[String(seat)]||{},left=trumpPending?5:Math.max(0,13-completedTricks-((playBySeat[seat])?1:0));
    var visibleCount=def.offset===0?hand.length:left;
    var scoreRow=onlineRosterRows.find(function(x){return Number(x.seat)===seat;});
-   var identity=splitAvatarName(player.name||(scoreRow&&scoreRow.display_name)||('بازیکن '+(seat+1)));var nameNode=el('onlineName'+def.key);nameNode.textContent='';var avatarNode=document.createElement('span');avatarNode.className='online-avatar-mini';avatarNode.textContent=identity.avatar;nameNode.appendChild(avatarNode);nameNode.appendChild(document.createTextNode((def.offset===0?'شما · ':'')+identity.name+(scoreRow?' · '+Number(scoreRow.points||0)+' امتیاز':'')));
+   var identity=splitAvatarName((scoreRow&&scoreRow.display_name)||player.name||('بازیکن '+(seat+1)));var nameNode=el('onlineName'+def.key);nameNode.textContent='';var avatarNode=document.createElement('span');avatarNode.className='online-avatar-mini';avatarNode.textContent=identity.avatar;nameNode.appendChild(avatarNode);nameNode.appendChild(document.createTextNode((def.offset===0?'شما · ':'')+identity.name+(scoreRow?' · '+Number(scoreRow.points||0)+' امتیاز':'')));
    el('onlineCount'+def.key).textContent=visibleCount+' کارت';
    el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&!trickPending&&turn===seat);
    var slot=el('onlinePlayed'+def.key);slot.innerHTML='';
