@@ -1,5 +1,6 @@
 (function(){
 'use strict';
+window.__doubleKoutKuwaitiUIFileLoaded=true;
 let K=window.KuwaitiSixPlayerEngine;
 const $=id=>document.getElementById(id);
 const suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'};
@@ -182,6 +183,7 @@ async function attachOnlineKuwaitiRoom(info){
  return true;
 }
 window.addEventListener('doublekout:kuwaiti-online-started',e=>{window.__doubleKoutKuwaitiAttachPromise=attachOnlineKuwaitiRoom(e.detail);});
+window.__doubleKoutKuwaitiOnlineListenerReady=true;
 window.addEventListener('doublekout:kuwaiti-room-update',e=>{
  if(!window.DoubleKoutOnline||!window.DoubleKoutOnline.getRoomInfo)return;
  const info=window.DoubleKoutOnline.getRoomInfo();
@@ -1242,4 +1244,4 @@ if(window.visualViewport)window.visualViewport.addEventListener('resize',refresh
 // This script is loaded after the complete page markup; initialize synchronously.
 init();
 })();
-/* build: 0.8.13 LAN-ready UI validation checkpoint */
+/* build: 0.8.14 online-loader recovery checkpoint */
