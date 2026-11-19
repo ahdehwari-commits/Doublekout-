@@ -1075,7 +1075,7 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 var PUBLIC_AUTH_REDIRECT='https://ahdehwari-commits.github.io/Doublekout-/';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
-var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,onlineRosterRows=[],lastLobbyGuestId='',gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastOnlineHandSignature='',onlineChallengeDeadline=0,onlineChallengeExpired=false,confirmedPlayedCardIds=Object.create(null),onlineRematchDeadline=0,lastRematchBeep=-1,rematchBusy=false,myOnlineIsHost=false,rematchAutoAttemptedDeadline=0,kuwaitiStartInFlight=false;
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,onlineRosterRows=[],lastLobbyGuestId='',gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastAcceptedGameRevision=-1,lastOnlineHandSignature='',onlineRoomEpoch=0,onlineChallengeDeadline=0,onlineChallengeExpired=false,confirmedPlayedCardIds=Object.create(null),onlineRematchDeadline=0,lastRematchBeep=-1,rematchBusy=false,myOnlineIsHost=false,rematchAutoAttemptedDeadline=0,kuwaitiStartInFlight=false;
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
@@ -1251,7 +1251,8 @@ function subscribe(){
  if(!window.__doubleKoutRosterFocus){
   window.__doubleKoutRosterFocus=true;
   window.addEventListener('focus',function(){refreshRoster();});
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshRoster();});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){refreshRoster();refreshOnlineGame();}});
+  window.addEventListener('online',function(){if(roomId){refreshRoster();refreshOnlineGame();}});
  }
 }
 async function refreshRoster(){
@@ -1294,7 +1295,7 @@ async function createRoom(){
   stage='فراخوانی create_game_room';var roomPayload={p_game_mode:mode,p_player_count:count,p_display_name:(localStorage.getItem('doubleKoutAvatar')||'♛')+' '+(el('onlineName').value.trim()||'بازیکن')};
   var r=await client.rpc('create_game_room',roomPayload);
   if(r.error)throw r.error;
-  roomId=r.data.room_id;roomCode=r.data.code;showRoom();if(el('onlineResumeKuwaiti'))el('onlineResumeKuwaiti').style.display='none';subscribe();
+  onlineRoomEpoch++;lastAcceptedGameRevision=-1;lastGameRevision=-1;lastOnlineHandSignature='';roomId=r.data.room_id;roomCode=r.data.code;showRoom();if(el('onlineResumeKuwaiti'))el('onlineResumeKuwaiti').style.display='none';subscribe();
  }catch(e){say('ساخت اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
 }
 async function joinRoom(){
@@ -1305,7 +1306,7 @@ async function joinRoom(){
   stage='فراخوانی join_game_room';var preferredSeat=Number(el('onlinePreferredTeam').value||1);var displayName=(localStorage.getItem('doubleKoutAvatar')||'♛')+' '+(el('onlineName').value.trim()||'بازیکن');var rawMode=String(el('onlineMode').value||'double-kout').trim().toLowerCase();var modeMap={'double-kout':'double-kout','double_kout':'double-kout','doublekout':'double-kout','standard-hokm':'standard-hokm','standard_hokm':'standard-hokm','hokm':'standard-hokm','kuwaiti':'kuwaiti','kuwaiti-kout':'kuwaiti','kuwaiti_kout':'kuwaiti'};var selectedMode=modeMap[rawMode];if(!selectedMode)throw new Error('نوع بازی انتخاب‌شده معتبر نیست: '+rawMode);el('onlineMode').value=selectedMode;var r=selectedMode==='kuwaiti'?await client.rpc('join_game_room',{p_code:code,p_display_name:displayName}):await client.rpc('join_game_room',{p_code:code,p_display_name:displayName,p_preferred_seat:preferredSeat});
   if(r.error)throw r.error;
   if(selectedMode==='kuwaiti'&&r.data.game_mode!=='kuwaiti'){await client.rpc('leave_game_room',{p_room_id:r.data.room_id});throw new Error('این کد متعلق به اتاق چهار‌نفره است؛ کد اتاق کوت کویتی شش‌نفره را وارد کن.');}
-  roomId=r.data.room_id;roomCode=r.data.code;mode=r.data.game_mode;count=Number(r.data.player_count);showRoom();if(el('onlineResumeKuwaiti'))el('onlineResumeKuwaiti').style.display='none';say('وارد اتاق شدی؛ منتظر تصمیم میزبان بمان.');await refreshRoster();subscribe();
+  onlineRoomEpoch++;lastAcceptedGameRevision=-1;lastGameRevision=-1;lastOnlineHandSignature='';roomId=r.data.room_id;roomCode=r.data.code;mode=r.data.game_mode;count=Number(r.data.player_count);showRoom();if(el('onlineResumeKuwaiti'))el('onlineResumeKuwaiti').style.display='none';say('وارد اتاق شدی؛ منتظر تصمیم میزبان بمان.');await refreshRoster();subscribe();
  }catch(e){say('ورود به اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
 }
 async function toggleReady(){
@@ -1537,6 +1538,8 @@ function cardText(c){
 async function refreshOnlineGame(startPayload){
  if(!roomId||!client||mode==='kuwaiti')return;
  if(gameBusy){gameRefreshQueued=true;if(startPayload)gameStartSnapshot=startPayload;return;}
+ var requestRoomId=roomId,requestRoomEpoch=onlineRoomEpoch;
+ var requestStillCurrent=function(){return roomId===requestRoomId&&onlineRoomEpoch===requestRoomEpoch;};
  gameBusy=true;
  var syncStage='خواندن وضعیت بازی';
  try{
@@ -1544,14 +1547,20 @@ async function refreshOnlineGame(startPayload){
   if(startPayload&&startPayload.status==='playing')q={data:{status:startPayload.status,public_state:startPayload.state,revision:startPayload.revision},error:null};
   else{syncStage='دریافت وضعیت اتاق از سرور';q=await client.rpc('get_room_snapshot',{p_room_id:roomId});}
   if(q.error)throw q.error;
+  if(!requestStillCurrent())return;
+  var revision=Number(q.data.revision||0);
+  if(q.data.status==='playing'||q.data.status==='finished'){
+   if(Number.isFinite(revision)&&revision<lastAcceptedGameRevision)return;
+  }
   if(q.data.status!=='playing'&&q.data.status!=='finished'){showRoom();el('onlineGame').style.display='none';say('اتاق باز است؛ منتظر شروع میزبان هستیم · وضعیت سرور: '+q.data.status);return;}
   showRoom();
-  var state=q.data.public_state||{},revision=Number(q.data.revision||0);
+  var state=q.data.public_state||{};
   // Always re-read the private hand, even when the public room revision is unchanged.
   // A hand update can arrive before/after its room notification; compare its signature
   // so cards already played never remain as tappable stale cards on screen.
   syncStage='دریافت کارت‌های خصوصی بازیکن';var mine=await client.from('room_game_hands').select('seat,cards').eq('room_id',roomId).eq('owner_user_id',me.id).maybeSingle();
   if(mine.error)throw mine.error;
+  if(!requestStillCurrent())return;
   if(mine.data&&Number.isInteger(Number(mine.data.seat)))myOnlineSeat=Number(mine.data.seat);
   var hand=mine.data&&mine.data.cards||[];
   // iOS PWA can briefly return a stale private-hand snapshot after a successful RPC.
@@ -1566,7 +1575,8 @@ async function refreshOnlineGame(startPayload){
    // Otherwise a timeout checked once before its deadline is never checked again.
    if(q.data.status==='playing'&&(q.data.public_state||{}).phase==='playing'&&!q.data.public_state.trickPendingUntil&&!aiBusy){
     var sameState=q.data.public_state||{},sameTurn=Number(sameState.turn||0);
-    syncStage='بررسی نقش میزبان برای ادامه نوبت';var sameHost=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
+    syncStage='بررسی نقش میزبان برای ادامه نوبت';var sameHost=await client.from('room_members').select('is_host').eq('room_id',requestRoomId).eq('user_id',me.id).maybeSingle();
+    if(!requestStillCurrent())return;
     if(sameHost.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+sameHost.error.message);
     if(!sameHost.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
     if(sameHost.data.is_host){
@@ -1748,10 +1758,12 @@ async function refreshOnlineGame(startPayload){
    el('onlineHand').appendChild(b);
   });
   lastGameRevision=revision;
+  if(Number.isFinite(revision)&&revision>lastAcceptedGameRevision)lastAcceptedGameRevision=revision;
   lastOnlineHandSignature=handSignature;
   if(!finished&&myOnlineSeat===-1)myOnlineSeat=-1;
   if(!finished&&!decisionPending&&!trumpPending&&me.id&&!aiBusy){
-   syncStage='بررسی دسترسی میزبان';var hostQ=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
+   syncStage='بررسی دسترسی میزبان';var hostQ=await client.from('room_members').select('is_host').eq('room_id',requestRoomId).eq('user_id',me.id).maybeSingle();
+   if(!requestStillCurrent())return;
    if(hostQ.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+hostQ.error.message);
    if(!hostQ.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
    if(trickPending){
@@ -1782,6 +1794,7 @@ async function refreshOnlineGame(startPayload){
 }
 async function leave(){
  var leavingRoom=roomId;
+ onlineRoomEpoch++;lastAcceptedGameRevision=-1;
  if(rosterTimer){clearInterval(rosterTimer);rosterTimer=null;}
  if(gameTimer){clearInterval(gameTimer);gameTimer=null;}
  if(leavingRoom&&client){
