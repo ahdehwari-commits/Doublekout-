@@ -8,7 +8,7 @@ let selectedUser=null,busy=false;
 async function rpc(name,args){const r=await window.DoubleKoutOnline.rpc(name,args||{});if(r.error)throw r.error;return r.data;}
 async function invoke(name,body){const r=await window.DoubleKoutOnline.invoke(name,body||{});if(r.error)throw r.error;return r.data;}
 function ensure(){
- const host=$('onlineProgress');if(!host||$('pointTopups'))return;
+ const host=$('storeContent');if(!host||$('pointTopups'))return;
  const top=document.createElement('section');top.id='pointTopups';top.style.cssText='border-top:1px solid #668c78;margin-top:12px;padding-top:10px';
  top.innerHTML='<h3 style="color:#f4d58b;margin:0 0 8px">خرید امتیاز</h3><div id="topupHint" class="muted">بسته موردنظر را انتخاب کن. پرداخت پس از تأیید درگاه به‌صورت خودکار ثبت می‌شود.</div><div id="topupPackages" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:8px"></div><div id="topupStatus" role="status" class="muted" style="margin-top:7px"></div>';
  host.appendChild(top);
