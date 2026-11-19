@@ -56,7 +56,8 @@ async function refreshOnlineKuwaiti(){
   if(r.error)throw r.error;
   if(onlineKuwaiti!==requestContext||!isOnlineKuwaiti()||onlineKuwaiti.roomId!==requestRoomId)return false;
   const d=r.data||{},incomingRevision=Number(d.revision||0),seat=Number(d.seat);
-  if(Number.isFinite(incomingRevision)&&incomingRevision<Number(requestContext.revision||0))return true;
+  if(!Number.isFinite(incomingRevision)||incomingRevision<0)throw new Error('شماره نسخه وضعیت کوت کویتی معتبر نیست');
+  if(incomingRevision<Number(requestContext.revision||0))return true;
   const incomingHand=Array.isArray(d.hand)?d.hand:[],incomingHandSignature=JSON.stringify(incomingHand);
   const sameRevision=incomingRevision===Number(requestContext.revision||0);
   if(sameRevision&&incomingHandSignature===requestContext.handSignature)return true;
