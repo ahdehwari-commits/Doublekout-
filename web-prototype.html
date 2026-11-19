@@ -1255,7 +1255,7 @@ async function refreshRoster(){
   else if(mine&&mine.is_host&&guest){el('onlineLobbyDecision').style.display='block';el('onlineLobbyNotice').textContent='بازیکن واقعی «'+guest.display_name+'» وارد اتاق شد؛ شروع را انتخاب کن.';if(lastLobbyGuestId!==guest.user_id){lastLobbyGuestId=guest.user_id;say('بازیکن واقعی وارد اتاق شد. برای انتخاب نوع شروع آماده‌ای.');}}
   else if(!guest){el('onlineLobbyDecision').style.display='none';lastLobbyGuestId='';}
   if(!allReady&&rows.length>1&&!guest)say(rows.length+' بازیکن وارد شده‌اند؛ میزبان می‌تواند همین حالا تصمیم بگیرد.');
-  if(mine&&!mine.is_host)say('به اتاق میزبان متصل شدی؛ جایگاه تیمی انتخاب‌شده ثبت شده است.');
+  if(mine&&!mine.is_host)say(mode==='kuwaiti'?'صندلی شما در میز شش‌نفره ثبت شد؛ منتظر ورود و آمادگی هر شش بازیکن بمان.':'به اتاق میزبان متصل شدی؛ جایگاه تیمی انتخاب‌شده ثبت شده است.');
  }catch(e){if(/not_a_room_member|not a room member/i.test(String(e&&e.message||e)))say('میزبان اتاق را با هوش مصنوعی آغاز کرد؛ ورود شما پذیرفته نشد.');else say('به‌روزرسانی فهرست بازیکنان: '+(e.message||e));}
  finally{rosterBusy=false;if(rosterRefreshQueued){rosterRefreshQueued=false;Promise.resolve().then(refreshRoster);}}
 }
@@ -1275,6 +1275,7 @@ async function joinRoom(){
   if(!/^[A-F0-9]{6}$/.test(code))throw new Error('کد اتاق باید شش حرف یا عدد باشد.');
   stage='فراخوانی join_game_room';var preferredSeat=Number(el('onlinePreferredTeam').value||1);var displayName=(localStorage.getItem('doubleKoutAvatar')||'♛')+' '+(el('onlineName').value.trim()||'بازیکن');var selectedMode=el('onlineMode').value;var r=selectedMode==='kuwaiti'?await client.rpc('join_game_room',{p_code:code,p_display_name:displayName}):await client.rpc('join_game_room',{p_code:code,p_display_name:displayName,p_preferred_seat:preferredSeat});
   if(r.error)throw r.error;
+  if(selectedMode==='kuwaiti'&&r.data.game_mode!=='kuwaiti'){await client.rpc('leave_game_room',{p_room_id:r.data.room_id});throw new Error('این کد متعلق به اتاق چهار‌نفره است؛ کد اتاق کوت کویتی شش‌نفره را وارد کن.');}
   roomId=r.data.room_id;roomCode=r.data.code;mode=r.data.game_mode;count=Number(r.data.player_count);showRoom();say('وارد اتاق شدی؛ منتظر تصمیم میزبان بمان.');await refreshRoster();subscribe();
  }catch(e){say('ورود به اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
 }
