@@ -1550,7 +1550,8 @@ async function refreshOnlineGame(startPayload){
   if(!requestStillCurrent())return;
   var revision=Number(q.data.revision||0);
   if(q.data.status==='playing'||q.data.status==='finished'){
-   if(Number.isFinite(revision)&&revision<lastAcceptedGameRevision)return;
+   if(!Number.isFinite(revision)||revision<0)throw new Error('شماره نسخه وضعیت بازی معتبر نیست.');
+   if(revision<lastAcceptedGameRevision)return;
   }
   if(q.data.status!=='playing'&&q.data.status!=='finished'){showRoom();el('onlineGame').style.display='none';say('اتاق باز است؛ منتظر شروع میزبان هستیم · وضعیت سرور: '+q.data.status);return;}
   showRoom();
