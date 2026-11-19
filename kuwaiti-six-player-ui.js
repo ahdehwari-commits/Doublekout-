@@ -468,7 +468,53 @@ s.textContent+=`
 `;
 document.head.appendChild(s);
  const cornerStyle=document.createElement('style');cornerStyle.textContent="/* 9.2 contract indicator fixed to upper-right table corner */\n.k-table{position:relative}\n.k-trump-corner{position:absolute;top:9px;right:9px;transform:none;z-index:30;min-width:76px;justify-content:center;padding:5px 9px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#09271fee,#031711f5);box-shadow:0 4px 12px #0009;text-align:center;pointer-events:none}\n.k-trump-corner span{font-size:10px;color:#e9d39a}\n.k-trump-corner b{font-size:14px!important;color:#ffe19a}\n.k-table .k-seat[data-p=\"2\"]{padding-top:30px}\n";cornerStyle.textContent+="\n/* Seat labels sit below the card fans; individual trick wins stay on each chair. */\n.k-seat{display:flex!important;flex-direction:column!important;align-items:center!important;gap:3px!important}\n.k-seat .k-played{order:-1!important;position:relative!important;z-index:8!important;min-height:88px!important;margin:0 0 3px!important;overflow:visible!important;transform:translateY(-3px)!important}\n.k-seat .k-opponent-fan{position:relative!important;z-index:9!important}\n .k-seat .k-name{order:0!important;position:relative!important;z-index:10!important;width:100%;margin-top:20px!important;padding:7px 2px 3px!important;border-top:1px solid #d9bd78aa!important;background:linear-gradient(180deg,#0b3025,#061b15)!important;border-radius:7px 7px 10px 10px!important}\n.k-seat .k-count{order:1!important;margin:0!important;font-size:9px!important;line-height:1.1!important}\n/* Remaining cards are already counted on each chair; hide the duplicate oversized trick-card counter. */\n#kTrickCards{display:none!important}\n.k-seat .k-seat-tricks{order:2!important;font-size:10px!important;font-weight:900!important;color:#ffe5a1!important;line-height:1.3!important}\n.k-team-tricks{font-size:11px;font-weight:900;color:#ffe5a1;background:#09271f;border:1px solid #b99a5d;border-radius:8px;padding:4px 8px;margin:1px auto;max-width:max-content}\n/* Corner trump marker and two-layer trick pile: previous trick remains underneath current plays. */\n.k-table{position:relative!important;isolation:isolate!important;overflow:visible!important}\n.k-table>.k-seat{z-index:3!important}\n.k-table>.k-center{z-index:12!important;overflow:visible!important}\n.k-table>.k-table-card-layer{position:absolute!important;inset:0!important;z-index:24!important;pointer-events:none!important;overflow:visible!important}\n .k-trump-corner{position:absolute!important;top:9px!important;right:9px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:45!important;display:flex!important;align-items:center!important;gap:6px!important;max-width:34%!important;white-space:nowrap!important}\n.k-center{position:absolute!important}\n.k-previous-cards,.k-center-cards{position:absolute!important;left:50%!important;top:50%!important;width:100%!important;height:116px!important;min-height:0!important;transform:translate(-50%,-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;direction:ltr!important;overflow:visible!important;pointer-events:none!important}\n.k-previous-cards{z-index:2!important;opacity:.58!important;filter:brightness(.72) saturate(.78)!important}\n.k-center-cards{z-index:7!important}\n.k-previous-cards .k-pile-played{position:absolute!important;left:calc(50% - 30px)!important;top:calc(50% - 44px)!important;width:60px!important;height:88px!important;margin:0!important;transform:translate(var(--pile-x),var(--pile-y)) rotate(var(--pile-r))!important;box-shadow:0 8px 15px #000c!important}\n.k-center-cards .k-table-played{position:relative!important;z-index:8!important}\n@media(max-width:520px){.k-previous-cards,.k-center-cards{height:96px!important}.k-previous-cards .k-pile-played{width:49px!important;height:74px!important;left:calc(50% - 24px)!important;top:calc(50% - 37px)!important} .k-trump-corner{top:118px!important;right:118px!important;font-size:11px!important}.k-seat .k-played{min-height:60px!important}.k-seat-tricks{font-size:9px!important}}";
+
 document.head.appendChild(cornerStyle);
+const auctionVisualStyle=document.createElement('style');
+auctionVisualStyle.textContent=`
+/* 9.31 — charcoal marble tabletop, raised brass rim, black leather seats. */
+#kTable{
+ min-height:480px!important;border:5px solid #171411!important;border-radius:28px!important;
+ background-color:#171512!important;
+ background-image:radial-gradient(ellipse at 50% 43%,rgba(105,91,70,.42),rgba(31,28,24,.94) 62%,rgba(8,8,7,.99) 100%),repeating-linear-gradient(13deg,rgba(255,255,255,.025) 0 1px,transparent 1px 6px),linear-gradient(145deg,#484137,#171614 52%,#393127)!important;
+ box-shadow:inset 0 0 0 2px #e6c27b,inset 0 0 0 7px #3a2b1b,inset 0 0 58px #000e,0 22px 40px #000d!important;
+}
+#kTable>.k-seat{
+ border:1px solid #c49a50!important;border-radius:13px!important;
+ background:linear-gradient(145deg,#29241e,#090909 78%)!important;
+ box-shadow:0 10px 20px #000e,inset 0 1px 0 #fff3,inset 0 -8px 18px #0009!important;
+}
+#kTable>.k-center{border:1px solid #c49a50!important;border-radius:50%!important;background:radial-gradient(ellipse,rgba(48,42,33,.78),rgba(7,7,7,.9))!important;box-shadow:inset 0 0 28px #000e,0 0 0 5px #d1ad6544!important}
+#kTable .k-name{background:linear-gradient(#f3dfb0,#b98a43)!important;color:#24180c!important;border:1px solid #f5d58b!important;border-radius:6px!important;padding:3px 6px!important}
+#kTable .k-back{background-image:url("./assets/card-back-black-gold.svg")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important;border:2px solid #e4c477!important;box-shadow:inset 0 0 0 1px #fff3,0 8px 16px #000c!important}
+#kTable>.k-seat.active{outline:1px solid #f3d58c!important;box-shadow:0 0 0 1px #f3d58c,0 0 14px #f3d58c88!important;animation:none!important}
+#kTable>.k-seat.active:after{
+ content:''!important;position:absolute!important;top:-1px!important;left:-1px!important;right:auto!important;bottom:auto!important;
+ width:32px!important;height:32px!important;inset:auto!important;border:2px solid transparent!important;
+ border-top-color:#ffe6a1!important;border-right-color:#c99a43!important;border-radius:50%!important;
+ pointer-events:none!important;animation:kAuctionOrbit 1.05s linear infinite!important;z-index:2!important;
+}
+#kTable .k-bid-chip{top:4px!important;left:4px!important;min-width:21px!important;height:21px!important;border-radius:50%!important;padding:0 4px!important;font:900 11px/19px Georgia,serif!important;z-index:4!important}
+#kTable .k-bid-chip.pass{font-size:7px!important;letter-spacing:0!important}
+#kTable .k-bid-chip.winner{min-width:25px!important;height:25px!important;font-size:11px!important;line-height:23px!important}
+#kTable>.k-seat{overflow:visible!important}
+#kTable .seat-auction-panel{
+ position:absolute!important;z-index:80!important;left:50%!important;top:calc(100% + 5px)!important;bottom:auto!important;
+ transform:translateX(-50%)!important;width:min(218px,calc(100vw - 34px))!important;max-width:218px!important;
+ margin:0!important;padding:7px!important;border:1px solid #e6c27b!important;border-radius:12px!important;
+ background:linear-gradient(145deg,rgba(24,21,17,.98),rgba(5,5,5,.99))!important;
+ box-shadow:0 14px 28px #000e,0 0 12px #e7c87933!important;text-align:center!important;
+}
+#kTable>.k-seat[data-p="0"]>.seat-auction-panel,#kTable>.k-seat[data-p="1"]>.seat-auction-panel,#kTable>.k-seat[data-p="5"]>.seat-auction-panel{top:auto!important;bottom:calc(100% + 5px)!important}
+#kTable .seat-auction-panel #kAuctionTitle{display:block!important;font-size:11px!important;color:#ffe3a0!important;margin-bottom:3px!important}
+#kTable .seat-auction-panel #kAuctionInfo{font-size:9px!important;line-height:1.45!important;max-height:35px!important;overflow:hidden!important}
+#kTable .seat-auction-panel #kAuctionLog{display:none!important}
+#kTable .seat-auction-panel #kHumanAuctionControls .k-bids{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important;margin-top:5px!important}
+#kTable .seat-auction-panel #kHumanAuctionControls .k-bids button{min-width:0!important;min-height:34px!important;padding:3px 1px!important;font-size:11px!important;border-radius:8px!important}
+#kTable .seat-auction-panel #kMalzoom{min-height:34px!important;margin-top:4px!important;padding:5px!important}
+@media(max-width:520px){#kTable{min-height:460px!important}#kTable .seat-auction-panel{width:min(194px,calc(100vw - 26px))!important}#kTable .k-bid-chip{top:2px!important;left:2px!important}}
+`;
+document.head.appendChild(auctionVisualStyle);
 }
 function royalPortrait(rank){
  const p=rank==='K'?{coat:'#173e72',light:'#d9b45d',hair:'#49301f'}:rank==='Q'?{coat:'#8c2854',light:'#f0c66c',hair:'#38233b'}:{coat:'#17644e',light:'#e0b85d',hair:'#57351f'};
