@@ -1034,7 +1034,7 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 var PUBLIC_AUTH_REDIRECT='https://ahdehwari-commits.github.io/Doublekout-/';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
-var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,onlineRosterRows=[],lastLobbyGuestId='',gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastOnlineHandSignature='',onlineChallengeDeadline=0,onlineChallengeExpired=false,confirmedPlayedCardIds=Object.create(null),onlineRematchDeadline=0,lastRematchBeep=-1,rematchBusy=false,myOnlineIsHost=false,rematchAutoAttemptedDeadline=0;
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,onlineRosterRows=[],lastLobbyGuestId='',gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastOnlineHandSignature='',onlineChallengeDeadline=0,onlineChallengeExpired=false,confirmedPlayedCardIds=Object.create(null),onlineRematchDeadline=0,lastRematchBeep=-1,rematchBusy=false,myOnlineIsHost=false,rematchAutoAttemptedDeadline=0,kuwaitiStartInFlight=false;
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
@@ -1271,22 +1271,34 @@ async function toggleReady(){
  finally{if(el('onlineReady'))el('onlineReady').disabled=false;}
 }
 async function startKuwaitiOnlineGame(fillAI){
+ if(kuwaitiStartInFlight)return;
+ if(!roomId||mode!=='kuwaiti')return;
+ kuwaitiStartInFlight=true;
  try{
-  if(!roomId||mode!=='kuwaiti')return;
   el('onlineStart').disabled=true;
   say(fillAI?'پایان انتظار؛ صندلی‌های خالی با هوش مصنوعی تکمیل می‌شوند و کارت‌ها پخش می‌شوند...':'در حال پخش ۵۴ کارت و آماده‌سازی مزایده شش‌نفره...');
   var matchLimit=Number(document.getElementById('kMatchLimit')&&document.getElementById('kMatchLimit').value||54);
   var r=await client.rpc('kuwaiti_online_start_with_ai',{p_room_id:roomId,p_match_limit:matchLimit,p_fill_ai:!!fillAI});
-  if(r.error)throw r.error;
-  el('onlineGame').style.display='none';el('onlineLobbyDecision').style.display='none';
+  if(r.error&&/room_not_waiting/.test(String(r.error.message||r.error.code||r.error))){
+   var recovered=await client.rpc('kuwaiti_online_snapshot',{p_room_id:roomId});
+   if(recovered.error||!recovered.data||recovered.data.status!=='playing'||!recovered.data.state||recovered.data.state.engine!=='kuwaiti-six-player-v1')throw r.error;
+   r={data:{room_id:roomId,status:'playing',state:recovered.data.state,revision:recovered.data.revision,phase:recovered.data.state.phase}};
+  }else if(r.error)throw r.error;
+  el('onlineGame').style.display='none';el('onlineLobbyDecision').style.display='none';el('onlineStart').style.display='none';
   var bots=Array.isArray(r.data&&r.data.state&&r.data.state.aiSeats)?r.data.state.aiSeats.length:Math.max(0,6-onlineRosterRows.length);
   say('کوت کویتی آنلاین آغاز شد؛ '+bots+' صندلی با هوش مصنوعی و '+(6-bots)+' بازیکن انسانی. مزایده از دارنده ۲ خاج شروع می‌شود.');
   var info={roomId:roomId,code:roomCode,mode:mode,count:count,seat:myOnlineSeat,isHost:myOnlineIsHost,userId:me&&me.id,roster:onlineRosterRows};
+  // The six-player view is switched synchronously by its event listener before this overlay closes.
   window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-online-started',{detail:info}));
   close();
- }catch(e){say('شروع کوت کویتی آنلاین انجام نشد: '+(e.message||e));}
- finally{if(el('onlineStart'))el('onlineStart').disabled=false;}
+ }catch(e){
+  say('شروع کوت کویتی آنلاین انجام نشد: '+(e.message||e));
+ }finally{
+  kuwaitiStartInFlight=false;
+  if(el('onlineStart')&&el('onlineOverlay')&&el('onlineOverlay').classList.contains('open'))el('onlineStart').disabled=false;
+ }
 }
+
 async function startOnlineGame(choice){
  try{
   if(!roomId||mode==='kuwaiti')return;
