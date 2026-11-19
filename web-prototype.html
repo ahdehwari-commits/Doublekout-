@@ -1256,7 +1256,7 @@ async function refreshRoster(){
   else if(mine&&mine.is_host&&guest){el('onlineLobbyDecision').style.display='block';el('onlineLobbyNotice').textContent='بازیکن واقعی «'+guest.display_name+'» وارد اتاق شد؛ شروع را انتخاب کن.';if(lastLobbyGuestId!==guest.user_id){lastLobbyGuestId=guest.user_id;say('بازیکن واقعی وارد اتاق شد. برای انتخاب نوع شروع آماده‌ای.');}}
   else if(!guest){el('onlineLobbyDecision').style.display='none';lastLobbyGuestId='';}
   if(!allReady&&rows.length>1&&!guest)say(rows.length+' بازیکن وارد شده‌اند؛ میزبان می‌تواند همین حالا تصمیم بگیرد.');
-  if(mine&&!mine.is_host)say(mode==='kuwaiti'?'صندلی شما در میز شش‌نفره ثبت شد؛ منتظر ورود و آمادگی هر شش بازیکن بمان.':'به اتاق میزبان متصل شدی؛ جایگاه تیمی انتخاب‌شده ثبت شده است.');
+  if(mine&&!mine.is_host)say(mode==='kuwaiti'?'صندلی شما در میز شش‌نفره ثبت شد؛ منتظر تصمیم میزبان بمان. در صورت پایان انتظار، صندلی‌های خالی با هوش مصنوعی تکمیل می‌شوند.':'به اتاق میزبان متصل شدی؛ جایگاه تیمی انتخاب‌شده ثبت شده است.');
  }catch(e){if(/not_a_room_member|not a room member/i.test(String(e&&e.message||e)))say('میزبان اتاق را با هوش مصنوعی آغاز کرد؛ ورود شما پذیرفته نشد.');else say('به‌روزرسانی فهرست بازیکنان: '+(e.message||e));}
  finally{rosterBusy=false;if(rosterRefreshQueued){rosterRefreshQueued=false;Promise.resolve().then(refreshRoster);}}
 }
