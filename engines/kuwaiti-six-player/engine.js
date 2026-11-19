@@ -58,12 +58,14 @@ function cardPower(card,contract,{trickNo=1,isLead=false,isMalzoom=false,trumpAn
 // the second player's normal card establishes the lead suit.
 function effectiveLeadSuit(plays,{trickNo=1}={}){
  if(!Array.isArray(plays)||plays.length===0)return null;
- if(trickNo===9&&isJoker(plays[0].card)){
-   if(plays.length<2)return null;
-   const second=plays[1].card;
-   return second&&second.kind==='normal'?second.suit:null;
- }
  const first=plays[0].card;
+ if(isJoker(first)){
+   // A joker is not a suit lead. Ordinarily this matters on trick nine;
+   // if a player has no ordinary card left and must lead a joker earlier,
+   // the first ordinary card played by the next seat establishes the suit.
+   const firstNormal=plays.find(x=>x.card&&x.card.kind==='normal');
+   return firstNormal?firstNormal.card.suit:null;
+ }
  return first&&first.kind==='normal'?first.suit:null;
 }
 // Jokers cannot be used in the opening trick or led through trick eight.
@@ -73,10 +75,10 @@ function legalCards(hand,leadSuit,{trickNo=1,isFirstPlay=true,trumpSuit=null,fir
  // In the opening trick neither joker may be played, even as a discard.
  const available=trickNo===1?hand.filter(c=>!isJoker(c)):hand;
  if(isFirstPlay&&!leadSuit){
-   if(trickNo<9)return available.filter(c=>!isJoker(c));
+   if(trickNo<9){const ordinary=available.filter(c=>!isJoker(c));return ordinary.length?ordinary:[...available];}
    return [...available];
  }
- if(!leadSuit)return available.filter(c=>!isJoker(c));
+ if(!leadSuit){const ordinary=available.filter(c=>!isJoker(c));return ordinary.length?ordinary:[...available];}
  const follow=available.filter(c=>c.kind==='normal'&&c.suit===leadSuit);
  // Jokers are special cards: after the opening trick they may be played
  // even when the player can follow suit. The normal follow-suit rule still
