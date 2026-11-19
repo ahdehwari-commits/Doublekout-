@@ -6,8 +6,8 @@ var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
-var AVATARS=['♦️','⚔️','🛡️','🏆','🎖️','💎','🔱','🧿','🕶️','🎩','🥇','♠️','♥️','♦️','♣️','⭐'];
-function chosenAvatar(){try{var a=localStorage.getItem('doubleKoutAvatar');if(AVATARS.indexOf(a)>=0)return a;}catch(e){}var profile=me&&me.user_metadata&&me.user_metadata.avatar;return AVATARS.indexOf(profile)>=0?profile:'♦️';}
+var AVATARS=["♛","⚔️","🛡️","🏆","🎖️","💎","🔱","🧿","🕶️","🎩","🥇","♠️","♥️","♦️","♣️","⭐"];
+function chosenAvatar(){try{var a=localStorage.getItem('doubleKoutAvatar');if(AVATARS.indexOf(a)>=0)return a;}catch(e){}var profile=me&&me.user_metadata&&me.user_metadata.avatar;return AVATARS.indexOf(profile)>=0?profile:'♛';}
 function packPlayerName(name){return chosenAvatar()+' '+String(name||'بازیکن').trim();}
 function unpackPlayerName(value){var s=String(value||'بازیکن');var a=AVATARS.find(function(x){return s.indexOf(x+' ')===0;});return {avatar:a||'♛',name:a?s.slice(a.length+1):s};}
 function renderAvatarPicker(){var host=el('onlineAvatarPicker');if(!host)return;var current=chosenAvatar();host.querySelectorAll('[data-avatar]').forEach(function(b){b.classList.toggle('selected',b.getAttribute('data-avatar')===current);});}
