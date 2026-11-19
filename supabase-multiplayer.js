@@ -6,6 +6,11 @@ var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
+var AVATARS=['🦊','🐼','🐯','🦁','🐺','🐸','🐵','🐻','🐨','🐙','🦉','🐲','⚽','👑','🎯','🚀'];
+function chosenAvatar(){try{var a=localStorage.getItem('doubleKoutAvatar');return AVATARS.indexOf(a)>=0?a:'🦊';}catch(e){return '🦊';}}
+function packPlayerName(name){return chosenAvatar()+' '+String(name||'بازیکن').trim();}
+function unpackPlayerName(value){var s=String(value||'بازیکن');var a=AVATARS.find(function(x){return s.indexOf(x+' ')===0;});return {avatar:a||'👤',name:a?s.slice(a.length+1):s};}
+function renderAvatarPicker(){var host=el('onlineAvatarPicker');if(!host)return;var current=chosenAvatar();host.querySelectorAll('[data-avatar]').forEach(function(b){b.classList.toggle('selected',b.getAttribute('data-avatar')===current);});}
 function ensureUI(){
  if(el('onlineButton'))return;
  var grid=document.querySelector('#modePicker .mode-grid');if(!grid)return;
@@ -19,20 +24,22 @@ function ensureUI(){
  '#onlinePanel button{padding:10px 12px;border-radius:10px;border:1px solid #e6ce92;background:linear-gradient(145deg,#f5dfaa,#bd9144);color:#211808;font-weight:bold;font:inherit;cursor:pointer}'+
  '#onlinePanel button.secondary{background:#193b30;color:#f5e8c4;border-color:#688d7d}'+
  '#onlinePanel button:disabled{opacity:.45;cursor:not-allowed}#onlinePanel .onrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}#onlinePanel .onrow>*{flex:1;min-width:120px}'+
- '#onlineStatus{background:#071b15;border-radius:9px;padding:10px;font-size:12px;line-height:1.9;color:#f3dfaa;margin-top:10px;white-space:pre-wrap}'+
+ '#onlineStatus{background:#071b15;border-radius:9px;padding:10px;font-size:12px;line-height:1.9;color:#f3dfaa;margin-top:10px;white-space:pre-wrap}'+ '#onlinePanel .online-avatar-picker{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin:7px 0}'+ '#onlinePanel .online-avatar-option{padding:6px 2px;min-width:0;border:1px solid #678b78;background:#0b2b20;color:#fff;font-size:22px;line-height:1.2;border-radius:10px}'+ '#onlinePanel .online-avatar-option.selected{border:2px solid #ffe19a;background:#315b43;box-shadow:0 0 0 2px #d7b66d55}'+ '#onlinePanel .online-avatar-hint{font-size:11px;color:#c7d9ce;margin-top:3px}'+
  '#onlineCode{direction:ltr;text-align:center;font-size:27px;letter-spacing:5px;color:#ffe09a;padding:12px;border:1px dashed #c9a65f;border-radius:10px;margin:10px 0}'+
- '#onlineRoster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}#onlineRoster div{background:#0b2a20;border:1px solid #537e6a;border-radius:9px;padding:9px;font-size:12px}';
+ '#onlineRoster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}#onlineRoster div{background:#0b2a20;border:1px solid #537e6a;border-radius:9px;padding:9px;font-size:12px}+'#onlineRoster .online-avatar-mini{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;margin-left:6px;border-radius:50%;background:#d7b66d22;border:1px solid #d7b66d;font-size:16px;vertical-align:middle}';
  document.head.appendChild(style);
  var root=document.createElement('div');root.id='onlineOverlay';root.innerHTML=
  '<section id="onlinePanel"><button id="onlineClose" class="secondary" style="float:left">بستن</button><h2>اتاق آنلاین دابل کوت</h2>'+
  '<p>بازیکنان با اینترنت و گوشی‌های جداگانه وارد یک اتاق می‌شوند. در این مرحله ساخت اتاق، ورود با کد و وضعیت آمادگی فعال است؛ اجرای خود بازی آنلاین هنوز در حال تکمیل است.</p>'+
  '<div id="onlineSetup"><label>نوع بازی</label><select id="onlineMode"><option value="double-kout">دابل کوت توالی · چهار نفره</option><option value="standard-hokm">حکم معمولی · چهار نفره</option><option value="kuwaiti">کوت کویتی · شش نفره</option></select>'+
- '<label>نام نمایشی</label><input id="onlineName" maxlength="24" value="بازیکن">'+
+ '<label>نام نمایشی</label><input id="onlineName" maxlength="24" value="بازیکن"><label>آواتار بازیکن</label><div id="onlineAvatarPicker" class="online-avatar-picker"><button type="button" class="online-avatar-option" data-avatar="🦊">🦊</button><button type="button" class="online-avatar-option" data-avatar="🐼">🐼</button><button type="button" class="online-avatar-option" data-avatar="🐯">🐯</button><button type="button" class="online-avatar-option" data-avatar="🦁">🦁</button><button type="button" class="online-avatar-option" data-avatar="🐺">🐺</button><button type="button" class="online-avatar-option" data-avatar="🐸">🐸</button><button type="button" class="online-avatar-option" data-avatar="🐵">🐵</button><button type="button" class="online-avatar-option" data-avatar="🐻">🐻</button><button type="button" class="online-avatar-option" data-avatar="🐨">🐨</button><button type="button" class="online-avatar-option" data-avatar="🐙">🐙</button><button type="button" class="online-avatar-option" data-avatar="🦉">🦉</button><button type="button" class="online-avatar-option" data-avatar="🐲">🐲</button><button type="button" class="online-avatar-option" data-avatar="⚽">⚽</button><button type="button" class="online-avatar-option" data-avatar="👑">👑</button><button type="button" class="online-avatar-option" data-avatar="🎯">🎯</button><button type="button" class="online-avatar-option" data-avatar="🚀">🚀</button></div><div class="online-avatar-hint">آواتار انتخابی کنار نامت روی میز و فهرست بازیکنان نمایش داده می‌شود.</div>'+
  '<div class="onrow"><button id="onlineCreate">ساخت اتاق جدید</button><button id="onlineShowJoin" class="secondary">ورود با کد</button></div>'+
  '<div id="onlineJoinBox" style="display:none"><label>کد اتاق</label><input id="onlineJoinCode" maxlength="6" placeholder="مثلاً A1B2C3" style="text-transform:uppercase;direction:ltr;text-align:center"><button id="onlineJoin" style="width:100%;margin-top:8px">ورود به اتاق</button></div></div>'+
  '<div id="onlineRoom" style="display:none"><div id="onlineCode"></div><div id="onlineRoster"></div><div class="onrow"><button id="onlineReady">آماده‌ام</button><button id="onlineLeave" class="secondary">خروج از اتاق</button></div></div>'+
  '<div id="onlineStatus">برای شروع، ساخت اتاق یا ورود با کد را انتخاب کن.</div></section>';
  document.body.appendChild(root);
+ renderAvatarPicker();
+ el('onlineAvatarPicker').addEventListener('click',function(ev){var b=ev.target.closest('[data-avatar]');if(!b)return;var a=b.getAttribute('data-avatar');if(AVATARS.indexOf(a)<0)return;try{localStorage.setItem('doubleKoutAvatar',a);}catch(e){}renderAvatarPicker();});
  el('onlineClose').onclick=close;el('onlineCreate').onclick=createRoom;el('onlineShowJoin').onclick=function(){el('onlineJoinBox').style.display='block';};
  el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineLeave').onclick=leave;
  root.addEventListener('click',function(e){if(e.target===root)close();});
@@ -79,7 +86,7 @@ async function refreshRoster(){
   var r=await client.from('room_members').select('seat,display_name,is_host,ready,user_id').eq('room_id',roomId).order('seat');
   if(r.error){say('خواندن فهرست بازیکنان: '+r.error.message);return;}
   var cap=count,rows=r.data||[],html='';
-  for(var i=0;i<cap;i++){var p=rows.find(function(x){return x.seat===i;});html+='<div>'+(i+1)+'. '+(p?esc(p.display_name)+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
+  for(var i=0;i<cap;i++){var p=rows.find(function(x){return x.seat===i;});html+='<div>'+(i+1)+'. '+(p?'<span class="online-avatar-mini">'+esc(unpackPlayerName(p.display_name).avatar)+'</span>'+esc(unpackPlayerName(p.display_name).name)+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
   el('onlineRoster').innerHTML=html;
   var allReady=rows.length===cap&&rows.every(function(x){return x.ready;});
   say(rows.length+' از '+cap+' بازیکن وارد شده‌اند. '+(allReady?'همه آماده‌اند.':'منتظر ورود و آمادگی بازیکنان دیگر...'));
@@ -92,7 +99,7 @@ async function createRoom(){
  var stage='آماده‌سازی';try{
   say('در حال ورود مهمان و ساخت اتاق...');
   await authenticate(function(s){stage=s;});mode=el('onlineMode').value;count=mode==='kuwaiti'?6:4;
-  stage='فراخوانی create_game_room';var r=await client.rpc('create_game_room',{p_game_mode:mode,p_player_count:count,p_display_name:el('onlineName').value.trim()||'بازیکن'});
+  stage='فراخوانی create_game_room';var r=await client.rpc('create_game_room',{p_game_mode:mode,p_player_count:count,p_display_name:packPlayerName(el('onlineName').value.trim()||'بازیکن')});
   if(r.error)throw r.error;
   roomId=r.data.room_id;roomCode=r.data.code;showRoom();subscribe();
  }catch(e){say('ساخت اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
@@ -102,7 +109,7 @@ async function joinRoom(){
   say('در حال ورود به اتاق...');
   await authenticate(function(s){stage=s;});var code=el('onlineJoinCode').value.trim().toUpperCase();
   if(!/^[A-F0-9]{6}$/.test(code))throw new Error('کد اتاق باید شش حرف یا عدد باشد.');
-  stage='فراخوانی join_game_room';var r=await client.rpc('join_game_room',{p_code:code,p_display_name:el('onlineName').value.trim()||'بازیکن'});
+  stage='فراخوانی join_game_room';var r=await client.rpc('join_game_room',{p_code:code,p_display_name:packPlayerName(el('onlineName').value.trim()||'بازیکن')});
   if(r.error)throw r.error;
   roomId=r.data.room_id;roomCode=r.data.code;mode=r.data.game_mode;count=Number(r.data.player_count);showRoom();subscribe();
  }catch(e){say('ورود به اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
