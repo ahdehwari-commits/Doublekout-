@@ -161,9 +161,20 @@ async function submitOnlineKuwaitiBid(bid){
 }
 function attachOnlineKuwaitiRoom(info){
  if(!info||info.mode!=='kuwaiti'||!info.roomId)return;
+ if(isOnlineKuwaiti()&&onlineKuwaiti.roomId===info.roomId){
+  onlineKuwaiti.isHost=!!info.isHost;
+  onlineKuwaiti.code=info.code||onlineKuwaiti.code;
+  onlineKuwaiti.roster=info.roster||onlineKuwaiti.roster||[];
+  if($('kPlayStyle'))$('kPlayStyle').value='online';
+  setScreen('game');
+  refreshOnlineKuwaiti();
+  return;
+ }
  onlineKuwaiti={roomId:info.roomId,code:info.code,seat:Number(info.seat),isHost:!!info.isHost,roster:info.roster||[],revision:-1,legalCardIds:[]};
  if($('kPlayStyle'))$('kPlayStyle').value='online';
  if(window.DoubleKoutOnline&&window.DoubleKoutOnline.close)window.DoubleKoutOnline.close();
+ setScreen('game');
+ onlineKuwaitiStatus('اتاق کوت کویتی شروع شد؛ در حال بارگذاری میز و مزایده…');
  refreshOnlineKuwaiti();
 }
 window.addEventListener('doublekout:kuwaiti-online-started',e=>attachOnlineKuwaitiRoom(e.detail));
@@ -560,9 +571,6 @@ function startAuction(){
 }
 function renderAuction(){
  if(!auction)return;
- const activeSeat=document.querySelector('.k-seat[data-p="'+auction.current+'"]');
- if(activeSeat){$('kAuction').classList.add('seat-auction-panel');activeSeat.appendChild($('kAuction'));}
-
  const isHuman=isHumanSeat(auction.current),forced=auction.passes>=5&&!auction.highest;
  $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':(isOnlineKuwaiti()?' · بازیکن آنلاین':' · هوش مصنوعی در حال تصمیم‌گیری'));
  const obligated=game.obligatedPlayer;
