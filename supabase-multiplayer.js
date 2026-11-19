@@ -7,7 +7,7 @@ function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
 var AVATARS=['🦊','🐼','🐯','🦁','🐺','🐸','🐵','🐻','🐨','🐙','🦉','🐲','⚽','👑','🎯','🚀'];
-function chosenAvatar(){try{var a=localStorage.getItem('doubleKoutAvatar');return AVATARS.indexOf(a)>=0?a:'🦊';}catch(e){return '🦊';}}
+function chosenAvatar(){try{var a=localStorage.getItem('doubleKoutAvatar');if(AVATARS.indexOf(a)>=0)return a;}catch(e){}var profile=me&&me.user_metadata&&me.user_metadata.avatar;return AVATARS.indexOf(profile)>=0?profile:'🦊';}
 function packPlayerName(name){return chosenAvatar()+' '+String(name||'بازیکن').trim();}
 function unpackPlayerName(value){var s=String(value||'بازیکن');var a=AVATARS.find(function(x){return s.indexOf(x+' ')===0;});return {avatar:a||'👤',name:a?s.slice(a.length+1):s};}
 function renderAvatarPicker(){var host=el('onlineAvatarPicker');if(!host)return;var current=chosenAvatar();host.querySelectorAll('[data-avatar]').forEach(function(b){b.classList.toggle('selected',b.getAttribute('data-avatar')===current);});}
@@ -59,7 +59,7 @@ async function authenticate(setStage){
  var got=await client.auth.getSession();if(got.error)throw got.error;session=got.data&&got.data.session;
  if(!session){setStage('ورود ناشناس به Supabase');var sign=await client.auth.signInAnonymously();if(sign.error)throw sign.error;session=sign.data.session;}
  if(!session)throw new Error('ورود مهمان انجام نشد. ورود ناشناس را در Authentication فعال کن.');
- me=session.user;return me;
+ me=session.user;try{var avatar=chosenAvatar();if(!me.is_anonymous&&(!me.user_metadata||me.user_metadata.avatar!==avatar)){var profileUpdate=await client.auth.updateUser({data:{avatar:avatar}});if(profileUpdate.error)console.warn('Avatar profile sync:',profileUpdate.error.message);}}catch(profileError){console.warn('Avatar profile sync skipped:',profileError);}renderAvatarPicker();return me;
 }
 function showRoom(){el('onlineSetup').style.display='none';el('onlineRoom').style.display='block';el('onlineCode').textContent=roomCode;}
 function subscribe(){
