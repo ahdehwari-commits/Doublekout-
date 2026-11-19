@@ -992,12 +992,26 @@ function resetCardCustomization(){visualChoice={back:'black',table:'marble',layo
  const titles=['پشت کارت‌ها','میز بازی','چینش ۶ نفره','آواتار من'];
  let step=0;
  const storeRoot=document.getElementById("storeModal");if(storeRoot&&storeRoot.parentElement!==document.body)document.body.appendChild(storeRoot);if(modal&&modal.parentElement!==document.body)document.body.appendChild(modal);
- function showStep(n){step=Math.max(0,Math.min(3,n));modal.querySelectorAll('.customizer-page').forEach(p=>p.classList.toggle('hidden',Number(p.dataset.step)!==step));modal.querySelectorAll('[data-go-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.goStep)===step));title.textContent=titles[step];stepLabel.textContent=(step+1)+' از ۳';document.getElementById('customizerNext').classList.toggle('hidden',step===3);document.getElementById('customizerDone').classList.toggle('hidden',step!==3);modal.querySelectorAll('.customizer-rail .visual-choice').forEach(b=>{const rail=b.closest('[data-kind]');b.classList.toggle('selected',visualChoice[rail.dataset.kind]===b.dataset.value);});const selectedAvatar=localStorage.getItem('doubleKoutAvatar')||'♛';modal.querySelectorAll('[data-personal-avatar]').forEach(b=>b.classList.toggle('selected',b.dataset.personalAvatar===selectedAvatar));}
- document.getElementById('openStore').addEventListener('click',()=>{document.getElementById('storeModal').classList.remove('hidden');document.body.style.overflow='hidden';if(window.DoubleKoutStore&&window.DoubleKoutStore.refresh)window.DoubleKoutStore.refresh();if(window.DoubleKoutPaymentsAdmin&&window.DoubleKoutPaymentsAdmin.refresh)window.DoubleKoutPaymentsAdmin.refresh();});
- document.getElementById('closeStore').addEventListener('click',()=>{document.getElementById('storeModal').classList.add('hidden');document.body.style.overflow='';});
- document.getElementById('storeModal').addEventListener('click',e=>{if(e.target.id==='storeModal'){document.getElementById('closeStore').click();}});
- document.getElementById('openVisualCustomizer').addEventListener('click',()=>{modal.classList.remove('hidden');document.body.style.overflow='hidden';showStep(0);});
- document.getElementById('openPersonalization').addEventListener('click',()=>{modal.classList.remove('hidden');document.body.style.overflow='hidden';showStep(0);});
+ function showStep(n){step=Math.max(0,Math.min(3,n));modal.querySelectorAll('.customizer-page').forEach(p=>p.classList.toggle('hidden',Number(p.dataset.step)!==step));modal.querySelectorAll('[data-go-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.goStep)===step));title.textContent=titles[step];stepLabel.textContent=(step+1)+' از ۴';document.getElementById('customizerNext').classList.toggle('hidden',step===3);document.getElementById('customizerDone').classList.toggle('hidden',step!==3);modal.querySelectorAll('.customizer-rail .visual-choice').forEach(b=>{const rail=b.closest('[data-kind]');b.classList.toggle('selected',visualChoice[rail.dataset.kind]===b.dataset.value);});const selectedAvatar=localStorage.getItem('doubleKoutAvatar')||'♛';modal.querySelectorAll('[data-personal-avatar]').forEach(b=>b.classList.toggle('selected',b.dataset.personalAvatar===selectedAvatar));}
+ // Delegated handlers: the shop button is injected by ensureUI after this script runs.
+ document.addEventListener('click',e=>{
+  const target=e.target;
+  if(target.closest('#openStore')){
+   document.getElementById('storeModal').classList.remove('hidden');document.body.style.overflow='hidden';
+   if(window.DoubleKoutStore&&window.DoubleKoutStore.refresh)window.DoubleKoutStore.refresh();
+   if(window.DoubleKoutPaymentsAdmin&&window.DoubleKoutPaymentsAdmin.refresh)window.DoubleKoutPaymentsAdmin.refresh();
+   return;
+  }
+  if(target.closest('#closeStore')){
+   document.getElementById('storeModal').classList.add('hidden');document.body.style.overflow='';return;
+  }
+  if(target.id==='storeModal'){
+   const closeButton=document.getElementById('closeStore');if(closeButton)closeButton.click();return;
+  }
+  if(target.closest('#openPersonalization')||target.closest('#openVisualCustomizer')){
+   modal.classList.remove('hidden');document.body.style.overflow='hidden';showStep(0);return;
+  }
+ });
  function close(){modal.classList.add('hidden');document.body.style.overflow='';}
  document.getElementById('customizerClose').addEventListener('click',close);
  modal.querySelectorAll('[data-go-step]').forEach(b=>b.addEventListener('click',()=>showStep(Number(b.dataset.goStep))));
@@ -1118,6 +1132,38 @@ function ensureUI(){
  '#onlineTable .center-trick .table-played{width:54px;height:80px;font-size:17px;margin-left:-23px}'+
  '@media(max-width:520px){#onlineTable{min-height:320px;padding:7px;gap:5px}#onlineTable .center{min-height:140px}#onlinePanel #onlineHand{min-height:120px;overflow-x:auto;justify-content:center;padding:12px 8px 22px}#onlinePanel #onlineHand button{flex-basis:56px;width:56px;height:84px;margin-left:-32px!important}#onlinePanel #onlineHand button:first-child{margin-left:0!important}#onlinePanel #onlineHand button .card{width:56px;height:84px}#onlineTable .center-trick .table-played{width:45px;height:67px;margin-left:-19px}}';
  style.textContent += '#onlineGameModeModal{display:none;position:fixed;inset:0;z-index:100010;background:#020b08d9;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:18px}#onlineGameModeModal.open{display:flex}#onlineGameModeModal .online-mode-dialog{width:min(420px,100%);padding:18px;border:1px solid #e7c879;border-radius:22px;background:linear-gradient(145deg,#194b39,#061b15);box-shadow:0 20px 60px #000d;text-align:center}#onlineGameModeModal .online-mode-dialog>b{display:block;color:#ffe4a0;font-size:18px;margin-bottom:12px}#onlineGameModeModal [data-online-mode]{display:flex;flex-direction:column;gap:5px;width:100%;margin:8px 0;text-align:right;background:linear-gradient(145deg,#275c49,#09251c);border:1px solid #d8b66b;color:#fff0c6;padding:13px 15px}#onlineGameModeModal [data-online-mode] strong{font-size:15px}#onlineGameModeModal [data-online-mode] small{font-size:11px;color:#d3e2d8}#onlineGameModeModal [data-online-mode]:active{transform:scale(.98)}';
+ style.textContent+=`
+/* 9.30: stable four-player online oval table; seats stay around the tabletop. */
+#onlineTable{display:block!important;position:relative!important;min-height:460px!important;overflow:visible!important;background-color:#242522!important;background-image:radial-gradient(ellipse at 50% 42%,#55534b 0%,#302f2b 58%,#171816 100%),repeating-linear-gradient(14deg,#ffffff08 0 2px,transparent 2px 8px)!important;border:10px solid #b9944f!important;border-radius:48%/31%!important;box-shadow:inset 0 0 0 3px #f5d995aa,inset 0 0 0 8px #171511,inset 0 0 48px #000d,0 22px 38px #000d!important}
+#onlineTable:before{content:""!important;position:absolute!important;inset:7px!important;border:2px solid #e3c27c!important;border-radius:48%/31%!important;box-shadow:inset 0 0 0 4px #ffffff14,inset 0 0 28px #000b!important;pointer-events:none!important;z-index:0!important}
+#onlineTable>.seat{position:absolute!important;width:25%!important;min-height:90px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;padding:7px 4px!important;border:2px solid #c9a45e!important;border-radius:14px!important;background:linear-gradient(145deg,#25231f,#090a09)!important;box-shadow:0 10px 18px #000c,inset 0 1px 0 #fff3!important;z-index:3!important}
+#onlineTable>.north{top:2%!important;left:37.5%!important;right:auto!important;bottom:auto!important}
+#onlineTable>.south{bottom:2%!important;left:37.5%!important;right:auto!important;top:auto!important}
+#onlineTable>.west{left:1%!important;top:38%!important;right:auto!important;bottom:auto!important}
+#onlineTable>.east{right:1%!important;top:38%!important;left:auto!important;bottom:auto!important}
+#onlineTable>.center{position:absolute!important;left:28%!important;right:28%!important;top:27%!important;bottom:27%!important;min-height:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;border:1px solid #c9a45e!important;border-radius:50%!important;background:radial-gradient(ellipse,#302d25bb,#090a09aa)!important;box-shadow:inset 0 0 24px #000b,0 0 0 5px #d1ad6544!important;z-index:2!important}
+#onlineTable>.table-trump-corner{position:absolute!important;top:9px!important;right:10px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:1000!important}
+#onlineTable .seat .played{min-height:58px!important;overflow:visible!important}
+#onlineTable .center-trick{position:absolute!important;left:50%!important;top:55%!important;transform:translate(-50%,-42%)!important;z-index:45!important;pointer-events:none!important}
+#onlineTable .center-trick .table-played{width:54px;height:80px;margin-left:-23px}
+#onlineGame #onlineDecision,#onlineGame #onlineTrumpSelection{position:relative!important;z-index:30!important;display:block;box-sizing:border-box}
+#onlineGame #onlineHand.challenge-hand{display:flex!important;visibility:visible!important;opacity:1!important;min-height:166px!important;overflow-x:auto!important;overflow-y:visible!important;position:relative!important;z-index:31!important}
+#onlineGame #onlineHand.challenge-hand button{display:block!important;visibility:visible!important;opacity:1!important;flex:0 0 46px!important;width:46px!important;height:74px!important}
+#onlineGame #onlineHand.challenge-hand button .card{visibility:visible!important;opacity:1!important;filter:none!important}
+#game #currentGroupCounter,#game .k-live-tricks{display:none!important}
+#onlineGame #onlineLiveScoreTop,#onlineGame #onlineScore{display:none!important}
+/* Dark stone tabletop with a raised brass edge, matching the approved 3D table direction. */
+.table{background-color:#242522!important;background-image:radial-gradient(ellipse at 50% 42%,#55534b 0%,#302f2b 58%,#171816 100%),repeating-linear-gradient(14deg,#ffffff08 0 2px,transparent 2px 8px)!important;border-color:#b9944f!important;box-shadow:inset 0 0 0 3px #f5d99588,inset 0 -24px 48px #000b,0 22px 38px #000d!important}
+@media(max-width:520px){
+ #onlineTable{min-height:440px!important;border-width:8px!important;border-radius:44%/25%!important}
+ #onlineTable>.seat{width:28%!important;min-height:78px!important;padding:5px 2px!important}
+ #onlineTable>.north,#onlineTable>.south{left:36%!important;width:28%!important}
+ #onlineTable>.west{left:0!important;top:39%!important}
+ #onlineTable>.east{right:0!important;top:39%!important}
+ #onlineTable>.center{left:27%!important;right:27%!important;top:29%!important;bottom:29%!important}
+ #onlineTable .center-trick .table-played{width:45px;height:67px;margin-left:-19px}
+}
+`;
  document.head.appendChild(style);
  var root=document.createElement('div');root.id='onlineOverlay';root.innerHTML=
  '<section id="onlinePanel"><button id="onlineClose" class="secondary" style="float:left">بستن</button><h2>اتاق آنلاین دابل کوت</h2>'+
@@ -1325,7 +1371,7 @@ async function ensureKuwaitiUiListener(){
  if(window.__doubleKoutKuwaitiOnlineListenerReady)return;
  await new Promise((resolve,reject)=>{
   const script=document.createElement('script');
-  script.src='./kuwaiti-six-player-ui.js?v=0.8.18-revision-room-guard';
+  script.src='./kuwaiti-six-player-ui.js?v=0.8.19-table-auction-store-fixes';
   script.onload=()=>window.__doubleKoutKuwaitiOnlineListenerReady?resolve():reject(new Error('فایل رابط دریافت شد اما شنونده شروع آنلاین ثبت نشد.'));
   script.onerror=()=>reject(new Error('دریافت فایل رابط شش‌نفره ناموفق بود؛ اتصال یا مسیر فایل را بررسی کن.'));
   document.head.appendChild(script);
