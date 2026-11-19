@@ -1113,7 +1113,7 @@ function ensureUI(){
  '<div id="onlineStatus">برای شروع، ساخت اتاق یا ورود با کد را انتخاب کن.</div></section>';
  document.body.appendChild(root);
  el('onlineClose').onclick=close;el('onlineRegister').onclick=registerOnlineAccount;el('onlineLogin').onclick=loginOnlineAccount;el('onlineForgotPassword').onclick=resetOnlinePassword;el('onlineSaveNewPassword').onclick=saveRecoveredPassword;el('onlineResendConfirmation').onclick=resendOnlineConfirmation;el('onlineLogout').onclick=logoutOnlineAccount;el('onlineCreate').onclick=createRoom;el('onlineShowJoin').onclick=function(){el('onlineJoinBox').style.display='block';};
- el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=function(){if(onlineRosterRows.some(function(x){return x.user_id!==me.id;})){el('onlineLobbyDecision').style.display='block';say('میزبان می‌تواند بازیکن واقعی را بپذیرد یا بازی را با هوش مصنوعی آغاز کند.');}else startOnlineGame('ai');};el('onlineAcceptHuman').onclick=function(){startOnlineGame('human');};el('onlineUseAI').onclick=function(){startOnlineGame('ai');};el('onlineChooseNormal').onclick=function(){submitOnlineChallengeChoice('pass')};el('onlineChooseChallenge').onclick=function(){submitOnlineChallengeChoice('challenge')};el('onlineChallengeExtend').onclick=extendOnlineChallengeTime;el('onlineTrumpConfirm').onclick=function(){submitOnlineTrumpSelection(el('onlineTrumpContract').value,false);};el('onlineNextGame').onclick=function(){startNextOnlineGame(false)};el('onlineExtendRematch').onclick=extendOnlineRematchTime;el('onlineSortHand').onclick=function(){onlineHandSorted=!onlineHandSorted;lastGameRevision=-1;refreshOnlineGame();};el('onlineLeave').onclick=leave;
+ el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=function(){if(mode==='kuwaiti'){startKuwaitiOnlineGame();return;}if(onlineRosterRows.some(function(x){return x.user_id!==me.id;})){el('onlineLobbyDecision').style.display='block';say('میزبان می‌تواند بازیکن واقعی را بپذیرد یا بازی را با هوش مصنوعی آغاز کند.');}else startOnlineGame('ai');};el('onlineAcceptHuman').onclick=function(){startOnlineGame('human');};el('onlineUseAI').onclick=function(){startOnlineGame('ai');};el('onlineChooseNormal').onclick=function(){submitOnlineChallengeChoice('pass')};el('onlineChooseChallenge').onclick=function(){submitOnlineChallengeChoice('challenge')};el('onlineChallengeExtend').onclick=extendOnlineChallengeTime;el('onlineTrumpConfirm').onclick=function(){submitOnlineTrumpSelection(el('onlineTrumpContract').value,false);};el('onlineNextGame').onclick=function(){startNextOnlineGame(false)};el('onlineExtendRematch').onclick=extendOnlineRematchTime;el('onlineSortHand').onclick=function(){onlineHandSorted=!onlineHandSorted;lastGameRevision=-1;refreshOnlineGame();};el('onlineLeave').onclick=leave;
  root.addEventListener('click',function(e){if(e.target===root)close();});
 }
 function open(preselect){ensureUI();if(preselect&&el('onlineMode'))el('onlineMode').value=preselect;el('onlineOverlay').classList.add('open');}
@@ -1216,15 +1216,15 @@ function subscribe(){
  if(channel){client.removeChannel(channel);channel=null;}
  channel=client.channel('doublekout-room-'+roomId)
  .on('postgres_changes',{event:'*',schema:'public',table:'room_members',filter:'room_id=eq.'+roomId},refreshRoster)
- .on('postgres_changes',{event:'*',schema:'public',table:'game_rooms',filter:'id=eq.'+roomId},function(){refreshOnlineGame();})
+ .on('postgres_changes',{event:'*',schema:'public',table:'game_rooms',filter:'id=eq.'+roomId},function(){if(mode==='kuwaiti')window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-room-update',{detail:{roomId:roomId}}));else refreshOnlineGame();})
  .subscribe(function(state){
-  if(state==='SUBSCRIBED'){say('اتصال زنده برقرار است.');refreshRoster();refreshOnlineGame();}
+  if(state==='SUBSCRIBED'){say('اتصال زنده برقرار است.');refreshRoster();if(mode==='kuwaiti')window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-room-update',{detail:{roomId:roomId}}));else refreshOnlineGame();}
   else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'||state==='CLOSED')say('اتصال زنده برقرار نشد؛ فهرست بازیکنان به‌صورت دوره‌ای به‌روزرسانی می‌شود.');
  });
  refreshRoster();
  rosterTimer=setInterval(refreshRoster,5000);
  if(gameTimer)clearInterval(gameTimer);
- gameTimer=setInterval(refreshOnlineGame,3000);
+ gameTimer=setInterval(function(){if(mode==='kuwaiti')window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-room-update',{detail:{roomId:roomId}}));else refreshOnlineGame();},3000);
  if(!window.__doubleKoutRosterFocus){
   window.__doubleKoutRosterFocus=true;
   window.addEventListener('focus',function(){refreshRoster();});
@@ -1241,16 +1241,18 @@ async function refreshRoster(){
   var rows=Array.isArray(r.data)?r.data:[],cap=count,html='';onlineRosterRows=rows;
   for(var i=0;i<cap;i++){var p=rows.find(function(x){return Number(x.seat)===i;});html+='<div>'+(i+1)+'. '+(p?esc(p.display_name)+' · '+Number(p.points||0)+' امتیاز'+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
   el('onlineRoster').innerHTML=html;
-  var allReady=rows.length>=2&&rows.every(function(x){return x.ready===true;});
+  var allReady=rows.length>=2&&rows.every(function(x){return x.ready===true;}),allSixReady=rows.length===6&&rows.every(function(x){return x.ready===true;});
   var mine=rows.find(function(x){return x.user_id===me.id;});
   myOnlineSeat=mine?Number(mine.seat):-1;myOnlineIsHost=!!(mine&&mine.is_host);
   el('onlineReady').textContent=mine&&mine.ready?'لغو آمادگی':'آماده‌ام';
   el('onlineReady').dataset.ready=mine&&mine.ready?'true':'false';
   el('onlineReady').disabled=!mine;
-  el('onlineStart').style.display=mine&&mine.is_host&&mode!=='kuwaiti'?'block':'none';
-  el('onlineStart').textContent=rows.length>1?'پایان انتظار · انتخاب میزبان':'پایان انتظار · شروع با هوش مصنوعی';
+  el('onlineStart').style.display=mine&&mine.is_host&&(mode==='kuwaiti'?rows.length===6:true)?'block':'none';
+  el('onlineStart').disabled=mode==='kuwaiti'?!allSixReady:false;
+  el('onlineStart').textContent=mode==='kuwaiti'?'شروع کوت کویتی · شش بازیکن':(rows.length>1?'پایان انتظار · انتخاب میزبان':'پایان انتظار · شروع با هوش مصنوعی');
   var guest=rows.find(function(x){return !x.is_host;});
-  if(mine&&mine.is_host&&guest){el('onlineLobbyDecision').style.display='block';el('onlineLobbyNotice').textContent='بازیکن واقعی «'+guest.display_name+'» وارد اتاق شد؛ شروع را انتخاب کن.';if(lastLobbyGuestId!==guest.user_id){lastLobbyGuestId=guest.user_id;say('بازیکن واقعی وارد اتاق شد. برای انتخاب نوع شروع آماده‌ای.');}}
+  if(mode==='kuwaiti'){el('onlineLobbyDecision').style.display='none';lastLobbyGuestId='';}
+  else if(mine&&mine.is_host&&guest){el('onlineLobbyDecision').style.display='block';el('onlineLobbyNotice').textContent='بازیکن واقعی «'+guest.display_name+'» وارد اتاق شد؛ شروع را انتخاب کن.';if(lastLobbyGuestId!==guest.user_id){lastLobbyGuestId=guest.user_id;say('بازیکن واقعی وارد اتاق شد. برای انتخاب نوع شروع آماده‌ای.');}}
   else if(!guest){el('onlineLobbyDecision').style.display='none';lastLobbyGuestId='';}
   if(!allReady&&rows.length>1&&!guest)say(rows.length+' بازیکن وارد شده‌اند؛ میزبان می‌تواند همین حالا تصمیم بگیرد.');
   if(mine&&!mine.is_host)say('به اتاق میزبان متصل شدی؛ جایگاه تیمی انتخاب‌شده ثبت شده است.');
@@ -1271,7 +1273,7 @@ async function joinRoom(){
   say('در حال ورود به اتاق...');
   await authenticate(function(s){stage=s;});var code=el('onlineJoinCode').value.trim().toUpperCase();
   if(!/^[A-F0-9]{6}$/.test(code))throw new Error('کد اتاق باید شش حرف یا عدد باشد.');
-  stage='فراخوانی join_game_room';var preferredSeat=Number(el('onlinePreferredTeam').value||1);var r=await client.rpc('join_game_room',{p_code:code,p_display_name:(localStorage.getItem('doubleKoutAvatar')||'♛')+' '+(el('onlineName').value.trim()||'بازیکن'),p_preferred_seat:preferredSeat});
+  stage='فراخوانی join_game_room';var preferredSeat=Number(el('onlinePreferredTeam').value||1);var displayName=(localStorage.getItem('doubleKoutAvatar')||'♛')+' '+(el('onlineName').value.trim()||'بازیکن');var selectedMode=el('onlineMode').value;var r=selectedMode==='kuwaiti'?await client.rpc('join_game_room',{p_code:code,p_display_name:displayName}):await client.rpc('join_game_room',{p_code:code,p_display_name:displayName,p_preferred_seat:preferredSeat});
   if(r.error)throw r.error;
   roomId=r.data.room_id;roomCode=r.data.code;mode=r.data.game_mode;count=Number(r.data.player_count);showRoom();say('وارد اتاق شدی؛ منتظر تصمیم میزبان بمان.');await refreshRoster();subscribe();
  }catch(e){say('ورود به اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
@@ -1287,6 +1289,21 @@ async function toggleReady(){
   say(target?'آمادگی ثبت شد.':'آمادگی لغو شد؛ میزبان باید فهرست را به‌روزرسانی‌شده ببیند.');
  }catch(e){say('تغییر وضعیت آمادگی انجام نشد: '+(e.message||e));}
  finally{if(el('onlineReady'))el('onlineReady').disabled=false;}
+}
+async function startKuwaitiOnlineGame(){
+ try{
+  if(!roomId||mode!=='kuwaiti')return;
+  el('onlineStart').disabled=true;say('در حال پخش ۵۴ کارت و آماده‌سازی مزایده شش‌نفره...');
+  var matchLimit=Number(document.getElementById('kMatchLimit')&&document.getElementById('kMatchLimit').value||54);
+  var r=await client.rpc('kuwaiti_online_start',{p_room_id:roomId,p_match_limit:matchLimit});
+  if(r.error)throw r.error;
+  el('onlineGame').style.display='none';el('onlineLobbyDecision').style.display='none';
+  say('بازی کوت کویتی آنلاین آغاز شد؛ مزایده از دارنده ۲ خاج شروع می‌شود.');
+  var info={roomId:roomId,code:roomCode,mode:mode,count:count,seat:myOnlineSeat,isHost:myOnlineIsHost,userId:me&&me.id,roster:onlineRosterRows};
+  window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-online-started',{detail:info}));
+  close();
+ }catch(e){say('شروع کوت کویتی آنلاین انجام نشد: '+(e.message||e));}
+ finally{if(el('onlineStart'))el('onlineStart').disabled=false;}
 }
 async function startOnlineGame(choice){
  try{
@@ -1454,7 +1471,7 @@ function cardText(c){
  return rank+suit;
 }
 async function refreshOnlineGame(startPayload){
- if(!roomId||!client)return;
+ if(!roomId||!client||mode==='kuwaiti')return;
  if(gameBusy){gameRefreshQueued=true;if(startPayload)gameStartSnapshot=startPayload;return;}
  gameBusy=true;
  var syncStage='خواندن وضعیت بازی';
@@ -1708,9 +1725,9 @@ async function leave(){
   catch(e){say('خروج محلی انجام شد، اما حذف عضویت از اتاق انجام نشد: '+(e.message||e));}
  }
  if(channel){await client.removeChannel(channel);channel=null;}
- roomId=null;roomCode='';myOnlineSeat=-1;myOnlineIsHost=false;lastGameRevision=-1;lastOnlineHandSignature='';confirmedPlayedCardIds=Object.create(null);onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
+ roomId=null;roomCode='';myOnlineSeat=-1;myOnlineIsHost=false;window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-left'));lastGameRevision=-1;lastOnlineHandSignature='';confirmedPlayedCardIds=Object.create(null);onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
 }
-window.DoubleKoutOnline={open:open,leave:leave,getSession:async function(){await initClient();var r=await client.auth.getSession();if(r.error)throw r.error;return r.data.session||null;},rpc:async function(name,args){await initClient();return client.rpc(name,args||{});},invoke:async function(name,body){await initClient();return client.functions.invoke(name,{body:body||{}});}};
+window.DoubleKoutOnline={open:open,close:close,leave:leave,getRoomInfo:function(){return roomId?{roomId:roomId,code:roomCode,mode:mode,count:count,seat:myOnlineSeat,isHost:myOnlineIsHost,userId:me&&me.id,roster:onlineRosterRows}:null;},getSession:async function(){await initClient();var r=await client.auth.getSession();if(r.error)throw r.error;return r.data.session||null;},rpc:async function(name,args){await initClient();return client.rpc(name,args||{});},invoke:async function(name,body){await initClient();return client.functions.invoke(name,{body:body||{}});}};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
 })();
 
