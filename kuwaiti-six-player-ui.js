@@ -12,7 +12,7 @@ const fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
 let game=null,auction=null,firstGame=true,previousAuctionWinner=null,previousWinningTeam=null,humanSeats=new Set([0]),hotseatRevealed=false,matchGamesWon={A:0,B:0};
 let points={A:0,B:0},trickView=[],locked=false,aiTimer=null,matchLimit=54,playedTricks=0;
 
-let onlineKuwaiti=null,onlineKuwaitiBusy=false,onlineKuwaitiRefreshQueued=false,onlineKuwaitiAiTimer=null,onlineKuwaitiAiBusy=false;
+let onlineKuwaiti=null,onlineKuwaitiBusy=false,onlineKuwaitiRefreshQueued=false,onlineKuwaitiAiTimer=null,onlineKuwaitiAiBusy=false,onlineKuwaitiBidBusy=false;
 function isOnlineKuwaiti(){return !!(onlineKuwaiti&&onlineKuwaiti.roomId);}
 function onlineKuwaitiStatus(message){if($('kStatus'))setStatus(message);}
 async function onlineKuwaitiRpc(action){
@@ -173,9 +173,18 @@ async function refreshOnlineKuwaiti(){
  return refreshOk;
 }
 async function submitOnlineKuwaitiBid(bid){
+ if(onlineKuwaitiBidBusy||!isOnlineKuwaiti())return;
+ onlineKuwaitiBidBusy=true;
+ document.querySelectorAll('#kAuction [data-bid],#kAuction #kMalzoom').forEach(button=>button.disabled=true);
  const kind=bid.type==='pass'?'pass':bid.type==='malzoom'?'malzoom':'normal';
  try{await onlineKuwaitiRpc({type:'bid',kind,rank:kind==='normal'?bid.rank:undefined});}
- catch(e){onlineKuwaitiStatus('ثبت پیشنهاد مزایده انجام نشد: '+(e.message||e));}
+ catch(e){
+  onlineKuwaitiStatus('ثبت پیشنهاد مزایده انجام نشد: '+(e.message||e));
+  try{await refreshOnlineKuwaiti();}catch(_){}
+ }finally{
+  onlineKuwaitiBidBusy=false;
+  if(auction&&isOnlineKuwaiti()&&isHumanSeat(auction.current))renderAuction();
+ }
 }
 async function attachOnlineKuwaitiRoom(info){
  if(!info||info.mode!=='kuwaiti'||!info.roomId)return;
@@ -488,12 +497,7 @@ auctionVisualStyle.textContent=`
 #kTable .k-name{background:linear-gradient(#f3dfb0,#b98a43)!important;color:#24180c!important;border:1px solid #f5d58b!important;border-radius:6px!important;padding:3px 6px!important}
 #kTable .k-back{background-image:url("./assets/card-back-black-gold.svg")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important;border:2px solid #e4c477!important;box-shadow:inset 0 0 0 1px #fff3,0 8px 16px #000c!important}
 #kTable>.k-seat.active{outline:1px solid #f3d58c!important;box-shadow:0 0 0 1px #f3d58c,0 0 14px #f3d58c88!important;animation:none!important}
-#kTable>.k-seat.active:after{
- content:''!important;position:absolute!important;top:-1px!important;left:-1px!important;right:auto!important;bottom:auto!important;
- width:32px!important;height:32px!important;inset:auto!important;border:2px solid transparent!important;
- border-top-color:#ffe6a1!important;border-right-color:#c99a43!important;border-radius:50%!important;
- pointer-events:none!important;animation:kAuctionOrbit 1.05s linear infinite!important;z-index:2!important;
-}
+#kTable>.k-seat.active:after{content:none!important;display:none!important;animation:none!important}
 #kTable .k-bid-chip{top:4px!important;left:4px!important;min-width:21px!important;height:21px!important;border-radius:50%!important;padding:0 4px!important;font:900 11px/19px Georgia,serif!important;z-index:4!important}
 #kTable .k-bid-chip.pass{font-size:7px!important;letter-spacing:0!important}
 #kTable .k-bid-chip.winner{min-width:25px!important;height:25px!important;font-size:11px!important;line-height:23px!important}
@@ -662,12 +666,13 @@ function renderAuction(){
  $('kHumanAuctionControls').classList.toggle('hidden',!isHuman);
  const gate=$('kHotseatGate');if(isHuman&&!hotseatRevealed){gate.classList.remove('hidden');$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[auction.current];$('kHotseatText').textContent='گوشی را به '+playerNames[auction.current]+' بدهید؛ سپس کارت‌های مزایده را نمایش دهید.';}else if(!isHuman)gate.classList.add('hidden');
  if(isHuman){
-  $('kPass').disabled=forced;
+  $('kPass').disabled=forced||onlineKuwaitiBidBusy;
   $('kPass').textContent=forced?'پاس (غیرمجاز؛ باید پیشنهاد بدهی)':'پاس';
   $('kMalzoom').classList.toggle('hidden',obligated!==auction.current||!!auction.highest);
+  $('kMalzoom').disabled=onlineKuwaitiBidBusy;
   [...$('kAuction').querySelectorAll('[data-bid]')].forEach(b=>{
    const n=b.dataset.bid==='pass'?0:Number(b.dataset.bid);
-   b.disabled=b.dataset.bid!=='pass'&&n<=auction.highestRank;
+   b.disabled=onlineKuwaitiBidBusy||(b.dataset.bid!=='pass'&&n<=auction.highestRank);
   });
  }
  renderAuctionHand();
