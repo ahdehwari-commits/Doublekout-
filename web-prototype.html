@@ -469,12 +469,16 @@ body:has(#globalStatsPanel:not(.hidden))::before{content:"";position:fixed;inset
 #trumpPicker .setup{display:block!important}
 #trumpPicker #confirmTrump{width:100%;margin-top:10px}
 #onlineOverlay:has(#onlineDecision[style*="display: block"])::after,#onlineOverlay:has(#onlineTrumpSelection[style*="display: block"])::after,#onlineOverlay:has(#onlineRematchPanel[style*="display: block"])::after{content:"";position:fixed;inset:0;z-index:100001;background:rgba(2,8,16,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);pointer-events:none}
-#onlineDecision[style*="display: block"],#onlineTrumpSelection[style*="display: block"],#onlineRematchPanel[style*="display: block"]{position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;width:min(600px,calc(100vw - 24px))!important;max-height:calc(100dvh - 28px)!important;overflow:auto!important;z-index:100002!important;margin:0!important;padding:20px!important;border:1px solid #e7c879!important;border-radius:24px!important;background:linear-gradient(145deg,rgba(18,48,39,.98),rgba(5,17,15,.99))!important;box-shadow:0 25px 70px #000e,0 0 34px #e7c87955!important}
+#onlineDecision[style*="display: block"],#onlineTrumpSelection[style*="display: block"],#onlineRematchPanel[style*="display: block"]{position:fixed!important;left:50%!important;top:10%!important;transform:translateX(-50%)!important;width:min(600px,calc(100vw - 24px))!important;max-height:calc(100dvh - 190px)!important;overflow:auto!important;z-index:100002!important;margin:0!important;padding:20px!important;border:1px solid #e7c879!important;border-radius:24px!important;background:linear-gradient(145deg,rgba(18,48,39,.98),rgba(5,17,15,.99))!important;box-shadow:0 25px 70px #000e,0 0 34px #e7c87955!important}
 #onlineDecision[style*="display: block"] button,#onlineTrumpSelection[style*="display: block"] button{min-height:48px;border-radius:13px;font-weight:900}
 #onlineTrumpSelection .premium-contract-grid{margin:12px 0}
 @media(max-width:520px){#challengePanel[style*="display: block"],#trumpPicker:not(.hidden),#onlineDecision[style*="display: block"],#onlineTrumpSelection[style*="display: block"],#onlineRematchPanel[style*="display: block"]{padding:14px!important;border-radius:20px!important}.premium-contract-choice{min-height:88px}.premium-contract-choice .symbol{font-size:31px}}
 
 
+/* 9.35: keep private cards visible during challenge and contract selection, outside the decision panel. */
+#onlinePanel #onlineHand.challenge-hand{position:fixed!important;left:50%!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:min(96vw,850px)!important;max-width:96vw!important;min-height:132px!important;max-height:158px!important;z-index:100004!important;margin:0!important;padding:18px 8px 24px!important;overflow-x:auto!important;overflow-y:visible!important;background:linear-gradient(180deg,#123d30f7,#071e18f7)!important;border:1px solid #f0d18b!important;border-radius:14px!important;box-shadow:0 8px 24px #000c,inset 0 0 18px #0008!important;}
+#onlinePanel .challenge-hand-title{position:fixed!important;left:50%!important;bottom:calc(164px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;z-index:100004!important;width:max-content!important;max-width:90vw!important;padding:4px 12px!important;border-radius:9px!important;background:#071e18ee!important;border:1px solid #d7b66d!important;}
+@media(max-width:520px){#onlinePanel #onlineHand.challenge-hand{min-height:122px!important;max-height:140px!important;padding:14px 5px 20px!important}#onlinePanel .challenge-hand-title{bottom:calc(146px + env(safe-area-inset-bottom))!important}}
 /* Challenge choice: keep the hand visible and non-playable above the decision panel. */
 #hand.challenge-thinking{position:fixed!important;left:50%!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:min(96vw,850px)!important;max-width:96vw!important;z-index:100010!important;padding:10px 8px 16px!important;border:1px solid #e7c879!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(18,48,39,.99),rgba(5,17,15,.99))!important;box-shadow:0 12px 36px #000d,0 0 20px #e7c87944!important;}
 /* 9.18: reveal the player's cards above decision popups instead of leaving them behind the table. */
@@ -1694,7 +1698,7 @@ async function refreshOnlineGame(startPayload){
   var handTitle=el('onlineHandTitle'),handArea=el('onlineHand'),onlineTable=el('onlineTable');
   if(decisionPending||trumpPending){
    var activePhasePanel=decisionPending?decision:trumpPanel;
-   activePhasePanel.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
+   onlineTable.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
    handTitle.classList.add('challenge-hand-title');handArea.classList.add('challenge-hand');
   }else{
    onlineTable.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
@@ -1734,7 +1738,7 @@ async function refreshOnlineGame(startPayload){
    var trickBadge=el('onlineTricks'+def.key);
    if(!trickBadge){trickBadge=document.createElement('div');trickBadge.id='onlineTricks'+def.key;trickBadge.className='online-seat-tricks';el('onlineCount'+def.key).insertAdjacentElement('afterend',trickBadge);}
    var seatWonTricks=(state.trickWinners||[]).filter(function(winnerSeat){return Number(winnerSeat)===seat;}).length;
-   trickBadge.textContent=faScore(seatWonTricks)+' دست برده';
+   trickBadge.textContent=String(seatWonTricks).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];})+' دست برده';
    el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&!trickPending&&turn===seat);
    var slot=el('onlinePlayed'+def.key);slot.innerHTML='';
    if(def.offset!==0&&left>0){
