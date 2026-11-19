@@ -118,6 +118,7 @@ async function refreshOnlineKuwaiti(){
    const contractLabel=st.isMalzoom?(st.hiddenTrump&&!st.trumpAnnounced?'ملزوم · حکم مخفی':('ملزوم · '+(suitGlyph[game.trumpSuit]||'')+' '+(suitName[game.trumpSuit]||''))):(contractName[st.selectedContract]||st.selectedContract||'');
    $('kTrumpDisplay').textContent=contractLabel||'بدون حکم';
    setScreen('game');renderGame();
+   $('kStatus').textContent=seat===Number(st.turn)?('حکم ثبت شد: '+(contractLabel||'بدون حکم')+' · نوبت شماست؛ یکی از کارت‌های مجاز را انتخاب کن.'):(('حکم ثبت شد: '+(contractLabel||'بدون حکم'))+' · نوبت '+playerNames[Number(st.turn)]+' است.');
   }else if(st.phase==='malzoom_result'){
    $('kAuction').classList.add('hidden');setScreen('game');renderGame();
    $('kResult').classList.remove('hidden');
@@ -248,10 +249,7 @@ function addStyle(){
  .k-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
  .k-actions button{flex:1;min-width:90px}
  .k-auction{background:#08271f;border:1px solid #a58b54;border-radius:14px;padding:12px;margin:10px 0}
- .k-seat .seat-auction-panel{position:absolute!important;z-index:90!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%)!important;width:min(260px,78vw)!important;max-height:52vh!important;overflow:auto!important;margin:0!important;padding:10px!important;background:linear-gradient(145deg,#153e31f7,#071b16f9)!important;border:1px solid #f0d58b!important;border-radius:14px!important;box-shadow:0 16px 34px #000e,0 0 18px #e7c87955!important}
- .k-seat .seat-auction-panel .k-bids{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
- .k-seat .seat-auction-panel .k-bids button{min-height:42px;padding:8px 4px;font-size:14px}
- .k-auction-summary{background:linear-gradient(120deg,#132d25,#071e18);border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:12px;line-height:1.8}
+  .k-auction-summary{background:linear-gradient(120deg,#132d25,#071e18);border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:12px;line-height:1.8}
  .k-contract-setup{background:#0a3026;border:1px solid #d3b76e;border-radius:14px;padding:12px;margin:10px 0}
  .k-auction .k-bids{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
  .k-auction button{padding:9px 4px;font-size:12px}
@@ -542,10 +540,13 @@ function renderAuction(){
  if(!auction)return;
  const activeSeat=document.querySelector('.k-seat[data-p="'+auction.current+'"]');
  const auctionPanel=$('kAuction');
- if(activeSeat&&auctionPanel){auctionPanel.classList.add('seat-auction-panel');if(auctionPanel.parentElement!==activeSeat)activeSeat.appendChild(auctionPanel);}
- $('kAuctionSummary').classList.add('hidden');
  const isHuman=isHumanSeat(auction.current),forced=auction.passes>=5&&!auction.highest;
- $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':(isOnlineKuwaiti()?' · بازیکن آنلاین':' · هوش مصنوعی در حال تصمیم‌گیری'));
+ if(isHuman&&activeSeat&&auctionPanel){auctionPanel.classList.remove('hidden');if(auctionPanel.parentElement!==activeSeat)activeSeat.appendChild(auctionPanel);}
+ else if(auctionPanel){auctionPanel.classList.add('hidden');}
+ $('kAuctionSummary').classList.add('hidden');
+ $('kAuctionTitle').textContent=isHuman?'نوبت مزایده شما · پیشنهاد یا پاس':'نوبت مزایده هوش مصنوعی';
+ $('kAuctionInfo').classList.toggle('hidden',!isHuman);
+ $('kAuctionLog').classList.add('hidden');
  const obligated=game.obligatedPlayer;
  $('kAuctionInfo').textContent='ملزوم‌کننده: '+(obligated===null?'نامشخص':playerNames[obligated])+' · بالاترین پیشنهاد: '+(auction.highest?playerNames[auction.highestPlayer]+' · '+auction.highest.label:'هنوز پیشنهادی ثبت نشده')+' · پاس‌های پیاپی: '+auction.passes+' از ۵';
  $('kAuctionSummary').classList.add('hidden');
@@ -562,7 +563,7 @@ function renderAuction(){
    chip.title=isPass?'پاس در مزایده':'پیشنهاد مزایده '+latest.label;el.append(chip);
   }
  });
- $('kAuction').classList.remove('hidden');
+ if(isHuman)$('kAuction').classList.remove('hidden');
  $('kHumanAuctionControls').classList.toggle('hidden',!isHuman);
  const gate=$('kHotseatGate');if(isHuman&&!hotseatRevealed){gate.classList.remove('hidden');$('kHotseatTitle').textContent='تحویل گوشی به '+playerNames[auction.current];$('kHotseatText').textContent='گوشی را به '+playerNames[auction.current]+' بدهید؛ سپس کارت‌های مزایده را نمایش دهید.';}else if(!isHuman)gate.classList.add('hidden');
  if(isHuman){
@@ -1210,4 +1211,4 @@ if(window.visualViewport)window.visualViewport.addEventListener('resize',refresh
 // This script is loaded after the complete page markup; initialize synchronously.
 init();
 })();
-/* build: 0.8.16 auction-seat overlay and green-felt restoration */
+/* build: 0.8.17 compact auction badges, contract status and online mode normalization */
