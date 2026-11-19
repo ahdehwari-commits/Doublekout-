@@ -125,6 +125,7 @@ async function leave(){
  if(channel){await client.removeChannel(channel);channel=null;}
  roomId=null;roomCode='';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی. نشست مهمان روی این گوشی باقی می‌ماند.');
 }
+window.addEventListener('doublekout:avatar-changed',async function(ev){var avatar=ev&&ev.detail&&ev.detail.avatar;if(AVATARS.indexOf(avatar)<0||!client||!me||me.is_anonymous)return;try{var r=await client.auth.updateUser({data:{avatar:avatar}});if(r.error)console.warn('Avatar profile update:',r.error.message);}catch(e){console.warn('Avatar profile update skipped:',e);}});
 window.DoubleKoutOnline={open:open,leave:leave};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
 })();
