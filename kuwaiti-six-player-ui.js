@@ -11,7 +11,7 @@ const fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
 let game=null,auction=null,firstGame=true,previousAuctionWinner=null,previousWinningTeam=null,humanSeats=new Set([0]),hotseatRevealed=false,matchGamesWon={A:0,B:0};
 let points={A:0,B:0},trickView=[],locked=false,aiTimer=null,matchLimit=54,playedTricks=0;
 
-let onlineKuwaiti=null,onlineKuwaitiBusy=false,onlineKuwaitiRefreshQueued=false;
+let onlineKuwaiti=null,onlineKuwaitiBusy=false,onlineKuwaitiRefreshQueued=false,onlineKuwaitiAiTimer=null,onlineKuwaitiAiBusy=false;
 function isOnlineKuwaiti(){return !!(onlineKuwaiti&&onlineKuwaiti.roomId);}
 function onlineKuwaitiStatus(message){if($('kStatus'))setStatus(message);}
 async function onlineKuwaitiRpc(action){
@@ -20,6 +20,30 @@ async function onlineKuwaitiRpc(action){
  if(r.error)throw r.error;
  await refreshOnlineKuwaiti();
  return r.data;
+}
+function scheduleKuwaitiOnlineAI(){
+ if(!isOnlineKuwaiti()||!onlineKuwaiti.isHost||onlineKuwaitiAiBusy||onlineKuwaitiAiTimer)return;
+ const st=onlineKuwaiti.state||{};
+ const phase=st.phase;
+ const seat=phase==='malzoom_result'?Number(st.auctionWinner):Number(st.turn);
+ const meta=(st.seatPlayers||{})[String(seat)];
+ if(!Number.isInteger(seat)||!meta||meta.human!==false)return;
+ onlineKuwaitiAiTimer=setTimeout(async()=>{
+  onlineKuwaitiAiTimer=null;
+  if(!isOnlineKuwaiti()||!onlineKuwaiti.isHost||onlineKuwaitiAiBusy)return;
+  onlineKuwaitiAiBusy=true;
+  try{
+   const r=await window.DoubleKoutOnline.rpc('kuwaiti_online_ai_turn',{p_room_id:onlineKuwaiti.roomId});
+   if(r.error)throw r.error;
+   await refreshOnlineKuwaiti();
+  }catch(e){
+   onlineKuwaitiStatus('نوبت هوش مصنوعی: '+(e.message||e));
+   try{await refreshOnlineKuwaiti();}catch(_){}
+  }finally{
+   onlineKuwaitiAiBusy=false;
+   scheduleKuwaitiOnlineAI();
+  }
+ },650);
 }
 async function refreshOnlineKuwaiti(){
  if(!isOnlineKuwaiti()||!window.DoubleKoutOnline)return;
@@ -109,10 +133,12 @@ async function refreshOnlineKuwaiti(){
    $('kResult').classList.remove('hidden');
    const result=st.result||{},score=Number(result.score||0);
    $('kResult').innerHTML='<b>'+(result.success?'قرارداد موفق شد':'قرارداد ناموفق شد')+'</b><p class="k-small">تیم مزایده‌برنده '+fa(result.bidderTricks||0)+' دست و حریف '+fa(result.opponentTricks||0)+' دست برد · امتیاز این بازی: '+(score>0?'+':'')+fa(score)+'</p><p class="k-small">مجموع تیم الف: '+fa(points.A)+' · مجموع تیم ب: '+fa(points.B)+'</p>'+(st.matchOver?'<p class="k-small">مسابقه به حد امتیاز پایان رسید.</p>':'');
-   const winningTeam=st.previousWinningTeam,canChoose=winningTeam===team(seat);
+   const winningTeam=st.previousWinningTeam;
+   const winnerTeamHasHuman=Object.keys(st.seatPlayers||{}).some(p=>team(Number(p))===winningTeam&&(st.seatPlayers[p]||{}).human===true);
+   const canChoose=winningTeam===team(seat)||(onlineKuwaiti.isHost&&!winnerTeamHasHuman);
    if(!st.matchOver&&canChoose){
     const options=[0,1,2,3,4,5].filter(p=>team(p)===winningTeam);
-    $('kResult').innerHTML+='<label for="kOnlineNextPicker">انتخاب نفر اول مزایده بازی بعد</label><select id="kOnlineNextPicker" class="k-select">'+options.map(p=>'<option value="'+p+'">'+playerNames[p]+'</option>').join('')+'</select>';
+    $('kResult').innerHTML+='<label for="kOnlineNextPicker">انتخاب نفر اول مزایده بازی بعد</label><select id="kOnlineNextPicker" class="k-select">'+options.map(p=>'<option value="'+p+'">'+playerNames[p]+((st.seatPlayers||{})[String(p)]?.human===false?' · هوش مصنوعی':'')+'</option>').join('')+'</select>';
    }else if(!st.matchOver)$('kResult').innerHTML+='<p class="k-small">تیم برنده بازی، نفر اول مزایده بعدی را انتخاب می‌کند.</p>';
    $('kNewGame').classList.remove('hidden');
    $('kNewGame').textContent=st.matchOver?'شروع مسابقه جدید':'بازی بعدی';
@@ -125,6 +151,7 @@ async function refreshOnlineKuwaiti(){
  finally{
   onlineKuwaitiBusy=false;
   if(onlineKuwaitiRefreshQueued){onlineKuwaitiRefreshQueued=false;Promise.resolve().then(refreshOnlineKuwaiti);}
+  else scheduleKuwaitiOnlineAI();
  }
 }
 async function submitOnlineKuwaitiBid(bid){
@@ -149,7 +176,8 @@ window.addEventListener('doublekout:kuwaiti-room-update',e=>{
  }
 });
 window.addEventListener('doublekout:kuwaiti-left',()=>{
- onlineKuwaiti=null;auction=null;game=null;
+ if(onlineKuwaitiAiTimer){clearTimeout(onlineKuwaitiAiTimer);onlineKuwaitiAiTimer=null;}
+ onlineKuwaitiAiBusy=false;onlineKuwaiti=null;auction=null;game=null;
  if($('kPlayStyle'))$('kPlayStyle').value='ai';
 });
 function openOnlineKuwaiti(){
@@ -406,7 +434,8 @@ body.deck-back-classic .k-back{background:radial-gradient(ellipse,#1c5c92,#061b4
 s.textContent+=`body.deck-back-black .k-back{background-image:url("./assets/card-back-black-gold.svg")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
 body.deck-back-black .k-back:before,body.deck-back-black .k-back:after{content:none!important}`;
 document.head.appendChild(s);
- const cornerStyle=document.createElement('style');cornerStyle.textContent="/* 9.2 contract indicator fixed to upper-right table corner */\n.k-table{position:relative}\n.k-trump-corner{position:absolute;top:50%;right:8px;transform:translateY(-50%);z-index:30;min-width:76px;justify-content:center;padding:5px 9px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#09271fee,#031711f5);box-shadow:0 4px 12px #0009;text-align:center;pointer-events:none}\n.k-trump-corner span{font-size:10px;color:#e9d39a}\n.k-trump-corner b{font-size:14px!important;color:#ffe19a}\n.k-table .k-seat[data-p=\"2\"]{padding-top:30px}\n";document.head.appendChild(cornerStyle);
+ const cornerStyle=document.createElement('style');cornerStyle.textContent="/* 9.2 contract indicator fixed to upper-right table corner */\n.k-table{position:relative}\n.k-trump-corner{position:absolute;top:9px;right:9px;transform:none;z-index:30;min-width:76px;justify-content:center;padding:5px 9px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#09271fee,#031711f5);box-shadow:0 4px 12px #0009;text-align:center;pointer-events:none}\n.k-trump-corner span{font-size:10px;color:#e9d39a}\n.k-trump-corner b{font-size:14px!important;color:#ffe19a}\n.k-table .k-seat[data-p=\"2\"]{padding-top:30px}\n";cornerStyle.textContent+="\n/* Corner trump marker and two-layer trick pile: previous trick remains underneath current plays. */\n.k-table{position:relative!important;isolation:isolate!important;overflow:visible!important}\n.k-table>.k-seat{z-index:3!important}\n.k-table>.k-center{z-index:12!important;overflow:visible!important}\n.k-table>.k-table-card-layer{position:absolute!important;inset:0!important;z-index:24!important;pointer-events:none!important;overflow:visible!important}\n.k-trump-corner{position:absolute!important;top:8px!important;right:8px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:45!important;display:flex!important;align-items:center!important;gap:6px!important;max-width:34%!important;white-space:nowrap!important}\n.k-center{position:absolute!important}\n.k-previous-cards,.k-center-cards{position:absolute!important;left:50%!important;top:50%!important;width:100%!important;height:116px!important;min-height:0!important;transform:translate(-50%,-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;direction:ltr!important;overflow:visible!important;pointer-events:none!important}\n.k-previous-cards{z-index:2!important;opacity:.58!important;filter:brightness(.72) saturate(.78)!important}\n.k-center-cards{z-index:7!important}\n.k-previous-cards .k-pile-played{position:absolute!important;left:calc(50% - 30px)!important;top:calc(50% - 44px)!important;width:60px!important;height:88px!important;margin:0!important;transform:translate(var(--pile-x),var(--pile-y)) rotate(var(--pile-r))!important;box-shadow:0 8px 15px #000c!important}\n.k-center-cards .k-table-played{position:relative!important;z-index:8!important}\n@media(max-width:520px){.k-previous-cards,.k-center-cards{height:96px!important}.k-previous-cards .k-pile-played{width:49px!important;height:74px!important;left:calc(50% - 24px)!important;top:calc(50% - 37px)!important}.k-trump-corner{top:6px!important;right:6px!important;font-size:11px!important}}";
+document.head.appendChild(cornerStyle);
 }
 function royalPortrait(rank){
  const p=rank==='K'?{coat:'#173e72',light:'#d9b45d',hair:'#49301f'}:rank==='Q'?{coat:'#8c2854',light:'#f0c66c',hair:'#38233b'}:{coat:'#17644e',light:'#e0b85d',hair:'#57351f'};
@@ -463,7 +492,7 @@ function setupMarkup(){
  <div id="kContractSetup" class="k-contract-setup hidden"><b>انتخاب قرارداد پس از پایان مزایده</b><label>نوع بازی و خال حکم</label><select id="kContract" class="k-select"><option value="hokm_spades">پیک ♠ · حکم‌دار</option><option value="hokm_hearts">دل ♥ · حکم‌دار</option><option value="hokm_diamonds">خشت ♦ · حکم‌دار</option><option value="hokm_clubs">گشنیز ♣ · حکم‌دار</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option></select><button id="kConfirmContract" class="primary">تأیید قرارداد و شروع بازی</button></div>
  <div id="kMalzoomSetup" class="k-auction hidden"><b>تنظیم حکم ملزوم</b><label>خال حکم</label><select id="kTrumpSuit" class="k-select"><option value="S">پیک ♠</option><option value="H">دل ♥</option><option value="D">خشت ♦</option><option value="C">گشنیز ♣</option></select><label><input type="checkbox" id="kHideTrump" checked> حکم مخفی بماند</label><button id="kConfirmMalzoom" class="primary">تأیید و شروع بازی</button></div>
  <div class="k-table" id="kTable">${[0,1,2,3,4,5].map(p=>'<div class="k-seat" data-p="'+p+'"><div class="k-name" id="kName'+p+'">'+playerNames[p]+'</div><div class="k-count" id="kCount'+p+'">۹ کارت</div><div class="k-played" id="kPlayed'+p+'"></div></div>').join('')}
- <div class="k-trump-badge k-trump-corner"><span>حکم</span><b id="kTrumpDisplay">بدون حکم</b></div><div class="k-center"><div style="color:#f2d998;font-weight:bold">کوت کویتی</div><div id="kTrickCards" class="k-small">کارت‌های این دست: ۰ از ۶</div><div id="kCenterCards" class="k-center-cards"></div><div id="kTurn" class="k-small">در انتظار مزایده</div></div></div>
+ <div class="k-trump-badge k-trump-corner"><span>حکم</span><b id="kTrumpDisplay">بدون حکم</b></div><div class="k-center"><div style="color:#f2d998;font-weight:bold">کوت کویتی</div><div id="kTrickCards" class="k-small">کارت‌های این دست: ۰ از ۶</div><div id="kTurn" class="k-small">در انتظار مزایده</div></div><div id="kTableCardLayer" class="k-table-card-layer" aria-label="کارت‌های بازی‌شده روی میز"><div id="kPreviousCards" class="k-previous-cards" aria-label="کارت‌های دست قبلی"></div><div id="kCenterCards" class="k-center-cards" aria-label="کارت‌های دست جاری"></div></div></div>
  <div class="k-table-meta"><div class="k-live-tricks" id="kLiveTricks"><span id="kOwnTricksLabel">دست‌های تیم مزایده‌برنده: <b id="kWonA">۰</b></span><span id="kOpponentTricksLabel">دست‌های تیم حریف: <b id="kWonB">۰</b></span></div></div>
  <div id="kStatus" class="k-status hidden">وضعیت بازی</div>
  <div class="k-actions"><button id="kAskTrump" class="hidden">درخواست اعلام حکم مخفی</button><button id="kAnnounceTrump" class="hidden">اعلام حکم</button></div>
@@ -480,7 +509,7 @@ function resetSetup(){
  if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
  game=null;auction=null;locked=false;trickView=[];hotseatRevealed=false;$('kHotseatGate')?.classList.add('hidden');
  $('kAuction').classList.add('hidden');$('kAuctionSummary').classList.add('hidden');$('kContractSetup').classList.add('hidden');$('kMalzoomSetup').classList.add('hidden');$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');
- $('kHand').innerHTML='';$('kTrumpDisplay').textContent='بدون حکم';$('kTrickCards').textContent='کارت‌های این دست: ۰ از ۶';$('kTurn').textContent='در انتظار مزایده';$('kStatus').textContent='میز پاک و آماده بازی جدید است.';
+ $('kHand').innerHTML='';$('kPreviousCards').innerHTML='';$('kCenterCards').innerHTML='';$('kTrumpDisplay').textContent='بدون حکم';$('kTrickCards').textContent='کارت‌های این دست: ۰ از ۶';$('kTurn').textContent='در انتظار مزایده';$('kStatus').textContent='میز پاک و آماده بازی جدید است.';
  for(let p=0;p<6;p++){$('kPlayed'+p).innerHTML='';$('kCount'+p).textContent='۹ کارت';$('kSeat'+p)?.classList?.remove('active');}
  if(firstGame){playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;}
  $('kMatchProgress').textContent='حد امتیاز مسابقه: '+(matchLimit>0?'+':'')+fa(matchLimit)+' · مجموع الف: '+fa(points.A)+' · مجموع ب: '+fa(points.B);
@@ -500,7 +529,7 @@ function startAuction(){
  if(isMatchOver()){setStatus('حد امتیاز مسابقه قبلاً ثبت شده است؛ مسابقه جدید را آغاز کن.');return;}
  locked=false;
  // Clear every visual trace from the previous deal before dealing a fresh 54-card deck.
- $('kHand').innerHTML='';$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');$('kTrickCards').textContent='کارت‌های این دست: ۰ از ۶';
+ $('kHand').innerHTML='';$('kPreviousCards').innerHTML='';$('kCenterCards').innerHTML='';$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');$('kTrickCards').textContent='کارت‌های این دست: ۰ از ۶';
  for(let p=0;p<6;p++){$('kPlayed'+p).innerHTML='';$('kCount'+p).textContent='۹ کارت';}
  const firstAuctionPlayer=firstGame?null:Number($('kFirstAuction').value);
  // Do not allow a prior deal's contract or trump display to leak into the new auction.
@@ -994,7 +1023,9 @@ function renderGame(){
  $('kWonA').textContent=fa(ownTricks);$('kWonB').textContent=fa(opponentTricks);
  $('kOwnTricksLabel').firstChild.textContent='دست‌های تیم برنده مزایده: ';
  $('kOpponentTricksLabel').firstChild.textContent='دست‌های حریف: ';
- const currentPlays=game.trick.length?game.trick:(game.lastTrick||[]);
+ const currentPlays=game.trick||[];
+ const previousPlays=game.lastTrick||[];
+ const previousCards=$('kPreviousCards');if(previousCards){previousCards.innerHTML='';previousPlays.forEach((x,i)=>{const card=cardNode(x.card,true);card.classList.add('k-pile-played');const angle=(Math.sin(i*1.73)*13)+'deg';const radius=4+Math.sqrt(i+1)*4;card.style.setProperty('--pile-x',(Math.cos(i*2.3999632297)*radius)+'px');card.style.setProperty('--pile-y',(Math.sin(i*2.3999632297)*radius*.72)+'px');card.style.setProperty('--pile-r',angle);card.style.zIndex=String(i+1);previousCards.append(card);});}
  const centerCards=$('kCenterCards');if(centerCards){centerCards.innerHTML='';currentPlays.forEach((x,i)=>{const card=cardNode(x.card,true);card.classList.add('k-table-played');card.style.setProperty('--play-index',i);centerCards.append(card);});}
  $('kTrickCards').textContent='کارت‌های این دست: '+fa(game.trick.length)+' از ۶';
  $('kTrickCards').style.display='';
@@ -1085,7 +1116,12 @@ function startNewMatch(){
  if(isOnlineKuwaiti()){
   const st=onlineKuwaiti.state||{};const picker=$('kOnlineNextPicker');
   const action={type:'next_game'};
-  if(!st.matchOver){if(!picker){onlineKuwaitiStatus('تیم برنده باید نفر اول مزایده را انتخاب کند.');return;}action.first_auction_player=Number(picker.value);}
+  if(!st.matchOver){
+   if(!picker){onlineKuwaitiStatus('تیم برنده باید نفر اول مزایده را انتخاب کند.');return;}
+   action.first_auction_player=Number(picker.value);
+   const chosen=(st.seatPlayers||{})[String(action.first_auction_player)];
+   if(chosen&&chosen.human===false)action.bot_seat=action.first_auction_player;
+  }
   onlineKuwaitiRpc(action).catch(e=>onlineKuwaitiStatus('شروع بازی بعدی انجام نشد: '+e.message));return;
  }
  hotseatRevealed=false;
