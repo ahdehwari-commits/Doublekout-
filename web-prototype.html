@@ -944,16 +944,16 @@ function cardEl(c,small=false){
  d.innerHTML='<span class="face-border" aria-hidden="true"></span>'+corner+'<span class="face-center">'+(art?'<span class="royal-frame">'+art+'</span>':'<span class="suit">'+c.s+'</span>')+'</span><span class="face-bottom-mark" aria-hidden="true">'+c.s+'</span>';
  return d;
 }
-function liveSequenceScores(winners){
+function liveSequenceScores(winners,challengeTeam){
  const scores={A:0,B:0};let start=0,searchFrom=3;
- while(start<winners.length){let close=-1;for(let i=searchFrom;i<winners.length;i++){if(winners[i]===winners[i-1]){close=i;break;}}
+ while(start<winners.length){let close=-1;for(let i=searchFrom;i<winners.length;i++){if(winners[i]===winners[i-1]&&(!challengeTeam||team(winners[i])!==challengeTeam)){close=i;break;}}
  if(close>=0){scores[team(winners[close])]+=close-start+1;start=close+1;searchFrom=start+1;}else{if(winners.length===13)scores[team(winners[12])]+=winners.length-start;break;}}
  return scores;
 }
 function render(){
  if(!G)return;
  const gate=$('hotseatGate');if(gate){const hide=playStyle==='hotseat'&&humanSeats.has(G.turn)&&!hotseatRevealed&&!G.done;gate.classList.toggle('hidden',!hide);if(hide)$('hotseatGateText').textContent='گوشی را به '+(['بازیکن جنوب','بازیکن شرق','بازیکن شمال','بازیکن غرب'][G.turn]||'بازیکن بعدی')+' بدهید. پس از اینکه نفر قبلی دیگر صفحه را نمی‌بیند، دکمه زیر را بزنید.';}
- const liveResult=activeMode==='double-kout'&&!G.challenge?liveSequenceScores(G.trickWinners||[]):null;
+ const liveResult=activeMode==='double-kout'?liveSequenceScores(G.trickWinners||[],G.challenge||null):null;
  const liveA=liveResult?liveResult.A:(G.trickWinners||[]).filter(p=>team(p)==='A').length;
  const liveB=liveResult?liveResult.B:(G.trickWinners||[]).filter(p=>team(p)==='B').length;
  $('liveWonA').textContent=fa(liveA);$('liveWonB').textContent=fa(liveB);
