@@ -419,6 +419,7 @@ begin
       if (case when mod(v_first_picker,2)=0 then 'A' else 'B' end)<>v_bidder_team then raise exception 'picker_must_be_on_winning_team'; end if;
       v_first_game:=false;
       v_previous_winner:=coalesce(nullif(v_state->>'previousAuctionWinner','')::integer,nullif(v_state->>'auctionWinner','')::integer);
+      if v_previous_winner is null then raise exception 'previous_auction_winner_missing'; end if;
     end if;
 
     for v_suit in select unnest(array['S','H','D','C']) loop
@@ -486,7 +487,7 @@ begin
       v_state:=jsonb_set(v_state,'{bids}',coalesce(v_state->'bids','[]'::jsonb)||jsonb_build_array(jsonb_build_object('player',v_seat,'label','پاس')),true);
     elsif v_kind='normal' then
       v_rank:=nullif(p_action->>'rank','')::integer;
-      if v_rank not between 1 and 4 then raise exception 'invalid_bid_rank'; end if;
+      if v_rank is null or v_rank not between 1 and 4 then raise exception 'invalid_bid_rank'; end if;
       if v_rank<=v_highest_rank then raise exception 'bid_must_raise'; end if;
       v_target:=case v_rank when 1 then 6 when 2 then 7 when 3 then 8 when 4 then 9 end;
       v_highest:=jsonb_build_object('type','normal','rank',v_rank,'label',case when v_target=9 then 'باون · ۹ دست' else v_target::text end,'target',v_target);
@@ -521,7 +522,7 @@ begin
     if v_state->>'phase'<>'contract_selection' then raise exception 'contract_selection_not_active'; end if;
     if v_seat<>coalesce((v_state->>'auctionWinner')::integer,-1) then raise exception 'auction_winner_only'; end if;
     v_contract:=p_action->>'contract';
-    if v_contract not in ('hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras') then
+    if v_contract is null or v_contract not in ('hokm_spades','hokm_hearts','hokm_diamonds','hokm_clubs','naras','tak_naras','saras') then
       raise exception 'invalid_kuwaiti_contract';
     end if;
     v_trump:=case v_contract when 'hokm_spades' then 'S' when 'hokm_hearts' then 'H'
@@ -538,7 +539,7 @@ begin
     if v_state->>'phase'<>'malzoom_selection' then raise exception 'malzoom_selection_not_active'; end if;
     if v_seat<>coalesce((v_state->>'auctionWinner')::integer,-1) then raise exception 'auction_winner_only'; end if;
     v_trump:=p_action->>'trump_suit';
-    if v_trump not in ('S','H','D','C') then raise exception 'invalid_trump_suit'; end if;
+    if v_trump is null or v_trump not in ('S','H','D','C') then raise exception 'invalid_trump_suit'; end if;
     v_hidden:=coalesce((p_action->>'hidden')::boolean,true);
     update public.kuwaiti_online_secrets set trump_suit=v_trump,updated_at=now() where room_id=p_room_id;
     v_state:=v_state||jsonb_build_object('phase','playing','turn',v_seat,'leader',v_seat,
@@ -676,7 +677,7 @@ begin
   elsif v_type='score_malzoom' then
     if v_state->>'phase'<>'malzoom_result' then raise exception 'malzoom_result_not_ready'; end if;
     if v_seat<>coalesce((v_state->>'auctionWinner')::integer,-1) then raise exception 'auction_winner_only'; end if;
-    if jsonb_typeof(p_action->'success')<>'boolean' then raise exception 'malzoom_success_choice_required'; end if;
+    if jsonb_typeof(p_action->'success') is distinct from 'boolean' then raise exception 'malzoom_success_choice_required'; end if;
     v_success:=(p_action->>'success')::boolean;
     v_auction_winner:=(v_state->>'auctionWinner')::integer;
     v_bidder_team:=case when mod(v_auction_winner,2)=0 then 'A' else 'B' end;
