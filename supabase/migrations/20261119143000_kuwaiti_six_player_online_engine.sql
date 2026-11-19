@@ -727,7 +727,7 @@ returns jsonb
 language plpgsql
 security definer
 set search_path to 'public','pg_temp'
-as $
+as $$
 declare
   v_user uuid := auth.uid();
   v_room public.game_rooms%rowtype;
@@ -758,7 +758,7 @@ begin
   end if;
   return jsonb_build_object('left',true,'room_cancelled',true);
 end;
-$;
+$$;
 
 revoke all on function public.kuwaiti_online_normal_power(jsonb,text) from public,anon,authenticated;
 revoke all on function public.kuwaiti_online_card_power(jsonb,text,integer,boolean,boolean,boolean) from public,anon,authenticated;
