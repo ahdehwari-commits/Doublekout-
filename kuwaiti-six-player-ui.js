@@ -548,7 +548,7 @@ function renderAuction(){
  $('kAuctionTitle').textContent='نوبت مزایده: '+playerNames[auction.current]+(isHuman?' · نوبت شما':(isOnlineKuwaiti()?' · بازیکن آنلاین':' · هوش مصنوعی در حال تصمیم‌گیری'));
  const obligated=game.obligatedPlayer;
  $('kAuctionInfo').textContent='ملزوم‌کننده: '+(obligated===null?'نامشخص':playerNames[obligated])+' · بالاترین پیشنهاد: '+(auction.highest?playerNames[auction.highestPlayer]+' · '+auction.highest.label:'هنوز پیشنهادی ثبت نشده')+' · پاس‌های پیاپی: '+auction.passes+' از ۵';
- $('kAuctionSummary').classList.remove('hidden');
+ $('kAuctionSummary').classList.add('hidden');
  $('kAuctionSummary').textContent='مزایده در جریان است · '+(auction.highest?'پیشتاز فعلی: '+playerNames[auction.highestPlayer]+' با پیشنهاد '+auction.highest.label:'هنوز پیشنهادی ثبت نشده')+' · '+auction.bids.map(x=>playerNames[x.player]+': '+x.label).join(' ← ');
  $('kAuctionLog').textContent='روند مزایده: '+(auction.bids.length?auction.bids.map(x=>playerNames[x.player]+': '+x.label+(x.contract?' · '+(contractName[x.contract]||x.contract):'')).join(' ← '):'هنوز کسی پیشنهاد نداده است');
  document.querySelectorAll('.k-seat').forEach(el=>{
