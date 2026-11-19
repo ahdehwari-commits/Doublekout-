@@ -840,6 +840,8 @@ document.head.appendChild(contractHandStyle);
 function renderContractChoiceHand(player){
  if(!game||!game.hands||!Number.isInteger(player))return;
  const host=$('kHand');host.innerHTML='';host.classList.add('k-contract-thinking');
+ // Keep the private hand above transformed table layers and iOS clipping while selecting the contract.
+ document.body.appendChild(host);
  game.hands[player].forEach((card,i,arr)=>{const el=document.createElement('div');el.className='k-auction-card';const offset=i-(arr.length-1)/2;el.style.transform='rotate('+(offset*4.2)+'deg) translateY('+(Math.abs(offset)*2)+'px)';el.style.zIndex=String(10+i);el.style.opacity='1';el.style.filter='none';el.style.pointerEvents='none';el.append(cardNode(card));host.append(el);});
 }
 function markWinningSeatContract(contract){
@@ -1133,7 +1135,9 @@ function playAITurn(){
 function renderGame(){
  if(!game)return;
  $('kTable')?.classList.remove('auction-orbit-active');
- $('kHand').classList.remove('k-contract-thinking');
+ const handHost=$('kHand');
+ handHost.classList.remove('k-contract-thinking');
+ if(handHost.parentElement===document.body){const tools=$('kuwaitiGame')?.querySelector('.k-hand-tools');if(tools)tools.insertAdjacentElement('afterend',handHost);}
  $('kScoreA').textContent=fa(points.A);$('kScoreB').textContent=fa(points.B);$('kGamesWonA').textContent=fa(matchGamesWon.A);$('kGamesWonB').textContent=fa(matchGamesWon.B);
  $('kTrickNo').textContent=fa(Math.min(game.trickNo,9));
  const bidderTeam=Number.isInteger(game.auctionWinner)?team(game.auctionWinner):'A';
