@@ -102,6 +102,8 @@ async function refreshOnlineKuwaiti(){
     $('kOnlineMalzoomFail').onclick=()=>onlineKuwaitiRpc({type:'score_malzoom',success:false}).catch(e=>onlineKuwaitiStatus('ثبت نتیجه ملزوم: '+e.message));
    }else $('kResult').innerHTML='<b>۹ دست تمام شد</b><p class="k-small">منتظر ثبت نتیجه ملزوم توسط برنده مزایده هستیم.</p>';
    $('kNewGame').classList.add('hidden');
+  }else if(st.phase==='cancelled'){
+   $('kAuction').classList.add('hidden');$('kContractSetup').classList.add('hidden');$('kMalzoomSetup').classList.add('hidden');$('kHand').innerHTML='';$('kResult').classList.remove('hidden');$('kResult').innerHTML='<b>اتاق لغو شد</b><p class="k-small">یکی از بازیکنان از بازی خارج شد؛ این مسابقه پایان یافت.</p>';$('kNewGame').classList.add('hidden');setScreen('game');onlineKuwaitiStatus(st.message||'بازی لغو شد.');
   }else if(st.phase==='finished'){
    $('kAuction').classList.add('hidden');setScreen('game');renderGame();
    $('kResult').classList.remove('hidden');
