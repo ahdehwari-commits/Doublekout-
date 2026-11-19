@@ -274,6 +274,7 @@ declare
   v_secret text;
   v_legal text[] := array[]::text[];
   v_lead text;
+  v_hand_counts jsonb;
 begin
   if v_user is null then raise exception 'authentication_required'; end if;
   select * into v_room from public.game_rooms where id=p_room_id;
@@ -287,6 +288,8 @@ begin
   where room_id=p_room_id and owner_user_id=v_user;
   if v_hand is null then v_hand:='[]'::jsonb; end if;
   select trump_suit into v_secret from public.kuwaiti_online_secrets where room_id=p_room_id;
+  select coalesce(jsonb_agg(jsonb_array_length(cards) order by seat),'[0,0,0,0,0,0]'::jsonb)
+    into v_hand_counts from public.kuwaiti_online_hands where room_id=p_room_id;
 
   if v_state->>'phase'='playing' and (v_state->>'turn')::integer=v_seat then
     if jsonb_array_length(coalesce(v_state->'plays','[]'::jsonb))>0 then
@@ -313,7 +316,7 @@ begin
   return jsonb_build_object(
     'room_id',p_room_id,'status',v_room.status,'revision',v_room.revision,
     'game_mode',v_room.game_mode,'player_count',v_room.player_count,'seat',v_seat,
-    'state',v_state,'hand',v_hand,'legal_card_ids',to_jsonb(v_legal),
+    'state',v_state,'hand',v_hand,'hand_counts',v_hand_counts,'legal_card_ids',to_jsonb(v_legal),
     'trump_suit',case when not coalesce((v_state->>'hiddenTrump')::boolean,false)
                            or coalesce((v_state->>'trumpAnnounced')::boolean,false)
                            or v_seat=coalesce(nullif(v_state->>'auctionWinner','')::integer,-1)
