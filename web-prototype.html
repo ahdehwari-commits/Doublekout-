@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#103d32"><meta name="description" content="نسخه آزمایشی کوت بومی با قانون جفت و چلنج"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./IMG_3647.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Double Kout"><title>Double Kout · نسخه ۹.۶</title>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#103d32"><meta name="description" content="نسخه آزمایشی کوت بومی با قانون جفت و چلنج"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./IMG_3647.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Double Kout"><title>Double Kout · نسخه ۹.۱۸</title>
 <style>
 #game{transform-style:flat;transform:none;transition:none}:root{--felt:#0c382d;--felt2:#145343;--gold:#e7c879;--cream:#fffaf0;--ink:#17251f;--muted:#c4d5cd;--red:#c83d43}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#071d18 0%,#0b3027 48%,#061b16 100%);color:#fff;font-family:Tahoma,Arial,sans-serif;min-height:100vh}.wrap{max-width:980px;margin:auto;padding:14px}.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.brand{font-size:24px;font-weight:900;color:var(--gold)}.pill{background:#09271f;border:1px solid #467565;padding:6px 11px;border-radius:30px;font-size:12px;color:var(--muted)}.panel{background:#0c2e26dd;border:1px solid #477a68;border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 12px 35px #001b1666}.setup{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end}label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}select,button{font:inherit;border:0;border-radius:12px;padding:11px 13px}select{width:100%;background:#f7f1df;color:#17251f}button{background:var(--gold);color:#17251f;font-weight:bold;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}
 /* Keep cards fully legible while the player considers challenge vs. normal play. */
@@ -474,7 +474,15 @@ body:has(#globalStatsPanel:not(.hidden))::before{content:"";position:fixed;inset
 #onlineTrumpSelection .premium-contract-grid{margin:12px 0}
 @media(max-width:520px){#challengePanel[style*="display: block"],#trumpPicker:not(.hidden),#onlineDecision[style*="display: block"],#onlineTrumpSelection[style*="display: block"],#onlineRematchPanel[style*="display: block"]{padding:14px!important;border-radius:20px!important}.premium-contract-choice{min-height:88px}.premium-contract-choice .symbol{font-size:31px}}
 
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۶ · میز کوت کویتی آنلاین و هوش مصنوعی</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+
+/* 9.18: reveal the player's cards above decision popups instead of leaving them behind the table. */
+body:has(#challengePanel[style*="display: block"]) #hand,body:has(#trumpPicker:not(.hidden)) #hand{position:fixed!important;left:50%!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:min(96vw,850px)!important;max-width:96vw!important;z-index:100010!important;padding:10px 8px 16px!important;border:1px solid #e7c879!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(18,48,39,.98),rgba(5,17,15,.99))!important;box-shadow:0 12px 36px #000d,0 0 20px #e7c87944!important;}
+body:has(#challengePanel[style*="display: block"]) #challengePanel,body:has(#trumpPicker:not(.hidden)) #trumpPicker{padding-bottom:170px!important;max-height:calc(100dvh - 20px)!important;}
+#onlineTable{isolation:isolate!important;overflow:visible!important}
+#onlineTable .seat{position:relative!important;z-index:3!important}
+#onlineTable .center{position:relative!important;z-index:20!important;overflow:visible!important}
+#onlineTable .center-trick{position:absolute!important;z-index:45!important;left:50%!important;top:50%!important;transform:translate(-50%,-42%)!important;pointer-events:none!important}
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۱۸ · میز کوت کویتی آنلاین و هوش مصنوعی</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <button id="openVisualCustomizer" class="customize-open" type="button">✦ سفارشی‌سازی ظاهر بازی</button>
 <div id="visualCustomizer" class="visual-customizer-full hidden" aria-modal="true" role="dialog" aria-label="سفارشی‌سازی ظاهر بازی">
@@ -1291,10 +1299,18 @@ async function startKuwaitiOnlineGame(fillAI){
   el('onlineGame').style.display='none';el('onlineLobbyDecision').style.display='none';el('onlineStart').style.display='none';if(el('onlineResumeKuwaiti'))el('onlineResumeKuwaiti').style.display='block';
   var bots=Array.isArray(r.data&&r.data.state&&r.data.state.aiSeats)?r.data.state.aiSeats.length:Math.max(0,6-onlineRosterRows.length);
   say('کوت کویتی آنلاین آغاز شد؛ '+bots+' صندلی با هوش مصنوعی و '+(6-bots)+' بازیکن انسانی. مزایده از دارنده ۲ خاج شروع می‌شود.');
+  // Refresh the roster after the server start so the attaching client always has its authoritative seat.
+  await refreshRoster();
+  var mine=onlineRosterRows.find(function(x){return me&&x.user_id===me.id;});
+  if(!mine||!Number.isInteger(Number(mine.seat))||Number(mine.seat)<0)throw new Error('صندلی شما پس از شروع اتاق از فهرست بازیکنان دریافت نشد؛ اتاق باز است، دوباره تلاش کن.');
+  myOnlineSeat=Number(mine.seat);myOnlineIsHost=!!mine.is_host;
   var info={roomId:roomId,code:roomCode,mode:mode,count:count,seat:myOnlineSeat,isHost:myOnlineIsHost,userId:me&&me.id,roster:onlineRosterRows};
   // The six-player view is switched synchronously by its event listener before this overlay closes.
+  window.__doubleKoutKuwaitiAttachPromise=null;
   window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-online-started',{detail:info}));
-  if(window.__doubleKoutKuwaitiAttachPromise)await window.__doubleKoutKuwaitiAttachPromise;
+  if(!window.__doubleKoutKuwaitiAttachPromise)throw new Error('رابط میز شش‌نفره بارگذاری نشده است؛ فایل kuwaiti-six-player-ui.js اجرا نشده.');
+  await window.__doubleKoutKuwaitiAttachPromise;
+  if(!document.getElementById('kuwaitiGame')||document.getElementById('kuwaitiGame').classList.contains('hidden'))throw new Error('وضعیت آنلاین دریافت شد اما صفحه میز شش‌نفره فعال نشد.');
   close();
  }catch(e){
   say('شروع کوت کویتی آنلاین انجام نشد: '+(e.message||e));
