@@ -424,6 +424,13 @@ html{background-color:#061b16!important;min-height:100%;}body{background-color:#
  #hand button:first-child,#onlineHand button:first-child{margin-left:0!important}
  #hand button .card,#onlineHand button .card{width:49px!important;height:74px!important}
 }
+
+/* Pin both four-player contract indicators to the actual table corner; keep live cards above seat labels. */
+.table{position:relative!important;isolation:isolate!important;overflow:visible!important}
+.table>.table-trump-corner,#onlineTable>.table-trump-corner{position:absolute!important;top:9px!important;right:10px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:1000!important;display:flex!important;align-items:center!important;gap:5px!important;max-width:34%!important;white-space:nowrap!important}
+.table>.center{position:relative;z-index:30!important;overflow:visible!important}
+.table>.center .center-trick{position:relative!important;z-index:40!important}
+#centerPile,#onlineCenterPile{z-index:12!important}
 </style><style>
 .avatar-customizer{width:min(620px,100%);margin:auto;text-align:center;color:#f6e6bd}.avatar-customizer-title{font-size:18px;font-weight:700;margin:0 0 18px}
 .avatar-customizer-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:440px;margin:auto}
