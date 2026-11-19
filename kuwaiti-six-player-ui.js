@@ -461,7 +461,7 @@ s.textContent+=`
 #kTable>.k-center{z-index:1!important;transform:translateZ(1px)!important;pointer-events:none!important}
 #kTable>.k-seat{position:relative!important;z-index:30!important;transform:translateZ(30px)!important}
 #kTable>.k-seat.auction-panel-active{z-index:120!important;transform:translateZ(70px)!important}
-#kTable>.k-seat.auction-panel-active>.seat-auction-panel{z-index:180!important;transform:translateZ(90px)!important}
+#kTable>.k-seat.auction-panel-active>.seat-auction-panel{z-index:180!important}
 #kTable>.k-table-card-layer{z-index:150!important;transform:translateZ(60px)!important;pointer-events:none!important}
 #kTable>.k-table-card-layer .k-previous-cards{z-index:1!important}
 #kTable>.k-table-card-layer .k-center-cards{z-index:5!important}
