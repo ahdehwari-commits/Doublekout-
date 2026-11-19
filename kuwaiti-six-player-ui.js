@@ -38,7 +38,10 @@ function scheduleKuwaitiOnlineAI(){
    if(r.error)throw r.error;
    await refreshOnlineKuwaiti();
   }catch(e){
-   onlineKuwaitiStatus('نوبت هوش مصنوعی: '+(e.message||e));
+   const message=String(e&&e.message||e);
+   // A delayed AI call can arrive after the turn has moved to a human.
+   // Refresh the authoritative state, but do not expose this expected race as an error.
+   if(!message.includes('current_turn_is_human'))onlineKuwaitiStatus('نوبت هوش مصنوعی: '+message);
    try{await refreshOnlineKuwaiti();}catch(_){}
   }finally{
    onlineKuwaitiAiBusy=false;
@@ -452,6 +455,9 @@ s.textContent+=`
 s.textContent+=`
 /* Compact animated gold ring belongs to the auction panel, never the full tabletop. */
 #kTable.auction-orbit-active:after{content:none!important;display:none!important}
+ #kTable.auction-orbit-active:before{content:none!important;display:none!important}
+ /* During bidding, the center card well must not render as a large circular ring. */
+ #kTable.auction-orbit-active>.k-center{border:0!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;outline:0!important}
 .k-seat .seat-auction-panel{position:relative!important;overflow:visible!important;border:1px solid #e3c27c!important;isolation:isolate!important}
 .k-seat .seat-auction-panel:after{content:""!important;position:absolute!important;inset:-4px!important;border-radius:16px!important;padding:2px!important;pointer-events:none!important;z-index:-1!important;background:conic-gradient(from 0deg,transparent 0deg 205deg,#9c742d 225deg,#fff0bd 245deg,#d6a344 263deg,#fff5d1 280deg,transparent 300deg 360deg)!important;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0)!important;-webkit-mask-composite:xor!important;mask-composite:exclude!important;filter:drop-shadow(0 0 3px #e9c46c99)!important;animation:kAuctionPanelGoldOrbit 3.8s linear infinite!important}
 @keyframes kAuctionPanelGoldOrbit{to{transform:rotate(360deg)}}
@@ -573,7 +579,7 @@ function cardNode(c,small=false){
  d.innerHTML='<span class="k-corner k-corner-top">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span><span class="k-corner k-corner-bottom">'+rank+'<i>'+suitGlyph[c.suit]+'</i></span>'+(['K','Q','J'].includes(rank)?'<span class="k-royal-frame">'+royal(rank)+'</span>':'<span class="ksuit">'+suitGlyph[c.suit]+'</span>');
  return d;
 }
-function setStatus(msg){const node=$('kStatus');if(!node){console.error('Kuwaiti status node is missing:',msg);const turn=$('kTurn');if(turn)turn.textContent=String(msg);return;}node.classList.remove('hidden');node.removeAttribute('hidden');node.style.cssText+=';display:block!important;visibility:visible!important;opacity:1!important;position:fixed!important;left:8px!important;right:8px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:2147483000!important;min-height:42px!important;max-height:25vh!important;overflow:auto!important;background:#09271f!important;color:#fff0c2!important;border:2px solid #e7c879!important;border-radius:12px!important;padding:10px!important;box-sizing:border-box!important;';node.setAttribute('role','status');node.setAttribute('aria-live','assertive');node.textContent=String(msg);const turn=$('kTurn');if(turn&&String(msg).includes('هوش'))turn.textContent=String(msg);console.info('[Kuwaiti status]',msg);}
+function setStatus(msg){const node=$('kStatus');if(!node){console.error('Kuwaiti status node is missing:',msg);return;}node.classList.remove('hidden');node.removeAttribute('hidden');node.style.cssText+=';display:block!important;visibility:visible!important;opacity:1!important;position:fixed!important;left:8px!important;right:8px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:2147483000!important;min-height:42px!important;max-height:25vh!important;overflow:auto!important;background:#09271f!important;color:#fff0c2!important;border:2px solid #e7c879!important;border-radius:12px!important;padding:10px!important;box-sizing:border-box!important;';node.setAttribute('role','status');node.setAttribute('aria-live','assertive');node.textContent=String(msg);console.info('[Kuwaiti status]',msg);}
 function setContractChoice(value){const select=$('kContract');if(select)select.value=value;document.querySelectorAll('#kContractChoices [data-contract]').forEach(b=>{const yes=b.dataset.contract===value;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes?'true':'false');});}
 function setMalzoomSuit(value){const select=$('kTrumpSuit');if(select)select.value=value;document.querySelectorAll('#kMalzoomChoices [data-trump-suit]').forEach(b=>{const yes=b.dataset.trumpSuit===value;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes?'true':'false');});}
 function setScreen(which){
