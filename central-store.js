@@ -18,7 +18,7 @@ function ensure(){
   document.head.appendChild(style);
  }
  if($('onlineStore'))return;
- const host=$('onlineProgress');if(!host)return;
+ const host=$('storeContent');if(!host)return;
  const box=document.createElement('section');box.id='onlineStore';
  box.style.cssText='border-top:1px solid #668c78;margin-top:14px;padding-top:12px';
  box.innerHTML='<h3 style="margin:0 0 6px;color:#f4d58b">فروشگاه طرح پشت کارت</h3><div id="storeBalance" style="font-size:13px;margin-bottom:9px">برای مشاهده فروشگاه وارد حساب دائمی شو.</div><div id="storeItems" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px"></div><div style="font-size:11px;color:#c4d5cd;line-height:1.9;margin-top:9px">طرح‌های امتیازی با امتیاز برد خریداری می‌شوند. جوایز ویدئویی و پرداخت واقعی پس از اتصال و تأیید سرویس مربوط فعال خواهند شد.</div><div id="storeStatus" role="status" style="font-size:12px;margin-top:7px"></div>';
