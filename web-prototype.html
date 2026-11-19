@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#103d32"><meta name="description" content="نسخه آزمایشی کوت بومی با قانون جفت و چلنج"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./IMG_3647.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Double Kout"><title>Double Kout · نسخه ۹.۲۰</title>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#103d32"><meta name="description" content="نسخه آزمایشی کوت بومی با قانون جفت و چلنج"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./IMG_3647.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Double Kout"><title>Double Kout · نسخه ۹.۲۱</title>
 <style>
 #game{transform-style:flat;transform:none;transition:none}:root{--felt:#0c382d;--felt2:#145343;--gold:#e7c879;--cream:#fffaf0;--ink:#17251f;--muted:#c4d5cd;--red:#c83d43}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#071d18 0%,#0b3027 48%,#061b16 100%);color:#fff;font-family:Tahoma,Arial,sans-serif;min-height:100vh}.wrap{max-width:980px;margin:auto;padding:14px}.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.brand{font-size:24px;font-weight:900;color:var(--gold)}.pill{background:#09271f;border:1px solid #467565;padding:6px 11px;border-radius:30px;font-size:12px;color:var(--muted)}.panel{background:#0c2e26dd;border:1px solid #477a68;border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 12px 35px #001b1666}.setup{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end}label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}select,button{font:inherit;border:0;border-radius:12px;padding:11px 13px}select{width:100%;background:#f7f1df;color:#17251f}button{background:var(--gold);color:#17251f;font-weight:bold;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}
 /* Keep cards fully legible while the player considers challenge vs. normal play. */
@@ -482,9 +482,31 @@ body:has(#challengePanel[style*="display: block"]) #challengePanel,body:has(#tru
 #onlineTable .seat{position:relative!important;z-index:3!important}
 #onlineTable .center{position:relative!important;z-index:20!important;overflow:visible!important}
 #onlineTable .center-trick{position:absolute!important;z-index:45!important;left:50%!important;top:50%!important;transform:translate(-50%,-42%)!important;pointer-events:none!important}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۲۰ · میز کوت کویتی آنلاین و هوش مصنوعی</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+
+/* Standalone in-game shop: point top-ups and card-back cosmetics live here. */
+.store-modal{position:fixed;inset:0;z-index:100050;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(1,8,7,.84);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.store-modal.hidden{display:none!important}
+.store-modal-panel{width:min(720px,100%);max-height:min(92dvh,900px);overflow:auto;padding:18px;border:1px solid #e7c879;border-radius:23px;background:linear-gradient(145deg,#123b30,#061b16);color:#f8edcf;box-shadow:0 25px 70px #000e,0 0 34px #e7c87944}
+.store-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #668c78;padding-bottom:10px}
+.store-modal-head h2{margin:0;color:#f4d58b;font-size:21px}
+.store-modal-head button{border:1px solid #9b895d;border-radius:10px;padding:8px 12px;background:#193b30;color:#f5e8c4;font-weight:800}
+.store-modal-intro{font-size:12px;color:#d1e1d8;line-height:1.9;margin:8px 0 12px}
+#storeContent #onlineStore,#storeContent #pointTopups{border-top:1px solid #668c78;margin:12px 0 0;padding-top:12px}
+#storeContent #onlineStore h3,#storeContent #pointTopups h3{color:#f4d58b}
+#storeContent #centralAdminPanel{margin-top:14px}
+#storeContent #storeItems,#storeContent #topupPackages{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))!important}
+#openVisualCustomizer{width:100%;margin-top:16px}
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۲۱ · میز کوت کویتی آنلاین و هوش مصنوعی</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
-<button id="openVisualCustomizer" class="customize-open" type="button">✦ سفارشی‌سازی ظاهر بازی</button>
+<button id="openStore" class="customize-open" type="button">🛍️ فروشگاه</button>
+<div id="storeModal" class="store-modal hidden" role="dialog" aria-modal="true" aria-labelledby="storeModalTitle">
+ <section class="store-modal-panel">
+  <header class="store-modal-head"><h2 id="storeModalTitle">🛍️ فروشگاه</h2><button id="closeStore" type="button" aria-label="بستن فروشگاه">✕ بستن</button></header>
+  <p class="store-modal-intro">خرید امتیاز و تهیه یا فعال‌سازی طرح‌های پشت کارت در این بخش قرار دارد.</p>
+  <div id="storeContent"></div>
+  <button id="openVisualCustomizer" class="customize-open" type="button">🂠 مشاهده و انتخاب طرح پشت کارت و ظاهر بازی</button>
+ </section>
+</div>
 <div id="visualCustomizer" class="visual-customizer-full hidden" aria-modal="true" role="dialog" aria-label="سفارشی‌سازی ظاهر بازی">
  <div class="customizer-top"><button id="customizerClose" type="button">بازگشت</button><div id="customizerTitle">پشت کارت‌ها</div><div id="customizerStep">۱ از ۴</div></div>
  <div class="customizer-tabs"><button type="button" data-go-step="0" class="active">پشت کارت</button><button type="button" data-go-step="1">میز بازی</button><button type="button" data-go-step="2">چینش ۶ نفره</button><button type="button" data-go-step="3">آواتار من</button></div>
@@ -966,6 +988,9 @@ function resetCardCustomization(){visualChoice={back:'black',table:'marble',layo
  const titles=['پشت کارت‌ها','میز بازی','چینش ۶ نفره','آواتار من'];
  let step=0;
  function showStep(n){step=Math.max(0,Math.min(3,n));modal.querySelectorAll('.customizer-page').forEach(p=>p.classList.toggle('hidden',Number(p.dataset.step)!==step));modal.querySelectorAll('[data-go-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.goStep)===step));title.textContent=titles[step];stepLabel.textContent=(step+1)+' از ۳';document.getElementById('customizerNext').classList.toggle('hidden',step===3);document.getElementById('customizerDone').classList.toggle('hidden',step!==3);modal.querySelectorAll('.customizer-rail .visual-choice').forEach(b=>{const rail=b.closest('[data-kind]');b.classList.toggle('selected',visualChoice[rail.dataset.kind]===b.dataset.value);});const selectedAvatar=localStorage.getItem('doubleKoutAvatar')||'♛';modal.querySelectorAll('[data-personal-avatar]').forEach(b=>b.classList.toggle('selected',b.dataset.personalAvatar===selectedAvatar));}
+ document.getElementById('openStore').addEventListener('click',()=>{document.getElementById('storeModal').classList.remove('hidden');document.body.style.overflow='hidden';if(window.DoubleKoutStore&&window.DoubleKoutStore.refresh)window.DoubleKoutStore.refresh();if(window.DoubleKoutPaymentsAdmin&&window.DoubleKoutPaymentsAdmin.refresh)window.DoubleKoutPaymentsAdmin.refresh();});
+ document.getElementById('closeStore').addEventListener('click',()=>{document.getElementById('storeModal').classList.add('hidden');document.body.style.overflow='';});
+ document.getElementById('storeModal').addEventListener('click',e=>{if(e.target.id==='storeModal'){document.getElementById('closeStore').click();}});
  document.getElementById('openVisualCustomizer').addEventListener('click',()=>{modal.classList.remove('hidden');document.body.style.overflow='hidden';showStep(0);});
  function close(){modal.classList.add('hidden');document.body.style.overflow='';}
  document.getElementById('customizerClose').addEventListener('click',close);
