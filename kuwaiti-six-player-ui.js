@@ -456,16 +456,12 @@ s.textContent+=`
 /* Compact animated gold ring belongs to the auction panel, never the full tabletop. */
 #kTable.auction-orbit-active:after{content:none!important;display:none!important}
 
-/* 9.42 — true front-to-back stacking: central ring is the backdrop only. */
-#kTable{position:relative!important;isolation:isolate!important;transform-style:preserve-3d!important}
-#kTable>.k-center{z-index:1!important;transform:translateZ(1px)!important;pointer-events:none!important}
-#kTable>.k-seat{position:relative!important;z-index:30!important;transform:translateZ(30px)!important}
-#kTable>.k-seat.auction-panel-active{z-index:120!important;transform:translateZ(70px)!important}
-#kTable>.k-seat.auction-panel-active>.seat-auction-panel{z-index:180!important}
-#kTable>.k-table-card-layer{z-index:150!important;transform:translateZ(60px)!important;pointer-events:none!important}
-#kTable>.k-table-card-layer .k-previous-cards{z-index:1!important}
-#kTable>.k-table-card-layer .k-center-cards{z-index:5!important}
-#kTable>.k-table-card-layer .k-table-played{position:relative!important;z-index:6!important}
+/* 9.43 — stacking only; preserve the six fixed seat coordinates and layout. */
+#kTable>.k-center{z-index:1!important;pointer-events:none!important}
+#kTable>.k-seat{z-index:5!important}
+#kTable>.k-seat.auction-panel-active{z-index:20!important}
+#kTable>.k-seat.auction-panel-active>.seat-auction-panel{z-index:30!important}
+#kTable .k-center-cards{position:relative!important;z-index:8!important}
 
  #kTable.auction-orbit-active:before{content:none!important;display:none!important}
  /* During bidding, the center card well must not render as a large circular ring. */
