@@ -1697,12 +1697,16 @@ async function refreshOnlineGame(startPayload){
   var decision=el('onlineDecision');decision.style.display=decisionPending?'block':'none';var trumpPanel=el('onlineTrumpSelection');trumpPanel.style.display=trumpPending?'block':'none';
   var handTitle=el('onlineHandTitle'),handArea=el('onlineHand'),onlineTable=el('onlineTable');
   if(decisionPending||trumpPending){
-   var activePhasePanel=decisionPending?decision:trumpPanel;
-   onlineTable.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
+   // Portal the private hand to body: fixed descendants inside the transformed
+   // online table/panel can be clipped or painted underneath overlays on iOS.
+   document.body.appendChild(handTitle);document.body.appendChild(handArea);
    handTitle.classList.add('challenge-hand-title');handArea.classList.add('challenge-hand');
+   Object.assign(handArea.style,{position:'fixed',left:'50%',bottom:'calc(7px + env(safe-area-inset-bottom))',transform:'translateX(-50%)',width:'min(96vw,850px)',maxWidth:'96vw',minHeight:'120px',maxHeight:'132px',overflowX:'auto',overflowY:'visible',zIndex:'100020',display:'flex',visibility:'visible',opacity:'1',pointerEvents:'auto'});
+   Object.assign(handTitle.style,{position:'fixed',left:'50%',bottom:'calc(119px + env(safe-area-inset-bottom))',transform:'translateX(-50%)',width:'min(96vw,850px)',zIndex:'100021',display:'block',visibility:'visible',opacity:'1'});
   }else{
    onlineTable.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
    handTitle.classList.remove('challenge-hand-title');handArea.classList.remove('challenge-hand');
+   handArea.removeAttribute('style');handTitle.removeAttribute('style');
   }
   if(trumpPending){
    var pickerSeat=Number(state.trumpPickerSeat),picker=players[String(pickerSeat)]||{},canPick=myOnlineSeat===pickerSeat&&picker.human!==false;
@@ -1737,8 +1741,9 @@ async function refreshOnlineGame(startPayload){
    el('onlineCount'+def.key).textContent=visibleCount+' کارت';
    var trickBadge=el('onlineTricks'+def.key);
    if(!trickBadge){trickBadge=document.createElement('div');trickBadge.id='onlineTricks'+def.key;trickBadge.className='online-seat-tricks';el('onlineCount'+def.key).insertAdjacentElement('afterend',trickBadge);}
-   var seatWonTricks=(state.trickWinners||[]).filter(function(winnerSeat){return Number(winnerSeat)===seat;}).length;
-   trickBadge.textContent=String(seatWonTricks).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];})+' دست برده';
+   var seatTeam=seat%2;
+   var seatWonTricks=(state.trickWinners||[]).filter(function(winnerSeat){return Number(winnerSeat)%2===seatTeam;}).length;
+   trickBadge.textContent=String(seatWonTricks).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];})+' دست تیم';
    el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&!trickPending&&turn===seat);
    var slot=el('onlinePlayed'+def.key);slot.innerHTML='';
    if(def.offset!==0&&left>0){
