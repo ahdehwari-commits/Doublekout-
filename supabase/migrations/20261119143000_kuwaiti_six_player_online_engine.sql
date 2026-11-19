@@ -721,6 +721,45 @@ begin
 end;
 $$;
 
+
+create or replace function public.kuwaiti_online_leave(p_room_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path to 'public','pg_temp'
+as $
+declare
+  v_user uuid := auth.uid();
+  v_room public.game_rooms%rowtype;
+  v_result jsonb;
+begin
+  if v_user is null then raise exception 'authentication_required'; end if;
+  select * into v_room from public.game_rooms where id=p_room_id for update;
+  if not found then return jsonb_build_object('left',true,'room_deleted',true); end if;
+  if v_room.game_mode<>'kuwaiti' or v_room.player_count<>6 then raise exception 'not_a_kuwaiti_six_player_room'; end if;
+  if not exists(select 1 from public.room_members where room_id=p_room_id and user_id=v_user) then
+    return jsonb_build_object('left',true);
+  end if;
+  if v_room.status='waiting' then
+    v_result:=public.leave_game_room(p_room_id);
+    return coalesce(v_result,jsonb_build_object('left',true));
+  end if;
+  if v_room.status<>'cancelled' then
+    update public.game_rooms
+      set status='cancelled',
+          public_state=coalesce(public_state,'{}'::jsonb)||jsonb_build_object(
+            'phase','cancelled','done',true,
+            'message','یکی از بازیکنان از اتاق خارج شد؛ این مسابقه لغو شد'
+          ),
+          revision=revision+1,updated_at=now()
+      where id=p_room_id;
+    delete from public.kuwaiti_online_hands where room_id=p_room_id;
+    delete from public.kuwaiti_online_secrets where room_id=p_room_id;
+  end if;
+  return jsonb_build_object('left',true,'room_cancelled',true);
+end;
+$;
+
 revoke all on function public.kuwaiti_online_normal_power(jsonb,text) from public,anon,authenticated;
 revoke all on function public.kuwaiti_online_card_power(jsonb,text,integer,boolean,boolean,boolean) from public,anon,authenticated;
 revoke all on function public.kuwaiti_online_legal_card_ids(jsonb,jsonb,integer,text,integer,integer) from public,anon,authenticated;
@@ -730,3 +769,5 @@ revoke all on function public.kuwaiti_online_action(uuid,jsonb) from public,anon
 grant execute on function public.kuwaiti_online_start(uuid,integer) to authenticated;
 grant execute on function public.kuwaiti_online_snapshot(uuid) to authenticated;
 grant execute on function public.kuwaiti_online_action(uuid,jsonb) to authenticated;
+revoke all on function public.kuwaiti_online_leave(uuid) from public,anon;
+grant execute on function public.kuwaiti_online_leave(uuid) to authenticated;
