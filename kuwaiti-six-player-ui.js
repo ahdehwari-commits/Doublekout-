@@ -1210,4 +1210,4 @@ if(window.visualViewport)window.visualViewport.addEventListener('resize',refresh
 // This script is loaded after the complete page markup; initialize synchronously.
 init();
 })();
-/* build: 0.8.15 auction-on-table and green-felt restoration */
+/* build: 0.8.16 auction-seat overlay and green-felt restoration */
