@@ -216,6 +216,8 @@ async function submitOnlineKuwaitiBid(bid){
 function clearKuwaitiAuctionSummaryTimer(){if(window.kuwaitiAuctionSummaryTimer){clearTimeout(window.kuwaitiAuctionSummaryTimer);window.kuwaitiAuctionSummaryTimer=null;}}
 function resetKuwaitiUiForOnlineAttach(){
  clearKuwaitiAuctionSummaryTimer();if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
+ if(onlineKuwaitiAiTimer){clearTimeout(onlineKuwaitiAiTimer);onlineKuwaitiAiTimer=null;}
+ onlineKuwaitiAiBusy=false;onlineKuwaitiBidBusy=false;onlineKuwaitiMalzoomAutoKey=null;
  game=null;auction=null;locked=false;trickView=[];firstGame=true;previousAuctionWinner=null;previousWinningTeam=null;previousDealer=null;
  points={A:0,B:0};matchGamesWon={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit')?.value)||54;
  $('kuwaitiGame')?.classList.remove('k-online-mode');$('kAuction').classList.remove('seat-auction-panel');$('kAuction').classList.add('hidden');
