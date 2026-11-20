@@ -1647,7 +1647,6 @@ function onlineLiveSequenceScores(winners,challengeTeam){
  if(close>=0){scores[side(winners[close])]+=close-start+1;start=close+1;searchFrom=start+1;}else{if(winners.length===13)scores[side(winners[12])]+=winners.length-start;break;}}
  return scores;
 }
-var onlinePileHistory=[],onlinePileHistoryRoom='';
 var onlineTrumpBusy=false;var onlineCardBusy=false;var onlineRematchTimerHandle=null;
 function renderOnlineRematchClock(){
  var panel=el('onlineRematchPanel'),clock=el('onlineRematchClock');
@@ -1674,7 +1673,6 @@ async function startNextOnlineGame(automatic){
   var r=await onlineRequest(client.rpc('start_next_room_game',{p_room_id:roomId}),'شروع بازی بعدی',15000);
   if(r.error)throw r.error;
   confirmedPlayedCardIds=Object.create(null);
-  onlinePileHistory=[];
   lastGameRevision=-1;lastOnlineHandSignature='';
   onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;
   var nextState=r.data&&r.data.state;
@@ -1885,26 +1883,12 @@ async function refreshOnlineGame(startPayload){
   });
   el('onlineTrick').innerHTML='';
   (state.plays||[]).forEach(function(p,i){var played=cardEl(visualCard(p.card),true);played.classList.add('table-played');played.style.setProperty('--play-index',i);el('onlineTrick').appendChild(played);});
+  // Temporarily hide all completed sequence piles. Only the four cards of the
+  // live trick (onlineTrick) remain visible; historical piles return later as
+  // a non-interactive table background.
   var onlinePile=el('onlineCenterPile');if(onlinePile){
-   onlinePile.innerHTML='';onlinePile.classList.remove('clearing');
-   function drawOnlinePileGroup(cards,index,isCurrent){
-    if(!cards||!cards.length)return;
-    var layer=document.createElement('div');layer.className='online-pile-layer '+(isCurrent?'current':'completed');
-    layer.style.cssText='position:absolute;inset:0;pointer-events:none;opacity:'+(isCurrent?'0.96':'0.68')+';z-index:'+(index+1)+';transform:'+(isCurrent?'translateY(-5px) scale(1.02)':'translateY('+(Math.min(index,4)*2)+'px) scale(0.98)')+';filter:'+(isCurrent?'drop-shadow(0 7px 9px #000c)':'none')+';';
-    cards.forEach(function(x,i){
-     var c=cardEl(visualCard(x.card||x),true);c.classList.add('pile-card');
-     var angle=i*2.399963229728653,radius=10+Math.sqrt(i+1)*5;
-     c.style.setProperty('--px',(Math.cos(angle)*radius*1.25)+'px');
-     c.style.setProperty('--py',(Math.sin(angle)*radius*.82)+'px');
-     c.style.setProperty('--pr',(Math.sin(i*1.73)*22)+'deg');
-     c.style.zIndex=String(i+1);layer.appendChild(c);
-    });
-    onlinePile.appendChild(layer);
-   }
-   (Array.isArray(state.completedGroups)?state.completedGroups:[]).forEach(function(group,index){
-    drawOnlinePileGroup(group.cards||[],index,false);
-   });
-   drawOnlinePileGroup(state.groupCards||[],(state.completedGroups||[]).length,true);
+   onlinePile.replaceChildren();
+   onlinePile.classList.remove('clearing');
   }
   el('onlineTrickMsg').textContent=trumpPending?'پنج کارت اول پخش شد؛ منتظر انتخاب قرارداد':(trickPending?'همه کارت‌ها روی میز؛ فرصت دیدن دست: '+Math.max(0,Math.ceil(onlineTrickDeadline-Date.now()/1000))+' ثانیه':(decisionPending?'در حال انتخاب چلنج':('نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳')));
   el('onlineTrumpBig').textContent=state.trump?(suitGlyph[state.trump]||'♠'):(trumpPending?'؟':'♠');
