@@ -24,23 +24,34 @@ async function onlineKuwaitiRpc(action){
 }
 function scheduleKuwaitiOnlineAI(){
  if(!isOnlineKuwaiti()||!onlineKuwaiti.isHost||onlineKuwaitiAiBusy||onlineKuwaitiAiTimer)return;
- const st=onlineKuwaiti.state||{};
+ const scheduledContext=onlineKuwaiti,scheduledRoomId=onlineKuwaiti.roomId;
+ const st=scheduledContext.state||{};
  const phase=st.phase;
  const seat=phase==='malzoom_result'?Number(st.auctionWinner):Number(st.turn);
+ const revision=Number(scheduledContext.revision||0);
  const meta=(st.seatPlayers||{})[String(seat)];
  if(!Number.isInteger(seat)||!meta||meta.human!==false)return;
  onlineKuwaitiAiTimer=setTimeout(async()=>{
   onlineKuwaitiAiTimer=null;
-  if(!isOnlineKuwaiti()||!onlineKuwaiti.isHost||onlineKuwaitiAiBusy)return;
+  if(!isOnlineKuwaiti()||onlineKuwaiti!==scheduledContext||
+     onlineKuwaiti.roomId!==scheduledRoomId||!onlineKuwaiti.isHost||onlineKuwaitiAiBusy)return;
+  // Revalidate the exact turn captured when this timer was scheduled.
+  const latest=onlineKuwaiti.state||{};
+  const latestPhase=latest.phase;
+  const latestSeat=latestPhase==='malzoom_result'?Number(latest.auctionWinner):Number(latest.turn);
+  const latestMeta=(latest.seatPlayers||{})[String(latestSeat)];
+  if(Number(onlineKuwaiti.revision||0)!==revision||latestPhase!==phase||
+     latestSeat!==seat||!latestMeta||latestMeta.human!==false){
+   scheduleKuwaitiOnlineAI();
+   return;
+  }
   onlineKuwaitiAiBusy=true;
   try{
-   const r=await window.DoubleKoutOnline.rpc('kuwaiti_online_ai_turn',{p_room_id:onlineKuwaiti.roomId});
+   const r=await window.DoubleKoutOnline.rpc('kuwaiti_online_ai_turn',{p_room_id:scheduledRoomId});
    if(r.error)throw r.error;
    await refreshOnlineKuwaiti();
   }catch(e){
    const message=String(e&&e.message||e);
-   // A delayed AI call can arrive after the turn has moved to a human.
-   // Refresh the authoritative state, but do not expose this expected race as an error.
    if(!message.includes('current_turn_is_human'))onlineKuwaitiStatus('نوبت هوش مصنوعی: '+message);
    try{await refreshOnlineKuwaiti();}catch(_){}
   }finally{
@@ -456,12 +467,14 @@ s.textContent+=`
 /* Compact animated gold ring belongs to the auction panel, never the full tabletop. */
 #kTable.auction-orbit-active:after{content:none!important;display:none!important}
 
-/* 9.43 — stacking only; preserve the six fixed seat coordinates and layout. */
+/* 9.44 — correct stacking without changing seat coordinates or transforms. */
 #kTable>.k-center{z-index:1!important;pointer-events:none!important}
+#kTable>.k-table-card-layer{z-index:24!important;pointer-events:none!important}
 #kTable>.k-seat{z-index:5!important}
-#kTable>.k-seat.auction-panel-active{z-index:20!important}
-#kTable>.k-seat.auction-panel-active>.seat-auction-panel{z-index:30!important}
-#kTable .k-center-cards{position:relative!important;z-index:8!important}
+#kTable>.k-seat.auction-panel-active{z-index:30!important}
+#kTable>.k-seat.auction-panel-active>.seat-auction-panel{z-index:80!important}
+#kTable>.k-table-card-layer .k-center-cards{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;z-index:8!important}
+#kTable>.k-table-card-layer .k-previous-cards{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;z-index:2!important}
 
  #kTable.auction-orbit-active:before{content:none!important;display:none!important}
  /* During bidding, the center card well must not render as a large circular ring. */
