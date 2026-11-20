@@ -53,7 +53,7 @@ console.log('PASS: missing speech categories cannot interrupt card play.');
 // The phase-modal wrapper must contain only auction/contract panels, never the table.
 const phaseModalStart = source.indexOf('<div id="kPhaseModal"');
 const tableStart = source.indexOf('<div class="k-table" id="kTable">', phaseModalStart);
-const phaseModalClose = source.indexOf('</div></div>\\n <div class="k-table" id="kTable">', phaseModalStart);
+const phaseModalClose = source.indexOf('</div></div>\n <div class="k-table" id="kTable">', phaseModalStart);
 assert.ok(phaseModalStart >= 0 && phaseModalClose > phaseModalStart && tableStart > phaseModalClose,
   'the six-player table must be outside the hidden phase-modal wrapper');
 console.log('PASS: hiding the contract modal cannot hide the six-player table.');
