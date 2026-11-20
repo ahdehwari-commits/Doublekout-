@@ -433,6 +433,35 @@ html{background-color:#061b16!important;min-height:100%;}body{background-color:#
 .table>.center{position:relative;z-index:30!important;overflow:visible!important}
 .table>.center .center-trick{position:relative!important;z-index:40!important}
 #centerPile,#onlineCenterPile{z-index:12!important}
+
+/* 9.60: isolate four-player online hand from legacy global fan/3D effects. */
+#onlinePanel #onlineHand,body>#onlineHand{
+ position:relative!important;display:block!important;width:100%!important;max-width:100%!important;
+ height:120px!important;min-height:120px!important;padding:0!important;margin:0!important;
+ overflow:visible!important;isolation:isolate!important;direction:ltr!important;
+}
+#onlinePanel #onlineHand>button,body>#onlineHand>button{
+ position:absolute!important;display:block!important;flex:none!important;
+ width:44px!important;height:66px!important;min-width:44px!important;
+ margin:0!important;padding:0!important;top:auto!important;
+ transform-origin:50% 100%!important;transition:none!important;
+}
+#onlinePanel #onlineHand>button>.card,body>#onlineHand>button>.card{
+ width:44px!important;height:66px!important;min-width:44px!important;
+ margin:0!important;transform:none!important;transition:none!important;
+ animation:none!important;translate:none!important;rotate:none!important;scale:1!important;
+}
+#onlinePanel #onlineHand>button.online-card-legal>.card,body>#onlineHand>button.online-card-legal>.card{
+ transform:none!important;outline:2px solid #ffe39a!important;border:2px solid #fff0b3!important;
+ box-shadow:0 0 0 2px #b27d2c,0 7px 12px #000b!important;filter:none!important;
+}
+#onlinePanel #onlineHand>button.online-card-illegal>.card,body>#onlineHand>button.online-card-illegal>.card{
+ transform:none!important;outline:1px solid #756b59!important;filter:grayscale(.45) brightness(.82)!important;
+}
+#onlinePanel #onlineHand>button.online-card-inactive>.card,body>#onlineHand>button.online-card-inactive>.card{
+ transform:none!important;filter:none!important;
+}
+
 </style><style>
 .avatar-customizer{width:min(620px,100%);margin:auto;text-align:center;color:#f6e6bd}.avatar-customizer-title{font-size:18px;font-weight:700;margin:0 0 18px}
 .avatar-customizer-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:440px;margin:auto}
@@ -1865,7 +1894,8 @@ async function refreshOnlineGame(startPayload){
    displayHand.forEach(function(c,i){
     var b=document.createElement('button');
     var fanOffset=i-(displayHand.length-1)/2;
-    var fanStep=Math.min(18,Math.max(12,(window.innerWidth||390)*0.86/(displayHand.length+1)));
+    var handWidth=onlineHandEl.clientWidth||((window.innerWidth||390)-24);
+    var fanStep=displayHand.length>1?Math.max(12,Math.min(17,(handWidth-48)/(displayHand.length-1))):0;
     b.type='button';
     b.style.setProperty('position','absolute','important');
     b.style.setProperty('left','calc(50% + '+(fanOffset*fanStep)+'px)','important');
@@ -1874,7 +1904,7 @@ async function refreshOnlineGame(startPayload){
     b.style.setProperty('height','66px','important');
     b.style.setProperty('margin','0','important');
     b.style.setProperty('padding','0','important');
-    b.style.setProperty('transform','translateX(-50%) rotate('+(fanOffset*3.2)+'deg) translateY('+(Math.abs(fanOffset)*1.2)+'px)','important');
+    b.style.setProperty('transform','translateX(-50%) rotate('+(fanOffset*1.15)+'deg)','important');
     b.style.setProperty('transform-origin','50% 100%','important');
     b.style.setProperty('z-index',String(1000+i),'important');
     b.style.setProperty('--hand-index',String(i));
