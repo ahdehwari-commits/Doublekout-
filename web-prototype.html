@@ -1890,7 +1890,8 @@ async function refreshOnlineGame(startPayload){
    if(onlinePileHistoryRoom!==pileRoomKey){onlinePileHistory=[];onlinePileHistoryRoom=pileRoomKey;}
    var clearing=Number(state.sequenceClearUntil||0)>Date.now()/1000;
    var completedPile=state.sequenceClearCards||[];
-   if(clearing&&completedPile.length){
+   // Snapshot polling is slower than the 0.9s clear animation. Capture the persisted completed pile whenever it exists, not only during that brief animation window.
+   if(completedPile.length){
     var completedSignature=completedPile.map(function(x){var c=x.card||x;return String(c.id||c.code||((c.suit||c.s)+'-'+(c.rank||c.r)));}).join('|');
     if(completedSignature&&!onlinePileHistory.some(function(g){return g.signature===completedSignature;})){
      onlinePileHistory.push({signature:completedSignature,cards:completedPile.map(function(x){return {card:Object.assign({},x.card||x)};})});
