@@ -19,7 +19,8 @@ function ensure(){
 }
 async function loadPackages(){
  const data=await rpc('get_topup_packages');const items=Array.isArray(data)?data:[];
- $('topupPackages').innerHTML=items.map(p=>'<article style="background:#09271f;border:1px solid #467565;border-radius:10px;padding:9px;text-align:center"><b>'+esc(p.title)+'</b><div style="color:#f4d58b;font-size:18px;margin:5px 0">'+Number(p.points).toLocaleString('fa-IR')+' امتیاز</div><div class="muted">'+money(p.price_toman)+'</div><button data-package="'+esc(p.id)+'" style="width:100%;margin-top:7px">پرداخت آنلاین</button></article>').join('');
+ let permanent=false;try{const session=await window.DoubleKoutOnline.getSession();permanent=!!(session&&session.user&&!session.user.is_anonymous);}catch(_){}
+ $('topupPackages').innerHTML=items.map(p=>'<article style="background:#09271f;border:1px solid #467565;border-radius:10px;padding:9px;text-align:center"><b>'+esc(p.title)+'</b><div style="color:#f4d58b;font-size:18px;margin:5px 0">'+Number(p.points).toLocaleString('fa-IR')+' امتیاز</div><div class="muted">'+money(p.price_toman)+'</div><button data-package="'+esc(p.id)+'" '+(permanent?'':'disabled')+' style="width:100%;margin-top:7px">'+(permanent?'پرداخت آنلاین':'ورود دائمی برای خرید')+'</button></article>').join('');
  $('topupPackages').querySelectorAll('[data-package]').forEach(b=>b.onclick=()=>startPayment(b.dataset.package));
 }
 async function startPayment(id){
