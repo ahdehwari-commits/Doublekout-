@@ -1088,7 +1088,7 @@ function normalizedRank(c){const x=c&&(c.r!==undefined?c.r:c.rank),m={'2':0,'3':
 function sortCardArray(cards){const o={'♠':0,'♥':1,'♦':2,'♣':3};return cards.sort((x,y)=>(o[normalizedSuit(x)]??9)-(o[normalizedSuit(y)]??9)||normalizedRank(x)-normalizedRank(y));}
 $('sortHand').onclick=()=>{if(!G)return;const p=playStyle==='hotseat'?G.turn:0;if(playStyle==='hotseat'&&!humanSeats.has(p))return;sortCardArray(G.hands[p]);render()};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script><script src="./kuwaiti-six-player-ui.js?v=0.8.27-20261120-table-outside-contract-modal"></script><script>
+</script><script src="./kuwaiti-six-player-ui.js?v=0.8.28-20261120-session-reset-no-handoff"></script><script>
 (function(){
 'use strict';
 var PUBLIC_AUTH_REDIRECT='https://ahdehwari-commits.github.io/Doublekout-/';
