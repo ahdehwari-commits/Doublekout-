@@ -26,7 +26,8 @@ function ensure(){
  const retry=document.createElement('button');retry.type='button';retry.textContent='تلاش دوباره';retry.style.cssText='width:100%;margin-top:8px';retry.addEventListener('click',refresh);box.appendChild(retry);
 }
 function preview(theme){const t=themes[theme]||themes['blue-gold'];return '<div aria-hidden="true" style="width:58px;height:82px;margin:0 auto 7px;border:3px solid '+t.edge+';border-radius:8px;background:'+t.bg+';box-shadow:inset 0 0 0 2px #ffffff22,0 4px 9px #0008;position:relative"><div style="position:absolute;inset:7px;border:1px solid '+t.edge+';border-radius:4px;background:repeating-linear-gradient(45deg,transparent 0 6px,'+t.glow+'33 6px 8px)"></div><b style="position:absolute;left:0;right:0;top:35px;text-align:center;font:italic 700 7px Georgia;color:#ffe6a0">Abdulhamid</b></div>';}
-async function call(name,args){const api=window.DoubleKoutOnline;if(!api||!api.rpc)throw new Error('اتصال حساب مرکزی آماده نیست.');const r=await api.rpc(name,args||{});if(r.error)throw r.erasync function refresh(){
+async function call(name,args){const api=window.DoubleKoutOnline;if(!api||!api.rpc)throw new Error('اتصال حساب مرکزی آماده نیست.');const r=await api.rpc(name,args||{});if(r.error)throw r.error;return r.data;}
+async function refresh(){
  ensure();
  if(busy){refreshQueued=true;return;}
  busy=true;
