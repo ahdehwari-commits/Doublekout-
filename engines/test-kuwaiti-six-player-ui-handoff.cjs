@@ -57,3 +57,15 @@ const phaseModalClose = source.indexOf('</div></div>\\n <div class="k-table" id=
 assert.ok(phaseModalStart >= 0 && phaseModalClose > phaseModalStart && tableStart > phaseModalClose,
   'the six-player table must be outside the hidden phase-modal wrapper');
 console.log('PASS: hiding the contract modal cannot hide the six-player table.');
+
+// No phone-handoff gate remains in six-player offline mode.
+assert.ok(!source.includes('kHotseatGate') && !source.includes('تحویل گوشی') && !source.includes('kRevealHand'),
+  'offline six-player play must not display a phone-handoff gate');
+
+// Switching from offline to online clears the old deal, result, and delayed auction-summary timer.
+assert.match(source, /function resetKuwaitiUiForOnlineAttach\(\)/);
+assert.match(source, /resetKuwaitiUiForOnlineAttach\(\);\s*onlineKuwaiti=/);
+assert.match(source, /function clearKuwaitiAuctionSummaryTimer\(\)/);
+assert.match(source, /game!==summaryGame\|\|isOnlineKuwaiti\(\)\|\|auction/);
+assert.match(source, /Clear stale offline result\/next-game controls[\s\S]*?kResult[\s\S]*?kNewGame/);
+console.log('PASS: online attach resets stale offline UI and timer; no handoff overlay remains.');
