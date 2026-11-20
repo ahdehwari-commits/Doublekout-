@@ -37,17 +37,18 @@ async function refresh(){
   const api=window.DoubleKoutOnline;
   if(!api||!api.getSession)throw new Error('اتصال حساب مرکزی در دسترس نیست؛ صفحه را یک‌بار تازه‌سازی کن.');
   const session=await api.getSession();
-  if(!session||!session.user||session.user.is_anonymous){
-   balance.textContent='برای مشاهده موجودی و خرید، ابتدا با حساب دائمی وارد شو.';
-   itemsHost.innerHTML='<div style="grid-column:1/-1;padding:12px;border:1px dashed #b99b5c;border-radius:10px;text-align:center">پس از ورود به حساب، طرح‌های قابل خرید و فعال‌سازی اینجا نمایش داده می‌شوند.</div>';
+  if(!session||!session.user){
+   balance.textContent='برای مشاهده موجودی، ابتدا وارد حساب بازی شو.';
+   itemsHost.innerHTML='<div style="grid-column:1/-1;padding:12px;border:1px dashed #b99b5c;border-radius:10px;text-align:center">برای نمایش فهرست و موجودی، وارد حساب بازی شو.</div>';
    return;
   }
+  const permanent=!session.user.is_anonymous;
   const data=await call('get_store_catalog');
   if(!data||!Array.isArray(data.items))throw new Error('پاسخ فهرست فروشگاه معتبر نیست.');
-  balance.textContent='موجودی شما: '+Number(data.points||0)+' امتیاز';
+  balance.textContent=permanent?'موجودی شما: '+Number(data.points||0)+' امتیاز':'حساب مهمان · موجودی قابل خرید: '+Number(data.points||0)+' امتیاز · برای خرید وارد حساب دائمی شو';
   itemsHost.innerHTML=data.items.length?data.items.map(item=>{
    const owned=!!item.owned,active=data.equipped===item.id;
-   return '<article style="background:#09271f;border:1px solid '+(active?'#e7c879':'#467565')+';border-radius:12px;padding:9px;text-align:center">'+preview(item.theme)+'<b style="font-size:12px">'+esc(item.title)+'</b><div style="font-size:10px;color:#c4d5cd;min-height:30px;margin:4px 0">'+esc(item.description)+'</div><div style="font-size:11px;color:#f4d58b;margin-bottom:6px">'+(owned?'دریافت‌شده':Number(item.price)+' امتیاز')+'</div>'+(active?'<span style="font-size:11px;color:#a8efbd">طرح فعال</span>':owned?'<button data-equip="'+esc(item.id)+'" style="width:100%;padding:7px;font-size:11px">استفاده از طرح</button>':'<button data-buy="'+esc(item.id)+'" style="width:100%;padding:7px;font-size:11px">خرید با امتیاز</button>')+'</article>';
+   return '<article style="background:#09271f;border:1px solid '+(active?'#e7c879':'#467565')+';border-radius:12px;padding:9px;text-align:center">'+preview(item.theme)+'<b style="font-size:12px">'+esc(item.title)+'</b><div style="font-size:10px;color:#c4d5cd;min-height:30px;margin:4px 0">'+esc(item.description)+'</div><div style="font-size:11px;color:#f4d58b;margin-bottom:6px">'+(owned?'دریافت‌شده':Number(item.price)+' امتیاز')+'</div>'+(active?'<span style="font-size:11px;color:#a8efbd">طرح فعال</span>':owned?'<button data-equip="'+esc(item.id)+'" style="width:100%;padding:7px;font-size:11px">استفاده از طرح</button>':permanent?'<button data-buy="'+esc(item.id)+'" style="width:100%;padding:7px;font-size:11px">خرید با امتیاز</button>':'<button disabled style="width:100%;padding:7px;font-size:11px">ورود دائمی برای خرید</button>')+'</article>';
   }).join(''):'<div style="grid-column:1/-1;padding:12px;text-align:center">فعلاً طرح فعالی برای فروش ثبت نشده است.</div>';
   itemsHost.querySelectorAll('[data-buy]').forEach(b=>b.addEventListener('click',()=>purchase(b.dataset.buy)));
   itemsHost.querySelectorAll('[data-equip]').forEach(b=>b.addEventListener('click',()=>equip(b.dataset.equip)));
