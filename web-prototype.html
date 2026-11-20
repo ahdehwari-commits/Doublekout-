@@ -561,7 +561,7 @@ body:has(#challengePanel[style*="display: block"]) #challengePanel,body:has(#tru
 <div id="storeModal" class="store-modal hidden" role="dialog" aria-modal="true" aria-labelledby="storeModalTitle">
  <section class="store-modal-panel">
   <header class="store-modal-head"><h2 id="storeModalTitle">🛍️ فروشگاه</h2><button id="closeStore" type="button" aria-label="بستن فروشگاه">✕ بستن</button></header>
-  <p class="store-modal-intro">طرح‌های پشت کارت و بسته‌های امتیاز در همین فروشگاه قرار دارند.</p>
+  <p class="store-modal-intro">طرح‌های پشت کارت و بسته‌های امتیاز از همین پنجره قابل مشاهده و تهیه هستند.</p>
   <div id="storeAccessNotice" class="store-access-notice hidden" role="status" aria-live="polite">برای ذخیره خریدها و طرح‌های انتخابی، لطفاً وارد حساب کاربری شوید.</div>
   <div id="storeContent"></div>
  </section>
@@ -1020,7 +1020,8 @@ function resetCardCustomization(){visualChoice={table:'marble',layout:'arc'};set
    const storeModal=document.getElementById('storeModal');
    const accessNotice=document.getElementById('storeAccessNotice');
    storeModal.classList.remove('hidden');document.body.style.overflow='hidden';
-   if(accessNotice){accessNotice.textContent='برای ذخیره خریدها و طرح‌های انتخابی، لطفاً وارد حساب کاربری شوید.';accessNotice.classList.remove('hidden');}
+   if(accessNotice)accessNotice.classList.add('hidden');
+   // Show the notice only after confirming that this is not a permanent account.
    // Keep the sign-in notice visible until a real, non-anonymous session is confirmed.
    if(window.DoubleKoutOnline&&window.DoubleKoutOnline.getSession){
     window.DoubleKoutOnline.getSession().then(session=>{
