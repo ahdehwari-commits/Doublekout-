@@ -9,10 +9,10 @@ const contractName={hokm_spades:'پیک',hokm_hearts:'دل',hokm_diamonds:'خش�
 const playerNames=['بازیکن ۱','بازیکن ۲','بازیکن ۳','بازیکن ۴','بازیکن ۵','بازیکن ۶'];
 const team=p=>K.teamOf(p);
 const fa=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
-let game=null,auction=null,firstGame=true,previousAuctionWinner=null,previousWinningTeam=null,humanSeats=new Set([0]),hotseatRevealed=false,matchGamesWon={A:0,B:0};
+let game=null,auction=null,firstGame=true,previousAuctionWinner=null,previousWinningTeam=null,previousDealer=null,humanSeats=new Set([0]),hotseatRevealed=false,matchGamesWon={A:0,B:0};
 let points={A:0,B:0},trickView=[],locked=false,aiTimer=null,matchLimit=54,playedTricks=0;
 
-let onlineKuwaiti=null,onlineKuwaitiBusy=false,onlineKuwaitiRefreshQueued=false,onlineKuwaitiAiTimer=null,onlineKuwaitiAiBusy=false,onlineKuwaitiBidBusy=false;
+let onlineKuwaiti=null,onlineKuwaitiBusy=false,onlineKuwaitiRefreshQueued=false,onlineKuwaitiAiTimer=null,onlineKuwaitiAiBusy=false,onlineKuwaitiBidBusy=false,onlineKuwaitiMalzoomAutoKey=null;
 function isOnlineKuwaiti(){return !!(onlineKuwaiti&&onlineKuwaiti.roomId);}
 function onlineKuwaitiStatus(message){if($('kStatus'))setStatus(message);}
 async function onlineKuwaitiRpc(action){
@@ -27,6 +27,7 @@ function scheduleKuwaitiOnlineAI(){
  const scheduledContext=onlineKuwaiti,scheduledRoomId=onlineKuwaiti.roomId;
  const st=scheduledContext.state||{};
  const phase=st.phase;
+  if(phase==='malzoom_result')return;
  const seat=phase==='malzoom_result'?Number(st.auctionWinner):Number(st.turn);
  const revision=Number(scheduledContext.revision||0);
  const meta=(st.seatPlayers||{})[String(seat)];
@@ -83,7 +84,7 @@ async function refreshOnlineKuwaiti(){
   onlineKuwaiti.hand=incomingHand;onlineKuwaiti.handSignature=incomingHandSignature;
   onlineKuwaiti.status=d.status;
   onlineKuwaiti.trumpSuit=d.trump_suit||null;
-  $('kPlayStyle').value='online';humanSeats=new Set([seat]);hotseatRevealed=true;
+  $('kPlayStyle').value='online';$('kuwaitiGame')?.classList.add('k-online-mode');humanSeats=new Set([seat]);hotseatRevealed=true;
   const names=st.seatPlayers||{};
   for(let p=0;p<6;p++){
    const name=names[String(p)]&&names[String(p)].name||('بازیکن '+fa(p+1));
@@ -147,17 +148,19 @@ async function refreshOnlineKuwaiti(){
    $('kTrumpDisplay').textContent=contractLabel||'بدون حکم';
    setScreen('game');renderGame();
    $('kStatus').textContent=seat===Number(st.turn)?('حکم ثبت شد: '+(contractLabel||'بدون حکم')+' · نوبت شماست؛ یکی از کارت‌های مجاز را انتخاب کن.'):(('حکم ثبت شد: '+(contractLabel||'بدون حکم'))+' · نوبت '+playerNames[Number(st.turn)]+' است.');
-  }else if(st.phase==='malzoom_result'){
-   $('kAuction').classList.add('hidden');setScreen('game');renderGame();
-   $('kResult').classList.remove('hidden');
-   const won=Number(st.bidderTricks||0),opp=Number(st.opponentTricks||0);
-   if(seat===game.auctionWinner){
-    $('kResult').innerHTML='<b>نتیجه ملزوم</b><p class="k-small">تیم برنده مزایده '+fa(won)+' دست و حریف '+fa(opp)+' دست برده است. نتیجه را ثبت کن.</p><div class="k-actions"><button id="kOnlineMalzoomSuccess">ملزوم موفق · ۵+</button><button id="kOnlineMalzoomFail">ملزوم ناموفق · ۵-</button></div>';
-    $('kOnlineMalzoomSuccess').onclick=()=>onlineKuwaitiRpc({type:'score_malzoom',success:true}).catch(e=>onlineKuwaitiStatus('ثبت نتیجه ملزوم: '+e.message));
-    $('kOnlineMalzoomFail').onclick=()=>onlineKuwaitiRpc({type:'score_malzoom',success:false}).catch(e=>onlineKuwaitiStatus('ثبت نتیجه ملزوم: '+e.message));
-   }else $('kResult').innerHTML='<b>۹ دست تمام شد</b><p class="k-small">منتظر ثبت نتیجه ملزوم توسط برنده مزایده هستیم.</p>';
-   $('kNewGame').classList.add('hidden');
-  }else if(st.phase==='cancelled'){
+   }else if(st.phase==='malzoom_result'){
+    $('kAuction').classList.add('hidden');setScreen('game');renderGame();
+    $('kResult').classList.remove('hidden');
+    const won=Number(st.bidderTricks||0),winner=Number(game.auctionWinner),meta=(st.seatPlayers||{})[String(winner)];
+    $('kResult').innerHTML='<b>ثبت خودکار نتیجه ملزوم</b><p class="k-small">تیم مزایده‌برنده '+fa(won)+' دست گرفته است؛ نتیجه بر اساس حداقل ۵ دست محاسبه می‌شود.</p>';
+    $('kNewGame').classList.add('hidden');
+    const autoKey=onlineKuwaiti.roomId+':'+String(incomingRevision);
+    if(onlineKuwaitiMalzoomAutoKey!==autoKey&&(seat===winner||(onlineKuwaiti.isHost&&meta&&meta.human===false))){
+     onlineKuwaitiMalzoomAutoKey=autoKey;
+     const action={type:'score_malzoom'};if(meta&&meta.human===false)action.bot_seat=winner;
+     onlineKuwaitiRpc(action).catch(e=>onlineKuwaitiStatus('ثبت خودکار نتیجه ملزوم: '+e.message));
+    }
+   }else if(st.phase==='cancelled'){
    $('kAuction').classList.add('hidden');$('kContractSetup').classList.add('hidden');$('kMalzoomSetup').classList.add('hidden');$('kHand').innerHTML='';$('kResult').classList.remove('hidden');$('kResult').innerHTML='<b>اتاق لغو شد</b><p class="k-small">یکی از بازیکنان از بازی خارج شد؛ این مسابقه پایان یافت.</p>';$('kNewGame').classList.add('hidden');setScreen('game');onlineKuwaitiStatus(st.message||'بازی لغو شد.');
   }else if(st.phase==='finished'){
    $('kAuction').classList.add('hidden');setScreen('game');renderGame();
@@ -168,9 +171,8 @@ async function refreshOnlineKuwaiti(){
    const winnerTeamHasHuman=Object.keys(st.seatPlayers||{}).some(p=>team(Number(p))===winningTeam&&(st.seatPlayers[p]||{}).human===true);
    const canChoose=winningTeam===team(seat)||(onlineKuwaiti.isHost&&!winnerTeamHasHuman);
    if(!st.matchOver&&canChoose){
-    const options=[0,1,2,3,4,5].filter(p=>team(p)===winningTeam);
-    $('kResult').innerHTML+='<label for="kOnlineNextPicker">انتخاب نفر اول مزایده بازی بعد</label><select id="kOnlineNextPicker" class="k-select">'+options.map(p=>'<option value="'+p+'">'+playerNames[p]+((st.seatPlayers||{})[String(p)]?.human===false?' · هوش مصنوعی':'')+'</option>').join('')+'</select>';
-   }else if(!st.matchOver)$('kResult').innerHTML+='<p class="k-small">تیم برنده بازی، نفر اول مزایده بعدی را انتخاب می‌کند.</p>';
+    $('kResult').innerHTML+='<p class="k-small">پخش‌کننده و نفر اول مزایده بازی بعد طبق قانون چرخش به‌صورت خودکار تعیین می‌شوند.</p>';
+   }else if(!st.matchOver)$('kResult').innerHTML+='<p class="k-small">پخش‌کننده بازی بعد طبق قانون چرخش به‌صورت خودکار تعیین می‌شود.</p>';
    $('kNewGame').classList.remove('hidden');
    $('kNewGame').textContent=st.matchOver?'شروع مسابقه جدید':'بازی بعدی';
    $('kNewGame').disabled=st.matchOver?!onlineKuwaiti.isHost:!canChoose;
@@ -520,7 +522,7 @@ s.textContent+=`
 .k-back:after{color:#ffe6a0!important;text-shadow:0 2px 3px #000!important}
 `;
 document.head.appendChild(s);
- const cornerStyle=document.createElement('style');cornerStyle.textContent="/* 9.2 contract indicator fixed to upper-right table corner */\n.k-table{position:relative}\n.k-trump-corner{position:absolute;top:9px;right:9px;transform:none;z-index:30;min-width:76px;justify-content:center;padding:5px 9px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#09271fee,#031711f5);box-shadow:0 4px 12px #0009;text-align:center;pointer-events:none}\n.k-trump-corner span{font-size:10px;color:#e9d39a}\n.k-trump-corner b{font-size:14px!important;color:#ffe19a}\n.k-table .k-seat[data-p=\"2\"]{padding-top:30px}\n";cornerStyle.textContent+="\n/* Seat labels sit below the card fans; individual trick wins stay on each chair. */\n.k-seat{display:flex!important;flex-direction:column!important;align-items:center!important;gap:3px!important}\n.k-seat .k-played{order:-1!important;position:relative!important;z-index:8!important;min-height:88px!important;margin:0 0 3px!important;overflow:visible!important;transform:translateY(-3px)!important}\n.k-seat .k-opponent-fan{position:relative!important;z-index:9!important}\n .k-seat .k-name{order:0!important;position:relative!important;z-index:10!important;width:100%;margin-top:20px!important;padding:7px 2px 3px!important;border-top:1px solid #d9bd78aa!important;background:linear-gradient(180deg,#0b3025,#061b15)!important;border-radius:7px 7px 10px 10px!important}\n.k-seat .k-count{order:1!important;margin:0!important;font-size:9px!important;line-height:1.1!important}\n/* Remaining cards are already counted on each chair; hide the duplicate oversized trick-card counter. */\n#kTrickCards{display:none!important}\n.k-seat .k-seat-tricks{order:2!important;font-size:10px!important;font-weight:900!important;color:#ffe5a1!important;line-height:1.3!important}\n.k-team-tricks{font-size:11px;font-weight:900;color:#ffe5a1;background:#09271f;border:1px solid #b99a5d;border-radius:8px;padding:4px 8px;margin:1px auto;max-width:max-content}\n/* Corner trump marker and two-layer trick pile: previous trick remains underneath current plays. */\n.k-table{position:relative!important;isolation:isolate!important;overflow:visible!important}\n.k-table>.k-seat{z-index:3!important}\n.k-table>.k-center{z-index:12!important;overflow:visible!important}\n.k-table>.k-table-card-layer{position:absolute!important;inset:0!important;z-index:24!important;pointer-events:none!important;overflow:visible!important}\n .k-trump-corner{position:absolute!important;top:9px!important;right:9px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:45!important;display:flex!important;align-items:center!important;gap:6px!important;max-width:34%!important;white-space:nowrap!important}\n.k-center{position:absolute!important}\n.k-previous-cards,.k-center-cards{position:absolute!important;left:50%!important;top:50%!important;width:100%!important;height:116px!important;min-height:0!important;transform:translate(-50%,-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;direction:ltr!important;overflow:visible!important;pointer-events:none!important}\n.k-previous-cards{z-index:2!important;opacity:.58!important;filter:brightness(.72) saturate(.78)!important}\n.k-center-cards{z-index:7!important}\n.k-previous-cards .k-pile-played{position:absolute!important;left:calc(50% - 30px)!important;top:calc(50% - 44px)!important;width:60px!important;height:88px!important;margin:0!important;transform:translate(var(--pile-x),var(--pile-y)) rotate(var(--pile-r))!important;box-shadow:0 8px 15px #000c!important}\n.k-center-cards .k-table-played{position:relative!important;z-index:8!important}\n@media(max-width:520px){.k-previous-cards,.k-center-cards{height:96px!important}.k-previous-cards .k-pile-played{width:49px!important;height:74px!important;left:calc(50% - 24px)!important;top:calc(50% - 37px)!important} .k-trump-corner{top:118px!important;right:118px!important;font-size:11px!important}.k-seat .k-played{min-height:60px!important}.k-seat-tricks{font-size:9px!important}}";
+ const cornerStyle=document.createElement('style');cornerStyle.textContent="/* 9.2 contract indicator fixed to upper-right table corner */\n.k-table{position:relative}\n.k-trump-corner{position:absolute;top:9px;right:9px;transform:none;z-index:30;min-width:76px;justify-content:center;padding:5px 9px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#09271fee,#031711f5);box-shadow:0 4px 12px #0009;text-align:center;pointer-events:none}\n.k-trump-corner span{font-size:10px;color:#e9d39a}\n.k-trump-corner b{font-size:14px!important;color:#ffe19a}\n.k-table .k-seat[data-p=\"2\"]{padding-top:30px}\n";cornerStyle.textContent+="\n/* Online is single-device per user: hide hotseat title and manual sort button. */\n#kuwaitiGame.k-online-mode .k-hand-tools{display:none!important}\n/* Readable team trick totals on every seat. */\n#kTable .k-seat .k-seat-tricks{font-size:17px!important;font-weight:1000!important;line-height:1.25!important}\n@media(max-width:520px){#kTable .k-seat .k-seat-tricks{font-size:15px!important}}\n/* Seat labels sit below the card fans; individual trick wins stay on each chair. */\n.k-seat{display:flex!important;flex-direction:column!important;align-items:center!important;gap:3px!important}\n.k-seat .k-played{order:-1!important;position:relative!important;z-index:8!important;min-height:88px!important;margin:0 0 3px!important;overflow:visible!important;transform:translateY(-3px)!important}\n.k-seat .k-opponent-fan{position:relative!important;z-index:9!important}\n .k-seat .k-name{order:0!important;position:relative!important;z-index:10!important;width:100%;margin-top:20px!important;padding:7px 2px 3px!important;border-top:1px solid #d9bd78aa!important;background:linear-gradient(180deg,#0b3025,#061b15)!important;border-radius:7px 7px 10px 10px!important}\n.k-seat .k-count{order:1!important;margin:0!important;font-size:9px!important;line-height:1.1!important}\n/* Remaining cards are already counted on each chair; hide the duplicate oversized trick-card counter. */\n#kTrickCards{display:none!important}\n.k-seat .k-seat-tricks{order:2!important;font-size:17px!important;font-weight:1000!important;color:#ffe5a1!important;line-height:1.3!important}\n.k-team-tricks{font-size:11px;font-weight:900;color:#ffe5a1;background:#09271f;border:1px solid #b99a5d;border-radius:8px;padding:4px 8px;margin:1px auto;max-width:max-content}\n/* Corner trump marker and two-layer trick pile: previous trick remains underneath current plays. */\n.k-table{position:relative!important;isolation:isolate!important;overflow:visible!important}\n.k-table>.k-seat{z-index:3!important}\n.k-table>.k-center{z-index:12!important;overflow:visible!important}\n.k-table>.k-table-card-layer{position:absolute!important;inset:0!important;z-index:24!important;pointer-events:none!important;overflow:visible!important}\n .k-trump-corner{position:absolute!important;top:9px!important;right:9px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:45!important;display:flex!important;align-items:center!important;gap:6px!important;max-width:34%!important;white-space:nowrap!important}\n.k-center{position:absolute!important}\n.k-previous-cards,.k-center-cards{position:absolute!important;left:50%!important;top:50%!important;width:100%!important;height:116px!important;min-height:0!important;transform:translate(-50%,-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;direction:ltr!important;overflow:visible!important;pointer-events:none!important}\n.k-previous-cards{z-index:2!important;opacity:.58!important;filter:brightness(.72) saturate(.78)!important}\n.k-center-cards{z-index:7!important}\n.k-previous-cards .k-pile-played{position:absolute!important;left:calc(50% - 30px)!important;top:calc(50% - 44px)!important;width:60px!important;height:88px!important;margin:0!important;transform:translate(var(--pile-x),var(--pile-y)) rotate(var(--pile-r))!important;box-shadow:0 8px 15px #000c!important}\n.k-center-cards .k-table-played{position:relative!important;z-index:8!important}\n@media(max-width:520px){.k-previous-cards,.k-center-cards{height:96px!important}.k-previous-cards .k-pile-played{width:49px!important;height:74px!important;left:calc(50% - 24px)!important;top:calc(50% - 37px)!important} .k-trump-corner{top:118px!important;right:118px!important;font-size:11px!important}.k-seat .k-played{min-height:60px!important}.k-seat-tricks{font-size:15px!important}}";
 cornerStyle.textContent+=`\n/* Final auction polish: compact status badge in table corner and orbit on bid panel only. */
 #kTable>.k-center #kTurn{display:none!important}
 #kTable>.k-turn-corner{position:absolute!important;top:9px!important;right:10px!important;left:auto!important;bottom:auto!important;z-index:56!important;display:block!important;width:min(48%,230px)!important;max-height:58px!important;overflow:auto!important;padding:5px 8px!important;border:1px solid #c9a45e!important;border-radius:9px!important;background:linear-gradient(145deg,#171512f2,#080807f5)!important;color:#ffe5a1!important;font-size:10px!important;line-height:1.35!important;text-align:right!important;box-shadow:0 3px 10px #000b!important;overflow-wrap:anywhere!important;pointer-events:none!important}
@@ -615,7 +617,7 @@ function setupMarkup(){
  <div class="k-intro"><div>۶ بازیکن</div><div>۵۴ کارت · ۹ کارت برای هر نفر</div><div>۹ دست در هر بازی</div></div>
  <label>شیوه بازی</label><select class="k-select" id="kPlayStyle"><option value="ai">یک بازیکن انسانی در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با شش گوشی · اتاق اینترنتی</option></select><div id="kHumanSeatSetup"><label>انتخاب صندلی بازیکنان انسانی؛ صندلی‌های خالی با هوش مصنوعی پر می‌شوند</label><div id="kHumanSeatChoices" class="k-actions"></div><p class="k-small">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><label>سطح هوش مصنوعی</label><select class="k-select" id="kDifficulty"><option value="easy">آسان · انتخاب ساده</option><option value="normal" selected>معمولی · تحلیل پایه</option><option value="hard">سخت · شمارش و تحلیل کارت‌ها</option><option value="expert">خیلی سخت · شبیه‌سازی دست‌های پنهان</option></select><p class="k-small">سطح انتخابی روی تمام بازیکنان هوش مصنوعی در این میز اعمال می‌شود.</p><label>حد امتیاز پایان مسابقه</label><select class="k-select" id="kMatchLimit"><option value="54">۵۴ امتیاز مثبت</option><option value="-54">۵۴ امتیاز منفی</option><option value="108">۱۰۸ امتیاز مثبت</option><option value="-108">۱۰۸ امتیاز منفی</option></select>
  <div class="k-small" id="kMatchProgress">حد امتیاز مسابقه: ۵۴+</div>
- <div id="kNextPicker" class="hidden"><label>انتخاب نفر اول مزایده توسط تیم برنده بازی قبل</label><select class="k-select" id="kFirstAuction"><option value="0">بازیکن ۱</option><option value="2">بازیکن ۳</option><option value="4">بازیکن ۵</option></select></div>
+ 
  <p class="k-small">در بازی اول دارنده ۲ خاج نفر اول مزایده است. در بازی‌های بعدی تیم برنده بازی قبل نفر اول مزایده را انتخاب می‌کند و بازیکن نشسته قبل از برنده مزایده قبلی، ملزوم‌کننده است.</p>
  <div class="k-actions"><button id="kStartAuction">پخش کارت و شروع مزایده</button><button id="kBackModes">بازگشت</button></div>`;
  const g=document.createElement('section');g.className='panel hidden';g.id='kuwaitiGame';
@@ -644,7 +646,7 @@ function revealCurrentHuman(){hotseatRevealed=true;$('kHotseatGate').classList.a
 function isMatchOver(){return matchLimit>=0?(points.A>=matchLimit||points.B>=matchLimit):(points.A<=matchLimit||points.B<=matchLimit);}
 function resetSetup(){
  if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
- game=null;auction=null;locked=false;trickView=[];hotseatRevealed=false;$('kHotseatGate')?.classList.add('hidden');
+ game=null;auction=null;locked=false;trickView=[];hotseatRevealed=false;$('kuwaitiGame')?.classList.remove('k-online-mode');$('kHotseatGate')?.classList.add('hidden');
  $('kAuction').classList.add('hidden');$('kAuctionSummary').classList.add('hidden');$('kContractSetup').classList.add('hidden');$('kMalzoomSetup').classList.add('hidden');$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');
  $('kHand').innerHTML='';$('kPreviousCards').innerHTML='';$('kCenterCards').innerHTML='';$('kTrumpDisplay').textContent='بدون حکم';$('kTrickCards').textContent='کارت‌های این دست: ۰ از ۶';$('kTurn').textContent='در انتظار مزایده';$('kStatus').textContent='میز پاک و آماده بازی جدید است.';
  for(let p=0;p<6;p++){$('kPlayed'+p).innerHTML='';$('kCount'+p).textContent='۹ کارت';$('kSeatTricks'+p).textContent='۰ دست تیم';$('kSeat'+p)?.classList?.remove('active');}
@@ -652,15 +654,10 @@ function resetSetup(){
  $('kMatchProgress').textContent='حد امتیاز مسابقه: '+(matchLimit>0?'+':'')+fa(matchLimit)+' · مجموع الف: '+fa(points.A)+' · مجموع ب: '+fa(points.B);
  renderHumanSeatChoices();$('kHumanSeatSetup').classList.toggle('hidden',$('kPlayStyle').value!=='hotseat');
  setScreen('setup');
- if(firstGame){$('kNextPicker').classList.add('hidden');}
- else{
-  $('kNextPicker').classList.remove('hidden');
-  const options=previousWinningTeam==='A'?[0,2,4]:[1,3,5];
-  const sel=$('kFirstAuction');sel.innerHTML=options.map(p=>'<option value="'+p+'">'+playerNames[p]+'</option>').join('');
-  if(previousWinningTeam==='A')sel.value='0';
- }
+ $('kNextPicker')?.classList.add('hidden');
 }
 function startAuction(){
+ $('kuwaitiGame')?.classList.remove('k-online-mode');
  humanSeats=$('kPlayStyle').value==='hotseat'?new Set([...document.querySelectorAll('#kHumanSeatChoices input:checked')].map(x=>Number(x.value))):new Set([0]);hotseatRevealed=false;
  if(!humanSeats.size){setStatus('دست‌کم یک صندلی انسانی انتخاب کن.');return;}
  if(isMatchOver()){setStatus('حد امتیاز مسابقه قبلاً ثبت شده است؛ مسابقه جدید را آغاز کن.');return;}
@@ -668,11 +665,11 @@ function startAuction(){
  // Clear every visual trace from the previous deal before dealing a fresh 54-card deck.
  $('kHand').innerHTML='';$('kPreviousCards').innerHTML='';$('kCenterCards').innerHTML='';$('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');$('kTrickCards').textContent='کارت‌های این دست: ۰ از ۶';
  for(let p=0;p<6;p++){$('kPlayed'+p).innerHTML='';$('kCount'+p).textContent='۹ کارت';}
- const firstAuctionPlayer=firstGame?null:Number($('kFirstAuction').value);
+ 
  // Do not allow a prior deal's contract or trump display to leak into the new auction.
  $('kTrumpDisplay').textContent='در انتظار مزایده';setContractChoice('hokm_spades');setMalzoomSuit('S');$('kAuctionSummary').classList.add('hidden');$('kContractSetup').classList.add('hidden');$('kWonA').textContent='۰';$('kWonB').textContent='۰';
  $('kStatus').textContent='کارت‌ها پخش شدند؛ قرارداد این بازی هنوز تعیین نشده است.';
- game=K.newGame({firstGame,previousAuctionWinner,firstAuctionPlayer});
+ game=K.newGame({firstGame,previousAuctionWinner,previousDealer,previousWinningTeam,score:points});
  game.contract=null;game.selectedContract=null;game.trumpSuit=null;game.trumpAnnounced=false;game.hiddenTrump=false;game.isMalzoom=false;
  game.initialHands=game.hands.map(h=>h.slice());
  auction={starter:game.auctionStarter,current:game.auctionStarter,highest:null,highestRank:0,highestPlayer:null,passes:0,bids:[],lastBidder:null};
@@ -1234,12 +1231,12 @@ function finishGame(){
  const opponentWon=game.trickWinners.length-won;
  let resultText='',score=0;
  if(game.isMalzoom){
-  $('kResult').classList.remove('hidden');
-  $('kResult').innerHTML='<b>نتیجه ملزوم</b><p class="k-small">تعداد دست‌های تیم برنده مزایده: '+fa(won)+' از ۹. با توجه به شرط ملزوم، نتیجه موفقیت را تعیین کن.</p><div class="k-actions"><button id="kMalzoomSuccess">ملزوم موفق · ۵+</button><button id="kMalzoomFail">ملزوم ناموفق · ۵-</button></div>';
-  $('kMalzoomSuccess').onclick=()=>applyScore(true,won,bidderTeam);
-  $('kMalzoomFail').onclick=()=>applyScore(false,won,bidderTeam);
-  resultText='بازی تمام شد؛ نتیجه ملزوم را مشخص کن.';
- }else{
+   const success=won>=5;
+   game.opponentTricks=opponentWon;
+   score=K.scoreContract('malzoom',won);
+   applyScore(success,won,bidderTeam,score);
+   resultText=success?'ملزوم موفق شد؛ تیم مزایده‌برنده حداقل ۵ دست گرفت.':'ملزوم ناموفق شد؛ تیم مزایده‌برنده کمتر از ۵ دست گرفت.';
+  }else{
   const target=game.auctionBid.target;
   const maxOpponentTricks=9-target;
   const success=won>=target;
@@ -1262,6 +1259,7 @@ function applyScore(success,won,bidderTeam,provided){
  const matchOver=isMatchOver();
  $('kMatchProgress').textContent='حد امتیاز مسابقه: '+(matchLimit>0?'+':'')+fa(matchLimit)+' · مجموع الف: '+fa(points.A)+' · مجموع ب: '+fa(points.B);
  previousAuctionWinner=game.auctionWinner;
+  previousDealer=game.dealer;
  previousWinningTeam=success?bidderTeam:(bidderTeam==='A'?'B':'A');
  firstGame=false;
  $('kResult').classList.remove('hidden');
@@ -1277,23 +1275,23 @@ function applyScore(success,won,bidderTeam,provided){
 }
 function startNewMatch(){
  if(isOnlineKuwaiti()){
-  const st=onlineKuwaiti.state||{};const picker=$('kOnlineNextPicker');
-  const action={type:'next_game'};
-  if(!st.matchOver){
-   if(!picker){onlineKuwaitiStatus('تیم برنده باید نفر اول مزایده را انتخاب کند.');return;}
-   action.first_auction_player=Number(picker.value);
-   const chosen=(st.seatPlayers||{})[String(action.first_auction_player)];
-   if(chosen&&chosen.human===false)action.bot_seat=action.first_auction_player;
-  }
-  onlineKuwaitiRpc(action).catch(e=>onlineKuwaitiStatus('شروع بازی بعدی انجام نشد: '+e.message));return;
+  const st=onlineKuwaiti.state||{};
+   const action={type:'next_game'};
+   if(!st.matchOver){
+    const winningTeam=st.previousWinningTeam;
+    const winnerSeats=[0,1,2,3,4,5].filter(p=>team(p)===winningTeam);
+    const winnerHasHuman=winnerSeats.some(p=>(st.seatPlayers||{})[String(p)]?.human===true);
+    if(onlineKuwaiti.isHost&&!winnerHasHuman){
+     const aiSeat=winnerSeats.find(p=>(st.seatPlayers||{})[String(p)]?.human===false);
+     if(Number.isInteger(aiSeat))action.bot_seat=aiSeat;
+    }
+   }
+   onlineKuwaitiRpc(action).catch(e=>onlineKuwaitiStatus('شروع بازی بعدی انجام نشد: '+e.message));return;
  }
  hotseatRevealed=false;
- if(isMatchOver()){firstGame=true;previousAuctionWinner=null;previousWinningTeam=null;points={A:0,B:0};matchGamesWon={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;resetSetup();return;}
+ if(isMatchOver()){firstGame=true;previousAuctionWinner=null;previousWinningTeam=null;previousDealer=null;points={A:0,B:0};matchGamesWon={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit').value)||54;resetSetup();return;}
  locked=false;
- const teamPlayers=previousWinningTeam==='B'?[1,3,5]:[0,2,4];
- const firstPicker=$('kFirstAuction');
- firstPicker.innerHTML=teamPlayers.map(p=>'<option value="'+p+'">'+playerNames[p]+'</option>').join('');
- firstPicker.value=String(teamPlayers[0]);
+ 
  $('kNewGame').classList.add('hidden');$('kResult').classList.add('hidden');
  startAuction();
 }
