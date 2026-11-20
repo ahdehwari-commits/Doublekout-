@@ -49,3 +49,11 @@ assert.ok(speakPlayer.includes('Array.isArray(requested)&&requested.length'),
 assert.ok(speakPlayer.includes("['کارت بازی شد!']"),
   'voice playback must have a non-empty fallback and never access undefined pool.length');
 console.log('PASS: missing speech categories cannot interrupt card play.');
+
+// The phase-modal wrapper must contain only auction/contract panels, never the table.
+const phaseModalStart = source.indexOf('<div id="kPhaseModal"');
+const tableStart = source.indexOf('<div class="k-table" id="kTable">', phaseModalStart);
+const phaseModalClose = source.indexOf('</div></div>', phaseModalStart);
+assert.ok(phaseModalStart >= 0 && phaseModalClose > phaseModalStart && phaseModalClose < tableStart,
+  'the six-player table must be outside the hidden phase-modal wrapper');
+console.log('PASS: hiding the contract modal cannot hide the six-player table.');
