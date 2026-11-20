@@ -1088,7 +1088,7 @@ function normalizedRank(c){const x=c&&(c.r!==undefined?c.r:c.rank),m={'2':0,'3':
 function sortCardArray(cards){const o={'♠':0,'♥':1,'♦':2,'♣':3};return cards.sort((x,y)=>(o[normalizedSuit(x)]??9)-(o[normalizedSuit(y)]??9)||normalizedRank(x)-normalizedRank(y));}
 $('sortHand').onclick=()=>{if(!G)return;const p=playStyle==='hotseat'?G.turn:0;if(playStyle==='hotseat'&&!humanSeats.has(p))return;sortCardArray(G.hands[p]);render()};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script><script src="./kuwaiti-six-player-ui.js?v=0.8.25-20261120-premium-contract-modal"></script><script>
+</script><script src="./kuwaiti-six-player-ui.js?v=0.8.26-20261120-premium-contract-modal-offline-ready"></script><script>
 (function(){
 'use strict';
 var PUBLIC_AUTH_REDIRECT='https://ahdehwari-commits.github.io/Doublekout-/';
@@ -1381,11 +1381,23 @@ async function ensureKuwaitiUiListener(){
  if(window.__doubleKoutKuwaitiOnlineListenerReady)return;
  await new Promise((resolve,reject)=>{
   const script=document.createElement('script');
-  script.src='./kuwaiti-six-player-ui.js?v=0.8.25-20261120-premium-contract-modal';
+  script.src='./kuwaiti-six-player-ui.js?v=0.8.26-20261120-premium-contract-modal-offline-ready';
   script.onload=()=>window.__doubleKoutKuwaitiOnlineListenerReady?resolve():reject(new Error('فایل رابط دریافت شد اما شنونده شروع آنلاین ثبت نشد.'));
   script.onerror=()=>reject(new Error('دریافت فایل رابط شش‌نفره ناموفق بود؛ اتصال یا مسیر فایل را بررسی کن.'));
   document.head.appendChild(script);
  });
+}
+async function ensureKuwaitiUiReady(){
+ await ensureKuwaitiUiListener();
+ if(window.__doubleKoutKuwaitiUiReady&&document.getElementById('kuwaitiGame'))return true;
+ var ready=window.__doubleKoutKuwaitiUiReadyPromise;
+ if(!ready)throw new Error('آماده‌سازی رابط میز شش‌نفره آغاز نشده است.');
+ var timer;
+ try{
+  await Promise.race([ready,new Promise(function(_,reject){timer=setTimeout(function(){reject(new Error('بارگذاری موتور یا ساخت میز شش‌نفره بیش از ۱۵ ثانیه طول کشید. صفحه را تازه‌سازی کن.'));},15000);})]);
+ }finally{if(timer)clearTimeout(timer);}
+ if(!window.__doubleKoutKuwaitiUiReady||!document.getElementById('kuwaitiGame'))throw new Error('موتور بازی آماده شد اما اجزای میز ساخته نشدند.');
+ return true;
 }
 async function startKuwaitiOnlineGame(fillAI){
  if(kuwaitiStartInFlight)return;
@@ -1411,7 +1423,7 @@ async function startKuwaitiOnlineGame(fillAI){
   myOnlineSeat=Number(mine.seat);myOnlineIsHost=!!mine.is_host;
   var info={roomId:roomId,code:roomCode,mode:mode,count:count,seat:myOnlineSeat,isHost:myOnlineIsHost,userId:me&&me.id,roster:onlineRosterRows};
   // The six-player view is switched synchronously by its event listener before this overlay closes.
-  await ensureKuwaitiUiListener();
+  await ensureKuwaitiUiReady();
   window.__doubleKoutKuwaitiAttachPromise=null;
   window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-online-started',{detail:info}));
   if(!window.__doubleKoutKuwaitiAttachPromise)throw new Error('رابط میز شش‌نفره بارگذاری نشده است؛ فایل kuwaiti-six-player-ui.js اجرا نشده.');
