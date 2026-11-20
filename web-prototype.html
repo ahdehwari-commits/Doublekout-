@@ -326,8 +326,9 @@ body.deck-back-classic .card.back{background:radial-gradient(ellipse,#1c5c92,#06
 .table>.seat .count,#onlineTable>.seat .count{color:#f5dfaa!important}
 @media(max-width:520px){.table,#onlineTable{min-height:440px!important;border-width:8px!important;border-radius:44%/25%!important}.table>.seat,#onlineTable>.seat{width:28%!important;min-height:78px!important;padding:5px 2px!important}.table>.north,#onlineTable>.north,.table>.south,#onlineTable>.south{left:36%!important;width:28%!important}.table>.west,#onlineTable>.west{left:0!important;top:39%!important}.table>.east,#onlineTable>.east{right:0!important;top:39%!important}.table>.center,#onlineTable>.center{left:27%!important;right:27%!important;top:29%!important;bottom:29%!important}.table>.seat .name,#onlineTable>.seat .name{font-size:10px!important;padding:2px 4px!important}}
 .mini-card img{display:block;width:100%;height:100%;object-fit:cover}
-body.deck-back-black .card.back{background-image:url("./assets/card-back-black-gold.svg")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
+body.deck-back-black .card.back{background-image:url("./assets/card-back-black-gold.png")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
 body.deck-back-black .card.back:before,body.deck-back-black .card.back:after{content:none!important}
+.back-choice.black:before{display:none!important}.back-choice.black i,.back-choice.black b{display:none!important}.back-choice.black img{display:block;width:100%;height:100%;object-fit:fill;border-radius:8px}
 
 /* Full-screen visual customization: large image rail, one category per screen */
 .customize-open{display:block;width:100%;margin:8px 0 14px;padding:13px 16px;border:1px solid #e7c777;border-radius:14px;background:linear-gradient(135deg,#292116,#090909);color:#f6d98f;box-shadow:inset 0 1px 0 #fff3,0 5px 16px #0009;font-weight:900}
@@ -530,6 +531,15 @@ body:has(#challengePanel[style*="display: block"]) #challengePanel,body:has(#tru
 body > #onlineHand.challenge-hand{position:fixed!important;left:50%!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:min(96vw,850px)!important;max-width:96vw!important;min-height:122px!important;max-height:158px!important;overflow-x:auto!important;overflow-y:visible!important;z-index:100020!important;display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
 body > #onlineHandTitle.challenge-hand-title{position:fixed!important;left:50%!important;bottom:calc(164px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:max-content!important;max-width:90vw!important;z-index:100021!important;display:block!important;visibility:visible!important;opacity:1!important}
 body > #onlineHand.challenge-hand button{position:relative!important}
+/* 9.57: expose the exact staged hand size in online contract/challenge selection. */
+body > #onlineHand.trump-selection-hand{min-height:112px!important;max-height:132px!important;padding:12px 8px 18px!important;justify-content:center!important}
+body > #onlineHand.trump-selection-hand button{flex:0 0 52px!important;width:52px!important;height:82px!important;margin-left:-14px!important}
+body > #onlineHand.trump-selection-hand button:first-child{margin-left:0!important}
+body > #onlineHand.challenge-selection-hand{min-height:112px!important;max-height:132px!important;padding:12px 4px 18px!important;justify-content:center!important}
+body > #onlineHand.challenge-selection-hand button{flex:0 0 44px!important;width:44px!important;height:70px!important;margin-left:-17px!important}
+body > #onlineHand.challenge-selection-hand button:first-child{margin-left:0!important}
+body > #onlineHand.challenge-selection-hand button .card{width:44px!important;height:70px!important}
+@media(max-width:390px){body > #onlineHand.challenge-selection-hand{width:98vw!important;max-width:98vw!important;padding-left:2px!important;padding-right:2px!important}body > #onlineHand.challenge-selection-hand button{flex-basis:42px!important;width:42px!important;height:68px!important;margin-left:-16px!important}body > #onlineHand.challenge-selection-hand button .card{width:42px!important;height:68px!important}}
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۲۳ · اصلاح مزایده و اتاق آنلاین</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="landing-personalize" aria-label="ابزارهای بازی">
@@ -557,7 +567,7 @@ body > #onlineHand.challenge-hand button{position:relative!important}
   <section class="customizer-page hidden" data-step="2"><div class="customizer-rail back-rail" data-kind="back">
    <button type="button" class="visual-choice large-choice" data-value="classic" aria-label="کلاسیک"><span class="back-choice classic"><i>♠</i><b>Abdolhamid Dehvari</b></span></button>
    <button type="button" class="visual-choice large-choice" data-value="red" aria-label="قرمز"><span class="back-choice red"><i>♥</i><b>Abdolhamid Dehvari</b></span></button>
-   <button type="button" class="visual-choice large-choice" data-value="black" aria-label="مشکی"><span class="back-choice black"><i>♣</i><b>Abdolhamid Dehvari</b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="black" aria-label="مشکی طلایی"><span class="back-choice black"><img src="./assets/card-back-black-gold.png" alt="پشت‌کارت مشکی طلایی"></span></button>
    <button type="button" class="visual-choice large-choice" data-value="green" aria-label="سبز"><span class="back-choice green"><i>♦</i><b>Abdolhamid Dehvari</b></span></button>
   </div></section>
   <section class="customizer-page hidden" data-step="3"><div class="avatar-customizer"><div class="avatar-customizer-title">آواتار دلخواهت را انتخاب کن</div><div class="avatar-customizer-grid" id="personalAvatarPicker"><button type="button" class="personal-avatar-option" data-personal-avatar="♛">♛</button><button type="button" class="personal-avatar-option" data-personal-avatar="⚔️">⚔️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🛡️">🛡️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🏆">🏆</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎖️">🎖️</button><button type="button" class="personal-avatar-option" data-personal-avatar="💎">💎</button><button type="button" class="personal-avatar-option" data-personal-avatar="🔱">🔱</button><button type="button" class="personal-avatar-option" data-personal-avatar="🧿">🧿</button><button type="button" class="personal-avatar-option" data-personal-avatar="🕶️">🕶️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎩">🎩</button><button type="button" class="personal-avatar-option" data-personal-avatar="🥇">🥇</button><button type="button" class="personal-avatar-option" data-personal-avatar="♠️">♠️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♥️">♥️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♦️">♦️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♣️">♣️</button><button type="button" class="personal-avatar-option" data-personal-avatar="⭐">⭐</button></div><p>انتخابت ذخیره می‌شود و در میز بازی زیر نامت نمایش داده خواهد شد.</p></div></section>
@@ -1755,12 +1765,12 @@ async function refreshOnlineGame(startPayload){
    document.body.appendChild(handTitle);document.body.appendChild(handArea);
    var portalStyle=document.getElementById('online-private-hand-portal-style');
    if(!portalStyle){portalStyle=document.createElement('style');portalStyle.id='online-private-hand-portal-style';portalStyle.textContent='#onlineHand.challenge-hand{display:flex!important;justify-content:center!important;align-items:flex-end!important;gap:0!important;padding:12px 8px 20px!important;background:linear-gradient(180deg,#123d30f7,#071e18f7)!important;border:1px solid #f0d18b!important;border-radius:14px!important;box-shadow:0 8px 24px #000c!important}#onlineHand.challenge-hand button{display:block!important;visibility:visible!important;opacity:1!important;flex:0 0 46px!important;width:46px!important;height:74px!important;padding:0!important;background:transparent!important}#onlineHand.challenge-hand button .card{visibility:visible!important;opacity:1!important;filter:none!important}#onlineHandTitle.challenge-hand-title{margin:0!important;padding:5px 10px!important;text-align:center!important;border:1px solid #8e713e!important;border-radius:10px 10px 0 0!important;background:#09271f!important;color:#ffe3a0!important}';document.head.appendChild(portalStyle);}
-   handTitle.classList.add('challenge-hand-title');handArea.classList.add('challenge-hand');
+   handTitle.classList.add('challenge-hand-title');handArea.classList.add('challenge-hand');handArea.classList.toggle('trump-selection-hand',trumpPending);handArea.classList.toggle('challenge-selection-hand',decisionPending);
    Object.assign(handArea.style,{position:'fixed',left:'50%',bottom:'calc(7px + env(safe-area-inset-bottom))',transform:'translateX(-50%)',width:'min(96vw,850px)',maxWidth:'96vw',minHeight:'120px',maxHeight:'132px',overflowX:'auto',overflowY:'visible',zIndex:'100020',display:'flex',visibility:'visible',opacity:'1',pointerEvents:'auto'});
    Object.assign(handTitle.style,{position:'fixed',left:'50%',bottom:'calc(119px + env(safe-area-inset-bottom))',transform:'translateX(-50%)',width:'min(96vw,850px)',zIndex:'100021',display:'block',visibility:'visible',opacity:'1'});
   }else{
    onlineTable.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
-   handTitle.classList.remove('challenge-hand-title');handArea.classList.remove('challenge-hand');
+   handTitle.classList.remove('challenge-hand-title');handArea.classList.remove('challenge-hand');handArea.classList.remove('trump-selection-hand','challenge-selection-hand');
    handArea.removeAttribute('style');handTitle.removeAttribute('style');
   }
   if(trumpPending){
@@ -1790,7 +1800,7 @@ async function refreshOnlineGame(startPayload){
   var completedTricks=Array.isArray(state.trickWinners)?state.trickWinners.length:Math.max(0,(Number(state.trickNo)||1)-1);
   seatDefs.forEach(function(def){
    var seat=(myOnlineSeat+def.offset)%4,player=players[String(seat)]||{},left=trumpPending?5:Math.max(0,13-completedTricks-((playBySeat[seat])?1:0));
-   var visibleCount=def.offset===0?hand.length:left;
+   var visibleCount=def.offset===0?(trumpPending?Math.min(hand.length,5):hand.length):left;
    var scoreRow=onlineRosterRows.find(function(x){return Number(x.seat)===seat;});
    var identity=splitAvatarName((scoreRow&&scoreRow.display_name)||player.name||('بازیکن '+(seat+1)));var nameNode=el('onlineName'+def.key);nameNode.textContent='';var avatarNode=document.createElement('span');avatarNode.className='online-avatar-mini';avatarNode.textContent=identity.avatar;var nameText=document.createElement('span');nameText.textContent=(def.offset===0?'شما · ':'')+identity.name+(scoreRow?' · '+Number(scoreRow.points||0)+' امتیاز':'');nameNode.appendChild(nameText);nameNode.appendChild(avatarNode);
    el('onlineCount'+def.key).textContent=visibleCount+' کارت';
@@ -1837,12 +1847,13 @@ async function refreshOnlineGame(startPayload){
   el('onlineLiveScoreTop').textContent=liveScoreText;
   el('onlineScore').textContent=liveScoreText;
   el('onlineHand').innerHTML='';
-  el('onlineHandTitle').textContent='کارت‌های شما · '+hand.length+' کارت';
+  var displayHand=trumpPending?hand.slice(0,5):(decisionPending?hand.slice(0,13):hand);
+  el('onlineHandTitle').textContent='کارت‌های شما · '+displayHand.length+' کارت';
   var leadOnlineCard=(state.plays||[])[0]&&((state.plays||[])[0].card||{}),leadOnlineSuit=leadOnlineCard&&(leadOnlineCard.suit||leadOnlineCard.s);
    leadOnlineSuit=({'S':'♠','H':'♥','D':'♦','C':'♣','♠':'♠','♥':'♥','♦':'♦','♣':'♣'})[leadOnlineSuit]||'';
    var followsLead=!!leadOnlineSuit&&hand.some(function(card){return normalizedSuit(card)===leadOnlineSuit;}),hasForcedSuit=!!leadOnlineSuit&&followsLead&&hand.some(function(card){return normalizedSuit(card)!==leadOnlineSuit;});
    var myPlayTurn=turn===myOnlineSeat&&!finished&&!decisionPending&&!trumpPending&&!trickPending;
-   hand.forEach(function(c,i){
+   displayHand.forEach(function(c,i){
     var b=document.createElement('button'),fanOffset=i-(hand.length-1)/2;b.type='button';b.style.transform='rotate('+(fanOffset*4.2)+'deg) translateY('+(Math.abs(fanOffset)*1.45)+'px)';b.style.position='relative';b.style.zIndex=String(100+i);b.style.setProperty('--hand-index',String(i));
     var legalCard=!followsLead||normalizedSuit(c)===leadOnlineSuit;b.classList.add(myPlayTurn?(hasForcedSuit?(legalCard?'online-card-legal':'online-card-illegal'):'online-card-unrestricted'):'online-card-inactive');b.style.setProperty('position','relative','important');b.style.setProperty('z-index',String(100+i),'important');b.appendChild(cardEl(visualCard(c)));
     b.disabled=!myPlayTurn||!legalCard;
