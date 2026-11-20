@@ -532,15 +532,9 @@ body:has(#challengePanel[style*="display: block"]) #challengePanel,body:has(#tru
 
 <div id="visualCustomizer" class="visual-customizer-full hidden" aria-modal="true" role="dialog" aria-label="سفارشی‌سازی ظاهر بازی">
  <div class="customizer-top"><button id="customizerClose" type="button">بازگشت</button><div id="customizerTitle">پشت کارت‌ها</div><div id="customizerStep">۱ از ۴</div></div>
- <div class="customizer-tabs"><button type="button" data-go-step="0" class="active">پشت کارت</button><button type="button" data-go-step="1">میز بازی</button><button type="button" data-go-step="2">چینش ۶ نفره</button><button type="button" data-go-step="3">آواتار من</button></div>
+ <div class="customizer-tabs"><button type="button" data-go-step="0" class="active">میز بازی</button><button type="button" data-go-step="1">چینش ۶ نفره</button><button type="button" data-go-step="2">آواتار من</button></div>
  <div class="customizer-stage">
-  <section class="customizer-page" data-step="0"><div class="customizer-rail" data-kind="back">
-   <button type="button" class="visual-choice large-choice" data-value="black" aria-label="مشکی طلایی"><img class="back-art" src="./assets/card-back-black-gold.svg" alt="پشت کارت مشکی طلایی"></button>
-   <button type="button" class="visual-choice large-choice" data-value="classic" aria-label="آبی طلایی"><span class="large-card mini-blue"><i>♠</i><b>DOUBLE KOUT</b></span></button>
-   <button type="button" class="visual-choice large-choice" data-value="red" aria-label="قرمز طلایی"><span class="large-card mini-red"><i>♠</i><b>DOUBLE KOUT</b></span></button>
-   <button type="button" class="visual-choice large-choice" data-value="green" aria-label="سبز طلایی"><span class="large-card mini-green"><i>♠</i><b>DOUBLE KOUT</b></span></button>
-  </div></section>
-  <section class="customizer-page hidden" data-step="1"><div class="customizer-rail table-rail" data-kind="table">
+  <section class="customizer-page hidden" data-step="0"><div class="customizer-rail table-rail" data-kind="table">
    <button type="button" class="visual-choice large-choice" data-value="marble" aria-label="مرمر"><span class="mini-table marble"><i></i><b></b></span></button>
    <button type="button" class="visual-choice large-choice" data-value="royal" aria-label="سلطنتی"><span class="mini-table royal"><i></i><b></b></span></button>
    <button type="button" class="visual-choice large-choice" data-value="casino" aria-label="کازینو"><span class="mini-table casino"><i></i><b></b></span></button>
@@ -548,12 +542,12 @@ body:has(#challengePanel[style*="display: block"]) #challengePanel,body:has(#tru
    <button type="button" class="visual-choice large-choice" data-value="persian" aria-label="فرش ایرانی"><span class="mini-table persian"><i></i><b></b></span></button>
    <button type="button" class="visual-choice large-choice" data-value="felt" aria-label="مخمل"><span class="mini-table felt"><i></i><b></b></span></button>
   </div></section>
-  <section class="customizer-page hidden" data-step="2"><div class="customizer-rail layout-rail" data-kind="layout">
+  <section class="customizer-page hidden" data-step="1"><div class="customizer-rail layout-rail" data-kind="layout">
    <button type="button" class="visual-choice large-choice" data-value="arc" aria-label="قوسی"><span class="mini-layout arc"><i></i></span></button>
    <button type="button" class="visual-choice large-choice" data-value="hex" aria-label="شش ضلعی"><span class="mini-layout hex"><i></i></span></button>
    <button type="button" class="visual-choice large-choice" data-value="wide" aria-label="گسترده"><span class="mini-layout wide"><i></i></span></button>
   </div></section>
-  <section class="customizer-page hidden" data-step="3"><div class="avatar-customizer"><div class="avatar-customizer-title">آواتار دلخواهت را انتخاب کن</div><div class="avatar-customizer-grid" id="personalAvatarPicker"><button type="button" class="personal-avatar-option" data-personal-avatar="♛">♛</button><button type="button" class="personal-avatar-option" data-personal-avatar="⚔️">⚔️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🛡️">🛡️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🏆">🏆</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎖️">🎖️</button><button type="button" class="personal-avatar-option" data-personal-avatar="💎">💎</button><button type="button" class="personal-avatar-option" data-personal-avatar="🔱">🔱</button><button type="button" class="personal-avatar-option" data-personal-avatar="🧿">🧿</button><button type="button" class="personal-avatar-option" data-personal-avatar="🕶️">🕶️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎩">🎩</button><button type="button" class="personal-avatar-option" data-personal-avatar="🥇">🥇</button><button type="button" class="personal-avatar-option" data-personal-avatar="♠️">♠️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♥️">♥️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♦️">♦️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♣️">♣️</button><button type="button" class="personal-avatar-option" data-personal-avatar="⭐">⭐</button></div><p>انتخابت ذخیره می‌شود و در میز بازی زیر نامت نمایش داده خواهد شد.</p></div></section>
+  <section class="customizer-page hidden" data-step="2"><div class="avatar-customizer"><div class="avatar-customizer-title">آواتار دلخواهت را انتخاب کن</div><div class="avatar-customizer-grid" id="personalAvatarPicker"><button type="button" class="personal-avatar-option" data-personal-avatar="♛">♛</button><button type="button" class="personal-avatar-option" data-personal-avatar="⚔️">⚔️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🛡️">🛡️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🏆">🏆</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎖️">🎖️</button><button type="button" class="personal-avatar-option" data-personal-avatar="💎">💎</button><button type="button" class="personal-avatar-option" data-personal-avatar="🔱">🔱</button><button type="button" class="personal-avatar-option" data-personal-avatar="🧿">🧿</button><button type="button" class="personal-avatar-option" data-personal-avatar="🕶️">🕶️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎩">🎩</button><button type="button" class="personal-avatar-option" data-personal-avatar="🥇">🥇</button><button type="button" class="personal-avatar-option" data-personal-avatar="♠️">♠️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♥️">♥️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♦️">♦️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♣️">♣️</button><button type="button" class="personal-avatar-option" data-personal-avatar="⭐">⭐</button></div><p>انتخابت ذخیره می‌شود و در میز بازی زیر نامت نمایش داده خواهد شد.</p></div></section>
  </div>
  <div class="customizer-bottom"><button id="customizerNext" type="button">تأیید و مرحله بعد</button><button id="customizerDone" type="button" class="hidden">تأیید نهایی و بازگشت به انتخاب میزها</button></div>
 </div>
@@ -567,7 +561,7 @@ body:has(#challengePanel[style*="display: block"]) #challengePanel,body:has(#tru
 <div id="storeModal" class="store-modal hidden" role="dialog" aria-modal="true" aria-labelledby="storeModalTitle">
  <section class="store-modal-panel">
   <header class="store-modal-head"><h2 id="storeModalTitle">🛍️ فروشگاه</h2><button id="closeStore" type="button" aria-label="بستن فروشگاه">✕ بستن</button></header>
-  <p class="store-modal-intro">خرید امتیاز و تهیه یا فعال‌سازی طرح‌های پشت کارت، همگی از همین فروشگاه انجام می‌شوند.</p>
+  <p class="store-modal-intro">طرح‌های پشت کارت و بسته‌های امتیاز در همین فروشگاه قرار دارند.</p>
   <div id="storeAccessNotice" class="store-access-notice hidden" role="status" aria-live="polite">برای ذخیره خریدها و طرح‌های انتخابی، لطفاً وارد حساب کاربری شوید.</div>
   <div id="storeContent"></div>
  </section>
@@ -1000,26 +994,25 @@ function royalPortrait(rank){
  return '<svg class="royal-art" viewBox="0 0 64 76" role="img" aria-label="'+({K:'شاه',Q:'بی‌بی',J:'سرباز'})[rank]+'"><defs><linearGradient id="robe'+rank+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+p.coat+'"/><stop offset="1" stop-color="#101b2c"/></linearGradient></defs><rect x="2" y="2" width="60" height="72" rx="8" fill="#f4e7c8" stroke="#a37a3c" stroke-width="1.8"/><path d="M7 70Q9 53 21 49L32 55L43 49Q55 53 57 70Z" fill="url(#robe'+rank+')" stroke="#4b3928" stroke-width="1.5"/><path d="M21 50L32 61L43 50L40 70H24Z" fill="'+p.light+'" opacity=".9"/><path d="M15 69Q18 57 24 56L32 65L40 56Q47 58 49 69" fill="none" stroke="#f6df9a" stroke-width="2"/>'+head+crown+'<path d="M28 52L32 57L36 52" fill="none" stroke="#fff0c4" stroke-width="2"/><path d="M9 9H55M9 66H55" stroke="#b48b4a" stroke-width=".8" opacity=".75"/><circle cx="12" cy="12" r="2" fill="#c9a45d"/><circle cx="52" cy="12" r="2" fill="#c9a45d"/><circle cx="12" cy="64" r="2" fill="#c9a45d"/><circle cx="52" cy="64" r="2" fill="#c9a45d"/></svg>';
 }
 
-var visualChoice={back:'black',table:'marble',layout:'arc'};
+var visualChoice={table:'marble',layout:'arc'};
 function setCardCustomization(){
  document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','six-layout-arc','six-layout-hex','six-layout-wide');
- document.body.classList.add('deck-back-'+visualChoice.back,'table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
- try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({back:visualChoice.back,table:visualChoice.table,layout:visualChoice.layout,v:2}));}catch(e){}
+ document.body.classList.add('table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
+ try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({table:visualChoice.table,layout:visualChoice.layout,v:3}));}catch(e){}
  document.querySelectorAll('#visualCustomizer .visual-choice').forEach(function(b){b.classList.toggle('selected',visualChoice[b.parentElement.dataset.kind]===b.dataset.value);});
 }
-function resetCardCustomization(){visualChoice={back:'black',table:'marble',layout:'arc'};setCardCustomization();}
+function resetCardCustomization(){visualChoice={table:'marble',layout:'arc'};setCardCustomization();}
 (function loadCardCustomization(){
  let saved={};try{saved=JSON.parse(localStorage.getItem('doubleKoutCardStyle')||'{}')||{};}catch(e){}
- visualChoice.back=saved.v===2&&['classic','red','black','green'].includes(saved.back)?saved.back:'black';
- visualChoice.table=['felt','parquet','persian','marble','royal','casino'].includes(saved.table)?saved.table:'marble';
+  visualChoice.table=['felt','parquet','persian','marble','royal','casino'].includes(saved.table)?saved.table:'marble';
  visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';setCardCustomization();
 })();
 (function(){
  const modal=document.getElementById('visualCustomizer'),title=document.getElementById('customizerTitle'),stepLabel=document.getElementById('customizerStep');
- const titles=['پشت کارت‌ها','میز بازی','چینش ۶ نفره','آواتار من'];
+ const titles=['میز بازی','چینش ۶ نفره','آواتار من'];
  let step=0;
  const storeRoot=document.getElementById("storeModal");if(storeRoot&&storeRoot.parentElement!==document.body)document.body.appendChild(storeRoot);if(modal&&modal.parentElement!==document.body)document.body.appendChild(modal);
- function showStep(n){step=Math.max(0,Math.min(3,n));modal.querySelectorAll('.customizer-page').forEach(p=>p.classList.toggle('hidden',Number(p.dataset.step)!==step));modal.querySelectorAll('[data-go-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.goStep)===step));title.textContent=titles[step];stepLabel.textContent=(step+1)+' از ۴';document.getElementById('customizerNext').classList.toggle('hidden',step===3);document.getElementById('customizerDone').classList.toggle('hidden',step!==3);modal.querySelectorAll('.customizer-rail .visual-choice').forEach(b=>{const rail=b.closest('[data-kind]');b.classList.toggle('selected',visualChoice[rail.dataset.kind]===b.dataset.value);});const selectedAvatar=localStorage.getItem('doubleKoutAvatar')||'♛';modal.querySelectorAll('[data-personal-avatar]').forEach(b=>b.classList.toggle('selected',b.dataset.personalAvatar===selectedAvatar));}
+ function showStep(n){step=Math.max(0,Math.min(2,n));modal.querySelectorAll('.customizer-page').forEach(p=>p.classList.toggle('hidden',Number(p.dataset.step)!==step));modal.querySelectorAll('[data-go-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.goStep)===step));title.textContent=titles[step];stepLabel.textContent=(step+1)+' از ۳';document.getElementById('customizerNext').classList.toggle('hidden',step===2);document.getElementById('customizerDone').classList.toggle('hidden',step!==2);modal.querySelectorAll('.customizer-rail .visual-choice').forEach(b=>{const rail=b.closest('[data-kind]');b.classList.toggle('selected',visualChoice[rail.dataset.kind]===b.dataset.value);});const selectedAvatar=localStorage.getItem('doubleKoutAvatar')||'♛';modal.querySelectorAll('[data-personal-avatar]').forEach(b=>b.classList.toggle('selected',b.dataset.personalAvatar===selectedAvatar));}
  // Delegated handlers: the shop button is injected by ensureUI after this script runs.
  document.addEventListener('click',e=>{
   const target=e.target;
