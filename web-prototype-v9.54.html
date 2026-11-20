@@ -532,8 +532,11 @@ body > #onlineHand.challenge-hand{position:fixed!important;left:50%!important;bo
 body > #onlineHandTitle.challenge-hand-title{position:fixed!important;left:50%!important;bottom:calc(164px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:max-content!important;max-width:90vw!important;z-index:100021!important;display:block!important;visibility:visible!important;opacity:1!important}
 body > #onlineHand.challenge-hand button{position:relative!important}
 /* 9.58: online hand cards always stack by their actual hand order, including after refresh. */
-#onlinePanel #onlineHand>button,body>#onlineHand>button{position:relative!important;z-index:calc(1000 + var(--hand-index))!important;order:var(--hand-index)!important;isolation:isolate!important}
-#onlinePanel #onlineHand>button .card,body>#onlineHand>button .card{position:relative!important;z-index:1!important}
+/* 9.59: isolate the online hand from the offline .hand flex/negative-margin rules. */
+#onlinePanel #onlineHand.online-hand-isolated{display:block!important;position:relative!important;height:120px!important;min-height:120px!important;max-height:120px!important;overflow:visible!important;padding:0!important;margin:0!important}
+body>#onlineHand.online-hand-isolated{display:block!important;height:120px!important;min-height:120px!important;max-height:120px!important;overflow:visible!important;padding:0!important;margin:0!important}
+#onlinePanel #onlineHand.online-hand-isolated>button,body>#onlineHand.online-hand-isolated>button{position:absolute!important;flex:none!important;display:block!important;isolation:isolate!important;box-sizing:border-box!important}
+#onlinePanel #onlineHand.online-hand-isolated>button .card,body>#onlineHand.online-hand-isolated>button .card{position:relative!important;z-index:1!important;width:44px!important;height:66px!important;margin:0!important}
 /* 9.57: expose the exact staged hand size in online contract/challenge selection. */
 body > #onlineHand.trump-selection-hand{min-height:112px!important;max-height:132px!important;padding:12px 8px 18px!important;justify-content:center!important}
 body > #onlineHand.trump-selection-hand button{flex:0 0 52px!important;width:52px!important;height:82px!important;margin-left:-14px!important}
@@ -1849,7 +1852,10 @@ async function refreshOnlineGame(startPayload){
   var liveScoreText=(mode==='double-kout'?'دست‌های گروه‌های تکمیل‌شده':'دست‌های انجام‌شده')+' · تیم '+teamAName+': '+faScore(liveTeamScores.A)+' · تیم '+teamBName+': '+faScore(liveTeamScores.B)+'  |  مجموع دست‌های ثبت‌شده: '+faScore(completedGroupHands);
   el('onlineLiveScoreTop').textContent=liveScoreText;
   el('onlineScore').textContent=liveScoreText;
-  el('onlineHand').innerHTML='';
+  var onlineHandEl=el('onlineHand');
+  onlineHandEl.classList.add('online-hand-isolated');
+  onlineHandEl.innerHTML='';
+  onlineHandEl.style.height='120px';
   var displayHand=trumpPending?hand.slice(0,5):(decisionPending?hand.slice(0,13):hand);
   el('onlineHandTitle').textContent='کارت‌های شما · '+displayHand.length+' کارت';
   var leadOnlineCard=(state.plays||[])[0]&&((state.plays||[])[0].card||{}),leadOnlineSuit=leadOnlineCard&&(leadOnlineCard.suit||leadOnlineCard.s);
@@ -1857,8 +1863,24 @@ async function refreshOnlineGame(startPayload){
    var followsLead=!!leadOnlineSuit&&hand.some(function(card){return normalizedSuit(card)===leadOnlineSuit;}),hasForcedSuit=!!leadOnlineSuit&&followsLead&&hand.some(function(card){return normalizedSuit(card)!==leadOnlineSuit;});
    var myPlayTurn=turn===myOnlineSeat&&!finished&&!decisionPending&&!trumpPending&&!trickPending;
    displayHand.forEach(function(c,i){
-    var b=document.createElement('button'),fanOffset=i-(hand.length-1)/2;b.type='button';b.style.transform='rotate('+(fanOffset*4.2)+'deg) translateY('+(Math.abs(fanOffset)*1.45)+'px)';b.style.position='relative';b.style.zIndex=String(100+i);b.style.setProperty('--hand-index',String(i));
-    var legalCard=!followsLead||normalizedSuit(c)===leadOnlineSuit;b.classList.add(myPlayTurn?(hasForcedSuit?(legalCard?'online-card-legal':'online-card-illegal'):'online-card-unrestricted'):'online-card-inactive');b.style.setProperty('position','relative','important');b.style.setProperty('z-index',String(1000+i),'important');b.style.setProperty('order',String(i),'important');b.appendChild(cardEl(visualCard(c)));
+    var b=document.createElement('button');
+    var fanOffset=i-(displayHand.length-1)/2;
+    var fanStep=Math.min(18,Math.max(12,(window.innerWidth||390)*0.86/(displayHand.length+1)));
+    b.type='button';
+    b.style.setProperty('position','absolute','important');
+    b.style.setProperty('left','calc(50% + '+(fanOffset*fanStep)+'px)','important');
+    b.style.setProperty('bottom','16px','important');
+    b.style.setProperty('width','44px','important');
+    b.style.setProperty('height','66px','important');
+    b.style.setProperty('margin','0','important');
+    b.style.setProperty('padding','0','important');
+    b.style.setProperty('transform','translateX(-50%) rotate('+(fanOffset*3.2)+'deg) translateY('+(Math.abs(fanOffset)*1.2)+'px)','important');
+    b.style.setProperty('transform-origin','50% 100%','important');
+    b.style.setProperty('z-index',String(1000+i),'important');
+    b.style.setProperty('--hand-index',String(i));
+    var legalCard=!followsLead||normalizedSuit(c)===leadOnlineSuit;
+    b.classList.add(myPlayTurn?(hasForcedSuit?(legalCard?'online-card-legal':'online-card-illegal'):'online-card-unrestricted'):'online-card-inactive');
+    b.appendChild(cardEl(visualCard(c)));
     b.disabled=!myPlayTurn||!legalCard;
     b.onclick=async function(){
     if(b.disabled||onlineCardBusy)return;
