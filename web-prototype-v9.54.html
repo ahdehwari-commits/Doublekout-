@@ -575,6 +575,35 @@ body > #onlineHand.challenge-selection-hand button{flex:0 0 44px!important;width
 body > #onlineHand.challenge-selection-hand button:first-child{margin-left:0!important}
 body > #onlineHand.challenge-selection-hand button .card{width:44px!important;height:70px!important}
 @media(max-width:390px){body > #onlineHand.challenge-selection-hand{width:98vw!important;max-width:98vw!important;padding-left:2px!important;padding-right:2px!important}body > #onlineHand.challenge-selection-hand button{flex-basis:42px!important;width:42px!important;height:68px!important;margin-left:-16px!important}body > #onlineHand.challenge-selection-hand button .card{width:42px!important;height:68px!important}}
+
+/* 9.61: final authoritative layout for the four-player online hand.
+   5-card trump selection uses full-size cards; 13-card challenge/play fans
+   use adaptive overlap so the complete hand remains visible. */
+#onlinePanel #onlineHand.online-hand-isolated{
+ display:block!important;position:relative!important;width:100%!important;
+ height:112px!important;min-height:112px!important;max-height:112px!important;
+ padding:0!important;margin:0!important;overflow:visible!important;
+ isolation:isolate!important;direction:ltr!important;box-sizing:border-box!important;
+}
+#onlinePanel #onlineHand.online-hand-isolated>button{
+ position:absolute!important;display:block!important;flex:none!important;
+ width:54px!important;height:81px!important;min-width:54px!important;
+ margin:0!important;padding:0!important;top:auto!important;
+ transform-origin:50% 100%!important;transition:none!important;
+ box-sizing:border-box!important;
+}
+#onlinePanel #onlineHand.online-hand-isolated>button>.card{
+ position:relative!important;display:block!important;
+ width:54px!important;height:81px!important;min-width:54px!important;
+ margin:0!important;padding:5px!important;transform:none!important;
+ transition:none!important;animation:none!important;
+ box-sizing:border-box!important;
+}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal>.card,
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal>.card,
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-inactive>.card{
+ transform:none!important;
+}
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۲۳ · اصلاح مزایده و اتاق آنلاین</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="landing-personalize" aria-label="ابزارهای بازی">
@@ -1895,13 +1924,13 @@ async function refreshOnlineGame(startPayload){
     var b=document.createElement('button');
     var fanOffset=i-(displayHand.length-1)/2;
     var handWidth=onlineHandEl.clientWidth||((window.innerWidth||390)-24);
-    var fanStep=displayHand.length>1?Math.max(12,Math.min(17,(handWidth-48)/(displayHand.length-1))):0;
+    var fanStep=displayHand.length>1?Math.max(18,Math.min(54,(handWidth-54)/(displayHand.length-1))):0;
     b.type='button';
     b.style.setProperty('position','absolute','important');
     b.style.setProperty('left','calc(50% + '+(fanOffset*fanStep)+'px)','important');
     b.style.setProperty('bottom','16px','important');
-    b.style.setProperty('width','44px','important');
-    b.style.setProperty('height','66px','important');
+    b.style.setProperty('width','54px','important');
+    b.style.setProperty('height','81px','important');
     b.style.setProperty('margin','0','important');
     b.style.setProperty('padding','0','important');
     b.style.setProperty('transform','translateX(-50%) rotate('+(fanOffset*1.15)+'deg)','important');
