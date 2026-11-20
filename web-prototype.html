@@ -617,6 +617,39 @@ body > #onlineHand.challenge-selection-hand button .card{width:44px!important;he
  #onlineTable>.seat.west{transform:translateX(-7px)!important}
  #onlineTable>.seat.east{transform:translateX(7px)!important}
 }
+</style><style id="online-live-trick-above-history">
+/* Historical pile is a separate low layer; active four cards must stay crisp above it. */
+#onlineTable{isolation:isolate!important}
+#onlineTable #onlineCenterPile{
+ position:absolute!important;
+ z-index:4!important;
+ opacity:1!important;
+ filter:none!important;
+ pointer-events:none!important;
+}
+#onlineTable #onlineCenterPile .pile-card{
+ z-index:1!important;
+ opacity:.44!important;
+ filter:blur(.12px)!important;
+}
+#onlineTable>.center{
+ position:relative!important;
+ z-index:70!important;
+ isolation:isolate!important;
+}
+#onlineTable>.center .center-trick{
+ position:relative!important;
+ z-index:71!important;
+ opacity:1!important;
+ filter:none!important;
+}
+#onlineTable>.center .center-trick .table-played{
+ position:relative!important;
+ z-index:72!important;
+ opacity:1!important;
+ filter:none!important;
+}
+#onlineTable #onlineTrickMsg{position:relative;z-index:73}
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۲۳ · اصلاح مزایده و اتاق آنلاین</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="landing-personalize" aria-label="ابزارهای بازی">
