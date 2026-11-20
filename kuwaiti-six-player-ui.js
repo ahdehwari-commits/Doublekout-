@@ -1238,7 +1238,7 @@ function renderGame(){
   const b=document.createElement('button');
   const offset=i-(arr.length-1)/2;
   b.style.transform='rotate('+(offset*4.8)+'deg) translateY('+(Math.abs(offset)*2.4)+'px)';
-  b.style.zIndex=String(10+i);
+  b.style.position='relative';b.style.zIndex=String(100+i);b.style.setProperty('--hand-index',String(i));
   const lead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});
   const legal=displayPlayer===turnPlayer&&isTurnHuman&&!game.done&&displayLegalCards.some(x=>x.id===c.id);
   b.disabled=!legal;b.append(cardNode(c));b.onclick=()=>playHumanCard(c);$('kHand').append(b);
@@ -1400,4 +1400,4 @@ if(window.visualViewport)window.visualViewport.addEventListener('resize',refresh
 // This script is loaded after the complete page markup; initialize synchronously.
 init();
 })();
-/* build: 0.8.28 clear online/offline session state + remove hotseat handoff */
+/* build: 0.8.29 restore card-back personalization + deterministic hand stacking */
