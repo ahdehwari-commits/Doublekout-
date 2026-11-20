@@ -1792,7 +1792,7 @@ async function refreshOnlineGame(startPayload){
    onlineTrickResolveTimer=setTimeout(function(){
     onlineTrickResolveScheduled=false;onlineTrickResolveTimer=null;
     refreshOnlineGame();
-   },3100);
+   },1200);
   }else if(!trickPending&&onlineTrickResolveTimer){
    clearTimeout(onlineTrickResolveTimer);onlineTrickResolveTimer=null;onlineTrickResolveScheduled=false;
   }
@@ -1886,22 +1886,11 @@ async function refreshOnlineGame(startPayload){
   el('onlineTrick').innerHTML='';
   (state.plays||[]).forEach(function(p,i){var played=cardEl(visualCard(p.card),true);played.classList.add('table-played');played.style.setProperty('--play-index',i);el('onlineTrick').appendChild(played);});
   var onlinePile=el('onlineCenterPile');if(onlinePile){
-   var pileRoomKey=String(roomId||'');
-   if(onlinePileHistoryRoom!==pileRoomKey){onlinePileHistory=[];onlinePileHistoryRoom=pileRoomKey;}
-   var clearing=Number(state.sequenceClearUntil||0)>Date.now()/1000;
-   var completedPile=state.sequenceClearCards||[];
-   // Snapshot polling is slower than the 0.9s clear animation. Capture the persisted completed pile whenever it exists, not only during that brief animation window.
-   if(completedPile.length){
-    var completedSignature=completedPile.map(function(x){var c=x.card||x;return String(c.id||c.code||((c.suit||c.s)+'-'+(c.rank||c.r)));}).join('|');
-    if(completedSignature&&!onlinePileHistory.some(function(g){return g.signature===completedSignature;})){
-     onlinePileHistory.push({signature:completedSignature,cards:completedPile.map(function(x){return {card:Object.assign({},x.card||x)};})});
-    }
-   }
    onlinePile.innerHTML='';onlinePile.classList.remove('clearing');
    function drawOnlinePileGroup(cards,index,isCurrent){
     if(!cards||!cards.length)return;
     var layer=document.createElement('div');layer.className='online-pile-layer '+(isCurrent?'current':'completed');
-    layer.style.cssText='position:absolute;inset:0;pointer-events:none;opacity:'+(isCurrent?'0.94':'0.54')+';z-index:'+(index+1)+';transform:'+(isCurrent?'translateY(-6px) scale(1.02)':'translateY('+(Math.min(index,4)*2)+'px) scale(0.98)')+';filter:'+(isCurrent?'drop-shadow(0 7px 9px #000c)':'none')+';';
+    layer.style.cssText='position:absolute;inset:0;pointer-events:none;opacity:'+(isCurrent?'0.96':'0.68')+';z-index:'+(index+1)+';transform:'+(isCurrent?'translateY(-5px) scale(1.02)':'translateY('+(Math.min(index,4)*2)+'px) scale(0.98)')+';filter:'+(isCurrent?'drop-shadow(0 7px 9px #000c)':'none')+';';
     cards.forEach(function(x,i){
      var c=cardEl(visualCard(x.card||x),true);c.classList.add('pile-card');
      var angle=i*2.399963229728653,radius=10+Math.sqrt(i+1)*5;
@@ -1912,8 +1901,10 @@ async function refreshOnlineGame(startPayload){
     });
     onlinePile.appendChild(layer);
    }
-   onlinePileHistory.forEach(function(group,index){drawOnlinePileGroup(group.cards,index,false);});
-   drawOnlinePileGroup(state.groupCards||[],onlinePileHistory.length,true);
+   (Array.isArray(state.completedGroups)?state.completedGroups:[]).forEach(function(group,index){
+    drawOnlinePileGroup(group.cards||[],index,false);
+   });
+   drawOnlinePileGroup(state.groupCards||[],(state.completedGroups||[]).length,true);
   }
   el('onlineTrickMsg').textContent=trumpPending?'پنج کارت اول پخش شد؛ منتظر انتخاب قرارداد':(trickPending?'همه کارت‌ها روی میز؛ فرصت دیدن دست: '+Math.max(0,Math.ceil(onlineTrickDeadline-Date.now()/1000))+' ثانیه':(decisionPending?'در حال انتخاب چلنج':('نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳')));
   el('onlineTrumpBig').textContent=state.trump?(suitGlyph[state.trump]||'♠'):(trumpPending?'؟':'♠');
