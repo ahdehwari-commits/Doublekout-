@@ -658,12 +658,14 @@ body > #onlineHand.challenge-selection-hand button .card{width:44px!important;he
  width:max-content!important;height:52px!important;transform:translateY(-50%)!important;
  overflow:visible!important;z-index:12!important
 }
-#onlineTable>.seat.east .played{right:calc(100% + 3px)!important;left:auto!important}
-#onlineTable>.seat.west .played{left:calc(100% + 3px)!important;right:auto!important}
+/* Keep east/west card fans outside the seats, vertically spanning above and below each seat. */
+#onlineTable>.seat.east .played{left:calc(100% + 5px)!important;right:auto!important}
+#onlineTable>.seat.west .played{right:calc(100% + 5px)!important;left:auto!important}
 #onlineTable>.seat.east .opponent-fan,#onlineTable>.seat.west .opponent-fan{
  display:flex!important;flex-direction:row!important;align-items:center!important;
  justify-content:flex-start!important;width:max-content!important;height:52px!important;
- padding:0!important;margin:0!important;transform:none!important;overflow:visible!important
+ padding:0!important;margin:0!important;transform:rotate(90deg) scale(.82)!important;
+ transform-origin:center center!important;overflow:visible!important
 }
 #onlineTable>.seat.east .opponent-fan .card.back,#onlineTable>.seat.west .opponent-fan .card.back{
  width:34px!important;height:51px!important;min-width:34px!important;flex:0 0 34px!important;
