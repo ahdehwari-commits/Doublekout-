@@ -581,21 +581,21 @@ body > #onlineHand.challenge-selection-hand button .card{width:44px!important;he
    use adaptive overlap so the complete hand remains visible. */
 #onlinePanel #onlineHand.online-hand-isolated{
  display:block!important;position:relative!important;width:100%!important;
- height:112px!important;min-height:112px!important;max-height:112px!important;
+ height:124px!important;min-height:124px!important;max-height:124px!important;
  padding:0!important;margin:0!important;overflow:visible!important;
  isolation:isolate!important;direction:ltr!important;box-sizing:border-box!important;
 }
 #onlinePanel #onlineHand.online-hand-isolated>button{
  position:absolute!important;display:block!important;flex:none!important;
- width:54px!important;height:81px!important;min-width:54px!important;
+ width:60px!important;height:90px!important;min-width:60px!important;
  margin:0!important;padding:0!important;top:auto!important;
  transform-origin:50% 100%!important;transition:none!important;
  box-sizing:border-box!important;
 }
 #onlinePanel #onlineHand.online-hand-isolated>button>.card{
  position:relative!important;display:block!important;
- width:54px!important;height:81px!important;min-width:54px!important;
- margin:0!important;padding:5px!important;transform:none!important;
+ width:60px!important;height:90px!important;min-width:60px!important;
+ margin:0!important;padding:5px!important;transform:none!important;opacity:.8!important;
  transition:none!important;animation:none!important;
  box-sizing:border-box!important;
 }
@@ -650,6 +650,31 @@ body > #onlineHand.challenge-selection-hand button .card{width:44px!important;he
  filter:none!important;
 }
 #onlineTable #onlineTrickMsg{position:relative;z-index:73}
+</style><style id="online-seat-and-card-layout-fix">
+#onlineOverlay:has(#onlineDecision[style*="display: block"]) #onlineTable>.seat,
+#onlineOverlay:has(#onlineTrumpSelection[style*="display: block"]) #onlineTable>.seat{visibility:hidden!important;pointer-events:none!important}
+#onlineTable>.seat.east .played,#onlineTable>.seat.west .played{
+ position:absolute!important;top:50%!important;bottom:auto!important;min-height:0!important;
+ width:max-content!important;height:52px!important;transform:translateY(-50%)!important;
+ overflow:visible!important;z-index:12!important
+}
+#onlineTable>.seat.east .played{right:calc(100% + 3px)!important;left:auto!important}
+#onlineTable>.seat.west .played{left:calc(100% + 3px)!important;right:auto!important}
+#onlineTable>.seat.east .opponent-fan,#onlineTable>.seat.west .opponent-fan{
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ justify-content:flex-start!important;width:max-content!important;height:52px!important;
+ padding:0!important;margin:0!important;transform:none!important;overflow:visible!important
+}
+#onlineTable>.seat.east .opponent-fan .card.back,#onlineTable>.seat.west .opponent-fan .card.back{
+ width:34px!important;height:51px!important;min-width:34px!important;flex:0 0 34px!important;
+ margin-left:-27px!important;opacity:.8!important;transform:none!important
+}
+#onlineTable>.seat.east .opponent-fan .card.back:first-child,
+#onlineTable>.seat.west .opponent-fan .card.back:first-child{margin-left:0!important}
+#onlinePanel #onlineHand.online-hand-isolated>button>.card{opacity:.8!important}
+@media(max-width:520px){
+ #onlinePanel #onlineHand.online-hand-isolated{height:124px!important;min-height:124px!important;max-height:124px!important}
+}
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۲۳ · اصلاح مزایده و اتاق آنلاین</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="landing-personalize" aria-label="ابزارهای بازی">
@@ -1337,7 +1362,6 @@ function ensureUI(){
  style.textContent += "\n/* Final online-table geometry override: history at base, live trick above, hand in normal flow. */\n#onlineTable{min-height:510px!important;height:510px!important;overflow:visible!important;position:relative!important;isolation:isolate!important}\n#onlineTable>#onlineCenterPile{z-index:1!important;opacity:1!important;filter:none!important}\n#onlineTable>.center{z-index:20!important;position:absolute!important;left:25%!important;right:25%!important;top:25%!important;bottom:25%!important;overflow:visible!important}\n#onlineTable>.center>#onlineTrick{z-index:45!important;position:absolute!important}\n#onlineTable>.center>#onlineTrick .table-played{opacity:1!important;filter:none!important}\n#onlineTable>.seat.north{top:1%!important;left:37%!important;right:auto!important;bottom:auto!important}\n#onlineTable>.seat.south{bottom:1%!important;left:37%!important;right:auto!important;top:auto!important}\n#onlineTable>.seat.west{left:0!important;top:38%!important;right:auto!important;bottom:auto!important}\n#onlineTable>.seat.east{right:0!important;top:38%!important;left:auto!important;bottom:auto!important}\n#onlinePanel #onlineHand{position:relative!important;display:flex!important;height:148px!important;min-height:148px!important;margin:10px auto 0!important;padding:12px 8px 22px!important;overflow:visible!important;isolation:isolate!important;z-index:30!important}\n#onlinePanel #onlineHand>button{position:absolute!important;top:auto!important;transform-origin:50% 100%!important;opacity:1!important;filter:none!important}\n@media(max-width:520px){\n #onlineTable{height:490px!important;min-height:490px!important}\n #onlineTable>.seat.north,#onlineTable>.seat.south{left:36%!important;width:28%!important}\n #onlineTable>.seat.west{left:0!important;top:39%!important}\n #onlineTable>.seat.east{right:0!important;top:39%!important}\n #onlineTable>.center{left:24%!important;right:24%!important;top:27%!important;bottom:27%!important}\n #onlinePanel #onlineHand{height:142px!important;min-height:142px!important;margin-top:8px!important}\n}";
  /* 9.72: move player seats to the screen edges; leave the table geometry untouched. */
  style.textContent += "\n#onlineOverlay #onlineTable>.seat{position:fixed!important;z-index:100005!important;width:min(24vw,148px)!important;min-width:104px!important;max-width:148px!important;min-height:76px!important;box-sizing:border-box!important;margin:0!important}\n#onlineOverlay #onlineTable>.seat.north{top:calc(env(safe-area-inset-top) + 76px)!important;left:50%!important;right:auto!important;bottom:auto!important;transform:translateX(-50%)!important}\n#onlineOverlay #onlineTable>.seat.south{bottom:calc(env(safe-area-inset-bottom) + 158px)!important;left:50%!important;right:auto!important;top:auto!important;transform:translateX(-50%)!important}\n#onlineOverlay #onlineTable>.seat.west{left:5px!important;top:50%!important;right:auto!important;bottom:auto!important;transform:translateY(-50%)!important}\n#onlineOverlay #onlineTable>.seat.east{right:5px!important;top:50%!important;left:auto!important;bottom:auto!important;transform:translateY(-50%)!important}\n@media(max-width:520px){#onlineOverlay #onlineTable>.seat{width:27vw!important;min-width:92px!important;max-width:124px!important;min-height:68px!important;padding:4px 3px!important}#onlineOverlay #onlineTable>.seat.north{top:calc(env(safe-area-inset-top) + 70px)!important}#onlineOverlay #onlineTable>.seat.south{bottom:calc(env(safe-area-inset-bottom) + 154px)!important}#onlineOverlay #onlineTable>.seat.west{left:3px!important}#onlineOverlay #onlineTable>.seat.east{right:3px!important}}\n";
-style.textContent += "\n/* 9.73: detached player panels anchored to screen edges; tabletop unchanged. */\n#onlineOverlay>#onlineSeatNorth,#onlineOverlay>#onlineSeatSouth,#onlineOverlay>#onlineSeatEast,#onlineOverlay>#onlineSeatWest{position:fixed!important;z-index:100005!important;display:flex!important;box-sizing:border-box!important;width:116px!important;min-height:68px!important;padding:5px 4px!important;margin:0!important}\n#onlineOverlay>#onlineSeatNorth{top:calc(env(safe-area-inset-top) + 8px)!important;left:50%!important;right:auto!important;bottom:auto!important;transform:translateX(-50%)!important}\n#onlineOverlay>#onlineSeatSouth{bottom:calc(env(safe-area-inset-bottom) + 150px)!important;left:50%!important;right:auto!important;top:auto!important;transform:translateX(-50%)!important}\n#onlineOverlay>#onlineSeatWest{left:4px!important;top:50%!important;right:auto!important;bottom:auto!important;transform:translateY(-50%)!important}\n#onlineOverlay>#onlineSeatEast{right:4px!important;top:50%!important;left:auto!important;bottom:auto!important;transform:translateY(-50%)!important}\n@media(max-width:520px){#onlineOverlay>#onlineSeatNorth,#onlineOverlay>#onlineSeatSouth,#onlineOverlay>#onlineSeatEast,#onlineOverlay>#onlineSeatWest{width:102px!important;min-height:62px!important;padding:4px 3px!important}#onlineOverlay>#onlineSeatNorth{top:calc(env(safe-area-inset-top) + 6px)!important}#onlineOverlay>#onlineSeatSouth{bottom:calc(env(safe-area-inset-bottom) + 146px)!important}#onlineOverlay>#onlineSeatWest{left:2px!important}#onlineOverlay>#onlineSeatEast{right:2px!important}}\n";
 document.head.appendChild(style);
  var root=document.createElement('div');root.id='onlineOverlay';root.innerHTML=
  '<section id="onlinePanel"><button id="onlineClose" class="secondary" style="float:left">بستن</button><h2>اتاق آنلاین دابل کوت</h2>'+
@@ -1933,11 +1957,11 @@ async function refreshOnlineGame(startPayload){
     slot.appendChild(fan);
    }
   });
-  // Detach player panels from tabletop so their positions are tied to screen edges.
-  var onlineOverlayRoot=el('onlineOverlay');
-  ['North','South','East','West'].forEach(function(side){
+  // Keep player seats inside the table so they scroll with it and remain below dialogs.
+  var onlineTableNode=el('onlineTable');
+  ['North','West','East','South'].forEach(function(side){
    var seatNode=el('onlineSeat'+side);
-   if(seatNode&&seatNode.parentElement!==onlineOverlayRoot)onlineOverlayRoot.appendChild(seatNode);
+   if(seatNode&&onlineTableNode&&seatNode.parentElement!==onlineTableNode)onlineTableNode.appendChild(seatNode);
   });
   el('onlineTrick').innerHTML='';
   (state.plays||[]).forEach(function(p,i){var played=cardEl(visualCard(p.card),true);played.classList.add('table-played');played.style.setProperty('--play-index',i);el('onlineTrick').appendChild(played);});
@@ -1989,7 +2013,7 @@ async function refreshOnlineGame(startPayload){
   var onlineHandEl=el('onlineHand');
   onlineHandEl.classList.add('online-hand-isolated');
   onlineHandEl.innerHTML='';
-  onlineHandEl.style.height='120px';
+  onlineHandEl.style.height='124px';
   var displayHand=trumpPending?hand.slice(0,5):(decisionPending?hand.slice(0,13):hand);
   el('onlineHandTitle').textContent='کارت‌های شما';
   var leadOnlineCard=(state.plays||[])[0]&&((state.plays||[])[0].card||{}),leadOnlineSuit=leadOnlineCard&&(leadOnlineCard.suit||leadOnlineCard.s);
@@ -2000,16 +2024,16 @@ async function refreshOnlineGame(startPayload){
     var b=document.createElement('button');
     var fanOffset=i-(displayHand.length-1)/2;
     var handWidth=onlineHandEl.clientWidth||((window.innerWidth||390)-24);
-    var fanStep=displayHand.length>1?Math.max(18,Math.min(54,(handWidth-54)/(displayHand.length-1))):0;
+    var fanStep=displayHand.length>1?Math.max(18,Math.min(56,(handWidth-60)/(displayHand.length-1))):0;
     b.type='button';
     b.style.setProperty('position','absolute','important');
     b.style.setProperty('left','calc(50% + '+(fanOffset*fanStep)+'px)','important');
     b.style.setProperty('bottom','16px','important');
-    b.style.setProperty('width','54px','important');
-    b.style.setProperty('height','81px','important');
+    b.style.setProperty('width','60px','important');
+    b.style.setProperty('height','90px','important');
     b.style.setProperty('margin','0','important');
     b.style.setProperty('padding','0','important');
-    b.style.setProperty('transform','translateX(-50%) rotate('+(fanOffset*1.15)+'deg)','important');
+    b.style.setProperty('transform','translateX(-50%) rotate('+(fanOffset*1.55)+'deg)','important');
     b.style.setProperty('transform-origin','50% 100%','important');
     b.style.setProperty('z-index',String(1000+i),'important');
     b.style.setProperty('--hand-index',String(i));
