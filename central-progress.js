@@ -34,18 +34,10 @@ async function refresh(){
 function readQueue(){try{const x=JSON.parse(localStorage.getItem(QUEUE_KEY)||'[]');return Array.isArray(x)?x:[];}catch(_){return [];}}
 function writeQueue(q){try{localStorage.setItem(QUEUE_KEY,JSON.stringify(q.slice(-100)));}catch(_){}}
 async function flushPending(){
- try{
-  const session=await window.DoubleKoutOnline.getSession();if(!session||!session.user||session.user.is_anonymous)return;
-  const queue=readQueue(),keep=[];
-  for(const item of queue){
-   if(item.userId!==session.user.id){keep.push(item);continue;}
-   try{const r=await rpc('award_local_game_win',{p_game_id:item.gameId,p_game_mode:item.mode});if(r.error)throw r.error;}
-   catch(_){keep.push(item);}
-  }
-  writeQueue(keep);
-  if(queue.length!==keep.length)await refresh();
- }catch(_){}
+ // Discard legacy queued offline wins; they are intentionally not rankable.
+ writeQueue([]);
 }
+
 async function awardLocalWin(gameId,mode){
  // Local/offline results are not server-verifiable and are excluded from rankings.
  return {status:'not_ranked',points:0};
