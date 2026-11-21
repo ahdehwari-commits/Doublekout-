@@ -683,6 +683,27 @@ body>#onlineHand.challenge-hand>button>.card{
 }
 body>#onlineHand.challenge-hand>button{width:60px!important;height:90px!important}
 body>#onlineHand.challenge-hand{min-height:124px!important;max-height:140px!important}
+</style>
+<style id="online-final-layout-override">
+/* Restore table seat anchors after legacy relative-position override. */
+#onlineTable>.seat{position:absolute!important;z-index:30!important}
+#onlineTable>.north{top:2%!important;left:37.5%!important;right:auto!important;bottom:auto!important}
+#onlineTable>.south{bottom:2%!important;left:37.5%!important;right:auto!important;top:auto!important}
+#onlineTable>.west{left:1%!important;top:38%!important;right:auto!important;bottom:auto!important}
+#onlineTable>.east{right:1%!important;top:38%!important;left:auto!important;bottom:auto!important}
+#onlineTable>.center{position:absolute!important;left:27%!important;right:27%!important;top:27%!important;bottom:27%!important;z-index:70!important}
+#onlinePanel #onlineHand.online-hand-isolated{height:140px!important;min-height:140px!important;max-height:140px!important}
+#onlinePanel #onlineHand.online-hand-isolated>button{width:72px!important;height:108px!important;min-width:72px!important}
+#onlinePanel #onlineHand.online-hand-isolated>button>.card{width:72px!important;height:108px!important;min-width:72px!important;font-size:22px!important}
+body>#onlineHand.challenge-hand{min-height:140px!important;max-height:154px!important}
+body>#onlineHand.challenge-hand>button{width:72px!important;height:108px!important;min-width:72px!important}
+body>#onlineHand.challenge-hand>button>.card{width:72px!important;height:108px!important;min-width:72px!important;font-size:22px!important}
+@media(max-width:520px){
+ #onlineTable>.north,#onlineTable>.south{left:36%!important;width:28%!important}
+ #onlineTable>.west{left:0!important;top:39%!important}
+ #onlineTable>.east{right:0!important;top:39%!important}
+ #onlineTable>.center{left:27%!important;right:27%!important;top:29%!important;bottom:29%!important}
+}
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۲۳ · اصلاح مزایده و اتاق آنلاین</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="landing-personalize" aria-label="ابزارهای بازی">
@@ -1913,8 +1934,8 @@ async function refreshOnlineGame(startPayload){
    var portalStyle=document.getElementById('online-private-hand-portal-style');
    if(!portalStyle){portalStyle=document.createElement('style');portalStyle.id='online-private-hand-portal-style';portalStyle.textContent='#onlineHand.challenge-hand{display:flex!important;justify-content:center!important;align-items:flex-end!important;gap:0!important;padding:12px 8px 20px!important;background:linear-gradient(180deg,#123d30f7,#071e18f7)!important;border:1px solid #f0d18b!important;border-radius:14px!important;box-shadow:0 8px 24px #000c!important}#onlineHand.challenge-hand button{display:block!important;visibility:visible!important;opacity:1!important;flex:0 0 46px!important;width:46px!important;height:74px!important;padding:0!important;background:transparent!important}#onlineHand.challenge-hand button .card{visibility:visible!important;opacity:1!important;filter:none!important}#onlineHandTitle.challenge-hand-title{margin:0!important;padding:5px 10px!important;text-align:center!important;border:1px solid #8e713e!important;border-radius:10px 10px 0 0!important;background:#09271f!important;color:#ffe3a0!important}';document.head.appendChild(portalStyle);}
    handTitle.classList.add('challenge-hand-title');handArea.classList.add('challenge-hand');handArea.classList.toggle('trump-selection-hand',trumpPending);handArea.classList.toggle('challenge-selection-hand',decisionPending);
-   Object.assign(handArea.style,{position:'fixed',left:'50%',bottom:'calc(7px + env(safe-area-inset-bottom))',transform:'translateX(-50%)',width:'min(96vw,850px)',maxWidth:'96vw',minHeight:'120px',maxHeight:'132px',overflowX:'auto',overflowY:'visible',zIndex:'100020',display:'flex',visibility:'visible',opacity:'1',pointerEvents:'auto'});
-   Object.assign(handTitle.style,{position:'fixed',left:'50%',bottom:'calc(119px + env(safe-area-inset-bottom))',transform:'translateX(-50%)',width:'min(96vw,850px)',zIndex:'100021',display:'block',visibility:'visible',opacity:'1'});
+   Object.assign(handArea.style,{position:'fixed',left:'50%',bottom:'calc(7px + env(safe-area-inset-bottom))',transform:'translateX(-50%)',width:'min(96vw,850px)',maxWidth:'96vw',minHeight:'140px',maxHeight:'154px',overflowX:'auto',overflowY:'visible',zIndex:'100020',display:'flex',visibility:'visible',opacity:'1',pointerEvents:'auto'});
+   Object.assign(handTitle.style,{position:'fixed',left:'50%',bottom:'calc(151px + env(safe-area-inset-bottom))',transform:'translateX(-50%)',width:'min(96vw,850px)',zIndex:'100021',display:'block',visibility:'visible',opacity:'1'});
   }else{
    onlineTable.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
    handTitle.classList.remove('challenge-hand-title');handArea.classList.remove('challenge-hand');handArea.classList.remove('trump-selection-hand','challenge-selection-hand');
@@ -2032,13 +2053,13 @@ async function refreshOnlineGame(startPayload){
     var b=document.createElement('button');
     var fanOffset=i-(displayHand.length-1)/2;
     var handWidth=onlineHandEl.clientWidth||((window.innerWidth||390)-24);
-    var fanStep=displayHand.length>1?Math.max(18,Math.min(56,(handWidth-60)/(displayHand.length-1))):0;
+    var fanStep=displayHand.length>1?Math.max(18,Math.min(56,(handWidth-72)/(displayHand.length-1))):0;
     b.type='button';
     b.style.setProperty('position','absolute','important');
     b.style.setProperty('left','calc(50% + '+(fanOffset*fanStep)+'px)','important');
     b.style.setProperty('bottom','16px','important');
-    b.style.setProperty('width','60px','important');
-    b.style.setProperty('height','90px','important');
+    b.style.setProperty('width','72px','important');
+    b.style.setProperty('height','108px','important');
     b.style.setProperty('margin','0','important');
     b.style.setProperty('padding','0','important');
     b.style.setProperty('transform','translateX(-50%) rotate('+(fanOffset*1.55)+'deg)','important');
