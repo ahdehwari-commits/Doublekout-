@@ -629,8 +629,8 @@ body > #onlineHand.challenge-selection-hand button .card{width:44px!important;he
 }
 #onlineTable #onlineCenterPile .pile-card{
  z-index:1!important;
- opacity:.58!important;
- filter:blur(.04px)!important;
+ opacity:.9!important;
+ filter:none!important;
 }
 #onlineTable>.center{
  position:relative!important;
@@ -2003,15 +2003,15 @@ async function refreshOnlineGame(startPayload){
    var clearingPile=Number(state.sequenceClearUntil||0)>Date.now()/1000;
    var pileCards=clearingPile?(state.sequenceClearCards||[]):(state.groupCards||[]);
    onlinePile.classList.toggle('clearing',clearingPile);
-   onlinePile.style.opacity=clearingPile?'0.82':'0.44';
-   onlinePile.style.filter=clearingPile?'none':'blur(0.15px)';
+   onlinePile.style.opacity='1';
+   onlinePile.style.filter='none';
    pileCards.forEach(function(x,i){
     var pc=cardEl(visualCard(x.card||x),true);pc.classList.add('pile-card');
     var angle=i*2.399963229728653,radius=12+Math.sqrt(i+1)*8;
     pc.style.setProperty('--px',(Math.cos(angle)*radius*1.45)+'px');
     pc.style.setProperty('--py',(Math.sin(angle)*radius*.95)+'px');
     pc.style.setProperty('--pr',(Math.sin(i*1.73)*31+(i%3-1)*7)+'deg');
-    pc.style.zIndex=String(i+1);pc.style.opacity=clearingPile?'0.9':'0.72';
+    pc.style.zIndex=String(i+1);pc.style.opacity='0.9';
     onlinePile.appendChild(pc);
    });
   }
