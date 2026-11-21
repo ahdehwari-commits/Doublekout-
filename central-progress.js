@@ -47,28 +47,10 @@ async function flushPending(){
  }catch(_){}
 }
 async function awardLocalWin(gameId,mode){
- // Offline results are not verifiable by the server and never enter rankings.
+ // Local/offline results are not server-verifiable and are excluded from rankings.
  return {status:'not_ranked',points:0};
- /* Legacy flow retained below only as unreachable compatibility history.
- try{
-  const session=await window.DoubleKoutOnline.getSession();
-  if(!session||!session.user)return {status:'no_account'};
-  if(session.user.is_anonymous){
-   const q=readQueue();
-   if(!q.some(x=>x.gameId===gameId&&x.userId===session.user.id)){q.push({gameId,mode,userId:session.user.id});writeQueue(q);}
-   return {status:'pending',needsAccount:true};
-  }
-  const r=await rpc('award_local_game_win',{p_game_id:gameId,p_game_mode:mode});
-  if(r.error)throw r.error;
-  const data=r.data||{};
-  await refresh();
-  return {status:data.awarded?'awarded':'duplicate',points:Number(data.points_added||0)};
- }catch(e){
-  try{const session=await window.DoubleKoutOnline.getSession();if(session&&session.user&&!session.user.is_anonymous){const q=readQueue();if(!q.some(x=>x.gameId===gameId&&x.userId===session.user.id)){q.push({gameId,mode,userId:session.user.id});writeQueue(q);}console.warn('Central win-point sync queued for retry:',e&&e.message||e);return {status:'pending',needsBackend:true};}}catch(_){}
-  console.warn('Central win-point sync failed:',e&&e.message||e);return {status:'error',message:e.message||String(e)};
- }
- */
 }
+
 function showAwardResult(result,containerId){const host=document.getElementById(containerId);if(!host)return;let n=document.getElementById('centralAwardNotice');if(!n){n=document.createElement('div');n.id='centralAwardNotice';n.style.cssText='margin-top:8px;padding:8px;border:1px solid #b99a5d;border-radius:8px;font-size:12px;line-height:1.8';host.appendChild(n);}n.innerHTML='';if(result&&result.status==='awarded'){n.textContent='دو امتیاز برد به حساب مرکزی اضافه شد.';}else if(result&&result.status==='duplicate'){n.textContent='امتیاز این بازی قبلاً ثبت شده است؛ امتیاز تکراری داده نشد.';}else if(result&&result.status==='pending'){n.textContent=result.needsAccount?'برد این بازی موقتاً نگهداری شد؛ پس از تبدیل همین حساب مهمان به حساب دائمی، دو امتیاز به حسابت اضافه می‌شود.':result.needsBackend?'برد ذخیره شد؛ سرویس مرکزی امتیاز فعلاً پاسخ نداد و بازی دوباره برای ثبت امتیاز تلاش می‌کند.':'برد روی همین دستگاه نگهداری شد و پس از برقراری اینترنت با همین حساب همگام می‌شود.';}else if(result&&result.status==='not_ranked'){n.textContent='بازی آفلاین ثبت شد، اما برای جلوگیری از تقلب در رتبه‌بندی امتیاز آنلاین ندارد.';}else if(result&&result.status==='no_account'){n.textContent='برای ثبت این برد و دریافت امتیاز، ابتدا وارد حساب دائمی شو. ';const b=document.createElement('button');b.textContent='ورود به حساب';b.onclick=openAccount;n.appendChild(b);}else{n.textContent='ثبت امتیاز انجام نشد: '+(result&&result.message||'اتصال مرکزی برقرار نیست.');}}
 function openAccount(){if(online())window.DoubleKoutOnline.open();setText('onlineAuthStatus','برای ثبت بردهای محلی و دیدن رتبه‌ات، وارد حساب دائمی شو.');}
 window.DoubleKoutProgress={refresh,awardLocalWin,openAccount,showAwardResult,flushPending};
