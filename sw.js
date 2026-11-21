@@ -1,4 +1,4 @@
-const CACHE='double-kout-9.70-live-trick-layer-above-history';
+const CACHE='double-kout-9.71-table-geometry-layer-hand';
 const ASSETS=['./','./index.html','./web-prototype.html','./manifest.webmanifest','./IMG_3647.png','./assets/card-back-black-gold.svg','./assets/card-back-black-gold.png','./kuwaiti-six-player-ui.js','./supabase-multiplayer.js','./anonymous-learning.js','./central-progress.js','./central-store.js','./central-payments-admin.js','./lan-multiplayer.js','./three-d-scene.js','./engines/standard-hokm/engine.js','./engines/kuwaiti-six-player/engine.js','./engines/double-kout-sequence.js'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
