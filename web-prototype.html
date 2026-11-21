@@ -629,7 +629,7 @@ body > #onlineHand.challenge-selection-hand button .card{width:44px!important;he
 }
 #onlineTable #onlineCenterPile .pile-card{
  z-index:1!important;
- opacity:.9!important;
+ opacity:.95!important;
  filter:none!important;
 }
 #onlineTable>.center{
@@ -650,7 +650,10 @@ body > #onlineHand.challenge-selection-hand button .card{width:44px!important;he
  filter:none!important;
 }
 #onlineTable #onlineTrickMsg{position:relative;z-index:73};
-#onlineTable #onlineTrickMsg{display:none!important}
+#onlineTable #onlineTrickMsg{display:none!important};
+/* Final online UI cleanup: keep turn text, hand labels and legacy contract select hidden. */
+#onlineTable #onlineTrickMsg,#onlineHandTitle.challenge-hand-title,#onlineHandTitle{display:none!important;visibility:hidden!important}
+#onlineTrumpSelection #onlineTrumpContract{display:none!important;visibility:hidden!important}
 </style><style id="online-seat-and-card-layout-fix">
 #onlineOverlay:has(#onlineDecision[style*="display: block"]) #onlineTable>.seat,
 #onlineOverlay:has(#onlineTrumpSelection[style*="display: block"]) #onlineTable>.seat{visibility:hidden!important;pointer-events:none!important}
@@ -1948,7 +1951,7 @@ async function refreshOnlineGame(startPayload){
   if(trumpPending){
    var pickerSeat=trumpPickerSeat,picker=trumpPickerMeta,canPick=myOnlineSeat===pickerSeat&&picker.human!==false;
    el('onlineTrumpHint').textContent=canPick?'پنج کارت خودت را بررسی کن و قرارداد را انتخاب کن؛ پس از تأیید، هشت کارت باقی‌مانده برای همه پخش می‌شود.':(picker.human===false?'حاکم هوش مصنوعی در حال بررسی پنج کارت و انتخاب قرارداد است.':'منتظر انتخاب قرارداد توسط '+(picker.name||'حاکم')+' هستیم.');
-   el('onlineTrumpContract').style.display=canPick?'block':'none';el('onlineTrumpConfirm').style.display=canPick?'block':'none';el('onlineTrumpConfirm').disabled=!canPick;
+   el('onlineTrumpContract').style.setProperty('display','none','important');el('onlineTrumpConfirm').style.display=canPick?'block':'none';el('onlineTrumpConfirm').disabled=!canPick;
   }else{el('onlineTrumpContract').style.display='none';el('onlineTrumpConfirm').style.display='none';}
   if(decisionPending){
    var remaining=Math.max(0,Math.ceil(myDeadline-Date.now()/1000));
@@ -2012,11 +2015,12 @@ async function refreshOnlineGame(startPayload){
     pc.style.setProperty('--px',(Math.cos(angle)*radius*1.45)+'px');
     pc.style.setProperty('--py',(Math.sin(angle)*radius*.95)+'px');
     pc.style.setProperty('--pr',(Math.sin(i*1.73)*31+(i%3-1)*7)+'deg');
-    pc.style.zIndex=String(i+1);pc.style.opacity='0.9';
+    pc.style.zIndex=String(i+1);pc.style.opacity='0.95';
     onlinePile.appendChild(pc);
    });
   }
   el('onlineTrickMsg').textContent=trumpPending?'پنج کارت اول پخش شد؛ منتظر انتخاب قرارداد':(trickPending?'کارت چهارم روی میز؛ لحظه‌ای برای دیدن نتیجه':(decisionPending?'در حال انتخاب چلنج':('نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳')));
+  el('onlineTrickMsg').style.setProperty('display','none','important');
   el('onlineTrumpBig').textContent=state.trump?(suitGlyph[state.trump]||'♠'):(trumpPending?'؟':'♠');
   var teamAName=[players['0']&&players['0'].name,players['2']&&players['2'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۱ و ۳';
   var teamBName=[players['1']&&players['1'].name,players['3']&&players['3'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۲ و ۴';
@@ -2047,7 +2051,7 @@ async function refreshOnlineGame(startPayload){
   onlineHandEl.innerHTML='';
   onlineHandEl.style.height='124px';
   var displayHand=trumpPending?hand.slice(0,5):(decisionPending?hand.slice(0,13):hand);
-  el('onlineHandTitle').textContent='کارت‌های شما';
+  el('onlineHandTitle').textContent='کارت‌های شما';el('onlineHandTitle').style.setProperty('display','none','important');
   var leadOnlineCard=(state.plays||[])[0]&&((state.plays||[])[0].card||{}),leadOnlineSuit=leadOnlineCard&&(leadOnlineCard.suit||leadOnlineCard.s);
    leadOnlineSuit=({'S':'♠','H':'♥','D':'♦','C':'♣','♠':'♠','♥':'♥','♦':'♦','♣':'♣'})[leadOnlineSuit]||'';
    var followsLead=!!leadOnlineSuit&&hand.some(function(card){return normalizedSuit(card)===leadOnlineSuit;}),hasForcedSuit=!!leadOnlineSuit&&followsLead&&hand.some(function(card){return normalizedSuit(card)!==leadOnlineSuit;});
