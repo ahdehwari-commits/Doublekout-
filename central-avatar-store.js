@@ -60,10 +60,8 @@ async function choose(id){
  if(busy||!catalog)return;
  const item=catalog.items.find(x=>x.id===id);if(!item)return;
  const owned=!!item.owned;
- if(!owned){
-  if(item.free===false){
-   if(!window.confirm('خرید «'+item.title+'» با '+Number(item.price)+' امتیاز انجام شود؟'))return;
-  }
+ if(!owned&&item.free===false){
+  if(!window.confirm('خرید «'+item.title+'» با '+Number(item.price)+' امتیاز انجام شود؟'))return;
  }
  busy=true;render(catalog);
  const status=$('avatarStoreStatus');
@@ -74,10 +72,10 @@ async function choose(id){
   }
   await rpc('equip_avatar',{p_avatar_id:id});
   if(status)status.textContent='آواتار انتخابی با موفقیت در حساب شما ذخیره شد.';
-  await refresh();
  }catch(e){
   if(status)status.textContent=e.message==='not_enough_points'?'امتیاز کافی برای خرید این آواتار ندارید.':(e.message||'خرید یا انتخاب آواتار انجام نشد.');
- }finally{busy=false;if(catalog)render(catalog);}
+ }finally{busy=false;}
+ await refresh();
 }
 document.addEventListener('click',e=>{
  const b=e.target.closest('#personalAvatarPicker [data-avatar-id]');
