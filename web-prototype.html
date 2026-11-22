@@ -1975,11 +1975,13 @@ async function refreshOnlineGame(startPayload){
    var remaining=Math.max(0,Math.ceil(myDeadline-Date.now()/1000));
    var alreadyPassed=(state.challengePassed||[]).includes(myOnlineSeat);
    el('onlineDecisionHint').textContent=alreadyPassed?'انتخاب شما ثبت شد؛ منتظر تصمیم دیگر بازیکنان هستیم.':isMyChallengeTurn?'همه بازیکنان هم‌زمان فرصت دارند؛ اگر دست مناسبی دارید چلنج کنید یا عبور کنید.':'در حال انتظار برای تکمیل انتخاب بازیکنان...';
-   var challengeTrumpInfo=el('onlineChallengeTrumpInfo'),challengeTrump=state.trump||state.trumpSuit||null,challengeContract=state.contract||state.selectedContract||null;
-   var challengeSuitGlyph=challengeTrump?(suitGlyph[challengeTrump]||challengeTrump):'';
+   var challengeTrumpInfo=el('onlineChallengeTrumpInfo'),challengeContract=state.contract||state.selectedContract||null;
+   var contractSuit=({'hokm_spades':'S','hokm_hearts':'H','hokm_diamonds':'D','hokm_clubs':'C'})[challengeContract]||null;
+   var challengeTrump=state.trump||state.trumpSuit||contractSuit;
+   var challengeSuitGlyph=challengeTrump?(suitGlyph[challengeTrump]||({'S':'♠','H':'♥','D':'♦','C':'♣'})[challengeTrump]||challengeTrump):'';
    var challengeSuitName=({'S':'پیک','H':'دل','D':'خشت','C':'گشنیز','♠':'پیک','♥':'دل','♦':'خشت','♣':'گشنیز'})[challengeTrump]||'';
    var challengeContractName=({'hokm_spades':'حکم پیک','hokm_hearts':'حکم دل','hokm_diamonds':'حکم خشت','hokm_clubs':'حکم گشنیز','naras':'نرس','tak_naras':'تک نرس','saras':'سرس','partner_middle':'برگ وسط یار'})[challengeContract]||challengeContract||'';
-   challengeTrumpInfo.textContent=challengeSuitGlyph?'حکم اعلامی: '+challengeSuitGlyph+' '+challengeSuitName:('قرارداد اعلامی: '+(challengeContractName||'بدون حکم'));
+   challengeTrumpInfo.textContent=challengeSuitGlyph?'حکم اعلامی: '+challengeSuitGlyph+' '+challengeSuitName:('قرارداد اعلامی: '+(challengeContractName||'هنوز اعلام نشده'));
    challengeTrumpInfo.style.display='block';
    el('onlineChallengeClock').textContent=alreadyPassed?'ثبت شد':remaining+' ثانیه';
    el('onlineChooseNormal').style.display=isMyChallengeTurn?'block':'none';
@@ -2008,7 +2010,7 @@ async function refreshOnlineGame(startPayload){
    if(!trickBadge){trickBadge=document.createElement('div');trickBadge.id='onlineTricks'+def.key;trickBadge.className='online-seat-tricks';el('onlineCount'+def.key).insertAdjacentElement('afterend',trickBadge);}
    var seatTeam=seat%2;
    var seatWonTricks=mode==='double-kout'?(seatTeam===0?seatCounterScores.A:seatCounterScores.B):(state.trickWinners||[]).filter(function(winnerSeat){return Number(winnerSeat)%2===seatTeam;}).length;
-   trickBadge.innerHTML='<span class="online-seat-tricks-number">'+String(seatWonTricks).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];})+'</span>';
+   trickBadge.innerHTML='<span class="online-seat-tricks-number">'+String(seatWonTricks).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];})+'</span><span class="online-seat-tricks-label"> دست</span>';
    el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&!trickPending&&turn===seat);
    var slot=el('onlinePlayed'+def.key);slot.innerHTML='';
    if(def.offset!==0&&left>0&&!trumpPending){
@@ -2213,4 +2215,25 @@ body>#onlineHand.online-hand-isolated>button.online-card-illegal>.card{outline:1
 #centerPile .pile-card,#onlineCenterPile .pile-card{visibility:visible!important;opacity:1!important;filter:none!important}
 </style>
 
+
+<style id="online-ui-final-980">
+/* 9.80: compact legal-card cue, declarer contract fallback, and Persian trick label. */
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal>.card,
+body>#onlineHand.online-hand-isolated>button.online-card-legal>.card{
+ transform:translateY(-7px)!important;
+ outline:2px solid #e2c783!important;border:1px solid #fff0c6!important;
+ box-shadow:0 3px 7px #0008!important;filter:none!important;
+}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal>.card,
+body>#onlineHand.online-hand-isolated>button.online-card-illegal>.card{
+ transform:none!important;outline:1px solid #77705f!important;
+ box-shadow:0 3px 6px #0008!important;filter:none!important;
+}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal,
+body>#onlineHand.online-hand-isolated>button.online-card-illegal{opacity:.88!important;filter:none!important}
+#onlineTable .online-seat-tricks-label{display:inline-block!important;font-size:11px!important;font-weight:800!important;color:#f3e3bd!important;margin-inline-start:2px!important}
+#onlineTable .online-seat-tricks{font-size:12px!important;min-width:48px!important}
+#onlineTable .online-seat-tricks-number{font-size:16px!important}
+@media(max-width:520px){#onlineTable .online-seat-tricks-label{font-size:10px!important}#onlineTable .online-seat-tricks-number{font-size:15px!important}}
+</style>
 </body></html>
