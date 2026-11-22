@@ -758,6 +758,10 @@ function renderAuction(){
  }
  renderAuctionHand();
 }
+function sortKuwaitiDisplayHand(cards){
+ const suitOrder={S:0,H:1,D:2,C:3,'♠':0,'♥':1,'♦':2,'♣':3},rankOrder={'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,J:11,Q:12,K:13,A:14};
+ return (cards||[]).slice().sort((a,b)=>{const aj=a.kind==='joker',bj=b.kind==='joker';if(aj!==bj)return aj?1:-1;return (suitOrder[a.suit]??9)-(suitOrder[b.suit]??9)||(rankOrder[a.rank]??99)-(rankOrder[b.rank]??99);});
+}
 function renderAuctionHand(){
  if(!game||!game.hands)return;
  $('kHand').innerHTML='';
@@ -765,7 +769,7 @@ function renderAuctionHand(){
  const hotseat=$('kPlayStyle').value==='hotseat';
  const p=isOnlineKuwaiti()?onlineKuwaiti.seat:(hotseat?(auction?auction.current:game.turn):0);
  if(!isHumanSeat(p))return;
- game.hands[p].forEach((c,i,arr)=>{
+ sortKuwaitiDisplayHand(game.hands[p]).forEach((c,i,arr)=>{
   const card=document.createElement('div');card.className='k-auction-card';
   const offset=i-(arr.length-1)/2;
   card.style.transform='rotate('+(offset*4)+'deg) translateY('+(Math.abs(offset)*2.1)+'px)';
@@ -908,7 +912,7 @@ function renderContractChoiceHand(player){
  const host=$('kHand');host.innerHTML='';host.classList.add('k-contract-thinking');
  // Keep the private hand above transformed table layers and iOS clipping while selecting the contract.
  document.body.appendChild(host);
- game.hands[player].forEach((card,i,arr)=>{const el=document.createElement('div');el.className='k-auction-card';const offset=i-(arr.length-1)/2;el.style.transform='rotate('+(offset*4.2)+'deg) translateY('+(Math.abs(offset)*2)+'px)';el.style.zIndex=String(10+i);el.style.opacity='1';el.style.filter='none';el.style.pointerEvents='none';el.append(cardNode(card));host.append(el);});
+ sortKuwaitiDisplayHand(game.hands[player]).forEach((card,i,arr)=>{const el=document.createElement('div');el.className='k-auction-card';const offset=i-(arr.length-1)/2;el.style.transform='rotate('+(offset*4.2)+'deg) translateY('+(Math.abs(offset)*2)+'px)';el.style.zIndex=String(10+i);el.style.opacity='1';el.style.filter='none';el.style.pointerEvents='none';el.append(cardNode(card));host.append(el);});
 }
 function markWinningSeatContract(contract){
  if(!game||!Number.isInteger(game.auctionWinner))return;
@@ -1234,7 +1238,7 @@ function renderGame(){
  const isTurnHuman=isHumanSeat(turnPlayer),displayHuman=isHumanSeat(displayPlayer);
  const canRevealHand=displayHuman;
   const displayLead=K.effectiveLeadSuit(game.trick,{trickNo:game.trickNo});const displayLegalCards=isOnlineKuwaiti()?game.hands[displayPlayer].filter(x=>onlineKuwaiti.legalCardIds.includes(x.id)):K.legalCards(game.hands[displayPlayer],displayLead,{trickNo:game.trickNo,isFirstPlay:game.trick.length===0,trumpSuit:game.trickNo===1?game.trumpSuit:((game.trumpAnnounced||displayPlayer===game.auctionWinner)?game.trumpSuit:null),firstTrickNoCut:game.trickNo===1});$('kHand').classList.toggle('k-has-legal-restrictions',displayLegalCards.length<game.hands[displayPlayer].length);
- if(canRevealHand)game.hands[displayPlayer].forEach((c,i,arr)=>{
+ if(canRevealHand)sortKuwaitiDisplayHand(game.hands[displayPlayer]).forEach((c,i,arr)=>{
   const b=document.createElement('button');
   const offset=i-(arr.length-1)/2;
   b.style.transform='rotate('+(offset*4.8)+'deg) translateY('+(Math.abs(offset)*2.4)+'px)';
