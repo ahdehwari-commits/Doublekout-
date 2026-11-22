@@ -1248,9 +1248,26 @@ function royalPortrait(rank){
 }
 
 var visualChoice={table:'marble',layout:'arc',back:'classic'};
+function renderOwnedStoreBacks(data){
+ const rail=document.querySelector('#visualCustomizer .back-rail');if(!rail||!data||!Array.isArray(data.items))return;
+ rail.querySelectorAll('[data-store-back]').forEach(n=>n.remove());
+ const owned=data.items.filter(item=>item&&item.owned);
+ const colors={'blue-gold':'linear-gradient(135deg,#08264b,#1f5c91 48%,#081f3c)','black-gold':'linear-gradient(135deg,#090909,#35302a 52%,#080808)',emerald:'linear-gradient(135deg,#063c2c,#16845b 52%,#05291e)',ruby:'linear-gradient(135deg,#4a0715,#a51f3b 52%,#330611)',violet:'linear-gradient(135deg,#251044,#633a91 52%,#17092d)'};
+ owned.forEach(item=>{
+  const b=document.createElement('button');b.type='button';b.className='visual-choice large-choice';b.dataset.value='store:'+item.id;b.dataset.storeBack=item.id;b.setAttribute('aria-label',item.title||'پشت‌کارت خریداری‌شده');
+  const preview=document.createElement('span');preview.className='back-choice store-back';preview.style.background=colors[item.theme]||colors['blue-gold'];
+  const mark=document.createElement('i');mark.textContent='✦';const label=document.createElement('b');label.textContent=item.title||'پشت‌کارت';
+  preview.append(mark,label);b.appendChild(preview);rail.appendChild(b);
+ });
+ const equipped=owned.find(item=>item.id===data.equipped);
+ if(equipped){visualChoice.back='store:'+equipped.id;setCardCustomization();}
+}
+window.addEventListener('doublekout:store-catalog',e=>renderOwnedStoreBacks(e.detail));
 function setCardCustomization(){
  document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','six-layout-arc','six-layout-hex','six-layout-wide');
- document.body.classList.add('deck-back-'+visualChoice.back,'table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
+ document.body.classList.add('table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
+ if(/^store:[A-Za-z0-9_-]+$/.test(visualChoice.back)){const id=visualChoice.back.slice(6);if(window.DoubleKoutStore)window.DoubleKoutStore.applyTheme(id);}
+ else{document.documentElement.removeAttribute('data-card-back');document.body.classList.add('deck-back-'+visualChoice.back);}
  try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({table:visualChoice.table,layout:visualChoice.layout,back:visualChoice.back,v:4}));}catch(e){}
  document.querySelectorAll('#visualCustomizer .visual-choice').forEach(function(b){b.classList.toggle('selected',visualChoice[b.parentElement.dataset.kind]===b.dataset.value);});
 }
@@ -1258,7 +1275,7 @@ function resetCardCustomization(){visualChoice={table:'marble',layout:'arc',back
 (function loadCardCustomization(){
  let saved={};try{saved=JSON.parse(localStorage.getItem('doubleKoutCardStyle')||'{}')||{};}catch(e){}
   visualChoice.table=['felt','parquet','persian','marble','royal','casino'].includes(saved.table)?saved.table:'marble';
- visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';visualChoice.back=['classic','red','black','green'].includes(saved.back)?saved.back:'classic';setCardCustomization();
+ visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';visualChoice.back=(typeof saved.back==='string'&&/^store:[A-Za-z0-9_-]+$/.test(saved.back))?saved.back:(['classic','red','black','green'].includes(saved.back)?saved.back:'classic');setCardCustomization();
 })();
 (function(){
  const modal=document.getElementById('visualCustomizer'),title=document.getElementById('customizerTitle'),stepLabel=document.getElementById('customizerStep');
@@ -1269,6 +1286,7 @@ function resetCardCustomization(){visualChoice={table:'marble',layout:'arc',back
  // Delegated handlers: the shop button is injected by ensureUI after this script runs.
  document.addEventListener('click',e=>{
   const target=e.target;
+  if(target.closest('#openPersonalization')){if(window.DoubleKoutStore&&window.DoubleKoutStore.refresh)window.DoubleKoutStore.refresh();}
   if(target.closest('#openStoreLanding')){
    const storeModal=document.getElementById('storeModal');
    const accessNotice=document.getElementById('storeAccessNotice');
