@@ -1,0 +1,196 @@
+# نسخهٔ پشتیبان ۱۰.۱ — فهرست بازیابی و کدهای پروژه
+
+## هویت نقطهٔ بازیابی
+- مخزن: https://github.com/ahdehwari-commits/Doublekout-
+- شاخهٔ پشتیبان: `backup/version-10.1`
+- Commit دقیق کد برنامه در زمان تهیهٔ نسخه: `3d5dc2cee33ee0f62937c325d3c627e26c495a41`
+- شاخهٔ پشتیبان ابتدا دقیقاً از همین Commit ساخته و سپس با این سند مستندسازی شده است؛ فایل‌های برنامه در Commit مبنا تغییر نکرده‌اند.
+- شاخهٔ اصلی در زمان ثبت: `main`
+- توجه: عنوان ۱۰.۱ نام این نقطهٔ بازیابی است؛ برچسب داخل رابط فعلی بازی هنوز «نسخه ۹.۲۳» است و شماره‌گذاری نسخهٔ محصول جداگانه باید بعداً هماهنگ شود.
+
+## روش بازیابی
+1. آرشیو ZIP شاخهٔ `backup/version-10.1` را از GitHub دریافت کنید:
+   https://github.com/ahdehwari-commits/Doublekout-/archive/refs/heads/backup/version-10.1.zip
+2. برای بازگردانی دقیق کد برنامه به نقطهٔ اصلی، از Commit زیر استفاده کنید:
+   `3d5dc2cee33ee0f62937c325d3c627e26c495a41`
+3. پروژه شامل وب/PWA، نسخهٔ Android WebView، موتورهای بازی، تست‌ها، migrationهای SQL و Edge Functionها است.
+4. این نسخه پشتیبان کد مخزن را حفظ می‌کند؛ شامل پشتیبان کامل داده‌های زنده کاربران، Auth، Storage یا dump کامل دیتابیس نیست. برای بازیابی کامل محیط عملیاتی، نسخهٔ پشتیبان مستقل دیتابیس و تنظیمات محرمانه لازم است. کلیدها و Secretها عمداً در این سند قرار نگرفته‌اند.
+
+## وضعیت پایگاه داده در زمان تهیه
+- پروژه Supabase: `awgzilkxmtyrcxpouxif`
+- نسخه PostgreSQL: 17 (بر اساس بررسی فعلی)
+- تعداد migrationهای SQL در مخزن: 49
+- تعداد migrationهای ثبت‌شده در تاریخچهٔ زنده Supabase: 48
+- **عدم تطابق مهم:** migrationهای اعمال‌شده که فایل هم‌نسخه‌شان در مخزن پیدا نشد:
+  20261119113235, 20261119120848, 20261120151023, 20261121133428, 20261121133539
+- migrationهای موجود در مخزن که در تاریخچهٔ اعمال‌شدهٔ زنده دیده نشد:
+  20261118003300, 20261119151700, 20261120163000, 20261120171500, 20261121090000, 20261121133500
+- تا رفع این اختلاف، migration جدید نباید روی پروژهٔ زنده اعمال شود؛ ابتدا باید تفاوت تاریخچه و ساختار واقعی دیتابیس بررسی و تطبیق داده شود.
+
+## Edge Functions زنده
+- `room-action`: فعال، نسخهٔ زنده 528، verify_jwt=true، SHA ثبت‌شده: `f7a97d435dfa74333398920d2be1a93e57e36e872b51906a2bb81f2d7c55401b`
+- `zarinpal`: فعال، نسخهٔ زنده 1، verify_jwt=false، SHA ثبت‌شده: `در خروجی این بررسی ارائه نشد`
+- کدهای محلی این توابع در مسیرهای `supabase/functions/room-action/index.ts` و `supabase/functions/zarinpal/index.ts` قرار دارند. برای بازیابی باید تنظیمات Secret سمت سرور جداگانه و امن نگهداری شوند.
+
+## فهرست تمام مسیرهای ثبت‌شده در مخزن (161 مورد)
+- `.github`
+- `.github/workflows`
+- `.github/workflows/android-apk.yml`
+- `.github/workflows/cross-platform.yml`
+- `.github/workflows/deploy-pages.yml`
+- `DEVELOPER_HANDOFF_FA.md`
+- `IMG_3647.png`
+- `README.md`
+- `android`
+- `android/app`
+- `android/app/build.gradle`
+- `android/app/src`
+- `android/app/src/main`
+- `android/app/src/main/AndroidManifest.xml`
+- `android/app/src/main/assets`
+- `android/app/src/main/assets/anonymous-learning.js`
+- `android/app/src/main/assets/assets`
+- `android/app/src/main/assets/assets/card-back-black-gold.svg`
+- `android/app/src/main/assets/card-back-black-gold.svg`
+- `android/app/src/main/assets/central-payments-admin.js`
+- `android/app/src/main/assets/central-progress.js`
+- `android/app/src/main/assets/central-store.js`
+- `android/app/src/main/assets/engines`
+- `android/app/src/main/assets/engines/double-kout-game.js`
+- `android/app/src/main/assets/engines/double-kout-sequence.js`
+- `android/app/src/main/assets/engines/kuwaiti-six-player`
+- `android/app/src/main/assets/engines/kuwaiti-six-player/engine.js`
+- `android/app/src/main/assets/engines/standard-hokm`
+- `android/app/src/main/assets/engines/standard-hokm/engine.js`
+- `android/app/src/main/assets/index.html`
+- `android/app/src/main/assets/kuwaiti-six-player-ui.js`
+- `android/app/src/main/assets/lan-multiplayer.js`
+- `android/app/src/main/assets/table-art.png`
+- `android/app/src/main/assets/three-d-scene.js`
+- `android/app/src/main/java`
+- `android/app/src/main/java/com`
+- `android/app/src/main/java/com/doublekout`
+- `android/app/src/main/java/com/doublekout/app`
+- `android/app/src/main/java/com/doublekout/app/LanServer.java`
+- `android/app/src/main/java/com/doublekout/app/MainActivity.java`
+- `android/app/src/main/res`
+- `android/app/src/main/res/mipmap-xxxhdpi`
+- `android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.jpg`
+- `android/build.gradle`
+- `android/gradle.properties`
+- `android/settings.gradle`
+- `anonymous-learning.js`
+- `assets`
+- `assets/card-back-black-gold.png`
+- `assets/card-back-black-gold.svg`
+- `central-payments-admin.js`
+- `central-progress.js`
+- `central-store.js`
+- `desktop`
+- `desktop/main.cjs`
+- `engine`
+- `engine/kuwaiti-card-power.js`
+- `engine/test-kuwaiti-card-power.cjs`
+- `engines`
+- `engines/README.md`
+- `engines/double-kout-game.js`
+- `engines/double-kout-sequence.js`
+- `engines/kuwaiti-six-player`
+- `engines/kuwaiti-six-player/engine.js`
+- `engines/standard-hokm`
+- `engines/standard-hokm/engine.js`
+- `engines/test-anonymous-learning.cjs`
+- `engines/test-browser-engine-load-order.cjs`
+- `engines/test-central-store.cjs`
+- `engines/test-double-kout-game.cjs`
+- `engines/test-double-kout-sequence.cjs`
+- `engines/test-engine-foundations.cjs`
+- `engines/test-four-player-ui.cjs`
+- `engines/test-kuwaiti-six-player-game.cjs`
+- `engines/test-kuwaiti-six-player-ui-handoff.cjs`
+- `engines/test-standard-hokm.cjs`
+- `index.html`
+- `kuwaiti-six-player-ui.js`
+- `lan-multiplayer.js`
+- `manifest.webmanifest`
+- `package.json`
+- `scripts`
+- `scripts/check-inline-js.cjs`
+- `supabase-multiplayer.js`
+- `supabase`
+- `supabase/ADMIN_BOOTSTRAP.md`
+- `supabase/README.md`
+- `supabase/config.toml`
+- `supabase/functions`
+- `supabase/functions/room-action`
+- `supabase/functions/room-action/index.ts`
+- `supabase/functions/zarinpal`
+- `supabase/functions/zarinpal/index.ts`
+- `supabase/migrations`
+- `supabase/migrations/20261113000100_multiplayer_rooms.sql`
+- `supabase/migrations/20261113000200_room_lobby_actions.sql`
+- `supabase/migrations/20261113000300_authoritative_four_player_game.sql`
+- `supabase/migrations/20261114000400_reliable_room_lobby.sql`
+- `supabase/migrations/20261114000500_deal_before_challenge_decision.sql`
+- `supabase/migrations/20261114000600_rotating_challenge_turns.sql`
+- `supabase/migrations/20261114000700_simultaneous_challenge_window.sql`
+- `supabase/migrations/20261114000800_ten_second_turn_timeout.sql`
+- `supabase/migrations/20261114000900_fix_challenge_extension_json.sql`
+- `supabase/migrations/20261114001000_force_room_playing_status.sql`
+- `supabase/migrations/20261114001100_fix_challenge_choice_json.sql`
+- `supabase/migrations/20261114001200_challenger_starts_first.sql`
+- `supabase/migrations/20261114001300_ten_second_challenge_window.sql`
+- `supabase/migrations/20261114001400_fix_guest_room_playing_status.sql`
+- `supabase/migrations/20261114001500_guest_team_selection.sql`
+- `supabase/migrations/20261114001600_add_room_snapshot_rpc.sql`
+- `supabase/migrations/20261114001700_allow_human_play_after_turn_timer.sql`
+- `supabase/migrations/20261115001800_online_rematch_timer.sql`
+- `supabase/migrations/20261115001900_online_trick_display_delay.sql`
+- `supabase/migrations/20261115002000_lobby_decision_and_sequence_pile.sql`
+- `supabase/migrations/20261116002100_anonymous_strategy_learning.sql`
+- `supabase/migrations/20261116002200_central_player_progress.sql`
+- `supabase/migrations/20261116002300_central_cosmetic_store.sql`
+- `supabase/migrations/20261116002400_admin_payments.sql`
+- `supabase/migrations/20261116002500_admin_player_history.sql`
+- `supabase/migrations/20261116002600_two_points_per_win.sql`
+- `supabase/migrations/20261117002700_online_staged_five_card_deal.sql`
+- `supabase/migrations/20261117002800_idempotent_turns_and_ai_strategy.sql`
+- `supabase/migrations/20261117002900_restore_online_timeout_and_trick_delay.sql`
+- `supabase/migrations/20261118003000_first_card_timeout_and_ai_fallback.sql`
+- `supabase/migrations/20261118003100_fix_initial_staged_deal_and_action_log.sql`
+- `supabase/migrations/20261118003200_force_spades_first_online_game.sql`
+- `supabase/migrations/20261118003300_fix_online_naras_rank_order.sql`
+- `supabase/migrations/20261118101428_verified_accounts_and_room_player_scores.sql`
+- `supabase/migrations/20261118180929_expert_online_ai_and_dealer_rotation.sql`
+- `supabase/migrations/20261118182649_restrict_anon_execution_on_authenticated_rpcs.sql`
+- `supabase/migrations/20261118184004_index_foreign_keys_and_optimize_auth_policies.sql`
+- `supabase/migrations/20261118184354_secure_internal_tables_default_deny_policies.sql`
+- `supabase/migrations/20261118184501_restrict_internal_definer_helpers.sql`
+- `supabase/migrations/20261119105330_kuwaiti_six_player_online_engine.sql`
+- `supabase/migrations/20261119105639_kuwaiti_online_win_rewards.sql`
+- `supabase/migrations/20261119105712_kuwaiti_online_win_rewards_guard.sql`
+- `supabase/migrations/20261119112853_kuwaiti_online_ai_fill_and_turns.sql`
+- `supabase/migrations/20261119151700_kuwaiti_online_start_idempotency.sql`
+- `supabase/migrations/20261120020739_kuwaiti_dealer_rotation_and_automatic_malzoom.sql`
+- `supabase/migrations/20261120163000_resolve_fourth_card_without_display_lock.sql`
+- `supabase/migrations/20261120171500_show_fourth_card_then_resolve.sql`
+- `supabase/migrations/20261121090000_disable_unverified_local_game_rewards.sql`
+- `supabase/migrations/20261121133500_revoke_client_execution_of_offline_win_award.sql`
+- `supabase/tests`
+- `supabase/tests/admin-payments-smoke.sql`
+- `supabase/tests/cosmetic-store-smoke.sql`
+- `supabase/tests/dealer-rotation-smoke.sql`
+- `supabase/tests/online-game-smoke.sql`
+- `supabase/tests/player-progress-smoke.sql`
+- `sw.js`
+- `three-d-scene.js`
+- `versions`
+- `versions/9.0`
+- `versions/9.0/web-prototype.html`
+- `versions/9.1`
+- `versions/9.1/kuwaiti-six-player-ui.js`
+- `versions/9.1/supabase-multiplayer.js`
+- `versions/9.1/sw.js`
+- `versions/9.1/web-prototype.html`
+- `web-prototype-v9.54.html`
+- `web-prototype.html`
