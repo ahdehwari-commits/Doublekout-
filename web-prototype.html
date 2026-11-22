@@ -1990,8 +1990,9 @@ async function refreshOnlineGame(startPayload){
     var myFinalWon=myFinalTeam==='A'?finalScoreA:finalScoreB;
     var myFinalLost=myFinalTeam==='A'?finalScoreB:finalScoreA;
     var finalOutcome=myFinalWon>myFinalLost?'پیروزی تیم شما':(myFinalWon<myFinalLost?'شکست تیم شما':'بازی مساوی شد');
+    var finalNumber=function(n){return String(n).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];});};
     var challengeOutcome=result?(result.status==='success'?'چلنج موفق شد':'چلنج شکست خورد'):'';
-    finalResultNode.textContent=finalOutcome+'\\nدست‌های برده: '+faScore(myFinalWon)+'  |  دست‌های باخته: '+faScore(myFinalLost)+(challengeOutcome?'\\n'+challengeOutcome:'');
+    finalResultNode.textContent=finalOutcome+'\\nدست‌های برده: '+finalNumber(myFinalWon)+'  |  دست‌های باخته: '+finalNumber(myFinalLost)+(challengeOutcome?'\\n'+challengeOutcome:'');
    }else finalResultNode.textContent='';
   }
   el('onlineRematchText').textContent=myOnlineIsHost
