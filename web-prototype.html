@@ -2203,7 +2203,14 @@ body>#onlineHand.online-hand-isolated>button.online-card-legal>.card{
 body>#onlineHand.online-hand-isolated>button.online-card-illegal{opacity:.62!important;filter:grayscale(.62) brightness(.82)!important}
 #onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal>.card,
 body>#onlineHand.online-hand-isolated>button.online-card-illegal>.card{outline:1px solid #827b6c!important;box-shadow:0 2px 5px #0009!important;filter:grayscale(.62) brightness(.82)!important}
-#centerPile,#onlineCenterPile{display:none!important;visibility:hidden!important;opacity:0!important}
+/* Keep historical trick cards visible; remove only the circular halo behind the center. */
+#centerPile,#onlineCenterPile{display:block!important;visibility:visible!important;opacity:1!important;filter:none!important}
+.table>.center,#onlineTable>.center{
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+}
+.table>.center .table-emblem,#onlineTable>.center .table-emblem{pointer-events:none!important}
+#centerPile .pile-card,#onlineCenterPile .pile-card{visibility:visible!important;opacity:1!important;filter:none!important}
 </style>
 
 </body></html>
