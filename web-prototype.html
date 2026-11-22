@@ -465,6 +465,15 @@ html{background-color:#061b16!important;min-height:100%;}body{background-color:#
 </style><style>
 .avatar-customizer{width:min(620px,100%);margin:auto;text-align:center;color:#f6e6bd}.avatar-customizer-title{font-size:18px;font-weight:700;margin:0 0 18px}
 .avatar-customizer-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:440px;margin:auto}
+.personal-avatar-option{position:relative;overflow:hidden;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:3px;min-width:0}
+.personal-avatar-option img{width:100%;height:auto;aspect-ratio:1;object-fit:contain;border-radius:12px}
+.personal-avatar-option .avatar-price{font-size:9px;line-height:1.4;color:#ffe4a0;white-space:normal}
+.avatar-store-tabs{display:flex;justify-content:space-around;gap:8px;flex-wrap:wrap;font-size:11px;color:#f5d992;margin:0 0 12px}
+.avatar-loading{grid-column:1/-1;padding:18px;font-size:12px;color:#f5d992}
+#visualCustomizer .back-rail .store-back{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#ffe7a8;font-size:9px}
+#visualCustomizer .back-rail .store-back i{font-size:22px;font-style:normal}
+#visualCustomizer .back-rail .store-back b{font-size:8px}
+
 .personal-avatar-option{aspect-ratio:1;border:2px solid #8b6b35;border-radius:16px;background:linear-gradient(145deg,#173d30,#071c15);font-size:clamp(30px,7vw,44px);box-shadow:0 5px 12px #0008}
 .personal-avatar-option.selected{border:3px solid #ffe39a;background:linear-gradient(145deg,#71501f,#263b2b);box-shadow:0 0 0 3px #bb8d3d,0 0 20px #e9bd5e88}
 .avatar-customizer p{font-size:12px;color:#d8cba9;margin-top:18px}
@@ -800,7 +809,7 @@ body>#onlineHand.challenge-hand>button>.card{width:72px!important;height:108px!i
    <button type="button" class="visual-choice large-choice" data-value="red" aria-label="قرمز"><span class="back-choice red"><i>♥</i><b>Abdolhamid Dehvari</b></span></button>
    <button type="button" class="visual-choice large-choice" data-value="green" aria-label="سبز"><span class="back-choice green"><i>♦</i><b>Abdolhamid Dehvari</b></span></button>
   </div></section>
-  <section class="customizer-page hidden" data-step="3"><div class="avatar-customizer"><div class="avatar-customizer-title">آواتار دلخواهت را انتخاب کن</div><div class="avatar-customizer-grid" id="personalAvatarPicker"><button type="button" class="personal-avatar-option" data-personal-avatar="♛">♛</button><button type="button" class="personal-avatar-option" data-personal-avatar="⚔️">⚔️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🛡️">🛡️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🏆">🏆</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎖️">🎖️</button><button type="button" class="personal-avatar-option" data-personal-avatar="💎">💎</button><button type="button" class="personal-avatar-option" data-personal-avatar="🔱">🔱</button><button type="button" class="personal-avatar-option" data-personal-avatar="🧿">🧿</button><button type="button" class="personal-avatar-option" data-personal-avatar="🕶️">🕶️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎩">🎩</button><button type="button" class="personal-avatar-option" data-personal-avatar="🥇">🥇</button><button type="button" class="personal-avatar-option" data-personal-avatar="♠️">♠️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♥️">♥️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♦️">♦️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♣️">♣️</button><button type="button" class="personal-avatar-option" data-personal-avatar="⭐">⭐</button></div><p>انتخابت ذخیره می‌شود و در میز بازی زیر نامت نمایش داده خواهد شد.</p></div></section>
+  <section class="customizer-page hidden" data-step="3"><div class="avatar-customizer"><div class="avatar-customizer-title">آواتار دلخواهت را انتخاب کن</div><div class="avatar-store-tabs"><span>۱۸ آواتار فانتزی رایگان</span><span>۱۸ آواتار خلیجی · هرکدام ۱۰۰ امتیاز</span></div><div class="avatar-customizer-grid" id="personalAvatarPicker"><div class="avatar-loading">در حال دریافت آواتارها…</div></div><p>با انتخاب آواتار، اگر رایگان باشد دریافت و اگر خلیجی باشد پس از پرداخت امتیاز، برای حساب تو فعال می‌شود.</p></div></section>
  </div>
  <div class="customizer-bottom"><button id="customizerNext" type="button">تأیید و مرحله بعد</button><button id="customizerDone" type="button" class="hidden">تأیید نهایی و بازگشت به انتخاب میزها</button></div>
 </div>
@@ -1262,7 +1271,19 @@ function renderOwnedStoreBacks(data){
  const equipped=owned.find(item=>item.id===data.equipped);
  if(equipped){visualChoice.back='store:'+equipped.id;setCardCustomization();}
 }
-window.addEventListener('doublekout:store-catalog',e=>renderOwnedStoreBacks(e.detail));
+function renderAvatarCatalog(data){
+ const grid=document.getElementById('personalAvatarPicker');if(!grid||!data||!Array.isArray(data.avatars))return;
+ grid.innerHTML='';
+ data.avatars.forEach(item=>{
+  const b=document.createElement('button');b.type='button';b.className='personal-avatar-option'+(item.id===data.equipped_avatar?' selected':'');
+  b.dataset.personalAvatar=item.id;b.setAttribute('aria-label',item.title+(item.owned?'، در مالکیت شما':item.price===0?'، رایگان': '، '+item.price+' امتیاز'));
+  const img=document.createElement('img');img.src='./assets/'+item.asset_path;img.alt=item.title;img.loading='lazy';img.decoding='async';b.appendChild(img);
+  const meta=document.createElement('span');meta.className='avatar-price';meta.textContent=item.owned?'در مالکیت شما':item.price===0?'رایگان':item.price+' امتیاز';b.appendChild(meta);
+  grid.appendChild(b);
+ });
+ if(data.equipped_avatar){try{localStorage.setItem('doubleKoutAvatar',data.equipped_avatar);}catch(_){}}
+}
+window.addEventListener('doublekout:store-catalog',e=>{renderOwnedStoreBacks(e.detail);renderAvatarCatalog(e.detail);});
 function setCardCustomization(){
  document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','six-layout-arc','six-layout-hex','six-layout-wide');
  document.body.classList.add('table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
@@ -1318,7 +1339,7 @@ function resetCardCustomization(){visualChoice={table:'marble',layout:'arc',back
  function close(){modal.classList.add('hidden');document.body.style.overflow='';}
  document.getElementById('customizerClose').addEventListener('click',close);
  modal.querySelectorAll('[data-go-step]').forEach(b=>b.addEventListener('click',()=>showStep(Number(b.dataset.goStep))));
- modal.addEventListener('click',e=>{const av=e.target.closest('[data-personal-avatar]');if(av){const value=av.dataset.personalAvatar;try{localStorage.setItem('doubleKoutAvatar',value);}catch(_){}modal.querySelectorAll('[data-personal-avatar]').forEach(x=>x.classList.toggle('selected',x===av));window.dispatchEvent(new CustomEvent('doublekout:avatar-changed',{detail:{avatar:value}}));return;}const b=e.target.closest('.customizer-rail .visual-choice');if(!b)return;const kind=b.closest('[data-kind]').dataset.kind;visualChoice[kind]=b.dataset.value;setCardCustomization();showStep(step);});
+ modal.addEventListener('click',async e=>{const av=e.target.closest('[data-personal-avatar]');if(av){const value=av.dataset.personalAvatar;const api=window.DoubleKoutOnline;if(!api||!api.rpc){alert('برای ثبت آواتار باید به حساب بازی متصل باشی.');return;}av.disabled=true;try{let r=await api.rpc('purchase_avatar',{p_avatar_id:value});if(r.error)throw r.error;r=await api.rpc('equip_avatar',{p_avatar_id:value});if(r.error)throw r.error;try{localStorage.setItem('doubleKoutAvatar',value);}catch(_){}modal.querySelectorAll('[data-personal-avatar]').forEach(x=>x.classList.toggle('selected',x===av));window.dispatchEvent(new CustomEvent('doublekout:avatar-changed',{detail:{avatar:value}}));if(window.DoubleKoutStore&&window.DoubleKoutStore.refresh)await window.DoubleKoutStore.refresh();}catch(err){const msg=String(err.message||err);alert(msg.includes('not_enough_points')?'امتیاز کافی برای خرید این آواتار نداری.':msg.includes('permanent_account_required')?'برای خرید باید وارد حساب دائمی شوی.':msg);}finally{av.disabled=false;}return;}const b=e.target.closest('.customizer-rail .visual-choice');if(!b)return;const kind=b.closest('[data-kind]').dataset.kind;visualChoice[kind]=b.dataset.value;setCardCustomization();showStep(step);});
  document.getElementById('customizerNext').addEventListener('click',()=>showStep(step+1));
  document.getElementById('customizerDone').addEventListener('click',()=>{setCardCustomization();close();const picker=document.getElementById('modePicker');if(picker)picker.classList.remove('hidden');});
 })();
