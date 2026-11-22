@@ -720,6 +720,14 @@ body>#onlineHand.challenge-hand>button>.card{width:72px!important;height:108px!i
 #onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal>.card,body>#onlineHand.online-hand-isolated>button.online-card-legal>.card{outline:3px solid #ffe36b!important;border:2px solid #fff4bd!important;box-shadow:0 0 0 3px #b88624,0 0 18px #ffe36bcc,0 8px 14px #000c!important;filter:brightness(1.12) saturate(1.3)!important}
 #onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal,body>#onlineHand.online-hand-isolated>button.online-card-illegal{opacity:.38!important;filter:grayscale(.8) brightness(.7)!important}
 #onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal>.card,body>#onlineHand.online-hand-isolated>button.online-card-illegal>.card{outline:1px solid #81796b!important;box-shadow:0 2px 5px #0009!important;filter:grayscale(.8) brightness(.72)!important}
+
+/* 9.62: count only tricks belonging to completed groups and soften legal-card emphasis. */
+#onlineTable .online-seat-tricks{font-size:13px!important;padding:4px 8px!important;min-width:58px!important;line-height:1.3!important}
+@media(max-width:520px){#onlineTable .online-seat-tricks{font-size:12px!important;padding:3px 6px!important;min-width:54px!important}}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal,body>#onlineHand.online-hand-isolated>button.online-card-legal{opacity:1!important;filter:none!important}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal>.card,body>#onlineHand.online-hand-isolated>button.online-card-legal>.card{transform:none!important;outline:2px solid #d9bd79!important;border:1px solid #f1dfb5!important;box-shadow:0 0 0 1px #98783f,0 5px 9px #0008!important;filter:none!important}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal,body>#onlineHand.online-hand-isolated>button.online-card-illegal{opacity:.88!important;filter:none!important}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal>.card,body>#onlineHand.online-hand-isolated>button.online-card-illegal>.card{transform:none!important;outline:1px solid #8b806a!important;box-shadow:0 3px 6px #0008!important;filter:grayscale(.18) brightness(.94)!important}
 </style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۲۳ · اصلاح مزایده و اتاق آنلاین</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
 <div class="landing-personalize" aria-label="ابزارهای بازی">
@@ -1992,8 +2000,8 @@ async function refreshOnlineGame(startPayload){
    var trickBadge=el('onlineTricks'+def.key);
    if(!trickBadge){trickBadge=document.createElement('div');trickBadge.id='onlineTricks'+def.key;trickBadge.className='online-seat-tricks';el('onlineCount'+def.key).insertAdjacentElement('afterend',trickBadge);}
    var seatTeam=seat%2;
-   var seatWonTricks=(state.trickWinners||[]).filter(function(winnerSeat){return Number(winnerSeat)%2===seatTeam;}).length;
-   trickBadge.textContent=String(seatWonTricks).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];})+' دست تیم';
+   var seatWonTricks=mode==='double-kout'?(seatTeam===0?liveTeamScores.A:liveTeamScores.B):(state.trickWinners||[]).filter(function(winnerSeat){return Number(winnerSeat)%2===seatTeam;}).length;
+   trickBadge.textContent=String(seatWonTricks).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];})+(mode==='double-kout'?' دست تکمیل‌شده':' دست تیم');
    el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&!trickPending&&turn===seat);
    var slot=el('onlinePlayed'+def.key);slot.innerHTML='';
    if(def.offset!==0&&left>0&&!trumpPending){
@@ -2070,7 +2078,7 @@ async function refreshOnlineGame(startPayload){
     var b=document.createElement('button');
     var fanOffset=i-(displayHand.length-1)/2;
     var handWidth=onlineHandEl.clientWidth||((window.innerWidth||390)-24);
-    var fanStep=displayHand.length>1?Math.max(18,Math.min(56,(handWidth-72)/(displayHand.length-1))):0;
+    var fanStep=displayHand.length>1?Math.max(16,Math.min(42,(handWidth-76)/(displayHand.length-1))):0;
     b.type='button';
     b.style.setProperty('position','absolute','important');
     b.style.setProperty('left','calc(50% + '+(fanOffset*fanStep)+'px)','important');
