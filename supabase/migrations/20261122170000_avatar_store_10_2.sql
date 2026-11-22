@@ -186,3 +186,46 @@ revoke all on function public.equip_avatar(text) from public, anon;
 grant execute on function public.get_avatar_catalog() to authenticated, service_role;
 grant execute on function public.purchase_avatar(text) to authenticated, service_role;
 grant execute on function public.equip_avatar(text) to authenticated, service_role;
+
+
+-- Include the selected account avatar in the lobby roster payload.
+create or replace function public.get_room_roster(p_room_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_user uuid := auth.uid();
+  v_result jsonb;
+begin
+  if v_user is null then raise exception 'authentication_required'; end if;
+  if not exists (
+    select 1 from public.room_members
+    where room_id = p_room_id and user_id = v_user
+  ) then raise exception 'not_a_room_member'; end if;
+
+  select coalesce(
+    jsonb_agg(
+      jsonb_build_object(
+        'seat', m.seat,
+        'display_name', m.display_name,
+        'is_host', m.is_host,
+        'ready', m.ready,
+        'user_id', m.user_id,
+        'points', coalesce(p.points, 0),
+        'wins', coalesce(p.wins, 0),
+        'avatar_id', p.avatar_id,
+        'avatar_asset_path', a.asset_path
+      ) order by m.seat
+    ),
+    '[]'::jsonb
+  )
+  into v_result
+  from public.room_members m
+  left join public.player_profiles p on p.user_id = m.user_id
+  left join public.store_avatars a on a.id = p.avatar_id and a.active
+  where m.room_id = p_room_id;
+  return v_result;
+end;
+$$;
