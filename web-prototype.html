@@ -1416,11 +1416,10 @@ var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
 var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,onlineRosterRows=[],lastLobbyGuestId='',gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastAcceptedGameRevision=-1,lastOnlineHandSignature='',onlineRoomEpoch=0,onlineChallengeDeadline=0,onlineChallengeExpired=false,confirmedPlayedCardIds=Object.create(null),onlineRematchDeadline=0,lastRematchBeep=-1,rematchBusy=false,myOnlineIsHost=false,rematchAutoAttemptedDeadline=0,kuwaitiStartInFlight=false;
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function rosterPlayerLabel(displayName){
- var raw=String(displayName||'بازیکن'),m=raw.match(/^(gulf|fantasy)-(\d{2})\s+(.+)$/);
- if(!m)return esc(raw);
- var id=m[1]+'-'+m[2],name=m[3];
- return '<span class="roster-avatar"><img src="./assets/avatars/'+id+'.webp" alt="" loading="lazy"></span>'+esc(name);
+function rosterPlayerLabel(displayName,avatarId){
+ var raw=String(displayName||'بازیکن'),label=esc(raw);
+ if(!avatarId||! /^(gulf|fantasy)-\d{2}$/.test(String(avatarId)))return label;
+ return '<span class="roster-avatar"><img src="./assets/avatars/'+avatarId+'.webp" alt="" loading="lazy"></span>'+label;
 }
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
 function onlineRequest(promise,label,limit){
@@ -1648,7 +1647,7 @@ async function refreshRoster(){
   var r=await client.rpc('get_room_roster',{p_room_id:roomId});
   if(r.error)throw r.error;
   var rows=Array.isArray(r.data)?r.data:[],cap=count,html='';onlineRosterRows=rows;
-  for(var i=0;i<cap;i++){var p=rows.find(function(x){return Number(x.seat)===i;});html+='<div>'+(i+1)+'. '+(p?rosterPlayerLabel(p.display_name)+' · '+Number(p.points||0)+' امتیاز'+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
+  for(var i=0;i<cap;i++){var p=rows.find(function(x){return Number(x.seat)===i;});html+='<div>'+(i+1)+'. '+(p?rosterPlayerLabel(p.display_name,p.avatar_id)+' · '+Number(p.points||0)+' امتیاز'+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
   el('onlineRoster').innerHTML=html;
   var allReady=rows.length>=2&&rows.every(function(x){return x.ready===true;}),allSixReady=rows.length===6&&rows.every(function(x){return x.ready===true;});
   var mine=rows.find(function(x){return x.user_id===me.id;});
