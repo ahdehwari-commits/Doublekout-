@@ -1988,6 +1988,7 @@ async function refreshOnlineGame(startPayload){
   var avatarChoices=['♛','⚔️','🛡️','🏆','🎖️','💎','🔱','🧿','🕶️','🎩','🥇','♠️','♥️','♦️','♣️','⭐'];
   var splitAvatarName=function(value){var raw=String(value||'بازیکن');var av=avatarChoices.find(function(x){return raw.indexOf(x+' ')===0;});return {avatar:av||'👤',name:av?raw.slice(av.length+1):raw};};
   var visualCard=function(c){return {r:rankGlyph[c.rank||c.r]||(c.rank||c.r),s:suitGlyph[c.suit||c.s]||(c.suit||c.s),id:c.id};};
+  var seatCounterScores=mode==='double-kout'?onlineLiveSequenceScores(Array.isArray(state.trickWinners)?state.trickWinners:[],state.challengeTeam||null):null;
   var seatDefs=[{key:'South',offset:0},{key:'East',offset:1},{key:'North',offset:2},{key:'West',offset:3}];
   var playBySeat={};(state.plays||[]).forEach(function(p){playBySeat[Number(p.seat)]=p;});
   var completedTricks=Array.isArray(state.trickWinners)?state.trickWinners.length:Math.max(0,(Number(state.trickNo)||1)-1);
@@ -2000,7 +2001,7 @@ async function refreshOnlineGame(startPayload){
    var trickBadge=el('onlineTricks'+def.key);
    if(!trickBadge){trickBadge=document.createElement('div');trickBadge.id='onlineTricks'+def.key;trickBadge.className='online-seat-tricks';el('onlineCount'+def.key).insertAdjacentElement('afterend',trickBadge);}
    var seatTeam=seat%2;
-   var seatWonTricks=mode==='double-kout'?(seatTeam===0?liveTeamScores.A:liveTeamScores.B):(state.trickWinners||[]).filter(function(winnerSeat){return Number(winnerSeat)%2===seatTeam;}).length;
+   var seatWonTricks=mode==='double-kout'?(seatTeam===0?seatCounterScores.A:seatCounterScores.B):(state.trickWinners||[]).filter(function(winnerSeat){return Number(winnerSeat)%2===seatTeam;}).length;
    trickBadge.textContent=String(seatWonTricks).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];})+(mode==='double-kout'?' دست تکمیل‌شده':' دست تیم');
    el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&!trickPending&&turn===seat);
    var slot=el('onlinePlayed'+def.key);slot.innerHTML='';
