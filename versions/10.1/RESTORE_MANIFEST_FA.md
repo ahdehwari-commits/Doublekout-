@@ -29,7 +29,7 @@
 
 ## Edge Functions زنده
 - `room-action`: فعال، نسخهٔ زنده 528، verify_jwt=true، SHA ثبت‌شده: `f7a97d435dfa74333398920d2be1a93e57e36e872b51906a2bb81f2d7c55401b`
-- `zarinpal`: فعال، نسخهٔ زنده 1، verify_jwt=false، SHA ثبت‌شده: `در خروجی این بررسی ارائه نشد`
+- `zarinpal`: فعال، نسخهٔ زنده 1، verify_jwt=false، SHA ثبت‌شده: `f859215044823b92f0f918ae53b997cf32812ed0e474f6a23220559ce778445c`
 - کدهای محلی این توابع در مسیرهای `supabase/functions/room-action/index.ts` و `supabase/functions/zarinpal/index.ts` قرار دارند. برای بازیابی باید تنظیمات Secret سمت سرور جداگانه و امن نگهداری شوند.
 
 ## فهرست تمام مسیرهای ثبت‌شده در مخزن (161 مورد)
