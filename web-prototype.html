@@ -1417,7 +1417,7 @@ var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function rosterPlayerLabel(displayName){
- var raw=String(displayName||'بازیکن'),m=raw.match(/^(gulf|fantasy)-(\\d{2})\\s+(.+)$/);
+ var raw=String(displayName||'بازیکن'),m=raw.match(/^(gulf|fantasy)-(\d{2})\s+(.+)$/);
  if(!m)return esc(raw);
  var id=m[1]+'-'+m[2],name=m[3];
  return '<span class="roster-avatar"><img src="./assets/avatars/'+id+'.webp" alt="" loading="lazy"></span>'+esc(name);
