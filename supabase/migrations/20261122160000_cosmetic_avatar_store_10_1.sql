@@ -144,9 +144,9 @@ as $function$
 declare uid uuid:=auth.uid(); item public.game_avatars%rowtype; balance bigint;
 begin
  if uid is null then raise exception 'account_login_required'; end if;
- if coalesce((auth.jwt()->>'is_anonymous')::boolean,false) then raise exception 'permanent_account_required'; end if;
  select * into item from public.game_avatars where id=p_avatar_id and active for share;
  if not found then raise exception 'avatar_unavailable'; end if;
+ if item.point_price>0 and coalesce((auth.jwt()->>'is_anonymous')::boolean,false) then raise exception 'permanent_account_required'; end if;
  insert into public.player_profiles(user_id) values(uid) on conflict(user_id) do nothing;
  select points into balance from public.player_profiles where user_id=uid for update;
  if exists(select 1 from public.player_avatar_ownership where user_id=uid and avatar_id=p_avatar_id) then
@@ -188,5 +188,34 @@ grant execute on function public.get_store_catalog() to authenticated;
 grant execute on function public.purchase_card_back(text) to authenticated;
 grant execute on function public.purchase_avatar(text) to authenticated;
 grant execute on function public.equip_avatar(text) to authenticated;
+
+create or replace function public.get_room_roster(p_room_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path to 'public','pg_temp'
+as $function$
+declare
+  v_user uuid := auth.uid();
+  v_result jsonb;
+begin
+  if v_user is null then raise exception 'authentication_required'; end if;
+  if not exists (select 1 from public.room_members where room_id=p_room_id and user_id=v_user) then
+    raise exception 'not_a_room_member';
+  end if;
+  select coalesce(jsonb_agg(jsonb_build_object(
+    'seat',m.seat,'display_name',m.display_name,'is_host',m.is_host,'ready',m.ready,
+    'user_id',m.user_id,'points',coalesce(p.points,0),'wins',coalesce(p.wins,0),
+    'avatar_id',p.equipped_avatar_id
+  ) order by m.seat),'[]'::jsonb)
+  into v_result
+  from public.room_members m
+  left join public.player_profiles p on p.user_id=m.user_id
+  where m.room_id=p_room_id;
+  return v_result;
+end;
+$function$;
+revoke all on function public.get_room_roster(uuid) from public,anon;
+grant execute on function public.get_room_roster(uuid) to authenticated;
 
 commit;
