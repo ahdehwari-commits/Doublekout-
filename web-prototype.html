@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#103d32"><meta name="description" content="نسخه آزمایشی کوت بومی با قانون جفت و چلنج"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./IMG_3647.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Double Kout"><title>Double Kout · نسخه ۹.۲۲</title>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#103d32"><meta name="description" content="نسخه آزمایشی کوت بومی با قانون جفت و چلنج"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./IMG_3647.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Double Kout"><title>Double Kout · نسخه ۹.۲۲</title><link rel="stylesheet" href="./assets/shadows-theme.css">
 <style>
 #game{transform-style:flat;transform:none;transition:none}:root{--felt:#0c382d;--felt2:#145343;--gold:#e7c879;--cream:#fffaf0;--ink:#17251f;--muted:#c4d5cd;--red:#c83d43}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#071d18 0%,#0b3027 48%,#061b16 100%);color:#fff;font-family:Tahoma,Arial,sans-serif;min-height:100vh}.wrap{max-width:980px;margin:auto;padding:14px}.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.brand{font-size:24px;font-weight:900;color:var(--gold)}.pill{background:#09271f;border:1px solid #467565;padding:6px 11px;border-radius:30px;font-size:12px;color:var(--muted)}.panel{background:#0c2e26dd;border:1px solid #477a68;border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 12px 35px #001b1666}.setup{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end}label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}select,button{font:inherit;border:0;border-radius:12px;padding:11px 13px}select{width:100%;background:#f7f1df;color:#17251f}button{background:var(--gold);color:#17251f;font-weight:bold;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}
 /* Keep cards fully legible while the player considers challenge vs. normal play. */
@@ -1249,7 +1249,7 @@ function royalPortrait(rank){
 
 var visualChoice={table:'marble',layout:'arc',back:'classic'};
 function setCardCustomization(){
- document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','six-layout-arc','six-layout-hex','six-layout-wide');
+ document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','table-theme-shadows','six-layout-arc','six-layout-hex','six-layout-wide');
  document.body.classList.add('deck-back-'+visualChoice.back,'table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
  try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({table:visualChoice.table,layout:visualChoice.layout,back:visualChoice.back,v:4}));}catch(e){}
  document.querySelectorAll('#visualCustomizer .visual-choice').forEach(function(b){b.classList.toggle('selected',visualChoice[b.parentElement.dataset.kind]===b.dataset.value);});
@@ -1257,7 +1257,7 @@ function setCardCustomization(){
 function resetCardCustomization(){visualChoice={table:'marble',layout:'arc',back:'classic'};setCardCustomization();}
 (function loadCardCustomization(){
  let saved={};try{saved=JSON.parse(localStorage.getItem('doubleKoutCardStyle')||'{}')||{};}catch(e){}
-  visualChoice.table=['felt','parquet','persian','marble','royal','casino'].includes(saved.table)?saved.table:'marble';
+  visualChoice.table=['felt','parquet','persian','marble','royal','casino','shadows'].includes(saved.table)?saved.table:'marble';
  visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';visualChoice.back=['classic','red','black','green'].includes(saved.back)?saved.back:'classic';setCardCustomization();
 })();
 (function(){
@@ -2292,4 +2292,5 @@ body>#onlineHand.online-hand-isolated>button.online-card-illegal{opacity:.88!imp
 #onlineTable .online-seat-tricks-number{font-size:16px!important}
 @media(max-width:520px){#onlineTable .online-seat-tricks-label{font-size:10px!important}#onlineTable .online-seat-tricks-number{font-size:15px!important}}
 </style>
+<script src="./shadows-theme.js?v=1"></script>
 </body></html>
