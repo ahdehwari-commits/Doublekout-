@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Double Kout in the Shadows — Table Concept</title>
+<style>
+:root{color-scheme:dark;--gold:#d8b66b;--gold2:#f2dda0;--stone:#242321;--stone2:#393631;--felt:#102d25;--cream:#f7f0df;--red:#b72e39}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:#f5eddb;font-family:Tahoma,Arial,sans-serif;background:radial-gradient(ellipse at 50% 35%,#34312b 0,#171715 52%,#090a09 100%);overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.2;background:repeating-linear-gradient(90deg,transparent 0 78px,#b6a17a10 79px 81px),linear-gradient(180deg,#0008,transparent 28%,#0009)}
+.room{max-width:1100px;margin:auto;padding:22px 18px 34px;position:relative}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.brand{font-weight:900;letter-spacing:.12em;color:var(--gold2);font-size:clamp(18px,3vw,27px);text-shadow:0 2px 12px #d4a64a55}
+.subtitle{font-size:11px;color:#c7b995;letter-spacing:.2em}
+.tag{border:1px solid #9d7d43;border-radius:99px;padding:7px 12px;color:#e5cf9a;font-size:11px;background:#171613}
+.lamp{height:2px;background:linear-gradient(90deg,transparent,#b78b43,transparent);margin:0 0 20px}
+.table-wrap{perspective:1200px;filter:drop-shadow(0 30px 24px #000c)}
+.table{position:relative;min-height:620px;padding:28px;border-radius:34px;border:7px solid #8e6a31;background:linear-gradient(145deg,#5a5345 0%,#282723 18%,#1b1b19 50%,#39352d 100%);box-shadow:inset 0 0 0 2px #f4d99188,inset 0 0 0 9px #171612,inset 0 0 70px #000,0 0 0 2px #3e2d15;transform:rotateX(2deg);overflow:hidden}
+.table:before{content:"";position:absolute;inset:16px;border:2px solid #c19a50;border-radius:22px;box-shadow:inset 0 0 0 1px #f8df9a33,0 0 20px #d3a34b20;pointer-events:none}
+.table:after{content:"";position:absolute;inset:0;opacity:.13;pointer-events:none;background:repeating-linear-gradient(12deg,transparent 0 7px,#fff 8px,transparent 9px 15px),repeating-linear-gradient(102deg,transparent 0 19px,#000 20px,transparent 21px 31px);mix-blend-mode:soft-light}
+.rivet{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff1c2,#a87a35 55%,#39230d);box-shadow:0 1px 4px #000;z-index:2}.r1{top:9px;left:9px}.r2{top:9px;right:9px}.r3{bottom:9px;left:9px}.r4{bottom:9px;right:9px}
+.seat{position:absolute;z-index:3;min-width:128px;text-align:center;padding:10px 14px;border-radius:13px;background:linear-gradient(145deg,#292722,#10100f);border:1px solid #9b783d;box-shadow:0 8px 14px #0009,inset 0 1px #fff2}
+.seat b{display:block;color:#f0d99f;font-size:13px}.seat small{display:block;color:#aaa08a;font-size:10px;margin-top:5px}.north{top:34px;left:50%;transform:translateX(-50%)}.south{bottom:28px;left:50%;transform:translateX(-50%)}.west{left:30px;top:50%;transform:translateY(-50%)}.east{right:30px;top:50%;transform:translateY(-50%)}
+.player-mark{display:inline-block;width:7px;height:7px;border-radius:50%;background:#7f9b70;margin-left:6px;box-shadow:0 0 8px #8fc17a}
+.play-zone{position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%);width:min(55%,520px);height:280px;border-radius:50%;background:radial-gradient(ellipse,#1a3b30aa 0,#0c1c17aa 62%,transparent 72%);display:flex;align-items:center;justify-content:center}
+.center-label{position:absolute;top:7px;color:#c5ad78;font-size:10px;letter-spacing:.18em;text-shadow:0 2px 5px #000}
+.trick{position:relative;width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;place-items:center}
+.played-card{width:83px;height:119px;border-radius:9px;background:linear-gradient(145deg,#fffdf5,#e5dbc4);color:#171713;border:1px solid #fff8e9;box-shadow:0 10px 20px #000b,inset 2px 2px 3px #fff;display:flex;flex-direction:column;justify-content:space-between;padding:7px;font:700 24px Georgia,serif;position:relative}
+.played-card.red{color:var(--red)}.played-card .suit{font-size:37px;align-self:center}.played-card .corner{font-size:13px;line-height:1.05}.played-card .corner.bottom{align-self:flex-end;transform:rotate(180deg)}
+.p1{transform:rotate(-9deg) translate(8px,8px)}.p2{transform:rotate(8deg) translate(-8px,8px)}.p3{transform:rotate(7deg) translate(8px,-8px);opacity:.48;filter:brightness(.78)}.p4{transform:rotate(-7deg) translate(-8px,-8px);opacity:.48;filter:brightness(.78)}
+.back-fan{position:absolute;z-index:4;display:flex;direction:ltr;align-items:center;justify-content:center}.back{width:49px;height:72px;border-radius:6px;border:2px solid #d8b66b;background:repeating-linear-gradient(45deg,#171715 0 5px,#25221c 5px 7px);box-shadow:inset 0 0 0 2px #4c3a1d,0 5px 9px #000b;position:relative;margin-left:-27px}.back:first-child{margin-left:0}.back:before{content:"✦";position:absolute;inset:8px;border:1px solid #d3ad61;color:#e4c77f;display:grid;place-items:center;font-size:22px;text-shadow:0 0 8px #e4c77f55}.back:after{content:"";position:absolute;inset:15px 9px;border:1px solid #8d6c36;transform:rotate(45deg)}
+.fan-n{top:126px;left:50%;transform:translateX(-50%)}.fan-s{bottom:122px;left:50%;transform:translateX(-50%)}.fan-w{left:158px;top:50%;transform:translateY(-50%) rotate(90deg)}.fan-e{right:158px;top:50%;transform:translateY(-50%) rotate(-90deg)}
+.hand-area{margin:22px auto 0;max-width:670px;text-align:center;position:relative;z-index:5}.hand-title{font-size:11px;color:#cbb783;margin-bottom:10px;letter-spacing:.12em}.hand{display:flex;justify-content:center;direction:ltr;padding:10px 14px 18px;overflow-x:auto}
+.hand .played-card{width:79px;height:116px;margin-left:-21px;cursor:pointer;transition:transform .18s,box-shadow .18s}.hand .played-card:first-child{margin-left:0}.hand .played-card:nth-child(odd){transform:rotate(-3deg)}.hand .played-card:nth-child(even){transform:rotate(3deg)}.hand .played-card:hover{transform:translateY(-15px) rotate(0) scale(1.04);z-index:3;box-shadow:0 18px 26px #000d}
+.controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:14px}.controls button{border:1px solid #9c7a40;background:linear-gradient(#3a3325,#171613);color:#e8d39e;padding:10px 18px;border-radius:9px;font-weight:bold}.controls button.primary{background:linear-gradient(#e4c77e,#9b7332);color:#1c1710;border-color:#f5dfa0}
+.note{text-align:center;color:#a99e86;font-size:11px;line-height:1.8;margin-top:17px}
+@media(max-width:700px){.room{padding:12px 8px 24px}.table{min-height:520px;padding:12px;border-width:5px}.table:before{inset:10px}.seat{min-width:94px;padding:8px 7px}.seat b{font-size:11px}.seat small{font-size:9px}.north{top:25px}.south{bottom:23px}.west{left:12px}.east{right:12px}.fan-n{top:104px}.fan-s{bottom:95px}.fan-w{left:104px}.fan-e{right:104px}.back{width:37px;height:55px;margin-left:-22px}.play-zone{width:68%;height:220px}.played-card{width:65px;height:95px;font-size:20px}.played-card .suit{font-size:29px}.hand .played-card{width:66px;height:98px;margin-left:-28px}.hand-area{margin-top:12px}.hand{justify-content:flex-start}.subtitle{display:none}}
+@media(max-width:390px){.seat{min-width:82px}.fan-w{left:88px}.fan-e{right:88px}.play-zone{width:74%}.played-card{width:57px;height:84px}.hand .played-card{width:60px;height:90px;margin-left:-32px}}
+</style>
+</head>
+<body>
+<div class="room">
+<header><div><div class="brand">DOUBLE KOUT</div><div class="subtitle">IN THE SHADOWS · TABLE CONCEPT</div></div><div class="tag">پیش‌نمایش مستقل میز بازی</div></header>
+<div class="lamp"></div>
+<div class="table-wrap"><main class="table" aria-label="میز مفهومی دابل کوت">
+<i class="rivet r1"></i><i class="rivet r2"></i><i class="rivet r3"></i><i class="rivet r4"></i>
+<div class="seat north"><b>حریف روبه‌رو</b><small>۴ کارت در دست</small></div>
+<div class="seat west"><b>یار سمت چپ</b><small>۴ کارت در دست</small></div>
+<div class="seat east"><b>حریف سمت راست</b><small>۴ کارت در دست</small></div>
+<div class="seat south"><b><span class="player-mark"></span>شما</b><small>نوبت شما</small></div>
+<div class="back-fan fan-n"><i class="back"></i><i class="back"></i><i class="back"></i><i class="back"></i></div>
+<div class="back-fan fan-s"><i class="back"></i><i class="back"></i><i class="back"></i><i class="back"></i></div>
+<div class="back-fan fan-w"><i class="back"></i><i class="back"></i><i class="back"></i><i class="back"></i></div>
+<div class="back-fan fan-e"><i class="back"></i><i class="back"></i><i class="back"></i><i class="back"></i></div>
+<section class="play-zone"><div class="center-label">محدودهٔ بازی · ترفند جاری</div><div class="trick">
+<div class="played-card red p1"><span class="corner">A<br>♥</span><span class="suit">♥</span><span class="corner bottom">A<br>♥</span></div>
+<div class="played-card p2"><span class="corner">K<br>♠</span><span class="suit">♠</span><span class="corner bottom">K<br>♠</span></div>
+<div class="played-card red p3"><span class="corner">7<br>♦</span><span class="suit">♦</span><span class="corner bottom">7<br>♦</span></div>
+<div class="played-card p4"><span class="corner">Q<br>♣</span><span class="suit">♣</span><span class="corner bottom">Q<br>♣</span></div>
+</div></section>
+</main></div>
+<section class="hand-area"><div class="hand-title">کارت‌های شما · نمونهٔ نمایشی</div><div class="hand">
+<div class="played-card"><span class="corner">A<br>♠</span><span class="suit">♠</span><span class="corner bottom">A<br>♠</span></div>
+<div class="played-card red"><span class="corner">10<br>♥</span><span class="suit">♥</span><span class="corner bottom">10<br>♥</span></div>
+<div class="played-card"><span class="corner">Q<br>♠</span><span class="suit">♠</span><span class="corner bottom">Q<br>♠</span></div>
+<div class="played-card red"><span class="corner">8<br>♦</span><span class="suit">♦</span><span class="corner bottom">8<br>♦</span></div>
+<div class="played-card"><span class="corner">J<br>♣</span><span class="suit">♣</span><span class="corner bottom">J<br>♣</span></div>
+</div><div class="controls"><button class="primary" onclick="alert('این پیش‌نمایش گرافیکی است؛ هنوز به موتور بازی متصل نیست.')">انتخاب کارت</button><button onclick="alert('نسخهٔ نمایشی مستقل است.')">راهنمای میز</button></div></section>
+<p class="note">این فایل فقط نمونهٔ بصری HTML/CSS است؛ کارت‌ها و بازیکنان نمایشی‌اند و هنوز به منطق بازی، نوبت‌ها یا Supabase متصل نیستند.</p>
+</div>
+</body></html>
