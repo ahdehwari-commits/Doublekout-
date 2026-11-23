@@ -8,6 +8,7 @@ body.table-theme-shadows{
     radial-gradient(ellipse at 16% 12%,rgba(111,145,190,.15),transparent 27%),
     linear-gradient(180deg,#111316 0%,#090a0c 58%,#050607 100%)!important;
   color:#f5ead1!important;
+  position:relative;isolation:isolate;
 }
 body.table-theme-shadows:before{
   content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.72;
@@ -41,7 +42,7 @@ body.table-theme-shadows .k-table{
     repeating-linear-gradient(103deg,rgba(0,0,0,.12) 0 2px,transparent 2px 13px),
     linear-gradient(145deg,#343333 0%,#1b1d20 48%,#0b0c0e 100%)!important;
   border:8px solid #9c7436!important;
-  border-radius:30px!important;
+  /* Preserve each game's existing table silhouette and responsive geometry. */
   box-shadow:
     inset 0 0 0 2px #f3d58b,
     inset 0 0 0 6px #4a3518,
