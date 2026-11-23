@@ -465,6 +465,15 @@ html{background-color:#061b16!important;min-height:100%;}body{background-color:#
 </style><style>
 .avatar-customizer{width:min(620px,100%);margin:auto;text-align:center;color:#f6e6bd}.avatar-customizer-title{font-size:18px;font-weight:700;margin:0 0 18px}
 .avatar-customizer-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:440px;margin:auto}
+.personal-avatar-option{position:relative;overflow:hidden;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:3px;min-width:0}
+.personal-avatar-option img{width:100%;height:auto;aspect-ratio:1;object-fit:contain;border-radius:12px}
+.personal-avatar-option .avatar-price{font-size:9px;line-height:1.4;color:#ffe4a0;white-space:normal}
+.avatar-store-tabs{display:flex;justify-content:space-around;gap:8px;flex-wrap:wrap;font-size:11px;color:#f5d992;margin:0 0 12px}
+.avatar-loading{grid-column:1/-1;padding:18px;font-size:12px;color:#f5d992}
+#visualCustomizer .back-rail .store-back{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#ffe7a8;font-size:9px}
+#visualCustomizer .back-rail .store-back i{font-size:22px;font-style:normal}
+#visualCustomizer .back-rail .store-back b{font-size:8px}
+
 .personal-avatar-option{aspect-ratio:1;border:2px solid #8b6b35;border-radius:16px;background:linear-gradient(145deg,#173d30,#071c15);font-size:clamp(30px,7vw,44px);box-shadow:0 5px 12px #0008}
 .personal-avatar-option.selected{border:3px solid #ffe39a;background:linear-gradient(145deg,#71501f,#263b2b);box-shadow:0 0 0 3px #bb8d3d,0 0 20px #e9bd5e88}
 .avatar-customizer p{font-size:12px;color:#d8cba9;margin-top:18px}
@@ -800,7 +809,7 @@ body>#onlineHand.challenge-hand>button>.card{width:72px!important;height:108px!i
    <button type="button" class="visual-choice large-choice" data-value="red" aria-label="قرمز"><span class="back-choice red"><i>♥</i><b>Abdolhamid Dehvari</b></span></button>
    <button type="button" class="visual-choice large-choice" data-value="green" aria-label="سبز"><span class="back-choice green"><i>♦</i><b>Abdolhamid Dehvari</b></span></button>
   </div></section>
-  <section class="customizer-page hidden" data-step="3"><div class="avatar-customizer"><div class="avatar-customizer-title">آواتار دلخواهت را انتخاب کن</div><div class="avatar-customizer-grid" id="personalAvatarPicker"><button type="button" class="personal-avatar-option" data-personal-avatar="♛">♛</button><button type="button" class="personal-avatar-option" data-personal-avatar="⚔️">⚔️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🛡️">🛡️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🏆">🏆</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎖️">🎖️</button><button type="button" class="personal-avatar-option" data-personal-avatar="💎">💎</button><button type="button" class="personal-avatar-option" data-personal-avatar="🔱">🔱</button><button type="button" class="personal-avatar-option" data-personal-avatar="🧿">🧿</button><button type="button" class="personal-avatar-option" data-personal-avatar="🕶️">🕶️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎩">🎩</button><button type="button" class="personal-avatar-option" data-personal-avatar="🥇">🥇</button><button type="button" class="personal-avatar-option" data-personal-avatar="♠️">♠️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♥️">♥️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♦️">♦️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♣️">♣️</button><button type="button" class="personal-avatar-option" data-personal-avatar="⭐">⭐</button></div><p>انتخابت ذخیره می‌شود و در میز بازی زیر نامت نمایش داده خواهد شد.</p></div></section>
+  <section class="customizer-page hidden" data-step="3"><div class="avatar-customizer"><div class="avatar-customizer-title">آواتار دلخواهت را انتخاب کن</div><div class="avatar-store-tabs"><span>۱۸ آواتار فانتزی رایگان</span><span>۱۸ آواتار خلیجی · هرکدام ۱۰۰ امتیاز</span></div><div class="avatar-customizer-grid" id="personalAvatarPicker"><div class="avatar-loading">در حال دریافت آواتارها…</div></div><p>با انتخاب آواتار، اگر رایگان باشد دریافت و اگر خلیجی باشد پس از پرداخت امتیاز، برای حساب تو فعال می‌شود.</p></div></section>
  </div>
  <div class="customizer-bottom"><button id="customizerNext" type="button">تأیید و مرحله بعد</button><button id="customizerDone" type="button" class="hidden">تأیید نهایی و بازگشت به انتخاب میزها</button></div>
 </div>
@@ -1248,9 +1257,38 @@ function royalPortrait(rank){
 }
 
 var visualChoice={table:'marble',layout:'arc',back:'classic'};
+function renderOwnedStoreBacks(data){
+ const rail=document.querySelector('#visualCustomizer .back-rail');if(!rail||!data||!Array.isArray(data.items))return;
+ rail.querySelectorAll('[data-store-back]').forEach(n=>n.remove());
+ const owned=data.items.filter(item=>item&&item.owned);
+ const colors={'blue-gold':'linear-gradient(135deg,#08264b,#1f5c91 48%,#081f3c)','black-gold':'linear-gradient(135deg,#090909,#35302a 52%,#080808)',emerald:'linear-gradient(135deg,#063c2c,#16845b 52%,#05291e)',ruby:'linear-gradient(135deg,#4a0715,#a51f3b 52%,#330611)',violet:'linear-gradient(135deg,#251044,#633a91 52%,#17092d)'};
+ owned.forEach(item=>{
+  const b=document.createElement('button');b.type='button';b.className='visual-choice large-choice';b.dataset.value='store:'+item.id;b.dataset.storeBack=item.id;b.setAttribute('aria-label',item.title||'پشت‌کارت خریداری‌شده');
+  const preview=document.createElement('span');preview.className='back-choice store-back';preview.style.background=colors[item.theme]||colors['blue-gold'];
+  const mark=document.createElement('i');mark.textContent='✦';const label=document.createElement('b');label.textContent=item.title||'پشت‌کارت';
+  preview.append(mark,label);b.appendChild(preview);rail.appendChild(b);
+ });
+ const equipped=owned.find(item=>item.id===data.equipped);
+ if(equipped){visualChoice.back='store:'+equipped.id;setCardCustomization();}
+}
+function renderAvatarCatalog(data){
+ const grid=document.getElementById('personalAvatarPicker');if(!grid||!data||!Array.isArray(data.avatars))return;
+ grid.innerHTML='';
+ data.avatars.forEach(item=>{
+  const b=document.createElement('button');b.type='button';b.className='personal-avatar-option'+(item.id===data.equipped_avatar?' selected':'');
+  b.dataset.personalAvatar=item.id;b.setAttribute('aria-label',item.title+(item.owned?'، در مالکیت شما':item.price===0?'، رایگان': '، '+item.price+' امتیاز'));
+  const img=document.createElement('img');img.src='./assets/'+item.asset_path;img.alt=item.title;img.loading='lazy';img.decoding='async';b.appendChild(img);
+  const meta=document.createElement('span');meta.className='avatar-price';meta.textContent=item.owned?'در مالکیت شما':item.price===0?'رایگان':item.price+' امتیاز';b.appendChild(meta);
+  grid.appendChild(b);
+ });
+ if(data.equipped_avatar){try{localStorage.setItem('doubleKoutAvatar',data.equipped_avatar);}catch(_){}}
+}
+window.addEventListener('doublekout:store-catalog',e=>{renderOwnedStoreBacks(e.detail);renderAvatarCatalog(e.detail);});
 function setCardCustomization(){
  document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','six-layout-arc','six-layout-hex','six-layout-wide');
- document.body.classList.add('deck-back-'+visualChoice.back,'table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
+ document.body.classList.add('table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
+ if(/^store:[A-Za-z0-9_-]+$/.test(visualChoice.back)){const id=visualChoice.back.slice(6);if(window.DoubleKoutStore)window.DoubleKoutStore.applyTheme(id);}
+ else{document.documentElement.removeAttribute('data-card-back');document.body.classList.add('deck-back-'+visualChoice.back);}
  try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({table:visualChoice.table,layout:visualChoice.layout,back:visualChoice.back,v:4}));}catch(e){}
  document.querySelectorAll('#visualCustomizer .visual-choice').forEach(function(b){b.classList.toggle('selected',visualChoice[b.parentElement.dataset.kind]===b.dataset.value);});
 }
@@ -1258,7 +1296,7 @@ function resetCardCustomization(){visualChoice={table:'marble',layout:'arc',back
 (function loadCardCustomization(){
  let saved={};try{saved=JSON.parse(localStorage.getItem('doubleKoutCardStyle')||'{}')||{};}catch(e){}
   visualChoice.table=['felt','parquet','persian','marble','royal','casino'].includes(saved.table)?saved.table:'marble';
- visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';visualChoice.back=['classic','red','black','green'].includes(saved.back)?saved.back:'classic';setCardCustomization();
+ visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';visualChoice.back=(typeof saved.back==='string'&&/^store:[A-Za-z0-9_-]+$/.test(saved.back))?saved.back:(['classic','red','black','green'].includes(saved.back)?saved.back:'classic');setCardCustomization();
 })();
 (function(){
  const modal=document.getElementById('visualCustomizer'),title=document.getElementById('customizerTitle'),stepLabel=document.getElementById('customizerStep');
@@ -1269,6 +1307,7 @@ function resetCardCustomization(){visualChoice={table:'marble',layout:'arc',back
  // Delegated handlers: the shop button is injected by ensureUI after this script runs.
  document.addEventListener('click',e=>{
   const target=e.target;
+  if(target.closest('#openPersonalization')){if(window.DoubleKoutStore&&window.DoubleKoutStore.refresh)window.DoubleKoutStore.refresh();}
   if(target.closest('#openStoreLanding')){
    const storeModal=document.getElementById('storeModal');
    const accessNotice=document.getElementById('storeAccessNotice');
@@ -1300,7 +1339,7 @@ function resetCardCustomization(){visualChoice={table:'marble',layout:'arc',back
  function close(){modal.classList.add('hidden');document.body.style.overflow='';}
  document.getElementById('customizerClose').addEventListener('click',close);
  modal.querySelectorAll('[data-go-step]').forEach(b=>b.addEventListener('click',()=>showStep(Number(b.dataset.goStep))));
- modal.addEventListener('click',e=>{const av=e.target.closest('[data-personal-avatar]');if(av){const value=av.dataset.personalAvatar;try{localStorage.setItem('doubleKoutAvatar',value);}catch(_){}modal.querySelectorAll('[data-personal-avatar]').forEach(x=>x.classList.toggle('selected',x===av));window.dispatchEvent(new CustomEvent('doublekout:avatar-changed',{detail:{avatar:value}}));return;}const b=e.target.closest('.customizer-rail .visual-choice');if(!b)return;const kind=b.closest('[data-kind]').dataset.kind;visualChoice[kind]=b.dataset.value;setCardCustomization();showStep(step);});
+ modal.addEventListener('click',async e=>{const av=e.target.closest('[data-personal-avatar]');if(av){const value=av.dataset.personalAvatar;const api=window.DoubleKoutOnline;if(!api||!api.rpc){alert('برای ثبت آواتار باید به حساب بازی متصل باشی.');return;}av.disabled=true;try{let r=await api.rpc('purchase_avatar',{p_avatar_id:value});if(r.error)throw r.error;r=await api.rpc('equip_avatar',{p_avatar_id:value});if(r.error)throw r.error;try{localStorage.setItem('doubleKoutAvatar',value);}catch(_){}modal.querySelectorAll('[data-personal-avatar]').forEach(x=>x.classList.toggle('selected',x===av));window.dispatchEvent(new CustomEvent('doublekout:avatar-changed',{detail:{avatar:value}}));if(window.DoubleKoutStore&&window.DoubleKoutStore.refresh)await window.DoubleKoutStore.refresh();}catch(err){const msg=String(err.message||err);alert(msg.includes('not_enough_points')?'امتیاز کافی برای خرید این آواتار نداری.':msg.includes('permanent_account_required')?'برای خرید باید وارد حساب دائمی شوی.':msg);}finally{av.disabled=false;}return;}const b=e.target.closest('.customizer-rail .visual-choice');if(!b)return;const kind=b.closest('[data-kind]').dataset.kind;visualChoice[kind]=b.dataset.value;setCardCustomization();showStep(step);if(kind==='back'&&String(b.dataset.value).startsWith('store:')){const api=window.DoubleKoutOnline;if(api&&api.rpc){const id=b.dataset.value.slice(6);api.rpc('equip_card_back',{p_card_back_id:id}).then(r=>{if(r.error)throw r.error;if(window.DoubleKoutStore&&window.DoubleKoutStore.refresh)window.DoubleKoutStore.refresh();}).catch(err=>alert('فعال‌سازی پشت‌کارت ثبت نشد: '+(err.message||err)));}}});
  document.getElementById('customizerNext').addEventListener('click',()=>showStep(step+1));
  document.getElementById('customizerDone').addEventListener('click',()=>{setCardCustomization();close();const picker=document.getElementById('modePicker');if(picker)picker.classList.remove('hidden');});
 })();
@@ -1377,6 +1416,11 @@ var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
 var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,onlineRosterRows=[],lastLobbyGuestId='',gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastAcceptedGameRevision=-1,lastOnlineHandSignature='',onlineRoomEpoch=0,onlineChallengeDeadline=0,onlineChallengeExpired=false,confirmedPlayedCardIds=Object.create(null),onlineRematchDeadline=0,lastRematchBeep=-1,rematchBusy=false,myOnlineIsHost=false,rematchAutoAttemptedDeadline=0,kuwaitiStartInFlight=false;
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function rosterPlayerLabel(displayName,avatarId){
+ var raw=String(displayName||'بازیکن'),label=esc(raw);
+ if(!avatarId||! /^(gulf|fantasy)-\d{2}$/.test(String(avatarId)))return label;
+ return '<span class="roster-avatar"><img src="./assets/avatars/'+avatarId+'.webp" alt="" loading="lazy"></span>'+label;
+}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
 function onlineRequest(promise,label,limit){
  var timer;
@@ -1400,7 +1444,7 @@ function ensureUI(){
   '#onlinePanel button:disabled{opacity:.45;cursor:not-allowed}#onlinePanel .onrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}#onlinePanel .onrow>*{flex:1;min-width:120px}'+
  '#onlineStatus{background:#071b15;border-radius:9px;padding:10px;font-size:12px;line-height:1.9;color:#f3dfaa;margin-top:10px;white-space:pre-wrap}'+
  '#onlineCode{direction:ltr;text-align:center;font-size:27px;letter-spacing:5px;color:#ffe09a;padding:12px;border:1px dashed #c9a65f;border-radius:10px;margin:10px 0}'+
- '#onlineRoster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}#onlineRoster div{background:#0b2a20;border:1px solid #537e6a;border-radius:9px;padding:9px;font-size:12px}'+
+ '#onlineRoster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}#onlineRoster .roster-avatar{display:inline-flex;width:28px;height:28px;vertical-align:middle;margin-left:5px;border-radius:50%;overflow:hidden;border:1px solid #d8b66c;background:#183d32}#onlineRoster .roster-avatar img{width:100%;height:100%;object-fit:cover}#onlineRoster div{background:#0b2a20;border:1px solid #537e6a;border-radius:9px;padding:9px;font-size:12px}'+
  '#onlineTable .center{grid-column:2;grid-row:2;min-height:165px}#onlineTable .seat{padding:5px}#onlineTable .played{min-height:58px}'+
  '#onlinePanel #onlineHand{display:flex;flex-wrap:nowrap;align-items:flex-end;justify-content:center;direction:ltr;gap:0;overflow-x:auto;overflow-y:visible;min-height:128px;padding:18px 8px 24px;scrollbar-width:thin}'+
  '#onlinePanel #onlineHand button{padding:0!important;background:none!important;border:0!important;flex:0 0 58px;width:58px;height:88px;margin-left:-33px!important;position:relative;transform-origin:50% 100%;opacity:1!important}'+
@@ -1603,7 +1647,7 @@ async function refreshRoster(){
   var r=await client.rpc('get_room_roster',{p_room_id:roomId});
   if(r.error)throw r.error;
   var rows=Array.isArray(r.data)?r.data:[],cap=count,html='';onlineRosterRows=rows;
-  for(var i=0;i<cap;i++){var p=rows.find(function(x){return Number(x.seat)===i;});html+='<div>'+(i+1)+'. '+(p?esc(p.display_name)+' · '+Number(p.points||0)+' امتیاز'+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
+  for(var i=0;i<cap;i++){var p=rows.find(function(x){return Number(x.seat)===i;});html+='<div>'+(i+1)+'. '+(p?rosterPlayerLabel(p.display_name,p.avatar_id)+' · '+Number(p.points||0)+' امتیاز'+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
   el('onlineRoster').innerHTML=html;
   var allReady=rows.length>=2&&rows.every(function(x){return x.ready===true;}),allSixReady=rows.length===6&&rows.every(function(x){return x.ready===true;});
   var mine=rows.find(function(x){return x.user_id===me.id;});

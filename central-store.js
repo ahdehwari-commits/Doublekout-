@@ -8,7 +8,7 @@ const themes={
  ruby:{bg:'linear-gradient(135deg,#4a0715,#a51f3b 52%,#330611)',edge:'#f2d19a',glow:'#f18a9e'},
  violet:{bg:'linear-gradient(135deg,#251044,#633a91 52%,#17092d)',edge:'#e9d49a',glow:'#c6a1f0'}
 };
-let busy=false,refreshQueued=false;
+let busy=false,refreshQueued=false,cachedCatalog=null;
 const $=id=>document.getElementById(id);
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function ensure(){
@@ -45,6 +45,8 @@ async function refresh(){
   const permanent=!session.user.is_anonymous;
   const data=await call('get_store_catalog');
   if(!data||!Array.isArray(data.items))throw new Error('پاسخ فهرست فروشگاه معتبر نیست.');
+  cachedCatalog=data;
+  window.dispatchEvent(new CustomEvent('doublekout:store-catalog',{detail:data}));
   balance.textContent=permanent?'موجودی شما: '+Number(data.points||0)+' امتیاز':'حساب مهمان · موجودی قابل خرید: '+Number(data.points||0)+' امتیاز · برای خرید وارد حساب دائمی شو';
   itemsHost.innerHTML=data.items.length?data.items.map(item=>{
    const owned=!!item.owned,active=data.equipped===item.id;
@@ -77,7 +79,7 @@ async function equip(id){
  try{await call('equip_card_back',{p_card_back_id:id});$('storeStatus').textContent='طرح جدید برای کارت‌های پشت فعال شد.';await refresh();}
  catch(e){$('storeStatus').textContent=e.message||'فعال‌سازی انجام نشد.';}
 }
-window.DoubleKoutStore={refresh,applyTheme};
+window.DoubleKoutStore={refresh,applyTheme,getCatalog:()=>cachedCatalog};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{ensure();});else ensure();
 document.addEventListener('click',e=>{if(e.target&&e.target.id==='onlineRefreshProgress')setTimeout(refresh,100);});
 document.addEventListener('dblclick',()=>{});
