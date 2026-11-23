@@ -7,7 +7,10 @@ as $$
 begin
   if new.game_mode='kuwaiti' and new.player_count=6 and new.status='playing'
      and new.public_state->>'phase'='playing' then
-    if tg_op='INSERT' or old.public_state is distinct from new.public_state
+    if tg_op='INSERT' then
+      new.public_state:=jsonb_set(coalesce(new.public_state,'{}'::jsonb),
+        '{turnDeadline}',to_jsonb(extract(epoch from clock_timestamp())+10),true);
+    elsif old.public_state is distinct from new.public_state
        or old.status is distinct from new.status then
       new.public_state:=jsonb_set(coalesce(new.public_state,'{}'::jsonb),
         '{turnDeadline}',to_jsonb(extract(epoch from clock_timestamp())+10),true);
