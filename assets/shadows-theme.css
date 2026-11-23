@@ -105,7 +105,7 @@ body.table-theme-shadows .panel{
   border-color:#80602e!important;color:#f1e2c1!important;
 }
 body.table-theme-shadows .section-title{color:#e9cb83!important}
-body.table-theme-shadows .mini-table.shadows{
+.mini-table.shadows{
   background:
     radial-gradient(ellipse at 80% 15%,#e99b4655,transparent 28%),
     repeating-linear-gradient(17deg,transparent 0 9px,#fff1 10px 11px,transparent 12px 20px),
@@ -113,7 +113,7 @@ body.table-theme-shadows .mini-table.shadows{
   border:5px solid #a77c39!important;
   box-shadow:inset 0 0 0 3px #f0d58c,inset 0 0 20px #000!important;
 }
-body.table-theme-shadows .mini-table.shadows:before{border-color:#e4c477!important}
+.mini-table.shadows:before{border-color:#e4c477!important}
 @media(max-width:520px){
  body.table-theme-shadows .table,body.table-theme-shadows #onlineTable,body.table-theme-shadows .k-table{border-width:6px!important}
 }
