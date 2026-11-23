@@ -21,6 +21,7 @@ let game=null,auction=null,firstGame=true,previousAuctionWinner=null,previousWin
 let points={A:0,B:0},trickView=[],locked=false,aiTimer=null,matchLimit=54,playedTricks=0;
 
 let onlineKuwaiti=null,onlineKuwaitiBusy=false,onlineKuwaitiRefreshQueued=false,onlineKuwaitiAiTimer=null,onlineKuwaitiAiBusy=false,onlineKuwaitiBidBusy=false,onlineKuwaitiMalzoomAutoKey=null;
+let onlineKuwaitiTimeoutTimer=null,onlineKuwaitiClockTimer=null;
 function isOnlineKuwaiti(){return !!(onlineKuwaiti&&onlineKuwaiti.roomId);}
 function onlineKuwaitiStatus(message){if($('kStatus'))setStatus(message);}
 async function onlineKuwaitiRpc(action){
@@ -68,6 +69,34 @@ function scheduleKuwaitiOnlineAI(){
    scheduleKuwaitiOnlineAI();
   }
  },650);
+}
+function clearOnlineKuwaitiTurnTimers(){if(onlineKuwaitiTimeoutTimer){clearTimeout(onlineKuwaitiTimeoutTimer);onlineKuwaitiTimeoutTimer=null;}}
+function renderOnlineKuwaitiTurnClock(){
+ const status=$('kStatus');if(!status)return;let node=$('kTurnCountdown');
+ if(!node){node=document.createElement('div');node.id='kTurnCountdown';status.insertAdjacentElement('afterend',node);}
+ const st=onlineKuwaiti&&onlineKuwaiti.state||{},deadline=Number(st.turnDeadline);
+ if(!isOnlineKuwaiti()||st.phase!=='playing'||!Number.isFinite(deadline)){node.hidden=true;return;}
+ const seat=Number(st.turn),remaining=Math.max(0,Math.ceil(deadline-Date.now()/1000));
+ node.hidden=false;node.textContent='مهلت نوبت '+(playerNames[seat]||'بازیکن')+' : '+fa(remaining)+' ثانیه';
+ node.classList.toggle('urgent',remaining<=3);
+}
+function startOnlineKuwaitiClock(){if(!onlineKuwaitiClockTimer)onlineKuwaitiClockTimer=setInterval(renderOnlineKuwaitiTurnClock,250);}
+function scheduleOnlineKuwaitiTimeout(){
+ clearOnlineKuwaitiTurnTimers();
+ if(!isOnlineKuwaiti()||!onlineKuwaiti.isHost)return;
+ const context=onlineKuwaiti,st=context.state||{};if(st.phase!=='playing')return;
+ const seat=Number(st.turn),meta=(st.seatPlayers||{})[String(seat)];
+ if(!meta||meta.human!==true)return;
+ const deadline=Number(st.turnDeadline);if(!Number.isFinite(deadline))return;
+ const roomId=context.roomId,delay=Math.max(0,deadline*1000-Date.now());
+ onlineKuwaitiTimeoutTimer=setTimeout(async()=>{
+  onlineKuwaitiTimeoutTimer=null;
+  if(!isOnlineKuwaiti()||onlineKuwaiti!==context||context.roomId!==roomId||!context.isHost)return;
+  const latest=context.state||{};
+  if(latest.phase!=='playing'||Number(latest.turn)!==seat||Number(latest.turnDeadline)!==deadline)return;
+  try{const r=await window.DoubleKoutOnline.rpc('kuwaiti_online_timeout',{p_room_id:roomId});if(r.error)throw r.error;await refreshOnlineKuwaiti();}
+  catch(e){onlineKuwaitiStatus('اجرای خودکار کارت پس از پایان مهلت: '+(e.message||e));try{await refreshOnlineKuwaiti();}catch(_){}}
+ },delay+80);
 }
 async function refreshOnlineKuwaiti(){
  if(!isOnlineKuwaiti()||!window.DoubleKoutOnline)return false;
@@ -196,6 +225,7 @@ async function refreshOnlineKuwaiti(){
   onlineKuwaitiBusy=false;
   if(onlineKuwaitiRefreshQueued){onlineKuwaitiRefreshQueued=false;Promise.resolve().then(refreshOnlineKuwaiti);}
   else scheduleKuwaitiOnlineAI();
+   renderOnlineKuwaitiTurnClock();scheduleOnlineKuwaitiTimeout();
  }
  return refreshOk;
 }
@@ -217,7 +247,8 @@ function clearKuwaitiAuctionSummaryTimer(){if(window.kuwaitiAuctionSummaryTimer)
 function resetKuwaitiUiForOnlineAttach(){
  clearKuwaitiAuctionSummaryTimer();if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
  if(onlineKuwaitiAiTimer){clearTimeout(onlineKuwaitiAiTimer);onlineKuwaitiAiTimer=null;}
- onlineKuwaitiAiBusy=false;onlineKuwaitiBidBusy=false;onlineKuwaitiMalzoomAutoKey=null;
+ clearOnlineKuwaitiTurnTimers();
+  onlineKuwaitiAiBusy=false;onlineKuwaitiBidBusy=false;onlineKuwaitiMalzoomAutoKey=null;
  game=null;auction=null;locked=false;trickView=[];firstGame=true;previousAuctionWinner=null;previousWinningTeam=null;previousDealer=null;
  points={A:0,B:0};matchGamesWon={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit')?.value)||54;
  $('kuwaitiGame')?.classList.remove('k-online-mode');$('kAuction').classList.remove('seat-auction-panel');$('kAuction').classList.add('hidden');
@@ -244,6 +275,7 @@ async function attachOnlineKuwaitiRoom(info){
  }
  resetKuwaitiUiForOnlineAttach();
  onlineKuwaiti={roomId:info.roomId,code:info.code,seat:Number(info.seat),isHost:!!info.isHost,roster:info.roster||[],revision:-1,handSignature:null,legalCardIds:[]};
+  startOnlineKuwaitiClock();
  if($('kPlayStyle'))$('kPlayStyle').value='online';
  setScreen('game');
  $('kExit').textContent='بازگشت به اتاق آنلاین';
@@ -266,7 +298,8 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&isOnlineK
 window.addEventListener('doublekout:kuwaiti-left',()=>{
  $('kExit').textContent='بازگشت به انتخاب بازی';
  if(onlineKuwaitiAiTimer){clearTimeout(onlineKuwaitiAiTimer);onlineKuwaitiAiTimer=null;}
- onlineKuwaitiAiBusy=false;onlineKuwaitiBidBusy=false;onlineKuwaitiMalzoomAutoKey=null;onlineKuwaiti=null;auction=null;game=null;locked=false;
+ clearOnlineKuwaitiTurnTimers();if(onlineKuwaitiClockTimer){clearInterval(onlineKuwaitiClockTimer);onlineKuwaitiClockTimer=null;}
+  onlineKuwaitiAiBusy=false;onlineKuwaitiBidBusy=false;onlineKuwaitiMalzoomAutoKey=null;onlineKuwaiti=null;auction=null;game=null;locked=false;
  clearKuwaitiAuctionSummaryTimer();
  if($('kPlayStyle'))$('kPlayStyle').value='ai';
  $('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');$('kAuctionSummary').classList.add('hidden');
@@ -362,6 +395,8 @@ function addStyle(){
 `;
 
  s.textContent+=`
+#kTurnCountdown{margin:6px 0;padding:7px 12px;border:1px solid #c8a75d;border-radius:10px;background:#09271f;color:#ffe6a1;text-align:center;font-weight:800;font-size:13px}
+#kTurnCountdown.urgent{border-color:#e45d5d;color:#ffb0a8;animation:kTurnPulse .35s ease-in-out infinite alternate}
 /* AI diagnostic banner */\n#kuwaitiGame #kStatus{display:block!important;visibility:visible!important;opacity:1!important;position:fixed!important;left:8px!important;right:8px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:2147483000!important;min-height:42px!important;max-height:25vh!important;overflow:auto!important}\n/* 0.8.13: dual-corner ranks and illustrated face cards */
 .k-card{position:relative;overflow:hidden}
 .k-corner{position:absolute;z-index:4;display:flex;flex-direction:column;align-items:center;font:900 10px/1 Georgia,serif}
