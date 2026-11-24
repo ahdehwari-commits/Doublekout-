@@ -14,7 +14,7 @@ It is deliberately outside `supabase/migrations`: it has not been generated thro
 
 The SQL draft creates separate `store_avatars` and `player_avatar_ownership` tables, adds `player_profiles.equipped_avatar_id`, and defines authenticated RPCs for catalog, purchase and equip. Paid purchases lock the player's profile row before checking/debiting points, so simultaneous duplicate purchases cannot spend the same balance twice. Free avatars can be equipped without a paid ownership record. Direct table access is revoked; clients use the RPCs.
 
-## Still blocked
+## Implementation status
 
 The 60 WebP binaries are now committed under `assets/avatars/` on branch `feature/shadows-cell-theme`. The import workflow validated the archive and extracted exactly 60 images: 27 `fantasy_free`, 15 `gulf_paid`, and 18 `regional_paid`. The temporary ZIP was removed after extraction.
 
