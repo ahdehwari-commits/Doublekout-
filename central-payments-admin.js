@@ -25,11 +25,20 @@ async function loadPackages(){
 }
 async function startPayment(id){
  if(busy)return;
- const packages=await rpc('get_topup_packages');
- const selected=(Array.isArray(packages)?packages:[]).find(p=>String(p.id)===String(id));
- if(!selected){$('topupStatus').textContent='بسته انتخاب‌شده پیدا نشد.';return;}
+ busy=true;
  const status=$('topupStatus');
- status.innerHTML='<div style="border:1px solid #b99045;border-radius:12px;padding:12px;background:#09271f;line-height:2;color:#fff"><b style="color:#f4d58b">پرداخت</b><br>برای خرید بستهٔ <b>'+esc(selected.title)+'</b> به مبلغ <b>'+money(selected.price_toman)+'</b>، مبلغ را به کارت زیر به نام <b>عبدالحمید دهواری</b> واریز کن و تصویر رسید را برای ثبت امتیاز ارسال کن:<br><b dir="ltr" style="display:block;text-align:center;font-size:19px;letter-spacing:1px;color:#f4d58b;margin:8px 0">۵۸۵۹۸۳۱۱۷۷۵۴۷۳۶۰</b><div style="text-align:center">واتساپ: <b dir="ltr" style="color:#f4d58b">۰۹۱۵۹۴۸۷۷۰۷</b></div><a href="https://wa.me/989159487707" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;padding:9px;border-radius:8px;background:#1f8f55;color:#fff;text-decoration:none;font-weight:bold">ارسال فیش در واتساپ</a></div>';
+ status.textContent='در حال اتصال امن به درگاه سیزپی...';
+ try{
+  const result=await invoke('sizpay',{package_id:id});
+  if(!result||!result.payment_url||!result.fields)throw new Error('پاسخ درگاه کامل نیست.');
+  const form=document.createElement('form');
+  form.method='POST';form.action=result.payment_url;form.style.display='none';
+  Object.entries(result.fields).forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=String(value??'');form.appendChild(input);});
+  document.body.appendChild(form);form.submit();
+ }catch(e){
+  status.textContent='شروع پرداخت ناموفق بود: '+(e.message||'خطای نامشخص');
+  busy=false;
+ }
 }
 async function loadAdmin(){
  ensure();const panel=$('centralAdminPanel');if(!panel)return;
@@ -52,7 +61,7 @@ function selectPlayer(p){if(!p)return;selectedUser=p;$('adminSelected').innerHTM
  $('adminAdjust').onclick=async()=>{try{const delta=Number($('adminDelta').value),reason=$('adminReason').value.trim();const r=await rpc('admin_adjust_points',{p_user_id:p.user_id,p_delta:delta,p_reason:reason});$('adminStatus').textContent='تغییر ثبت شد؛ موجودی جدید: '+Number(r.points).toLocaleString('fa-IR');await searchPlayers();await showHistory(p.user_id);}catch(e){$('adminStatus').textContent='ثبت تغییر انجام نشد: '+(e.message||e);}};showHistory(p.user_id);}
 async function showHistory(userId){try{const previous=$('adminHistory');if(previous&&previous.parentElement)previous.parentElement.remove();const rows=await rpc('admin_get_player_history',{p_user_id:userId,p_limit:40});$('adminSelected').insertAdjacentHTML('beforeend','<div style="margin-top:9px"><b>سوابق امتیاز و تراکنش‌ها</b><div id="adminHistory"></div></div>');const host=$('adminHistory');if(!host)return;host.innerHTML=rows.length?rows.map(x=>'<div style="border-bottom:1px solid #467565;padding:6px 2px;font-size:11px">'+(x.delta>0?'+':'')+Number(x.delta).toLocaleString('fa-IR')+' امتیاز · موجودی پس از عملیات: '+Number(x.balance_after).toLocaleString('fa-IR')+'<br>'+esc(x.reason)+'<br><small>'+esc(x.created_at)+'</small></div>').join(''):'سابقه‌ای ثبت نشده است.';}catch(e){$('adminSelected').insertAdjacentHTML('beforeend','<div class="muted">سوابق فعلاً در دسترس نیست: '+esc(e.message||e)+'</div>');}}
 async function createManual(){if(!selectedUser){$('adminStatus').textContent='ابتدا بازیکن را جست‌وجو و انتخاب کن.';return;}try{const id=await rpc('admin_create_manual_payment',{p_user_id:selectedUser.user_id,p_package_id:$('adminPackage').value,p_reference:$('adminReference').value.trim()});$('adminStatus').textContent='سفارش پرداخت دستی ثبت شد. پس از تطبیق رسید با گردش حساب، آن را تأیید کن. شناسه: '+id;$('adminReference').value='';await loadOrders();}catch(e){$('adminStatus').textContent='ثبت پرداخت ناموفق بود: '+(e.message||e);}}
-async function loadOrders(){try{const rows=await rpc('admin_get_payment_orders',{p_status:'pending',p_limit:100});$('adminOrders').innerHTML=rows.length?rows.map(o=>'<article style="padding:9px;margin:6px 0;border:1px solid #467565;border-radius:9px"><b>'+esc(o.display_name||'بازیکن')+'</b> · '+esc(o.email||'')+'<br>'+esc(o.package_title)+' · '+money(o.amount_toman)+' · '+Number(o.points)+' امتیاز<br>روش: '+(o.source==='manual'?'دستی':'زرین‌پال')+' · '+esc(o.payment_reference||'درگاه')+'<br><small>'+esc(o.id)+'</small>'+(o.source==='manual'?'<div style="display:flex;gap:6px;margin-top:7px"><button data-approve="'+esc(o.id)+'">تأیید و واریز امتیاز</button><button data-reject="'+esc(o.id)+'" class="secondary">رد پرداخت</button></div>':'<div class="muted">پرداخت درگاه فقط پس از تأیید سرور به موجودی اضافه می‌شود.</div>')+'</article>').join(''):'پرداخت در انتظار بررسی وجود ندارد.';
+async function loadOrders(){try{const rows=await rpc('admin_get_payment_orders',{p_status:'pending',p_limit:100});$('adminOrders').innerHTML=rows.length?rows.map(o=>'<article style="padding:9px;margin:6px 0;border:1px solid #467565;border-radius:9px"><b>'+esc(o.display_name||'بازیکن')+'</b> · '+esc(o.email||'')+'<br>'+esc(o.package_title)+' · '+money(o.amount_toman)+' · '+Number(o.points)+' امتیاز<br>روش: '+(o.source==='manual'?'دستی':(o.source==='sizpay'?'سیزپی':'زرین‌پال'))+' · '+esc(o.payment_reference||'درگاه')+'<br><small>'+esc(o.id)+'</small>'+(o.source==='manual'?'<div style="display:flex;gap:6px;margin-top:7px"><button data-approve="'+esc(o.id)+'">تأیید و واریز امتیاز</button><button data-reject="'+esc(o.id)+'" class="secondary">رد پرداخت</button></div>':'<div class="muted">پرداخت درگاه فقط پس از تأیید سرور به موجودی اضافه می‌شود.</div>')+'</article>').join(''):'پرداخت در انتظار بررسی وجود ندارد.';
  $('adminOrders').querySelectorAll('[data-approve]').forEach(b=>b.onclick=()=>review(b.dataset.approve,true));$('adminOrders').querySelectorAll('[data-reject]').forEach(b=>b.onclick=()=>review(b.dataset.reject,false));
  }catch(e){$('adminOrders').textContent='دریافت پرداخت‌ها ناموفق بود: '+(e.message||e);}}
 async function review(id,approve){try{const note=prompt(approve?'یادداشت تأیید (اختیاری):':'علت رد پرداخت:')||'';await rpc('admin_review_manual_payment',{p_order_id:id,p_approve:approve,p_note:note});$('adminStatus').textContent=approve?'پرداخت تأیید شد و امتیاز فقط یک‌بار واریز شد.':'پرداخت رد شد و امتیازی واریز نشد.';await loadOrders();await searchPlayers();}catch(e){$('adminStatus').textContent='بررسی پرداخت ناموفق بود: '+(e.message||e);}}
