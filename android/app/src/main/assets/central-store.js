@@ -26,7 +26,7 @@ function ensure(){
  const retry=document.createElement('button');retry.type='button';retry.textContent='تلاش دوباره';retry.style.cssText='width:100%;margin-top:8px';retry.addEventListener('click',refresh);box.appendChild(retry);
 }
 
-let avatarItems=[],avatarFilter='all',avatarBusy=false;
+let avatarItems=[],avatarFilter='all',avatarBusy=false,avatarCanBuy=false;
 function ensureAvatarStore(){
  const host=$('storeContent');if(!host||$('avatarStore'))return;
  const section=document.createElement('section');section.id='avatarStore';
@@ -56,7 +56,7 @@ function renderAvatarItems(){
   const src='./assets/avatars/'+file,owned=!!item.owned||Number(item.price)===0,active=avatarEquipped===id;
   const action=active?'<span style="color:#a8efbd;font-size:11px">آواتار فعال</span>':
    owned?'<button type="button" data-avatar-equip="'+esc(id)+'" style="width:100%;padding:7px 3px;font-size:10px">انتخاب</button>':
-   '<button type="button" data-avatar-buy="'+esc(id)+'" style="width:100%;padding:7px 3px;font-size:10px">خرید · ۱۰۰ امتیاز</button>';
+   avatarCanBuy?'<button type="button" data-avatar-buy="'+esc(id)+'" style="width:100%;padding:7px 3px;font-size:10px">خرید · ۱۰۰ امتیاز</button>':'<button type="button" disabled style="width:100%;padding:7px 3px;font-size:10px">ورود دائمی برای خرید</button>';
   return '<article style="min-width:0;background:#09271f;border:1px solid '+(active?'#e7c879':'#467565')+';border-radius:11px;padding:7px;text-align:center">'+
    '<img loading="lazy" decoding="async" src="'+src+'" alt="'+esc(item.title||'آواتار')+'" style="display:block;width:100%;max-width:88px;aspect-ratio:1;object-fit:cover;border-radius:9px;margin:0 auto 6px;background:#173d30">'+
    '<b style="display:block;font-size:10px;min-height:25px">'+esc(item.title||'آواتار')+'</b>'+
@@ -80,7 +80,7 @@ async function loadAvatarStore(){
   const data=await call('get_avatar_store_catalog');
   if(!data||!Array.isArray(data.items))throw new Error('فهرست آواتارها از سرور دریافت نشد.');
   avatarItems=data.items;avatarEquipped=data.equipped||null;
-  const permanent=!session.user.is_anonymous;
+  const permanent=!session.user.is_anonymous;avatarCanBuy=permanent;
   balance.textContent=(permanent?'موجودی حساب: ':'حساب مهمان · موجودی: ')+Number(data.points||0).toLocaleString('fa-IR')+' امتیاز · '+avatarItems.length+' آواتار';
   renderAvatarItems();
  }catch(e){
