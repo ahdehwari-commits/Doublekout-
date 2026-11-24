@@ -29,7 +29,7 @@ insert into public.store_avatars(id,title,category,image_file,point_price,sort_o
 ('gulf_b_02_01','خلیجی 06','gulf_paid','gulf_b_02_01.webp',100,15),
 ('gulf_b_02_02','خلیجی 07','gulf_paid','gulf_b_02_02.webp',100,16),
 ('gulf_b_02_03','خلیجی 08','gulf_paid','gulf_b_02_03.webp',100,17),
-('gulf_b_02_04','خلیجی 09','gulf_b_02_04.webp',100,18),
+('gulf_b_02_04','خلیجی 09','gulf_paid','gulf_b_02_04.webp',100,18),
 ('gulf_b_02_05','خلیجی 10','gulf_paid','gulf_b_02_05.webp',100,19),
 ('gulf_b_03_01','خلیجی 11','gulf_paid','gulf_b_03_01.webp',100,20),
 ('gulf_b_03_02','خلیجی 12','gulf_paid','gulf_b_03_02.webp',100,21),
