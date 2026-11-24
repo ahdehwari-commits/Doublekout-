@@ -25,6 +25,102 @@ function ensure(){
  host.appendChild(box);
  const retry=document.createElement('button');retry.type='button';retry.textContent='تلاش دوباره';retry.style.cssText='width:100%;margin-top:8px';retry.addEventListener('click',refresh);box.appendChild(retry);
 }
+
+let avatarItems=[],avatarFilter='all',avatarBusy=false;
+function ensureAvatarStore(){
+ const host=$('storeContent');if(!host||$('avatarStore'))return;
+ const section=document.createElement('section');section.id='avatarStore';
+ section.style.cssText='border-top:1px solid #668c78;margin-top:14px;padding-top:12px';
+ section.innerHTML='<h3 style="margin:0 0 6px;color:#f4d58b">فروشگاه آواتار بازیکن</h3>'+
+  '<div id="avatarStoreBalance" style="font-size:12px;margin-bottom:9px;color:#c4d5cd">در حال آماده‌سازی فهرست آواتارها...</div>'+
+  '<div id="avatarStoreFilters" style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">'+
+  '<button type="button" data-avatar-filter="all">همه</button><button type="button" data-avatar-filter="fantasy_free">فانتزی رایگان</button>'+
+  '<button type="button" data-avatar-filter="gulf_paid">خلیجی</button><button type="button" data-avatar-filter="regional_paid">منطقه‌ای</button></div>'+
+  '<div id="avatarStoreItems" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px"></div>'+
+  '<div id="avatarStoreStatus" role="status" aria-live="polite" style="font-size:12px;line-height:1.8;margin-top:8px"></div>'+
+  '<div style="font-size:11px;color:#c4d5cd;line-height:1.8;margin-top:8px">آواتارهای فانتزی رایگان‌اند؛ آواتارهای خلیجی و منطقه‌ای هرکدام ۱۰۰ امتیاز هستند.</div>';
+ host.appendChild(section);
+ section.querySelectorAll('[data-avatar-filter]').forEach(b=>b.addEventListener('click',()=>{
+  avatarFilter=b.dataset.avatarFilter;
+  section.querySelectorAll('[data-avatar-filter]').forEach(x=>{x.style.background=x===b?'#f4d58b':'#24483b';x.style.color=x===b?'#17251f':'#fff';});
+  renderAvatarItems();
+ }));
+ section.querySelectorAll('[data-avatar-filter]').forEach((b,i)=>{b.style.cssText='padding:7px 9px;font-size:11px;background:'+(i===0?'#f4d58b':'#24483b')+';color:'+(i===0?'#17251f':'#fff')+';border:1px solid #987c43;border-radius:9px';});
+}
+function renderAvatarItems(){
+ const host=$('avatarStoreItems');if(!host)return;
+ const list=avatarItems.filter(x=>avatarFilter==='all'||x.category===avatarFilter);
+ host.innerHTML=list.map(item=>{
+  const id=String(item.id||''),file=String(item.image_file||'');
+  if(!/^[a-z0-9_]{3,48}$/.test(id)||!/^[a-z0-9_]+\.webp$/.test(file))return '';
+  const src='./assets/avatars/'+file,owned=!!item.owned||Number(item.price)===0,active=avatarEquipped===id;
+  const action=active?'<span style="color:#a8efbd;font-size:11px">آواتار فعال</span>':
+   owned?'<button type="button" data-avatar-equip="'+esc(id)+'" style="width:100%;padding:7px 3px;font-size:10px">انتخاب</button>':
+   '<button type="button" data-avatar-buy="'+esc(id)+'" style="width:100%;padding:7px 3px;font-size:10px">خرید · ۱۰۰ امتیاز</button>';
+  return '<article style="min-width:0;background:#09271f;border:1px solid '+(active?'#e7c879':'#467565')+';border-radius:11px;padding:7px;text-align:center">'+
+   '<img loading="lazy" decoding="async" src="'+src+'" alt="'+esc(item.title||'آواتار')+'" style="display:block;width:100%;max-width:88px;aspect-ratio:1;object-fit:cover;border-radius:9px;margin:0 auto 6px;background:#173d30">'+
+   '<b style="display:block;font-size:10px;min-height:25px">'+esc(item.title||'آواتار')+'</b>'+
+   '<div style="font-size:10px;color:#f4d58b;margin:3px 0 6px">'+(owned?'رایگان / دریافت‌شده':'۱۰۰ امتیاز')+'</div>'+action+'</article>';
+ }).join('')||'<div style="grid-column:1/-1;text-align:center;padding:12px;color:#c4d5cd">در این گروه آواتاری وجود ندارد.</div>';
+ host.querySelectorAll('[data-avatar-buy]').forEach(b=>b.addEventListener('click',()=>buyAvatar(b.dataset.avatarBuy)));
+ host.querySelectorAll('[data-avatar-equip]').forEach(b=>b.addEventListener('click',()=>equipAvatar(b.dataset.avatarEquip)));
+}
+let avatarEquipped=null;
+async function loadAvatarStore(){
+ ensureAvatarStore();
+ const balance=$('avatarStoreBalance'),status=$('avatarStoreStatus');
+ if(!balance||avatarBusy)return;
+ avatarBusy=true;
+ try{
+  status.textContent='';balance.textContent='در حال دریافت فهرست آواتارها...';
+  const api=window.DoubleKoutOnline;
+  if(!api||!api.getSession)throw new Error('اتصال حساب مرکزی در دسترس نیست.');
+  const session=await api.getSession();
+  if(!session||!session.user)throw new Error('برای مشاهده آواتارها ابتدا وارد حساب بازی شو.');
+  const data=await call('get_avatar_store_catalog');
+  if(!data||!Array.isArray(data.items))throw new Error('فهرست آواتارها از سرور دریافت نشد.');
+  avatarItems=data.items;avatarEquipped=data.equipped||null;
+  const permanent=!session.user.is_anonymous;
+  balance.textContent=(permanent?'موجودی حساب: ':'حساب مهمان · موجودی: ')+Number(data.points||0).toLocaleString('fa-IR')+' امتیاز · '+avatarItems.length+' آواتار';
+  renderAvatarItems();
+ }catch(e){
+  balance.textContent='فروشگاه آواتار در دسترس نیست.';
+  const host=$('avatarStoreItems');
+  if(host)host.innerHTML='<div style="grid-column:1/-1;border:1px solid #a75b52;border-radius:10px;padding:12px;text-align:center;line-height:1.9">فهرست آواتارها هنوز از سرویس حساب دریافت نمی‌شود. ابتدا باید ساختار فروشگاه آواتار روی پایگاه‌داده فعال شود؛ موجودی و امتیاز بازیکنان تغییری نکرده است.</div>';
+  status.textContent='جزئیات فنی: '+(e.message||e);
+ }finally{avatarBusy=false;}
+}
+async function buyAvatar(id){
+ const status=$('avatarStoreStatus');if(!status)return;
+ status.textContent='در حال بررسی موجودی و ثبت خرید...';
+ try{
+  const result=await call('purchase_avatar',{p_avatar_id:id});
+  status.textContent=result&&result.already_owned?'این آواتار قبلاً خریداری شده است.':'خرید آواتار با موفقیت ثبت شد.';
+  await loadAvatarStore();
+ }catch(e){status.textContent=e.message==='not_enough_points'?'امتیاز کافی برای خرید این آواتار نداری.':(e.message||'خرید آواتار انجام نشد.');}
+}
+async function equipAvatar(id){
+ const status=$('avatarStoreStatus');if(!status)return;
+ status.textContent='در حال انتخاب آواتار...';
+ try{
+  await call('equip_avatar',{p_avatar_id:id});
+  const item=avatarItems.find(x=>x.id===id);
+  if(item){
+   try{localStorage.setItem('doubleKoutAvatarId',id);localStorage.setItem('doubleKoutAvatarImage','./assets/avatars/'+item.image_file);}catch(_){}
+   const preview=$('selectedAvatarPreview');if(preview){preview.src='./assets/avatars/'+item.image_file;preview.classList.remove('hidden');}
+   window.dispatchEvent(new CustomEvent('doublekout:avatar-changed',{detail:{avatarId:id,image:'./assets/avatars/'+item.image_file}}));
+  }
+  status.textContent='آواتار برای حساب شما فعال شد.';
+  await loadAvatarStore();
+ }catch(e){status.textContent=e.message||'انتخاب آواتار انجام نشد.';}
+}
+document.addEventListener('click',e=>{
+ if(e.target&&e.target.closest('#openAvatarStoreFromCustomizer')){
+  const modal=$('storeModal');if(modal){modal.classList.remove('hidden');document.body.style.overflow='hidden';}
+  loadAvatarStore();
+ }
+});
+
 function preview(theme){const t=themes[theme]||themes['blue-gold'];return '<div aria-hidden="true" style="width:58px;height:82px;margin:0 auto 7px;border:3px solid '+t.edge+';border-radius:8px;background:'+t.bg+';box-shadow:inset 0 0 0 2px #ffffff22,0 4px 9px #0008;position:relative"><div style="position:absolute;inset:7px;border:1px solid '+t.edge+';border-radius:4px;background:repeating-linear-gradient(45deg,transparent 0 6px,'+t.glow+'33 6px 8px)"></div><b style="position:absolute;left:0;right:0;top:35px;text-align:center;font:italic 700 7px Georgia;color:#ffe6a0">Abdulhamid</b></div>';}
 async function call(name,args){const api=window.DoubleKoutOnline;if(!api||!api.rpc)throw new Error('اتصال حساب مرکزی آماده نیست.');const r=await api.rpc(name,args||{});if(r.error)throw r.error;return r.data;}
 async function refresh(){
@@ -59,6 +155,7 @@ async function refresh(){
   $('storeStatus').textContent='جزئیات خطا: '+(e.message||e);
  }finally{
   busy=false;
+  Promise.resolve().then(loadAvatarStore);
   if(refreshQueued){refreshQueued=false;Promise.resolve().then(refresh);}
  }
 }
@@ -77,7 +174,7 @@ async function equip(id){
  try{await call('equip_card_back',{p_card_back_id:id});$('storeStatus').textContent='طرح جدید برای کارت‌های پشت فعال شد.';await refresh();}
  catch(e){$('storeStatus').textContent=e.message||'فعال‌سازی انجام نشد.';}
 }
-window.DoubleKoutStore={refresh,applyTheme};
+window.DoubleKoutStore={refresh,applyTheme,refreshAvatars:loadAvatarStore};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{ensure();});else ensure();
 document.addEventListener('click',e=>{if(e.target&&e.target.id==='onlineRefreshProgress')setTimeout(refresh,100);});
 document.addEventListener('dblclick',()=>{});
