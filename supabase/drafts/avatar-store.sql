@@ -94,12 +94,12 @@ end $;
 alter table public.player_profiles enable row level security;
 alter table public.store_avatars enable row level security;
 alter table public.player_avatar_ownership enable row level security;
-revoke all on public.store_avatars,public.player_avatar_ownership from anon,authenticated;
+revoke all on public.store_avatars,public.player_avatar_ownership from public,anon,authenticated;
 -- No direct table access: all reads and writes go through the guarded RPCs below.
 
 create or replace function public.get_avatar_store_catalog()
 returns jsonb language plpgsql stable security definer
-set search_path=public,pg_temp as $$
+set search_path='' as $
 declare uid uuid:=auth.uid(); result jsonb;
 begin
  if uid is null then raise exception 'account_login_required'; end if;
@@ -119,7 +119,7 @@ grant execute on function public.get_avatar_store_catalog() to authenticated;
 
 create or replace function public.purchase_avatar(p_avatar_id text)
 returns jsonb language plpgsql security definer
-set search_path=public,pg_temp as $$
+set search_path='' as $
 declare uid uuid:=auth.uid(); item public.store_avatars%rowtype; balance bigint;
 begin
  if uid is null then raise exception 'account_login_required'; end if;
@@ -144,7 +144,7 @@ grant execute on function public.purchase_avatar(text) to authenticated;
 
 create or replace function public.equip_avatar(p_avatar_id text)
 returns jsonb language plpgsql security definer
-set search_path=public,pg_temp as $$
+set search_path='' as $
 declare uid uuid:=auth.uid(); item public.store_avatars%rowtype;
 begin
  if uid is null then raise exception 'account_login_required'; end if;
