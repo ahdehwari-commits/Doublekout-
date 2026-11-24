@@ -26,7 +26,7 @@ async function loadPackages(){
 async function startPayment(id){
  if(busy)return;busy=true;$('topupStatus').textContent='در حال ساخت سفارش امن پرداخت...';
  try{const data=await invoke('zarinpal',{package_id:id});if(!data||!data.url)throw new Error(data&&data.error||'ساخت لینک پرداخت ناموفق بود.');window.location.href=data.url;}
- catch(e){$('topupStatus').innerHTML='<div style="border:1px solid #b99045;border-radius:12px;padding:12px;background:#09271f;line-height:2;color:#fff">لطفاً مبلغ مورد نظر را به شماره کارت سازنده بازی عبدالحمید دهواری واریز و فیش آن را به واتساپ <b dir="ltr" style="display:inline-block;color:#f4d58b">۰۹۱۵۹۴۸۷۷۰۷</b> ارسال نمایید:<br><b dir="ltr" style="display:inline-block;font-size:19px;letter-spacing:1px;color:#f4d58b">۵۸۵۹۸۳۱۱۷۷۵۴۷۳۶۰</b></div>';}
+ catch(e){$('topupStatus').innerHTML='<div style="border:1px solid #b99045;border-radius:12px;padding:12px;background:#09271f;line-height:2;color:#fff"><b style="color:#f4d58b">پرداخت کارت‌به‌کارت</b><br>لطفاً مبلغ بستهٔ انتخاب‌شده را به کارت زیر به نام <b>عبدالحمید دهواری</b> واریز کنید و تصویر فیش واریزی را برای ثبت امتیاز ارسال نمایید:<br><b dir="ltr" style="display:block;text-align:center;font-size:19px;letter-spacing:1px;color:#f4d58b;margin:8px 0">۵۸۵۹۸۳۱۱۷۷۵۴۷۳۶۰</b><div style="text-align:center">واتساپ: <b dir="ltr" style="color:#f4d58b">۰۹۱۵۹۴۸۷۷۰۷</b></div><a href="https://wa.me/989159487707" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;padding:9px;border-radius:8px;background:#1f8f55;color:#fff;text-decoration:none;font-weight:bold">ارسال فیش در واتساپ</a></div>';}
  finally{busy=false;}
 }
 async function loadAdmin(){
