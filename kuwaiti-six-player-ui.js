@@ -22,6 +22,7 @@ let points={A:0,B:0},trickView=[],locked=false,aiTimer=null,matchLimit=54,played
 
 let onlineKuwaiti=null,onlineKuwaitiBusy=false,onlineKuwaitiRefreshQueued=false,onlineKuwaitiAiTimer=null,onlineKuwaitiAiBusy=false,onlineKuwaitiBidBusy=false,onlineKuwaitiMalzoomAutoKey=null;
 let onlineKuwaitiTimeoutTimer=null,onlineKuwaitiClockTimer=null;
+let onlineKuwaitiAudio=null,onlineKuwaitiLastBeepKey=null;
 function isOnlineKuwaiti(){return !!(onlineKuwaiti&&onlineKuwaiti.roomId);}
 function onlineKuwaitiStatus(message){if($('kStatus'))setStatus(message);}
 async function onlineKuwaitiRpc(action){
@@ -79,7 +80,31 @@ function renderOnlineKuwaitiTurnClock(){
  const seat=Number(st.turn),remaining=Math.max(0,Math.ceil(deadline-Date.now()/1000));
  node.hidden=false;node.textContent='مهلت نوبت '+(playerNames[seat]||'بازیکن')+' : '+fa(remaining)+' ثانیه';
  node.classList.toggle('urgent',remaining<=3);
+ playOnlineKuwaitiCountdownBeep(remaining,seat,deadline);
 }
+function unlockOnlineKuwaitiAudio(){
+ try{
+  const AudioCtor=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtor)return;
+  if(!onlineKuwaitiAudio)onlineKuwaitiAudio=new AudioCtor();
+  if(onlineKuwaitiAudio.state==='suspended')onlineKuwaitiAudio.resume().catch(()=>{});
+ }catch(_){}
+}
+function playOnlineKuwaitiCountdownBeep(remaining,seat,deadline){
+ if(remaining<0||remaining>3)return;
+ const key=[onlineKuwaiti&&onlineKuwaiti.roomId,seat,deadline,remaining].join(':');
+ if(key===onlineKuwaitiLastBeepKey)return;
+ onlineKuwaitiLastBeepKey=key;
+ try{
+  unlockOnlineKuwaitiAudio();
+  if(!onlineKuwaitiAudio||onlineKuwaitiAudio.state!=='running')return;
+  const now=onlineKuwaitiAudio.currentTime,osc=onlineKuwaitiAudio.createOscillator(),gain=onlineKuwaitiAudio.createGain();
+  osc.type='sine';osc.frequency.value=remaining===0?620:880;
+  gain.gain.setValueAtTime(0.0001,now);gain.gain.exponentialRampToValueAtTime(0.045,now+0.012);gain.gain.exponentialRampToValueAtTime(0.0001,now+0.11);
+  osc.connect(gain);gain.connect(onlineKuwaitiAudio.destination);osc.start(now);osc.stop(now+0.12);
+ }catch(_){}
+}
+document.addEventListener('pointerdown',unlockOnlineKuwaitiAudio,{passive:true});
 function startOnlineKuwaitiClock(){if(!onlineKuwaitiClockTimer)onlineKuwaitiClockTimer=setInterval(renderOnlineKuwaitiTurnClock,250);}
 function scheduleOnlineKuwaitiTimeout(){
  clearOnlineKuwaitiTurnTimers();
