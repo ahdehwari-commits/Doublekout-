@@ -1,6 +1,6 @@
--- DRAFT ONLY: avatar store schema and RPCs.
--- Not a production migration. Review and test in an isolated database before promotion.
--- Static image objects must exist at assets/avatars/<image_file> before enabling this catalog.
+-- Reference copy of the deployed migration `supabase/migrations/20261124052627_add_avatar_store.sql`.
+-- This SQL has been applied to the Doublekout Supabase project.
+-- Static WebP assets are committed under web and Android asset directories.
 
 create table if not exists public.store_avatars (
  id text primary key check (id ~ '^[a-z0-9_]{3,48}$'),
