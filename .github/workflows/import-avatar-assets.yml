@@ -47,7 +47,7 @@ jobs:
                   names = set()
                   for entry in entries:
                       name = Path(entry).name
-                      if not re.fullmatch(r"[a-z0-9_]+\\.webp", name):
+                      if not re.fullmatch(r"[a-z0-9_]+\.webp", name):
                           raise SystemExit(f"Unexpected image filename: {entry}")
                       if name in names:
                           raise SystemExit(f"Duplicate image filename: {name}")
