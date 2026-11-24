@@ -83,6 +83,14 @@ create table if not exists public.player_avatar_ownership (
 );
 alter table public.player_profiles
  add column if not exists equipped_avatar_id text;
+do $
+begin
+ if not exists(select 1 from pg_constraint where conname='player_profiles_equipped_avatar_fk'
+   and conrelid='public.player_profiles'::regclass) then
+  alter table public.player_profiles add constraint player_profiles_equipped_avatar_fk
+   foreign key(equipped_avatar_id) references public.store_avatars(id) on delete set null;
+ end if;
+end $;
 alter table public.player_profiles enable row level security;
 alter table public.store_avatars enable row level security;
 alter table public.player_avatar_ownership enable row level security;
