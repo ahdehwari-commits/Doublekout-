@@ -16,6 +16,6 @@ The SQL draft creates separate `store_avatars` and `player_avatar_ownership` tab
 
 ## Still blocked
 
-The 60 WebP binaries are **not** committed to this repository. The available GitHub write connector only accepts UTF-8 text for repository files; its blob operation accepts base64 text but there is no supported path here to stream the materialized ZIP's binary bytes into that call. Do not enable the catalog until the WebP files are uploaded to the exact static path and verified.
+The 60 WebP binaries are **not yet committed**. A one-time import path is now prepared: upload `DoubleKout_Avatars_for_GitHub.zip` into `assets/import/` on branch `feature/shadows-cell-theme`. The workflow `.github/workflows/import-avatar-assets.yml` will validate and extract all 60 files into `assets/avatars/`, then commit them back to the branch. See `assets/import/README.md`. The archive itself is not yet in the repository; it must be uploaded once through GitHub's file-upload UI because the connected GitHub write API available here accepts text blobs, not a local binary file stream.
 
 The current `central-store.js` is still the existing card-back store. The avatar gallery is not wired into the UI yet, to avoid shipping a gallery of broken image URLs. The draft SQL has not been executed. No production database or player balance has been changed.
