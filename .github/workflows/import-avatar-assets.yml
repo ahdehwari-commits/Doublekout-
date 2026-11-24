@@ -1,0 +1,78 @@
+name: Import avatar WebP assets
+
+on:
+  push:
+    branches:
+      - feature/shadows-cell-theme
+    paths:
+      - "assets/import/DoubleKout_Avatars_for_GitHub.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: avatar-assets-import-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  import:
+    if: ${{ hashFiles('assets/import/DoubleKout_Avatars_for_GitHub.zip') != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
+
+      - name: Verify and extract 60 WebP avatars
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import re, shutil
+
+          archive = Path("assets/import/DoubleKout_Avatars_for_GitHub.zip")
+          if not archive.is_file():
+              raise SystemExit("Avatar archive not found.")
+          destination = Path("assets/avatars")
+          destination.mkdir(parents=True, exist_ok=True)
+
+          with ZipFile(archive) as z:
+              entries = [n for n in z.namelist() if n.lower().endswith(".webp")]
+              if len(entries) != 60:
+                  raise SystemExit(f"Expected exactly 60 WebP images; found {len(entries)}.")
+              names = []
+              for entry in entries:
+                  name = Path(entry).name
+                  if not re.fullmatch(r"[a-z0-9_]+\.webp", name):
+                      raise SystemExit(f"Unexpected image filename: {entry}")
+                  if name in names:
+                      raise SystemExit(f"Duplicate image filename: {name}")
+                  names.append(name)
+                  data = z.read(entry)
+                  if len(data) < 16 or data[:4] != b"RIFF" or data[8:12] != b"WEBP":
+                      raise SystemExit(f"Invalid WebP file: {entry}")
+                  (destination / name).write_bytes(data)
+
+          if len(list(destination.glob("*.webp"))) != 60:
+              raise SystemExit("The target folder must contain exactly 60 WebP files.")
+          print("Verified and extracted 60 WebP avatar files.")
+          PY
+
+      - name: Remove import archive and commit extracted images
+        shell: bash
+        run: |
+          rm assets/import/DoubleKout_Avatars_for_GitHub.zip
+          rmdir assets/import 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/avatars assets/import
+          if git diff --cached --quiet; then
+            echo "No avatar asset changes to commit."
+            exit 0
+          fi
+          git commit -m "Add 60 WebP avatar assets"
+          git push origin "HEAD:${{ github.ref_name }}"
