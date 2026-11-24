@@ -16,6 +16,8 @@ The SQL draft creates separate `store_avatars` and `player_avatar_ownership` tab
 
 ## Still blocked
 
-The 60 WebP binaries are **not yet committed**. A one-time import path is now prepared: upload `DoubleKout_Avatars_for_GitHub.zip` into `assets/import/` on branch `feature/shadows-cell-theme`. The workflow `.github/workflows/import-avatar-assets.yml` will validate and extract all 60 files into `assets/avatars/`, then commit them back to the branch. See `assets/import/README.md`. The archive itself is not yet in the repository; it must be uploaded once through GitHub's file-upload UI because the connected GitHub write API available here accepts text blobs, not a local binary file stream.
+The 60 WebP binaries are now committed under `assets/avatars/` on branch `feature/shadows-cell-theme`. The import workflow validated the archive and extracted exactly 60 images: 27 `fantasy_free`, 15 `gulf_paid`, and 18 `regional_paid`. The temporary ZIP was removed after extraction.
 
-The current `central-store.js` is still the existing card-back store. The avatar gallery is not wired into the UI yet, to avoid shipping a gallery of broken image URLs. The draft SQL has not been executed. No production database or player balance has been changed.
+The web and Android UI now include an avatar gallery in the store, category filters, image previews, permanent-account gating for paid purchases, and calls to `get_avatar_store_catalog`, `purchase_avatar`, and `equip_avatar`. The currently equipped image is also shown on the local player's online seat. Existing card-back store behavior remains separate.
+
+**Backend activation is still pending:** `avatar-store.sql` remains a draft outside `supabase/migrations`; it has not been applied to any database. Until the draft is reviewed and applied through an explicitly approved migration, the gallery will report that the avatar service is not active and purchase/equip operations will not complete. No production database or player balance has been changed. Runtime UI and database tests have not been run.
