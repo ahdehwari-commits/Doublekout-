@@ -420,7 +420,7 @@ function addStyle(){
 `;
 
  s.textContent+=`
-#kTurnCountdown{margin:6px 0;padding:7px 12px;border:1px solid #c8a75d;border-radius:10px;background:#09271f;color:#ffe6a1;text-align:center;font-weight:800;font-size:13px}
+#kTurnCountdown{position:fixed;left:8px;right:8px;bottom:calc(56px + env(safe-area-inset-bottom));z-index:2147482999;margin:0;padding:7px 12px;border:1px solid #c8a75d;border-radius:10px;background:#09271f;color:#ffe6a1;text-align:center;font-weight:800;font-size:13px;box-shadow:0 4px 12px #000b}
 #kTurnCountdown.urgent{border-color:#e45d5d;color:#ffb0a8;animation:kTurnPulse .35s ease-in-out infinite alternate}
 /* AI diagnostic banner */\n#kuwaitiGame #kStatus{display:block!important;visibility:visible!important;opacity:1!important;position:fixed!important;left:8px!important;right:8px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:2147483000!important;min-height:42px!important;max-height:25vh!important;overflow:auto!important}\n/* 0.8.13: dual-corner ranks and illustrated face cards */
 .k-card{position:relative;overflow:hidden}
