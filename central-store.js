@@ -84,6 +84,15 @@ async function loadAvatarStore(){
   const data=await call('get_avatar_store_catalog');
   if(!data||!Array.isArray(data.items))throw new Error('فهرست آواتارها از سرور دریافت نشد.');
   avatarItems=data.items;avatarEquipped=data.equipped||null;avatarBackendReady=true;
+  if(avatarEquipped){
+   const equippedItem=avatarItems.find(x=>x.id===avatarEquipped);
+   if(equippedItem){
+    const image='./assets/avatars/'+equippedItem.image_file;
+    try{localStorage.setItem('doubleKoutAvatarId',avatarEquipped);localStorage.setItem('doubleKoutAvatarImage',image);}catch(_){}
+    const preview=$('selectedAvatarPreview');if(preview){preview.src=image;preview.classList.remove('hidden');}
+    window.dispatchEvent(new CustomEvent('doublekout:avatar-changed',{detail:{avatarId:avatarEquipped,image}}));
+   }
+  }
   const permanent=!session.user.is_anonymous;avatarCanBuy=permanent;
   balance.textContent=(permanent?'موجودی حساب: ':'حساب مهمان · موجودی: ')+Number(data.points||0).toLocaleString('fa-IR')+' امتیاز · '+avatarItems.length+' آواتار';
   renderAvatarItems();
