@@ -1474,7 +1474,7 @@ document.head.appendChild(style);
 
  el('onlineChooseGame').onclick=function(){el('onlineGameModeModal').classList.add('open');el('onlineGameModeModal').setAttribute('aria-hidden','false');};el('onlineModeCancel').onclick=function(){el('onlineGameModeModal').classList.remove('open');el('onlineGameModeModal').setAttribute('aria-hidden','true');};el('onlineGameModeModal').addEventListener('click',function(e){if(e.target===el('onlineGameModeModal')){el('onlineModeCancel').click();return;}var b=e.target.closest('[data-online-mode]');if(!b)return;el('onlineMode').value=b.dataset.onlineMode;el('onlineChooseGame').textContent='انتخاب بازی: '+b.querySelector('strong').textContent;el('onlineGameModeModal').classList.remove('open');el('onlineGameModeModal').setAttribute('aria-hidden','true');});el('onlineResumeKuwaiti').onclick=async function(){var info=window.DoubleKoutOnline.getRoomInfo();if(info&&info.mode==='kuwaiti'){window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-online-started',{detail:info}));if(window.__doubleKoutKuwaitiAttachPromise)await window.__doubleKoutKuwaitiAttachPromise;close();}};
  el('onlineClose').onclick=close;el('onlineRegister').onclick=registerOnlineAccount;el('onlineLogin').onclick=loginOnlineAccount;el('onlineForgotPassword').onclick=resetOnlinePassword;el('onlineSaveNewPassword').onclick=saveRecoveredPassword;el('onlineResendConfirmation').onclick=resendOnlineConfirmation;el('onlineLogout').onclick=logoutOnlineAccount;el('onlineCreate').onclick=createRoom;el('onlineShowJoin').onclick=function(){el('onlineJoinBox').style.display='block';};
- el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=function(){if(mode==='kuwaiti'){startKuwaitiOnlineGame(true);return;}if(onlineRosterRows.some(function(x){return x.user_id!==me.id;})){el('onlineLobbyDecision').style.display='block';say('میزبان می‌تواند بازیکن واقعی را بپذیرد یا بازی را با هوش مصنوعی آغاز کند.');}else startOnlineGame('ai');};el('onlineAcceptHuman').onclick=function(){startOnlineGame('human');};el('onlineUseAI').onclick=function(){startOnlineGame('ai');};el('onlineChooseNormal').onclick=function(){submitOnlineChallengeChoice('pass')};el('onlineChooseChallenge').onclick=function(){submitOnlineChallengeChoice('challenge')};el('onlineChallengeExtend').onclick=extendOnlineChallengeTime;el('onlineTrumpConfirm').onclick=function(){submitOnlineTrumpSelection(el('onlineTrumpContract').value,false);};el('onlineNextGame').onclick=function(){startNextOnlineGame(false)};el('onlineExtendRematch').onclick=extendOnlineRematchTime;el('onlineLeave').onclick=leave;
+ el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=function(){if(mode==='kuwaiti'){startKuwaitiOnlineGame(true);return;}if(onlineRosterRows.length>=3){startOnlineGame('human');return;}if(onlineRosterRows.some(function(x){return x.user_id!==me.id;})){el('onlineLobbyDecision').style.display='block';say('میزبان می‌تواند بازیکن واقعی را بپذیرد یا بازی را با هوش مصنوعی آغاز کند.');}else startOnlineGame('ai');};el('onlineAcceptHuman').onclick=function(){startOnlineGame('human');};el('onlineUseAI').onclick=function(){startOnlineGame('ai');};el('onlineChooseNormal').onclick=function(){submitOnlineChallengeChoice('pass')};el('onlineChooseChallenge').onclick=function(){submitOnlineChallengeChoice('challenge')};el('onlineChallengeExtend').onclick=extendOnlineChallengeTime;el('onlineTrumpConfirm').onclick=function(){submitOnlineTrumpSelection(el('onlineTrumpContract').value,false);};el('onlineNextGame').onclick=function(){startNextOnlineGame(false)};el('onlineExtendRematch').onclick=extendOnlineRematchTime;el('onlineLeave').onclick=leave;
  root.addEventListener('click',function(e){if(e.target===root)close();});
 }
 function open(preselect){ensureUI();if(preselect&&el('onlineMode'))el('onlineMode').value=preselect;var selected=el('onlineMode')&&el('onlineMode').value||'double-kout',labels={'double-kout':'دابل کوت توالی','standard-hokm':'حکم معمولی','kuwaiti':'کوت کویتی'};if(el('onlineChooseGame'))el('onlineChooseGame').textContent='انتخاب بازی: '+labels[selected];el('onlineOverlay').classList.add('open');}refreshStoreAccess();
@@ -1600,6 +1600,21 @@ async function refreshRoster(){
  if(rosterBusy){rosterRefreshQueued=true;return;}
  rosterBusy=true;
  try{
+  var matchNotice='';
+  var roomBeforeMatch=roomId;
+  var match=await client.rpc('try_merge_waiting_rooms',{p_room_id:roomBeforeMatch});
+  if(!match.error&&match.data&&match.data.merged){
+   if(match.data.room_id&&match.data.room_id!==roomBeforeMatch){
+    roomId=match.data.room_id;roomCode=match.data.code;mode=match.data.game_mode;count=Number(match.data.player_count||count);
+    onlineRoomEpoch++;lastAcceptedGameRevision=-1;lastGameRevision=-1;lastOnlineHandSignature='';
+    el('onlineCode').textContent=roomCode;
+    if(channel){await client.removeChannel(channel);channel=null;}
+    say('اتاق شما با اتاق هم‌نوع دیگری ادغام شد؛ اکنون هر چهار بازیکن واقعی در یک میز هستند.');
+    subscribe();
+    return;
+   }
+   matchNotice='دو اتاق با هم ادغام شدند؛ بازیکنان هر اتاق در یک تیم روبه‌روی تیم دیگر قرار گرفتند.';
+  }
   var r=await client.rpc('get_room_roster',{p_room_id:roomId});
   if(r.error)throw r.error;
   var rows=Array.isArray(r.data)?r.data:[],cap=count,html='';onlineRosterRows=rows;
@@ -1614,13 +1629,15 @@ async function refreshRoster(){
   var allCurrentHumansReady=rows.length>=1&&rows.every(function(x){return x.ready===true;});
   el('onlineStart').style.display=mine&&mine.is_host&&(mode==='kuwaiti'?rows.length>=1:true)?'block':'none';
   el('onlineStart').disabled=mode==='kuwaiti'?!allCurrentHumansReady:false;
-  el('onlineStart').textContent=mode==='kuwaiti'?(rows.length<6?'پایان انتظار · تکمیل صندلی‌ها با هوش مصنوعی':'شروع کوت کویتی · شش بازیکن'):(rows.length>1?'پایان انتظار · انتخاب میزبان':'پایان انتظار · شروع با هوش مصنوعی');
+  el('onlineStart').textContent=mode==='kuwaiti'?(rows.length<6?'پایان انتظار · تکمیل صندلی‌ها با هوش مصنوعی':'شروع کوت کویتی · شش بازیکن'):(rows.length>=3?'شروع با '+Number(rows.length).toLocaleString('fa-IR')+' بازیکن واقعی':(rows.length>1?'پایان انتظار · انتخاب میزبان':'پایان انتظار · شروع با هوش مصنوعی'));
   var guest=rows.find(function(x){return !x.is_host;});
   if(mode==='kuwaiti'){el('onlineLobbyDecision').style.display='none';lastLobbyGuestId='';}
+  else if(mine&&mine.is_host&&rows.length>=3){el('onlineLobbyDecision').style.display='none';lastLobbyGuestId='';}
   else if(mine&&mine.is_host&&guest){el('onlineLobbyDecision').style.display='block';el('onlineLobbyNotice').textContent='بازیکن واقعی «'+guest.display_name+'» وارد اتاق شد؛ شروع را انتخاب کن.';if(lastLobbyGuestId!==guest.user_id){lastLobbyGuestId=guest.user_id;say('بازیکن واقعی وارد اتاق شد. برای انتخاب نوع شروع آماده‌ای.');}}
   else if(!guest){el('onlineLobbyDecision').style.display='none';lastLobbyGuestId='';}
   if(!allReady&&rows.length>1&&!guest)say(rows.length+' بازیکن وارد شده‌اند؛ میزبان می‌تواند همین حالا تصمیم بگیرد.');
   if(mine&&!mine.is_host)say(mode==='kuwaiti'?'صندلی شما در میز شش‌نفره ثبت شد؛ منتظر تصمیم میزبان بمان. در صورت پایان انتظار، صندلی‌های خالی با هوش مصنوعی تکمیل می‌شوند.':'به اتاق میزبان متصل شدی؛ جایگاه تیمی انتخاب‌شده ثبت شده است.');
+  if(matchNotice)say(matchNotice);
  }catch(e){if(/not_a_room_member|not a room member/i.test(String(e&&e.message||e)))say('میزبان اتاق را با هوش مصنوعی آغاز کرد؛ ورود شما پذیرفته نشد.');else say('به‌روزرسانی فهرست بازیکنان: '+(e.message||e));}
  finally{rosterBusy=false;if(rosterRefreshQueued){rosterRefreshQueued=false;Promise.resolve().then(refreshRoster);}}
 }
