@@ -50,33 +50,23 @@ begin
   if v_state->>'phase'<>'auction' then raise exception 'six-player game did not start in auction phase'; end if;
   if v_state->'turnDeadline' is not null then raise exception 'card-play deadline must not run during auction'; end if;
 
-  -- Complete auction and contract selection using the existing server-side AI.
-  -- Convert the five non-host seats to AI one at a time only for this isolated test.
-  -- This test focuses on the card-play timeout path, not auction policy.
-  select (v_state->>'turn')::integer into v_seat;
+  -- Put the already-dealt room into a deterministic card-play fixture.
+  -- This avoids testing auction policy and isolates the timeout/AI card path.
+  v_seat:=(v_state->>'turn')::integer;
   update public.game_rooms
-     set public_state=jsonb_set(public_state,array['seatPlayers',v_seat::text,'human'],'false'::jsonb,false),
-         revision=revision+1,updated_at=now()
+     set public_state=public_state||jsonb_build_object(
+       'phase','playing','turn',v_seat,'auctionWinner',v_seat,'auctionBid',jsonb_build_object('target',6),
+       'contract','hokm','selectedContract','hokm_spades','trumpSuit','S',
+       'hiddenTrump',false,'trumpAnnounced',true,'isMalzoom',false,'target',6,
+       'trickNo',1,'plays','[]'::jsonb,'trickWinners','[]'::jsonb,'lastTrick','[]'::jsonb,
+       'leader',v_seat,'scoreA',0,'scoreB',0,'done',false,'matchOver',false
+     ),revision=revision+1,updated_at=now()
    where id=v_room_id;
-  v_result:=public.kuwaiti_online_ai_turn(v_room_id);
+  update public.kuwaiti_online_secrets
+     set trump_suit='S',updated_at=now()
+   where room_id=v_room_id;
   select public_state into v_state from public.game_rooms where id=v_room_id;
-
-  -- The remaining auction is resolved with the existing AI function by marking
-  -- each current seat as AI in the test fixture only.
-  for i in 1..30 loop
-    exit when v_state->>'phase'='playing';
-    v_seat:=coalesce((v_state->>'turn')::integer,(v_state->>'auctionWinner')::integer);
-    if v_seat is null then raise exception 'AI phase has no assigned seat'; end if;
-    update public.game_rooms
-       set public_state=jsonb_set(public_state,array['seatPlayers',v_seat::text,'human'],'false'::jsonb,false),
-           revision=revision+1,updated_at=now()
-     where id=v_room_id;
-    v_result:=public.kuwaiti_online_ai_turn(v_room_id);
-    select public_state into v_state from public.game_rooms where id=v_room_id;
-  end loop;
-  if v_state->>'phase'<>'playing' then
-    raise exception 'could not reach card-play phase for timeout test: %',v_state->>'phase';
-  end if;
+  if v_state->>'phase'<>'playing' then raise exception 'timeout fixture did not enter card-play phase'; end if;
 
   -- Restore the current seat as human and verify that the server stamps ten seconds.
   v_seat:=(v_state->>'turn')::integer;
