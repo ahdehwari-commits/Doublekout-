@@ -147,6 +147,8 @@ function openAvatarStoreFromCustomizer(){
  if(modal.parentElement!==document.body)document.body.appendChild(modal);
  modal.classList.remove('hidden');
  modal.style.display='flex';
+ modal.style.zIndex='100050';
+ modal.setAttribute('aria-hidden','false');
  document.body.style.overflow='hidden';
  loadAvatarStore();
 }
