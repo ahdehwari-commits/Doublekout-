@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#103d32"><meta name="description" content="نسخه آزمایشی کوت بومی با قانون جفت و چلنج"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./IMG_3647.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Double Kout"><title>Double Kout</title>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#103d32"><meta name="description" content="نسخه آزمایشی کوت بومی با قانون جفت و چلنج"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./IMG_3647.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Double Kout"><title>Double Kout · نسخه ۹.۲۲</title><link rel="stylesheet" href="./assets/shadows-theme.css">
 <style>
 #game{transform-style:flat;transform:none;transition:none}:root{--felt:#0c382d;--felt2:#145343;--gold:#e7c879;--cream:#fffaf0;--ink:#17251f;--muted:#c4d5cd;--red:#c83d43}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#071d18 0%,#0b3027 48%,#061b16 100%);color:#fff;font-family:Tahoma,Arial,sans-serif;min-height:100vh}.wrap{max-width:980px;margin:auto;padding:14px}.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.brand{font-size:24px;font-weight:900;color:var(--gold)}.pill{background:#09271f;border:1px solid #467565;padding:6px 11px;border-radius:30px;font-size:12px;color:var(--muted)}.panel{background:#0c2e26dd;border:1px solid #477a68;border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 12px 35px #001b1666}.setup{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end}label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}select,button{font:inherit;border:0;border-radius:12px;padding:11px 13px}select{width:100%;background:#f7f1df;color:#17251f}button{background:var(--gold);color:#17251f;font-weight:bold;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}
 /* Keep cards fully legible while the player considers challenge vs. normal play. */
 #hand.challenge-thinking button:disabled{opacity:1!important;filter:none!important;pointer-events:none!important}
 #hand.challenge-thinking .card{opacity:1!important;filter:none!important}
-#hand.challenge-thinking button{cursor:default}.primary{width:100%;margin-top:10px}.table{position:relative;cursor:grab;touch-action:pan-y;transform-style:preserve-3d;isolation:isolate;overflow:hidden;border:4px solid #b99045;border-radius:30px;padding:12px;background-color:#252523;background-image:radial-gradient(ellipse at 50% 45%,rgba(52,58,55,.72),rgba(20,21,20,.96) 68%),repeating-linear-gradient(18deg,rgba(255,255,255,.018) 0 2px,transparent 2px 7px),linear-gradient(135deg,#45423c,#151615 55%,#38342d);box-shadow:inset 0 0 0 2px rgba(255,226,158,.22),inset 0 0 55px rgba(0,0,0,.72),0 16px 38px #000b;display:grid;grid-template-columns:1fr 1.2fr 1fr;grid-template-rows:auto auto auto;gap:9px;align-items:center;text-align:center;min-height:350px}.seat{background:#0a291f;border:1px solid #497967;border-radius:13px;padding:9px;min-width:0}.seat.active{outline:2px solid var(--gold);box-shadow:0 0 15px #e7c87955}.seat .name{font-size:13px;color:var(--muted)}.seat .count{font-size:12px;color:#a8c4b7}.north{grid-column:2;grid-row:1}.west{grid-column:1;grid-row:2}.center{grid-column:2;grid-row:2;min-height:170px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;justify-items:center}.east{grid-column:3;grid-row:2}.south{grid-column:2;grid-row:3}.played{min-height:84px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}.card{width:61px;height:86px;background:var(--cream);color:#17251f;border-radius:9px;border:1px solid #d8d0bd;box-shadow:0 4px 10px #00140f88;display:flex;flex-direction:column;justify-content:space-between;padding:5px;font-family:Georgia,serif;font-size:20px;font-weight:bold;position:relative}.card.red{color:var(--red)}.card .suit{font-size:27px;align-self:center}.card.back{background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px);border:3px solid #f4e7c4}.card.small{width:44px;height:63px;font-size:16px}.card.small .suit{font-size:20px}.hand{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:12px 3px}.hand button{padding:0;background:none;border:0}.hand button:disabled{opacity:.35}.hand button:not(:disabled) .card{transform:translateY(-3px);border:2px solid var(--gold)}.hand button:active .card{transform:translateY(-9px)}.status{background:#09271f;border-radius:12px;padding:10px;margin-top:10px;color:#f8e9bd;font-size:14px;min-height:46px}.scores{display:flex;justify-content:space-around;gap:10px;flex-wrap:wrap}.score{font-size:14px}.score b{color:var(--gold);font-size:21px}.muted{color:var(--muted);font-size:12px;line-height:1.8}.hidden{display:none!important}.history{font-size:12px;max-height:110px;overflow:auto;color:#d5e4dc}.section-title{color:var(--gold);margin:2px 0 8px;font-size:16px}.rules{font-size:12px;color:var(--muted);line-height:1.9}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}.winner{color:#a8efbd;font-weight:bold}
+#hand.challenge-thinking button{cursor:default}.primary{width:100%;margin-top:10px}.table{position:relative;cursor:grab;touch-action:pan-y;transform-style:preserve-3d;isolation:isolate;overflow:hidden;border:4px solid #b99045;border-radius:30px;padding:12px;background-color:#252523;background-image:radial-gradient(ellipse at 50% 45%,rgba(52,58,55,.72),rgba(20,21,20,.96) 68%),repeating-linear-gradient(18deg,rgba(255,255,255,.018) 0 2px,transparent 2px 7px),linear-gradient(135deg,#45423c,#151615 55%,#38342d);box-shadow:inset 0 0 0 2px rgba(255,226,158,.22),inset 0 0 55px rgba(0,0,0,.72),0 16px 38px #000b;display:grid;grid-template-columns:1fr 1.2fr 1fr;grid-template-rows:auto auto auto;gap:9px;align-items:center;text-align:center;min-height:350px}.seat{background:#0a291f;border:1px solid #497967;border-radius:13px;padding:9px;min-width:0}.seat.active{outline:2px solid var(--gold);box-shadow:0 0 15px #e7c87955}.seat .name{font-size:13px;color:var(--muted)}.seat .count{font-size:12px;color:#a8c4b7}.north{grid-column:2;grid-row:1}.west{grid-column:1;grid-row:2}.center{grid-column:2;grid-row:2;min-height:170px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;justify-items:center}.east{grid-column:3;grid-row:2}.south{grid-column:2;grid-row:3}.played{min-height:84px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}.card{width:61px;height:86px;background:var(--cream);color:#17251f;border-radius:9px;border:1px solid #d8d0bd;box-shadow:0 4px 10px #00140f88;display:flex;flex-direction:column;justify-content:space-between;padding:5px;font-family:Georgia,serif;font-size:20px;font-weight:bold;position:relative}.card.red{color:var(--red)}.card .suit{font-size:27px;align-self:center}.card.back{background:repeating-linear-gradient(45deg,#173e69,#173e69 5px,#e4d6ad 5px,#e4d6ad 7px);border:3px solid #f4e7c4}.card.small{width:44px;height:63px;font-size:16px}.card.small .suit{font-size:20px}.hand{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:12px 3px}.hand button{padding:0;background:none;border:0}.hand button:disabled{opacity:.35}.hand button:not(:disabled) .card{transform:translateY(-3px);border:2px solid var(--gold)}.hand button:active .card{transform:translateY(-9px)}.status{background:#09271f;border-radius:12px;padding:10px;margin-top:10px;color:#f8e9bd;font-size:14px;min-height:46px}.scores{display:flex;justify-content:space-around;gap:10px;flex-wrap:wrap}.score{font-size:14px}.score b{color:var(--gold);font-size:21px}.muted{color:var(--muted);font-size:12px;line-height:1.8}.hidden{display:none!important}#kuwaitiGame #kTrickCards{display:none!important}.history{font-size:12px;max-height:110px;overflow:auto;color:#d5e4dc}.section-title{color:var(--gold);margin:2px 0 8px;font-size:16px}.rules{font-size:12px;color:var(--muted);line-height:1.9}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}.winner{color:#a8efbd;font-weight:bold}
 #modePicker{background-image:linear-gradient(120deg,rgba(4,20,16,.90),rgba(4,20,16,.58)),url("./IMG_3647.png");background-size:cover;background-position:center;min-height:260px}.mode-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
 .mode-card{min-height:108px;text-align:right;display:flex;flex-direction:column;gap:9px;justify-content:center;background:linear-gradient(145deg,#39352e,#090a09 70%);border:1px solid #d0a44d;color:#f4d58b;border-radius:14px;padding:16px;box-shadow:0 9px 20px #0009,inset 0 1px 0 #fff3;transform:perspective(700px) rotateX(3deg);transition:transform .2s,box-shadow .2s} .mode-card:active{transform:perspective(700px) rotateX(0deg) translateY(3px);box-shadow:0 3px 8px #0009}
 #hotseatGate{position:fixed;inset:0;z-index:9999;background:radial-gradient(ellipse at center,#174c3b,#061b15 75%);display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}#hotseatGate .gate-card{max-width:440px;width:100%;padding:28px 20px;border:1px solid #e7c879;border-radius:22px;background:#0a2a21;box-shadow:0 20px 60px #000b}#hotseatGate h2{color:#f3d58d}#hotseatGate p{line-height:2;color:#d5e5dc}#hotseatGate button{width:100%;margin-top:12px;font-size:17px}
@@ -310,7 +310,7 @@ body.six-layout-wide .k-table>.k-center{left:30%!important;right:30%!important;t
 .card.back:after{content:"♠"!important;position:absolute!important;inset:0!important;display:flex!important;align-items:center!important;justify-content:center!important;width:auto!important;height:auto!important;border:0!important;border-radius:0!important;background:none!important;color:#f9dfa0!important;font:900 36px/1 Georgia,serif!important;text-shadow:0 1px 3px #160d00,0 0 8px #e7bd5a!important;transform:none!important;overflow:visible!important}
 body.deck-back-classic .card.back{background:radial-gradient(ellipse,#1c5c92,#061b40 78%)!important}body.deck-back-red .card.back{background:radial-gradient(ellipse,#a92d3c,#260511 78%)!important}body.deck-back-green .card.back{background:radial-gradient(ellipse,#18724c,#03251a 78%)!important}
 .online-hand-tools{display:flex;align-items:center;justify-content:space-between;gap:8px}#onlineSortHand{width:42px;height:38px;padding:0;border:1px solid #e7c879;background:linear-gradient(#3b3424,#111);color:#ffe5a0;font-size:23px}
-#onlinePanel #onlineHand button.online-card-legal{opacity:1!important;filter:none!important;z-index:30!important}#onlinePanel #onlineHand button.online-card-legal .card{transform:translateY(-13px) scale(1.07)!important;outline:3px solid #ffe39a!important;border:2px solid #fff0b3!important;box-shadow:0 0 0 3px #b27d2c,0 14px 24px #000e,0 0 18px #f3d07899!important;filter:brightness(1.08) saturate(1.2)!important}
+#onlinePanel #onlineHand button.online-card-legal{opacity:1!important;filter:none!important}#onlinePanel #onlineHand button.online-card-legal .card{transform:translateY(-13px) scale(1.07)!important;outline:3px solid #ffe39a!important;border:2px solid #fff0b3!important;box-shadow:0 0 0 3px #b27d2c,0 14px 24px #000e,0 0 18px #f3d07899!important;filter:brightness(1.08) saturate(1.2)!important}
 #onlinePanel #onlineHand button.online-card-illegal{opacity:.38!important;filter:grayscale(.55) brightness(.72)!important}#onlinePanel #onlineHand button.online-card-illegal .card{transform:translateY(2px) scale(.96)!important;outline:1px solid #756b59!important;box-shadow:0 3px 6px #0008!important}#onlinePanel #onlineHand button.online-card-inactive{opacity:.72!important}
 /* 0.8.53 structural table redesign: oval tabletop, raised perimeter seats and central medallion */
 .table,#onlineTable{display:block!important;position:relative!important;min-height:460px!important;padding:0!important;border-width:12px!important;border-radius:48%/31%!important;box-shadow:inset 0 0 0 3px #f6dc9a88,inset 0 0 0 9px #342416,inset 0 0 60px #000d,0 20px 34px #000d!important;overflow:hidden!important}
@@ -328,6 +328,7 @@ body.deck-back-classic .card.back{background:radial-gradient(ellipse,#1c5c92,#06
 .mini-card img{display:block;width:100%;height:100%;object-fit:cover}
 body.deck-back-black .card.back{background-image:url("./assets/card-back-black-gold.svg")!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
 body.deck-back-black .card.back:before,body.deck-back-black .card.back:after{content:none!important}
+.back-choice.black:before{display:none!important}.back-choice.black i,.back-choice.black b{display:none!important}.back-choice.black img{display:block;width:100%;height:100%;object-fit:fill;border-radius:8px}
 
 /* Full-screen visual customization: large image rail, one category per screen */
 .customize-open{display:block;width:100%;margin:8px 0 14px;padding:13px 16px;border:1px solid #e7c777;border-radius:14px;background:linear-gradient(135deg,#292116,#090909);color:#f6d98f;box-shadow:inset 0 1px 0 #fff3,0 5px 16px #0009;font-weight:900}
@@ -359,25 +360,428 @@ body.deck-back-black .card.back:before,body.deck-back-black .card.back:after{con
 .layout-rail .large-choice{width:250px;height:250px;flex-basis:250px}
 .layout-rail .mini-layout{width:190px;height:190px;border-width:5px}
 .layout-rail .mini-layout i{width:22px;height:17px;box-shadow:-52px -38px 0 -2px #d8b96c,52px -38px 0 -2px #d8b96c,-62px 15px 0 -2px #d8b96c,62px 15px 0 -2px #d8b96c,-32px 56px 0 -2px #d8b96c,32px 56px 0 -2px #d8b96c}
+.back-choice{width:184px;height:276px;border:5px double #e7c777;border-radius:13px;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 5px #fff2,0 8px 18px #000b;overflow:hidden;color:#ffe3a0}.back-choice:before{content:"";position:absolute;inset:12px;border:2px solid #f5d987;border-radius:7px;background:repeating-radial-gradient(ellipse,transparent 0 8px,#f0d38a33 9px 10px),repeating-linear-gradient(45deg,transparent 0 8px,#f0d38a2a 8px 9px)}.back-choice i{font:900 80px Georgia;color:#ffe3a0;text-shadow:0 2px 5px #000;z-index:1}.back-choice b{position:absolute;left:7%;top:43%;width:86%;height:auto;bottom:auto;padding:5px 2px;border:1px solid #e8cf8d88;border-radius:5px;background:#102b4b66;font:italic 900 11px/1.15 Georgia,'Times New Roman',serif;color:#ffe7a0;letter-spacing:.05px;text-align:center;text-shadow:0 1px 2px #06172b,0 0 4px #f2c86a;transform:rotate(-18deg);z-index:2}.back-choice.classic{background:radial-gradient(ellipse,#1d5a91,#0c376b 58%,#061d42)}.back-choice.red{background:radial-gradient(ellipse,#a72a39,#6d1429 65%,#310b19)}.back-choice.black{background:radial-gradient(ellipse,#34302a,#111 70%)}.back-choice.green{background:radial-gradient(ellipse,#18734c,#075037 58%,#02291d)}
 .customizer-bottom{display:flex;justify-content:center;gap:10px;padding:14px 0 max(14px,env(safe-area-inset-bottom))}
 .customizer-bottom button{min-width:220px}
 @media(max-width:520px){.customizer-rail{gap:14px;padding:18px 28px}.large-choice{width:205px;height:300px;flex-basis:205px}.back-art{width:165px;height:250px}.table-rail .large-choice{width:270px;height:215px;flex-basis:270px}.table-rail .mini-table{width:220px;height:145px}.layout-rail .large-choice{width:220px;height:220px;flex-basis:220px}.layout-rail .mini-layout{width:165px;height:165px}.customizer-bottom button{min-width:0;flex:1;font-size:13px}}
 
 html{background-color:#061b16!important;min-height:100%;}body{background-color:#061b16!important;min-height:100vh;min-height:100dvh;overscroll-behavior-y:none;}@supports(padding:env(safe-area-inset-top)){html,body{background-color:#061b16!important;}}
-.hand:not(.has-legal-restrictions) button:not(:disabled) .card{border:1px solid #fff9!important;filter:none!important;transform:none!important}#onlinePanel #onlineHand button.online-card-unrestricted{opacity:1!important;filter:none!important;z-index:auto!important}#onlinePanel #onlineHand button.online-card-unrestricted .card{transform:none!important;outline:none!important;border:1px solid #fff9!important;box-shadow:0 9px 0 #c8bfa9,0 13px 22px #0009!important;filter:none!important}</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۰.۸.۵۷ · هوش پیشرفته و چلنج مستقل</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
+.hand:not(.has-legal-restrictions) button:not(:disabled) .card{border:1px solid #fff9!important;filter:none!important;transform:none!important}#onlinePanel #onlineHand button.online-card-unrestricted{opacity:1!important;filter:none!important}#onlinePanel #onlineHand button.online-card-unrestricted .card{transform:none!important;outline:none!important;border:1px solid #fff9!important;box-shadow:0 9px 0 #c8bfa9,0 13px 22px #0009!important;filter:none!important}
+/* 9.1 — curved compact fan, card-face redesign and lower hand rail */
+.hand{position:relative;z-index:2;overflow:visible!important;overflow-y:visible!important;min-height:112px;padding:16px 5px 22px;gap:0!important}
+.hand button{flex:0 0 44px!important;width:44px!important;height:66px!important;margin-left:-25px!important;transform-origin:50% 100%!important}
+.hand button:first-child{margin-left:0!important}
+.hand button .card{width:44px!important;height:66px!important}
+.hand button .card .suit{font-size:23px!important}
+@media(max-width:380px){.hand{min-height:112px;padding:16px 4px 22px}.hand button{flex-basis:44px!important;width:44px!important;height:66px!important;margin-left:-25px!important}.hand button .card{width:44px!important;height:66px!important}}
+.hand-rail{height:11px;margin:-20px 13px 9px;position:relative;z-index:1;border-radius:999px;background:linear-gradient(180deg,#f6dfa0 0%,#b68a3f 35%,#5d3c1a 72%,#e6c77c 100%);border:1px solid #f8e6b6;box-shadow:0 4px 8px #0009,inset 0 1px 2px #fff9,inset 0 -2px 3px #442b12;pointer-events:none}
+.card:not(.back){isolation:isolate;overflow:hidden!important;position:relative;background:radial-gradient(ellipse at 50% 42%,#fffef8 0%,#f8f0dc 58%,#e5d7b9 100%)!important;border:1px solid #f6e7c4!important;border-radius:8px!important;box-shadow:inset 0 0 0 1px #fff, inset 0 0 0 3px #d5bd83, inset 0 -5px 10px #8e795633,0 7px 0 #a99877,0 10px 14px #0009!important}
+.card:not(.back):after{content:"";position:absolute;inset:5px;border:1px solid #b99754;border-radius:5px;pointer-events:none;z-index:0}
+.card .face-border{position:absolute;inset:9px 7px;border:1px solid #d9c28e;border-radius:5px;opacity:.9;pointer-events:none;z-index:0}
+.card .corner{z-index:4;color:inherit;text-shadow:0 1px #fff8;font-family:Georgia,serif;font-weight:900}
+.card .corner-top{top:5px;left:5px}.card .corner-bottom{right:5px;bottom:5px}
+.card .face-center{position:absolute;inset:19px 8px;display:flex;align-items:center;justify-content:center;z-index:2;border-radius:50%;background:radial-gradient(circle,#fffdf4 0%,#eee1c2 62%,#d6c18d 100%);box-shadow:inset 0 0 0 1px #b9944d,0 0 0 2px #fff8;}
+.card .face-center:before{content:"";position:absolute;inset:4px;border:1px dotted #a98749;border-radius:50%;opacity:.85}
+.card .face-center .suit{font-size:30px!important;line-height:1;align-self:center;filter:drop-shadow(0 2px 1px #8e795566);transform:translateY(-1px)}
+.card.red .face-center{background:radial-gradient(circle,#fff7f2 0%,#f2d8cf 65%,#d8aaa0 100%);box-shadow:inset 0 0 0 1px #bd6970,0 0 0 2px #fff8}
+.card .royal-frame{position:absolute!important;inset:2px 1px!important;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:4px}
+.card .royal-frame svg{max-width:100%;max-height:100%;filter:drop-shadow(0 1px 1px #5b4934)}
+.card .face-bottom-mark{position:absolute;z-index:4;left:50%;bottom:5px;transform:translateX(-50%);font:700 8px/1 Georgia,serif;opacity:.58}
+.card.small .face-center{inset:17px 6px}.card.small .face-center .suit{font-size:23px!important}
+#currentGroupCounter{color:#f5dfaa}
+
+/* 9.2: table-corner trump marker */
+.table{position:relative}
+.table-trump-corner{position:absolute;top:8px;right:8px;z-index:60;min-width:48px;padding:5px 9px;border:1px solid #d7b66d;border-radius:10px;background:linear-gradient(145deg,#09271fee,#031711f5);box-shadow:0 4px 12px #0009;text-align:center;pointer-events:none}
+.table-trump-corner .muted{font-size:10px;line-height:1.2}
+.table-trump-corner [id$="TrumpBig"]{font-size:28px!important;line-height:1.15}
+.online-avatar-mini{display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;margin-left:5px;border-radius:50%;background:linear-gradient(145deg,#f5dfaa,#bd9144);border:1px solid #fff0bd;color:#14251d;font-size:15px;vertical-align:middle;box-shadow:0 2px 5px #0008}
+#onlineTable .seat .name{display:flex;align-items:center;justify-content:center;gap:3px;flex-wrap:wrap}
+
+/* 9.3 requested table layout: larger curved hand, top-right contract, loose center pile */
+#hand,#onlineHand{position:relative!important;isolation:isolate!important;z-index:15!important;overflow-x:auto!important;overflow-y:visible!important;justify-content:center!important;align-items:flex-end!important;flex-wrap:nowrap!important;min-height:132px!important;padding:18px 5px 25px!important;gap:0!important}
+#hand button,#onlineHand button{flex:0 0 54px!important;width:54px!important;height:81px!important;margin-left:-27px!important;transform-origin:50% 100%!important}
+#hand button:first-child,#onlineHand button:first-child{margin-left:0!important}
+#hand button .card,#onlineHand button .card{width:54px!important;height:81px!important;padding:5px!important;font-size:18px!important;border-radius:9px!important}
+#hand button .card .corner,#onlineHand button .card .corner{font-size:13px!important}
+#hand button .card .corner i,#onlineHand button .card .corner i{font-size:12px!important}
+#hand button .card .royal-frame,#onlineHand button .card .royal-frame{inset:9px 5px!important}
+#hand button .card .face-center .suit,#onlineHand button .card .face-center .suit{font-size:29px!important}
+.table>.table-trump-corner{top:7px!important;right:7px!important;left:auto!important;z-index:80!important}
+.table>.center>.table-trump-corner{display:none!important}
+.center-pile,.online-center-pile{position:absolute!important;left:50%!important;top:56%!important;transform:translate(-50%,-50%)!important;width:190px!important;height:170px!important;z-index:8!important;pointer-events:none!important}
+.center-pile .pile-card,.online-center-pile .pile-card{position:absolute!important;width:58px!important;height:86px!important;left:50%!important;top:50%!important;margin:-43px 0 0 -29px!important;border-radius:8px!important;box-shadow:0 7px 14px #000c!important;transform:translate(var(--px),var(--py)) rotate(var(--pr))!important}
+.center-pile.clearing .pile-card,.online-center-pile.clearing .pile-card{animation:pileCollect .85s ease-in forwards!important}
+@media(max-width:520px){
+ #hand,#onlineHand{min-height:126px!important;padding:16px 4px 23px!important}
+ #hand button,#onlineHand button{flex-basis:52px!important;width:52px!important;height:78px!important;margin-left:-26px!important}
+ #hand button:first-child,#onlineHand button:first-child{margin-left:0!important}
+ #hand button .card,#onlineHand button .card{width:52px!important;height:78px!important}
+ .center-pile,.online-center-pile{top:56%!important;width:172px!important;height:152px!important}
+ .center-pile .pile-card,.online-center-pile .pile-card{width:54px!important;height:80px!important;margin:-40px 0 0 -27px!important}
+}
+@media(max-width:380px){
+ #hand,#onlineHand{justify-content:flex-start!important}
+ #hand button,#onlineHand button{flex-basis:49px!important;width:49px!important;height:74px!important;margin-left:-25px!important}
+ #hand button:first-child,#onlineHand button:first-child{margin-left:0!important}
+ #hand button .card,#onlineHand button .card{width:49px!important;height:74px!important}
+}
+
+/* Pin both four-player contract indicators to the actual table corner; keep live cards above seat labels. */
+.table{position:relative!important;isolation:isolate!important;overflow:visible!important}
+.table>.table-trump-corner,#onlineTable>.table-trump-corner{position:absolute!important;top:9px!important;right:10px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:1000!important;display:flex!important;align-items:center!important;gap:5px!important;max-width:34%!important;white-space:nowrap!important}
+.table>.center{position:relative;z-index:30!important;overflow:visible!important}
+.table>.center .center-trick{position:relative!important;z-index:40!important}
+#centerPile,#onlineCenterPile{z-index:12!important}
+
+/* 9.60: isolate four-player online hand from legacy global fan/3D effects. */
+#onlinePanel #onlineHand,body>#onlineHand{
+ position:relative!important;display:block!important;width:100%!important;max-width:100%!important;
+ height:120px!important;min-height:120px!important;padding:0!important;margin:0!important;
+ overflow:visible!important;isolation:isolate!important;direction:ltr!important;
+}
+#onlinePanel #onlineHand>button,body>#onlineHand>button{
+ position:absolute!important;display:block!important;flex:none!important;
+ width:44px!important;height:66px!important;min-width:44px!important;
+ margin:0!important;padding:0!important;top:auto!important;
+ transform-origin:50% 100%!important;transition:none!important;
+}
+#onlinePanel #onlineHand>button>.card,body>#onlineHand>button>.card{
+ width:44px!important;height:66px!important;min-width:44px!important;
+ margin:0!important;transform:none!important;transition:none!important;
+ animation:none!important;translate:none!important;rotate:none!important;scale:1!important;
+}
+#onlinePanel #onlineHand>button.online-card-legal>.card,body>#onlineHand>button.online-card-legal>.card{
+ transform:none!important;outline:2px solid #ffe39a!important;border:2px solid #fff0b3!important;
+ box-shadow:0 0 0 2px #b27d2c,0 7px 12px #000b!important;filter:none!important;
+}
+#onlinePanel #onlineHand>button.online-card-illegal>.card,body>#onlineHand>button.online-card-illegal>.card{
+ transform:none!important;outline:1px solid #756b59!important;filter:grayscale(.45) brightness(.82)!important;
+}
+#onlinePanel #onlineHand>button.online-card-inactive>.card,body>#onlineHand>button.online-card-inactive>.card{
+ transform:none!important;filter:none!important;
+}
+
+</style><style>
+.avatar-customizer{width:min(620px,100%);margin:auto;text-align:center;color:#f6e6bd}.avatar-customizer-title{font-size:18px;font-weight:700;margin:0 0 18px}
+.avatar-customizer-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:440px;margin:auto}
+.personal-avatar-option{aspect-ratio:1;border:2px solid #8b6b35;border-radius:16px;background:linear-gradient(145deg,#173d30,#071c15);font-size:clamp(30px,7vw,44px);box-shadow:0 5px 12px #0008}
+.personal-avatar-option.selected{border:3px solid #ffe39a;background:linear-gradient(145deg,#71501f,#263b2b);box-shadow:0 0 0 3px #bb8d3d,0 0 20px #e9bd5e88}
+.avatar-customizer p{font-size:12px;color:#d8cba9;margin-top:18px}
+#hand button .card,#onlineHand button .card{width:57px!important;height:85px!important}#hand button,#onlineHand button{flex-basis:57px!important;margin-left:-28px!important;z-index:100!important}
+#hand button .card,#onlineHand button .card{border:2px solid #f4d58b!important;box-shadow:0 0 0 1px #9d7835,0 9px 16px #000b!important}
+@media(max-width:520px){#hand button .card,#onlineHand button .card{width:55px!important;height:82px!important}#hand button,#onlineHand button{flex-basis:55px!important;margin-left:-27px!important}}
+.table>.table-trump-corner{top:119px!important;right:121px!important;min-width:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;z-index:85!important;text-shadow:0 1px 2px #000,0 0 7px #f4d37b}
+.table-trump-corner .muted{font-size:9px!important;color:#e7c879!important;text-shadow:0 1px 2px #000}
+.table-trump-corner [id$="TrumpBig"]{font-size:30px!important;color:#f3d58d!important;text-shadow:0 2px 3px #000,0 0 9px #d7b66d}
+.center-pile,.online-center-pile{top:51%!important;z-index:55!important}
+.table .seat{z-index:18!important;position:relative!important}.table .seat .name{position:relative;z-index:20}
+#onlineTable .seat .name{display:flex!important;flex-direction:column!important;align-items:center!important;gap:2px!important}
+.online-avatar-mini{order:2!important;width:25px!important;height:25px!important;margin:1px 0 0!important}
+.center-trick{z-index:35!important;position:relative}
+</style><style>
+
+/* Premium decision dialogs inspired by the supplied glass-panel trump picker */
+body:has(#challengePanel[style*="display: block"])::before,
+body:has(#trumpPicker:not(.hidden))::before,
+body:has(#localRematchPanel[style*="display: block"])::before,
+body:has(#globalStatsPanel:not(.hidden))::before{content:"";position:fixed;inset:0;z-index:100000;background:rgba(2,8,16,.78);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+#challengePanel[style*="display: block"],#trumpPicker:not(.hidden),#localRematchPanel[style*="display: block"],#globalStatsPanel:not(.hidden){position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;width:min(600px,calc(100vw - 24px))!important;max-height:calc(100dvh - 28px)!important;overflow:auto!important;z-index:100001!important;margin:0!important;padding:22px!important;border:1px solid #e7c879!important;border-radius:24px!important;background:linear-gradient(145deg,rgba(18,48,39,.98),rgba(5,17,15,.99))!important;box-shadow:0 25px 70px #000e,0 0 34px #e7c87955,inset 0 1px 0 #fff3!important;color:#fff3d4!important}
+#challengePanel>b,#trumpPicker>b{display:block;text-align:center;color:#ffe3a0;font-size:19px;margin-bottom:8px}
+#challengePanel .actions{display:grid!important;grid-template-columns:1fr 1fr;gap:10px}
+#challengePanel .actions button,#trumpPicker #confirmTrump{min-height:50px;border:1px solid #f0d58b;border-radius:14px;background:linear-gradient(145deg,#ffe7a5,#bd8b3b);color:#211708;font-weight:900;box-shadow:0 7px 16px #0008}
+.premium-contract-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
+.premium-contract-choice{display:flex;min-height:102px;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 8px;border:1px solid #8d7951;border-radius:17px;background:linear-gradient(145deg,rgba(43,60,54,.96),rgba(7,20,17,.98));color:#f8edcf;box-shadow:0 8px 18px #0007,inset 0 1px 0 #fff2;transition:transform .18s,border-color .18s,box-shadow .18s}
+.premium-contract-choice .symbol{font:900 36px/1 Georgia,serif;color:#f7e9c3;text-shadow:0 2px 5px #000}
+.premium-contract-choice .symbol.red{color:#ff7378}
+.premium-contract-choice b{font-size:14px}
+.premium-contract-choice small{font-size:10px;color:#c8d8ce}
+.premium-contract-choice.selected{border:2px solid #ffe29a;background:linear-gradient(145deg,#72552a,#263c31);box-shadow:0 0 0 2px #c18d3f,0 0 24px #e8c97877,0 12px 22px #0009;transform:translateY(-2px)}
+#trumpPicker .setup{display:block!important}
+#trumpPicker #confirmTrump{width:100%;margin-top:10px}
+#onlineOverlay:has(#onlineDecision[style*="display: block"])::after,#onlineOverlay:has(#onlineTrumpSelection[style*="display: block"])::after,#onlineOverlay:has(#onlineRematchPanel[style*="display: block"])::after{content:"";position:fixed;inset:0;z-index:100001;background:rgba(2,8,16,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);pointer-events:none}
+#onlineDecision[style*="display: block"],#onlineTrumpSelection[style*="display: block"],#onlineRematchPanel[style*="display: block"]{position:fixed!important;left:50%!important;top:10%!important;transform:translateX(-50%)!important;width:min(600px,calc(100vw - 24px))!important;max-height:calc(100dvh - 190px)!important;overflow:auto!important;z-index:100002!important;margin:0!important;padding:20px!important;border:1px solid #e7c879!important;border-radius:24px!important;background:linear-gradient(145deg,rgba(18,48,39,.98),rgba(5,17,15,.99))!important;box-shadow:0 25px 70px #000e,0 0 34px #e7c87955!important}
+#onlineDecision[style*="display: block"] button,#onlineTrumpSelection[style*="display: block"] button{min-height:48px;border-radius:13px;font-weight:900}
+#onlineTrumpSelection .premium-contract-grid{margin:12px 0}
+@media(max-width:520px){#challengePanel[style*="display: block"],#trumpPicker:not(.hidden),#onlineDecision[style*="display: block"],#onlineTrumpSelection[style*="display: block"],#onlineRematchPanel[style*="display: block"]{padding:14px!important;border-radius:20px!important}.premium-contract-choice{min-height:88px}.premium-contract-choice .symbol{font-size:31px}}
+
+
+/* 9.35: keep private cards visible during challenge and contract selection, outside the decision panel. */
+#onlinePanel #onlineHand.challenge-hand{position:fixed!important;left:50%!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:min(96vw,850px)!important;max-width:96vw!important;min-height:132px!important;max-height:158px!important;z-index:100004!important;margin:0!important;padding:18px 8px 24px!important;overflow-x:auto!important;overflow-y:visible!important;background:linear-gradient(180deg,#123d30f7,#071e18f7)!important;border:1px solid #f0d18b!important;border-radius:14px!important;box-shadow:0 8px 24px #000c,inset 0 0 18px #0008!important;}
+#onlinePanel .challenge-hand-title{position:fixed!important;left:50%!important;bottom:calc(164px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;z-index:100004!important;width:max-content!important;max-width:90vw!important;padding:4px 12px!important;border-radius:9px!important;background:#071e18ee!important;border:1px solid #d7b66d!important;}
+@media(max-width:520px){#onlinePanel #onlineHand.challenge-hand{min-height:122px!important;max-height:140px!important;padding:14px 5px 20px!important}#onlinePanel .challenge-hand-title{bottom:calc(146px + env(safe-area-inset-bottom))!important}}
+/* Challenge choice: keep the hand visible and non-playable above the decision panel. */
+#hand.challenge-thinking{position:fixed!important;left:50%!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:min(96vw,850px)!important;max-width:96vw!important;z-index:100010!important;padding:10px 8px 16px!important;border:1px solid #e7c879!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(18,48,39,.99),rgba(5,17,15,.99))!important;box-shadow:0 12px 36px #000d,0 0 20px #e7c87944!important;}
+/* 9.18: reveal the player's cards above decision popups instead of leaving them behind the table. */
+body:has(#challengePanel[style*="display: block"]) #hand,body:has(#trumpPicker:not(.hidden)) #hand{position:fixed!important;left:50%!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:min(96vw,850px)!important;max-width:96vw!important;z-index:100010!important;padding:10px 8px 16px!important;border:1px solid #e7c879!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(18,48,39,.98),rgba(5,17,15,.99))!important;box-shadow:0 12px 36px #000d,0 0 20px #e7c87944!important;}
+body:has(#challengePanel[style*="display: block"]) #challengePanel,body:has(#trumpPicker:not(.hidden)) #trumpPicker{padding-bottom:170px!important;max-height:calc(100dvh - 20px)!important;}
+#onlineTable{isolation:isolate!important;overflow:visible!important}
+#onlineTable .seat{position:relative!important;z-index:3!important}
+#onlineTable .center{position:relative!important;z-index:20!important;overflow:visible!important}
+#onlineTable .center-trick{position:absolute!important;z-index:45!important;left:50%!important;top:50%!important;transform:translate(-50%,-42%)!important;pointer-events:none!important}
+
+/* Standalone in-game shop: point top-ups and card-back cosmetics live here. */
+.store-modal{position:fixed;inset:0;z-index:100050;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(1,8,7,.84);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.store-modal.hidden{display:none!important}
+.store-modal-panel{width:min(720px,100%);max-height:min(92dvh,900px);overflow:auto;padding:18px;border:1px solid #e7c879;border-radius:23px;background:linear-gradient(145deg,#123b30,#061b16);color:#f8edcf;box-shadow:0 25px 70px #000e,0 0 34px #e7c87944}
+.store-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #668c78;padding-bottom:10px}
+.store-modal-head h2{margin:0;color:#f4d58b;font-size:21px}
+.store-modal-head button{border:1px solid #9b895d;border-radius:10px;padding:8px 12px;background:#193b30;color:#f5e8c4;font-weight:800}
+.store-modal-intro{font-size:12px;color:#d1e1d8;line-height:1.9;margin:8px 0 12px}
+#storeContent #onlineStore,#storeContent #pointTopups{border-top:1px solid #668c78;margin:12px 0 0;padding-top:12px}
+#storeContent #onlineStore h3,#storeContent #pointTopups h3{color:#f4d58b}
+#storeContent #centralAdminPanel{margin-top:14px}
+#storeContent #storeItems,#storeContent #topupPackages{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))!important}
+#openVisualCustomizer{width:100%;margin-top:16px}
+.landing-personalize{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin:10px 0 18px;padding:3px}.landing-personalize .landing-action-customize{width:min(100%,430px);min-height:100px;justify-self:center}
+.landing-action{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;min-width:0;min-height:112px;padding:13px 9px;border:1px solid #c7a65e;border-radius:19px;color:#fff0c8;background:linear-gradient(145deg,#1c513e 0%,#0b2c22 58%,#061a15 100%);box-shadow:inset 0 1px 0 #ffffff30,inset 0 -5px 12px #0005,0 8px 18px #0008,0 0 0 2px #e7c87918;font-weight:900;transition:transform .16s ease,filter .16s ease}
+.landing-action:before{content:"";position:absolute;inset:5px;border:1px solid #e7c87955;border-radius:14px;pointer-events:none}
+.landing-action:active{transform:translateY(2px) scale(.985);filter:brightness(1.12)}
+.landing-action-icon{font-size:29px;line-height:1.1;filter:drop-shadow(0 3px 4px #0009)}
+.landing-action-title{font-size:16px;line-height:1.35;color:#ffe4a0}
+.landing-action-subtitle{font-size:10px;line-height:1.5;font-weight:600;color:#d3e4d9}
+.landing-action-store{background:linear-gradient(145deg,#76521d 0%,#3d2c14 55%,#17170f 100%);border-color:#f1d48b;box-shadow:inset 0 1px 0 #fff4c455,inset 0 -5px 12px #0007,0 8px 18px #0009,0 0 18px #e7c87933}
+.landing-action-store:before{border-color:#f5d99088}
+.landing-action-store .landing-action-title{color:#ffe7a8}
+.online-store-tools{display:flex;justify-content:center;margin:10px 0 14px}.online-store-tools .landing-action{width:min(100%,430px);min-height:100px}
+/* Keep the approved store-card appearance despite the generic online-panel button theme. */
+#onlinePanel .online-store-tools .landing-action{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:6px!important;width:min(100%,430px)!important;min-height:100px!important;padding:13px 9px!important;border:1px solid #f1d48b!important;border-radius:19px!important;color:#fff0c8!important;background:linear-gradient(145deg,#76521d 0%,#3d2c14 55%,#17170f 100%)!important;box-shadow:inset 0 1px 0 #fff4c455,inset 0 -5px 12px #0007,0 8px 18px #0009,0 0 18px #e7c87933!important;font-weight:900!important}
+#onlinePanel .online-store-tools .landing-action:before{content:"";position:absolute;inset:5px;border:1px solid #f5d99088;border-radius:14px;pointer-events:none}
+#onlinePanel .online-store-tools .landing-action .landing-action-icon{font-size:29px!important;line-height:1.1!important}
+#onlinePanel .online-store-tools .landing-action .landing-action-title{font-size:16px!important;line-height:1.35!important;color:#ffe7a8!important}
+#onlinePanel .online-store-tools .landing-action .landing-action-subtitle{font-size:10px!important;line-height:1.5!important;font-weight:600!important;color:#f0dfbd!important}
+.store-access-notice{margin:8px 0 12px;padding:11px 13px;border:1px solid #e7c879;border-radius:12px;background:linear-gradient(135deg,#473416,#241d10);color:#ffedc1;font-size:12px;line-height:1.9;text-align:center}
+.store-access-notice.hidden{display:none!important}
+@media(max-width:380px){.landing-personalize{gap:8px}.landing-action{min-height:104px;padding:10px 5px}.landing-action-icon{font-size:25px}.landing-action-title{font-size:14px}.landing-action-subtitle{font-size:9px}}
+
+</style><style id="online-private-hand-layer-fix">
+/* 9.56: the private hand is portaled to body during contract/challenge.
+   These selectors intentionally target the portaled body child, not #onlinePanel. */
+body > #onlineHand.challenge-hand{position:fixed!important;left:50%!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:min(96vw,850px)!important;max-width:96vw!important;min-height:122px!important;max-height:158px!important;overflow-x:auto!important;overflow-y:visible!important;z-index:100020!important;display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+body > #onlineHandTitle.challenge-hand-title{display:none!important;visibility:hidden!important;opacity:0!important}
+body > #onlineHand.challenge-hand button{position:relative!important}
+/* 9.58: online hand cards always stack by their actual hand order, including after refresh. */
+/* 9.59: isolate the online hand from the offline .hand flex/negative-margin rules. */
+#onlinePanel #onlineHand.online-hand-isolated{display:block!important;position:relative!important;height:120px!important;min-height:120px!important;max-height:120px!important;overflow:visible!important;padding:0!important;margin:0!important}
+body>#onlineHand.online-hand-isolated{display:block!important;height:120px!important;min-height:120px!important;max-height:120px!important;overflow:visible!important;padding:0!important;margin:0!important}
+#onlinePanel #onlineHand.online-hand-isolated>button,body>#onlineHand.online-hand-isolated>button{position:absolute!important;flex:none!important;display:block!important;isolation:isolate!important;box-sizing:border-box!important}
+#onlinePanel #onlineHand.online-hand-isolated>button .card,body>#onlineHand.online-hand-isolated>button .card{position:relative!important;z-index:1!important;width:44px!important;height:66px!important;margin:0!important}
+/* 9.57: expose the exact staged hand size in online contract/challenge selection. */
+body > #onlineHand.trump-selection-hand{min-height:112px!important;max-height:132px!important;padding:12px 8px 18px!important;justify-content:center!important}
+body > #onlineHand.trump-selection-hand button{flex:0 0 52px!important;width:52px!important;height:82px!important;margin-left:-14px!important}
+body > #onlineHand.trump-selection-hand button:first-child{margin-left:0!important}
+body > #onlineHand.challenge-selection-hand{min-height:112px!important;max-height:132px!important;padding:12px 4px 18px!important;justify-content:center!important}
+body > #onlineHand.challenge-selection-hand button{flex:0 0 44px!important;width:44px!important;height:70px!important;margin-left:-17px!important}
+body > #onlineHand.challenge-selection-hand button:first-child{margin-left:0!important}
+body > #onlineHand.challenge-selection-hand button .card{width:44px!important;height:70px!important}
+@media(max-width:390px){body > #onlineHand.challenge-selection-hand{width:98vw!important;max-width:98vw!important;padding-left:2px!important;padding-right:2px!important}body > #onlineHand.challenge-selection-hand button{flex-basis:42px!important;width:42px!important;height:68px!important;margin-left:-16px!important}body > #onlineHand.challenge-selection-hand button .card{width:42px!important;height:68px!important}}
+
+/* 9.61: final authoritative layout for the four-player online hand.
+   5-card trump selection uses full-size cards; 13-card challenge/play fans
+   use adaptive overlap so the complete hand remains visible. */
+#onlinePanel #onlineHand.online-hand-isolated{
+ display:block!important;position:relative!important;width:100%!important;
+ height:124px!important;min-height:124px!important;max-height:124px!important;
+ padding:0!important;margin:0!important;overflow:visible!important;
+ isolation:isolate!important;direction:ltr!important;box-sizing:border-box!important;
+}
+#onlinePanel #onlineHand.online-hand-isolated>button{
+ position:absolute!important;display:block!important;flex:none!important;
+ width:60px!important;height:90px!important;min-width:60px!important;
+ margin:0!important;padding:0!important;top:auto!important;
+ transform-origin:50% 100%!important;transition:none!important;
+ box-sizing:border-box!important;
+}
+#onlinePanel #onlineHand.online-hand-isolated>button>.card{
+ position:relative!important;display:block!important;
+ width:60px!important;height:90px!important;min-width:60px!important;
+ margin:0!important;padding:5px!important;transform:none!important;opacity:.8!important;
+ transition:none!important;animation:none!important;
+ box-sizing:border-box!important;
+}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal>.card,
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal>.card,
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-inactive>.card{
+ transform:none!important;
+}
+</style><style id="online-table-spacing-refinement">
+/* Open up the four-player table without changing card fan geometry. */
+#onlineTable>.seat.south{transform:translateY(12px)!important}
+#onlineTable>.seat.north{transform:translateY(-7px)!important}
+#onlineTable>.seat.west{transform:translateX(-9px)!important}
+#onlineTable>.seat.east{transform:translateX(9px)!important}
+#onlineTable #onlineCenterPile{opacity:1!important}
+@media(max-width:520px){
+ #onlineTable>.seat.south{transform:translateY(10px)!important}
+ #onlineTable>.seat.north{transform:translateY(-5px)!important}
+ #onlineTable>.seat.west{transform:translateX(-7px)!important}
+ #onlineTable>.seat.east{transform:translateX(7px)!important}
+}
+</style><style id="online-live-trick-above-history">
+/* Historical pile is a separate low layer; active four cards must stay crisp above it. */
+#onlineTable{isolation:isolate!important}
+#onlineTable #onlineCenterPile{
+ position:absolute!important;
+ z-index:4!important;
+ opacity:1!important;
+ filter:none!important;
+ pointer-events:none!important;
+}
+#onlineTable #onlineCenterPile .pile-card{
+ z-index:1!important;
+ opacity:.95!important;
+ filter:none!important;
+}
+#onlineTable>.center{
+ position:relative!important;
+ z-index:70!important;
+ isolation:isolate!important;
+}
+#onlineTable>.center .center-trick{
+ position:relative!important;
+ z-index:71!important;
+ opacity:1!important;
+ filter:none!important;
+}
+#onlineTable>.center .center-trick .table-played{
+ position:relative!important;
+ z-index:72!important;
+ opacity:1!important;
+ filter:none!important;
+}
+#onlineTable #onlineTrickMsg{position:relative;z-index:73};
+#onlineTable #onlineTrickMsg{display:none!important};
+/* Final online UI cleanup: keep turn text, hand labels and legacy contract select hidden. */
+#onlineTable #onlineTrickMsg,#onlineHandTitle.challenge-hand-title,#onlineHandTitle{display:none!important;visibility:hidden!important}
+#onlineTrumpSelection #onlineTrumpContract{display:none!important;visibility:hidden!important}
+</style><style id="online-seat-and-card-layout-fix">
+#onlineOverlay:has(#onlineDecision[style*="display: block"]) #onlineTable>.seat,
+#onlineOverlay:has(#onlineTrumpSelection[style*="display: block"]) #onlineTable>.seat{visibility:hidden!important;pointer-events:none!important}
+#onlineTable>.seat.east .played,#onlineTable>.seat.west .played{
+ position:absolute!important;left:50%!important;right:auto!important;min-height:0!important;
+ width:max-content!important;height:52px!important;transform:translateX(-50%)!important;
+ overflow:visible!important;z-index:12!important
+}
+/* Side-player hands sit above/below their own seats, never across the table center. */
+#onlineTable>.seat.west .played{bottom:calc(100% + 5px)!important;top:auto!important}
+#onlineTable>.seat.east .played{top:calc(100% + 5px)!important;bottom:auto!important}
+#onlineTable>.seat.east .opponent-fan,#onlineTable>.seat.west .opponent-fan{
+ display:flex!important;flex-direction:row!important;align-items:center!important;
+ justify-content:flex-start!important;direction:ltr!important;width:max-content!important;height:52px!important;
+ padding:0!important;margin:0!important;transform:none!important;
+ transform-origin:center center!important;overflow:visible!important
+}
+#onlineTable>.seat.east .opponent-fan .card.back,#onlineTable>.seat.west .opponent-fan .card.back{
+ width:34px!important;height:51px!important;min-width:34px!important;flex:0 0 34px!important;
+ margin-left:-27px!important;opacity:.8!important;transform:none!important
+}
+#onlineTable>.seat.east .opponent-fan .card.back:first-child,
+#onlineTable>.seat.west .opponent-fan .card.back:first-child{margin-left:0!important}
+#onlinePanel #onlineHand.online-hand-isolated>button>.card{opacity:.8!important}
+#onlineTable .center-trick .table-played{opacity:.8!important}
+@media(max-width:520px){
+ #onlinePanel #onlineHand.online-hand-isolated{height:124px!important;min-height:124px!important;max-height:124px!important}
+}
+/* Apply the same enlarged 80%-opacity cards after the private hand is portaled out of #onlinePanel. */
+body>#onlineHand.challenge-hand>button>.card{
+ width:60px!important;height:90px!important;min-width:60px!important;
+ opacity:.8!important;filter:none!important
+}
+body>#onlineHand.challenge-hand>button{width:60px!important;height:90px!important}
+body>#onlineHand.challenge-hand{min-height:124px!important;max-height:140px!important}
+</style>
+<style id="online-final-layout-override">
+/* Restore table seat anchors after legacy relative-position override. */
+#onlineTable>.seat{position:absolute!important;z-index:30!important}
+#onlineTable>.north{top:2%!important;left:37.5%!important;right:auto!important;bottom:auto!important}
+#onlineTable>.south{bottom:2%!important;left:37.5%!important;right:auto!important;top:auto!important}
+#onlineTable>.west{left:1%!important;top:38%!important;right:auto!important;bottom:auto!important}
+#onlineTable>.east{right:1%!important;top:38%!important;left:auto!important;bottom:auto!important}
+#onlineTable>.center{position:absolute!important;left:27%!important;right:27%!important;top:27%!important;bottom:27%!important;z-index:70!important}
+#onlinePanel #onlineHand.online-hand-isolated{height:140px!important;min-height:140px!important;max-height:140px!important}
+#onlinePanel #onlineHand.online-hand-isolated>button{width:72px!important;height:108px!important;min-width:72px!important}
+#onlinePanel #onlineHand.online-hand-isolated>button>.card{width:72px!important;height:108px!important;min-width:72px!important;font-size:22px!important}
+body>#onlineHand.challenge-hand{min-height:140px!important;max-height:154px!important}
+body>#onlineHand.challenge-hand>button{width:72px!important;height:108px!important;min-width:72px!important}
+body>#onlineHand.challenge-hand>button>.card{width:72px!important;height:108px!important;min-width:72px!important;font-size:22px!important}
+@media(max-width:520px){
+ #onlineTable>.north,#onlineTable>.south{left:36%!important;width:28%!important}
+ #onlineTable>.west{left:0!important;top:39%!important}
+ #onlineTable>.east{right:0!important;top:39%!important}
+ #onlineTable>.center{left:27%!important;right:27%!important;top:29%!important;bottom:29%!important}
+}
+
+/* 9.61: final online-game visibility and playable-card contrast corrections. */
+#onlineHandTitle,body>#onlineHandTitle.challenge-hand-title{display:none!important;visibility:hidden!important;opacity:0!important}
+#onlineTable #onlineTrickMsg{display:none!important;visibility:hidden!important;opacity:0!important}
+#onlineTable #onlineCenterPile{opacity:1!important;filter:none!important}
+#onlineCenterPile .pile-card{opacity:.98!important;filter:none!important}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal,body>#onlineHand.online-hand-isolated>button.online-card-legal{opacity:1!important;filter:none!important}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal>.card,body>#onlineHand.online-hand-isolated>button.online-card-legal>.card{outline:3px solid #ffe36b!important;border:2px solid #fff4bd!important;box-shadow:0 0 0 3px #b88624,0 0 18px #ffe36bcc,0 8px 14px #000c!important;filter:brightness(1.12) saturate(1.3)!important}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal,body>#onlineHand.online-hand-isolated>button.online-card-illegal{opacity:.38!important;filter:grayscale(.8) brightness(.7)!important}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal>.card,body>#onlineHand.online-hand-isolated>button.online-card-illegal>.card{outline:1px solid #81796b!important;box-shadow:0 2px 5px #0009!important;filter:grayscale(.8) brightness(.72)!important}
+
+/* 9.62: count only tricks belonging to completed groups and soften legal-card emphasis. */
+#onlineTable .online-seat-tricks{font-size:13px!important;padding:4px 8px!important;min-width:58px!important;line-height:1.3!important}
+@media(max-width:520px){#onlineTable .online-seat-tricks{font-size:12px!important;padding:3px 6px!important;min-width:54px!important}}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal,body>#onlineHand.online-hand-isolated>button.online-card-legal{opacity:1!important;filter:none!important}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal>.card,body>#onlineHand.online-hand-isolated>button.online-card-legal>.card{transform:none!important;outline:2px solid #d9bd79!important;border:1px solid #f1dfb5!important;box-shadow:0 0 0 1px #98783f,0 5px 9px #0008!important;filter:none!important}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal,body>#onlineHand.online-hand-isolated>button.online-card-illegal{opacity:.88!important;filter:none!important}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal>.card,body>#onlineHand.online-hand-isolated>button.online-card-illegal>.card{transform:none!important;outline:1px solid #8b806a!important;box-shadow:0 3px 6px #0008!important;filter:grayscale(.18) brightness(.94)!important}
+</style><style id="online-final-result-and-table-art">
+/* Table crest: let the complete artwork occupy the felt without stretching the lettering independently. */
+.table-theme-felt .table:after,.table-theme-parquet .table:after{
+ left:50%!important;top:50%!important;width:100%!important;height:100%!important;
+ transform:translate(-50%,-50%)!important;background-size:394% 407%!important;
+ background-position:50.6% 13.5%!important;background-repeat:no-repeat!important;
+ opacity:.34!important;filter:saturate(.78) contrast(.94) brightness(.91)!important;
+}
+.table-emblem{width:min(92%,560px)!important;max-height:88%!important;object-fit:contain!important;opacity:.34!important}
+.table-theme-felt .table-emblem,.table-theme-parquet .table-emblem{opacity:.34!important}
+@media(max-width:520px){.table-emblem{width:94%!important;opacity:.30!important}}
+/* Compact contract chooser: all eight options and the confirmation button fit on a phone screen. */
+#onlineTrumpSelection[style*="display: block"]{
+ top:50%!important;transform:translate(-50%,-50%)!important;
+ width:min(560px,calc(100vw - 16px))!important;
+ max-height:calc(100dvh - 18px)!important;overflow-y:auto!important;
+ padding:10px!important;border-radius:16px!important;
+}
+#onlineTrumpSelection> b{font-size:14px!important}
+#onlineTrumpSelection #onlineTrumpHint{font-size:11px!important;line-height:1.45!important;margin:5px 0!important}
+#onlineTrumpSelection .premium-contract-grid{gap:6px!important;margin:7px 0!important}
+#onlineTrumpSelection .premium-contract-choice{
+ min-height:66px!important;padding:5px 4px!important;gap:2px!important;
+ border-radius:10px!important;box-shadow:0 3px 8px #0006!important;
+}
+#onlineTrumpSelection .premium-contract-choice .symbol{font-size:25px!important;line-height:1!important}
+#onlineTrumpSelection .premium-contract-choice b{font-size:11px!important}
+#onlineTrumpSelection .premium-contract-choice small{font-size:9px!important}
+#onlineTrumpSelection .premium-contract-choice.selected{transform:none!important;box-shadow:0 0 0 1px #c18d3f,0 4px 9px #0008!important}
+#onlineTrumpConfirm{margin-top:5px!important;padding:9px 8px!important;font-size:12px!important;min-height:40px!important}
+@media(max-height:700px){
+ #onlineTrumpSelection{padding:7px!important}
+ #onlineTrumpSelection .premium-contract-choice{min-height:57px!important}
+ #onlineTrumpSelection .premium-contract-choice .symbol{font-size:22px!important}
+ #onlineTrumpSelection #onlineTrumpHint{display:none!important}
+}
+/* Final result remains visible inside the same rematch/countdown panel. */
+#onlineFinalResult{margin:0 0 8px;padding:10px 8px;border:1px solid #d7b66d;border-radius:10px;
+ background:linear-gradient(135deg,#183d2e,#09231b);color:#fff0c6;
+ font-size:14px;font-weight:900;line-height:1.9;text-align:center;white-space:pre-line}
+#onlineFinalResult:empty{display:none}
+#onlineRematchPanel #onlineRematchClock{font-size:26px!important;margin:3px!important}
+</style></head><body><main class="wrap"><header class="top"><div class="brand">♠ DOUBLE KOUT</div><span class="pill">نسخه ۹.۲۳ · اصلاح مزایده و اتاق آنلاین</span><button id="soundToggle" type="button">🔊 صدا روشن</button></header>
 <section class="panel" id="modePicker"><h2 class="section-title">انتخاب بازی</h2>
-<button id="openVisualCustomizer" class="customize-open" type="button">✦ سفارشی‌سازی ظاهر بازی</button>
+<div class="landing-personalize" aria-label="ابزارهای بازی">
+ <button id="openPersonalization" class="landing-action landing-action-customize" type="button"><span class="landing-action-icon" aria-hidden="true">🎨</span><span class="landing-action-title">شخصی‌سازی</span><span class="landing-action-subtitle">آواتار، میز و ظاهر کارت‌ها</span></button>
+ 
+</div>
+
 <div id="visualCustomizer" class="visual-customizer-full hidden" aria-modal="true" role="dialog" aria-label="سفارشی‌سازی ظاهر بازی">
- <div class="customizer-top"><button id="customizerClose" type="button">بازگشت</button><div id="customizerTitle">پشت کارت‌ها</div><div id="customizerStep">۱ از ۳</div></div>
- <div class="customizer-tabs"><button type="button" data-go-step="0" class="active">پشت کارت</button><button type="button" data-go-step="1">میز بازی</button><button type="button" data-go-step="2">چینش ۶ نفره</button></div>
+ <div class="customizer-top"><button id="customizerClose" type="button">بازگشت</button><div id="customizerTitle">پشت کارت‌ها</div><div id="customizerStep">۱ از ۴</div></div>
+ <div class="customizer-tabs"><button type="button" data-go-step="0" class="active">میز بازی</button><button type="button" data-go-step="1">چینش ۶ نفره</button><button type="button" data-go-step="2">پشت کارت‌ها</button><button type="button" data-go-step="3">آواتار من</button></div>
  <div class="customizer-stage">
-  <section class="customizer-page" data-step="0"><div class="customizer-rail" data-kind="back">
-   <button type="button" class="visual-choice large-choice" data-value="black" aria-label="مشکی طلایی"><img class="back-art" src="./assets/card-back-black-gold.svg" alt="پشت کارت مشکی طلایی"></button>
-   <button type="button" class="visual-choice large-choice" data-value="classic" aria-label="آبی طلایی"><span class="large-card mini-blue"><i>♠</i><b>DOUBLE KOUT</b></span></button>
-   <button type="button" class="visual-choice large-choice" data-value="red" aria-label="قرمز طلایی"><span class="large-card mini-red"><i>♠</i><b>DOUBLE KOUT</b></span></button>
-   <button type="button" class="visual-choice large-choice" data-value="green" aria-label="سبز طلایی"><span class="large-card mini-green"><i>♠</i><b>DOUBLE KOUT</b></span></button>
-  </div></section>
-  <section class="customizer-page hidden" data-step="1"><div class="customizer-rail table-rail" data-kind="table">
+  <section class="customizer-page hidden" data-step="0"><div class="customizer-rail table-rail" data-kind="table">
    <button type="button" class="visual-choice large-choice" data-value="marble" aria-label="مرمر"><span class="mini-table marble"><i></i><b></b></span></button>
    <button type="button" class="visual-choice large-choice" data-value="royal" aria-label="سلطنتی"><span class="mini-table royal"><i></i><b></b></span></button>
    <button type="button" class="visual-choice large-choice" data-value="casino" aria-label="کازینو"><span class="mini-table casino"><i></i><b></b></span></button>
@@ -385,11 +789,18 @@ html{background-color:#061b16!important;min-height:100%;}body{background-color:#
    <button type="button" class="visual-choice large-choice" data-value="persian" aria-label="فرش ایرانی"><span class="mini-table persian"><i></i><b></b></span></button>
    <button type="button" class="visual-choice large-choice" data-value="felt" aria-label="مخمل"><span class="mini-table felt"><i></i><b></b></span></button>
   </div></section>
-  <section class="customizer-page hidden" data-step="2"><div class="customizer-rail layout-rail" data-kind="layout">
+  <section class="customizer-page hidden" data-step="1"><div class="customizer-rail layout-rail" data-kind="layout">
    <button type="button" class="visual-choice large-choice" data-value="arc" aria-label="قوسی"><span class="mini-layout arc"><i></i></span></button>
    <button type="button" class="visual-choice large-choice" data-value="hex" aria-label="شش ضلعی"><span class="mini-layout hex"><i></i></span></button>
    <button type="button" class="visual-choice large-choice" data-value="wide" aria-label="گسترده"><span class="mini-layout wide"><i></i></span></button>
   </div></section>
+  <section class="customizer-page hidden" data-step="2"><div class="customizer-rail back-rail" data-kind="back">
+   <button type="button" class="visual-choice large-choice" data-value="black" aria-label="مشکی طلایی"><span class="back-choice black"><img src="./assets/card-back-black-gold.svg" alt="پشت‌کارت مشکی طلایی"></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="classic" aria-label="کلاسیک"><span class="back-choice classic"><i>♠</i><b>Abdolhamid Dehvari</b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="red" aria-label="قرمز"><span class="back-choice red"><i>♥</i><b>Abdolhamid Dehvari</b></span></button>
+   <button type="button" class="visual-choice large-choice" data-value="green" aria-label="سبز"><span class="back-choice green"><i>♦</i><b>Abdolhamid Dehvari</b></span></button>
+  </div></section>
+  <section class="customizer-page hidden" data-step="3"><div class="avatar-customizer"><div class="avatar-customizer-title">آواتار دلخواهت را انتخاب کن</div><div class="avatar-customizer-grid" id="personalAvatarPicker"><button type="button" class="personal-avatar-option" data-personal-avatar="♛">♛</button><button type="button" class="personal-avatar-option" data-personal-avatar="⚔️">⚔️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🛡️">🛡️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🏆">🏆</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎖️">🎖️</button><button type="button" class="personal-avatar-option" data-personal-avatar="💎">💎</button><button type="button" class="personal-avatar-option" data-personal-avatar="🔱">🔱</button><button type="button" class="personal-avatar-option" data-personal-avatar="🧿">🧿</button><button type="button" class="personal-avatar-option" data-personal-avatar="🕶️">🕶️</button><button type="button" class="personal-avatar-option" data-personal-avatar="🎩">🎩</button><button type="button" class="personal-avatar-option" data-personal-avatar="🥇">🥇</button><button type="button" class="personal-avatar-option" data-personal-avatar="♠️">♠️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♥️">♥️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♦️">♦️</button><button type="button" class="personal-avatar-option" data-personal-avatar="♣️">♣️</button><button type="button" class="personal-avatar-option" data-personal-avatar="⭐">⭐</button></div><p>انتخابت ذخیره می‌شود و در میز بازی زیر نامت نمایش داده خواهد شد.</p></div></section>
  </div>
  <div class="customizer-bottom"><button id="customizerNext" type="button">تأیید و مرحله بعد</button><button id="customizerDone" type="button" class="hidden">تأیید نهایی و بازگشت به انتخاب میزها</button></div>
 </div>
@@ -400,10 +811,18 @@ html{background-color:#061b16!important;min-height:100%;}body{background-color:#
 </div>
 <p class="muted" id="modeMessage">حالت شش‌نفره فقط با نام «کوت کویتی» نمایش داده می‌شود.</p><div class="actions" style="margin-top:12px"><button id="globalStatsBtn" type="button">آمار کل بازی‌ها</button><button id="exitAppBtn" type="button">خروج از برنامه</button></div>
 <section class="panel hidden" id="globalStatsPanel"><h3 class="section-title">آمار کل بازی‌ها</h3><div id="globalStatsReport" class="rules"></div><div class="actions"><button id="closeGlobalStats" type="button">بستن آمار</button><button id="resetGlobalStats" type="button">پاک‌کردن آمار</button></div></section></section>
+<div id="storeModal" class="store-modal hidden" role="dialog" aria-modal="true" aria-labelledby="storeModalTitle">
+ <section class="store-modal-panel">
+  <header class="store-modal-head"><h2 id="storeModalTitle">🛍️ فروشگاه</h2><button id="closeStore" type="button" aria-label="بستن فروشگاه">✕ بستن</button></header>
+  <p class="store-modal-intro">طرح‌های پشت کارت و بسته‌های امتیاز از همین پنجره قابل مشاهده و تهیه هستند.</p>
+  <div id="storeAccessNotice" class="store-access-notice hidden" role="status" aria-live="polite">برای ذخیره خریدها و طرح‌های انتخابی، لطفاً وارد حساب کاربری شوید.</div>
+  <div id="storeContent"></div>
+ </section>
+</div>
 <section class="panel hidden" id="setup"><h2 class="section-title">شروع بازی</h2><select id="hokmContract" class="hidden" aria-hidden="true"><option value="hokm_spades" selected>پیک</option><option value="hokm_hearts">دل</option><option value="hokm_diamonds">خشت</option><option value="hokm_clubs">گشنیز</option></select><div id="hokmContractPicker" class="hidden"></div><div class="setup"><div><label>شیوه بازی</label><select id="playStyle"><option value="ai">یک نفر در برابر هوش مصنوعی</option><option value="hotseat">بازی چندنفره واقعی با یک گوشی</option><option value="online">آنلاین با چهار گوشی (اتاق اینترنتی)</option></select></div><div id="humanSeatSetup" style="grid-column:1/-1"><label>صندلی بازیکنان انسانی (صندلی‌های خالی با هوش مصنوعی پر می‌شوند)</label><div id="humanSeatChoices" class="actions"></div><p class="muted">تغییر صندلی‌ها فقط هنگام شروع بازی جدید امکان‌پذیر است.</p></div><div><label>حکم بازی اول</label><div class="status" style="margin:0">پیک ♠ (ثابت)</div></div><div><label>سطح هوش مصنوعی</label><select id="difficulty"><option value="expert" selected>خیلی سخت</option><option value="hard">سخت</option><option value="normal">معمولی</option><option value="easy">آسان</option></select></div><div><label>شروع‌کننده</label><select id="starter"><option value="0">شما (جنوب)</option><option value="1">بازیکن شرق</option><option value="2">بازیکن شمال</option><option value="3">بازیکن غرب</option></select></div></div><div id="onlineSetupInfo" class="status hidden">برای بازی آنلاین، ابتدا اتاق بساز یا با کد وارد اتاق بازیکن دیگری شو. پنجره اتاق آنلاین با انتخاب این گزینه باز می‌شود.</div><button class="primary" id="start">پخش کارت و شروع بازی</button><p class="muted">در حکم معمولی، بازی اول با پیک شروع می‌شود و در بازی‌های بعدی حاکم حکم را تعیین می‌کند. نرس، تک نرس و سرس بدون حکم اجرا می‌شوند.</p></section>
-<section class="panel hidden" id="game"><div id="hotseatGate" class="hidden"><div class="gate-card"><div style="font-size:42px">♠ ♥ ♦ ♣</div><h2>تحویل گوشی به بازیکن بعدی</h2><p id="hotseatGateText">گوشی را به بازیکن بعدی بدهید. مطمئن شوید نفر قبلی دیگر صفحه را نمی‌بیند؛ سپس کارت‌های خود را نمایش دهید.</p><button id="revealHotseatHand" type="button">کارت‌های من را نمایش بده</button></div></div><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">بازی‌های برده تیم شما: <b id="gamesWonA">۰</b></div><div class="score">بازی‌های برده تیم حریف: <b id="gamesWonB">۰</b></div><div class="score">دست: <b id="trickNo">۱</b> / ۱۳</div></div>
+<section class="panel hidden" id="game"><div id="hotseatGate" class="hidden"><div class="gate-card"><div style="font-size:42px">♠ ♥ ♦ ♣</div><h2>تحویل گوشی به بازیکن بعدی</h2><p id="hotseatGateText">گوشی را به بازیکن بعدی بدهید. مطمئن شوید نفر قبلی دیگر صفحه را نمی‌بیند؛ سپس کارت‌های خود را نمایش دهید.</p><button id="revealHotseatHand" type="button">کارت‌های من را نمایش بده</button></div></div><div class="scores"><div class="score">دست‌های تیم شما: <b id="scoreA">۰</b></div><div class="score">دست‌های تیم حریف: <b id="scoreB">۰</b></div><div class="score">بازی‌های برده تیم شما: <b id="gamesWonA">۰</b></div><div class="score">بازی‌های برده تیم حریف: <b id="gamesWonB">۰</b></div><div class="score" id="currentGroupCounter"><span id="groupCounterLabel">مجموع دست‌های گروه‌های تکمیل‌شده:</span> <b id="groupTricksPlayed">۰</b></div></div>
 <div class="k-live-tricks" style="display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;background:#09271f;border:1px solid #b99a5d;border-radius:12px;padding:9px;margin:8px 0;color:#f4dfaa;font-size:13px;font-weight:bold"><span>دست‌های گروه‌های توالی · تیم شما: <b id="liveWonA">۰</b></span><span>تیم حریف: <b id="liveWonB">۰</b></span></div>
-<div id="challengePanel" class="status" style="display:none"><b>چلنج تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چلنج را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چلنج فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چلنج علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب قرارداد بازی بعدی</b><p class="muted">پس از دیدن پنج کارت اول، می‌توانی یکی از چهار خال حکم، نرس، تک نرس، سرس یا برگ وسط یار را انتخاب کنی. هشت کارت باقی‌مانده بعد از انتخاب پخش می‌شود.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div class="setup"><div><label>نوع قرارداد</label><select id="nextContract"><option value="" selected disabled>ابتدا حکم را انتخاب کن…</option><option value="hokm_spades">حکم پیک ♠</option><option value="hokm_hearts">حکم دل ♥</option><option value="hokm_diamonds">حکم خشت ♦</option><option value="hokm_clubs">حکم گشنیز ♣</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار</option></select></div><button id="confirmTrump">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="center"><div class="table-emblem" aria-hidden="true">
+<div id="challengePanel" class="status" style="display:none"><b>چلنج تیم شما علیه حریف</b><p class="muted">فقط تیم شما می‌تواند چلنج را اعلام کند. توالی‌های تیم شما اثری ندارد؛ اگر حریف از دست سوم و چهارم به بعد دو دست متوالی ببرد، چلنج فوراً شکست می‌خورد. اگر تا پایان دست دوازدهم چنین نکند، تیم شما باید دست سیزدهم را ببرد.</p><div class="actions"><button id="takeChallenge">اعلام چلنج علیه حریف</button><button id="skipChallenge">بازی عادی</button></div></div><div id="trumpPicker" class="status hidden"><b>انتخاب قرارداد بازی بعدی</b><p class="muted">پس از دیدن پنج کارت اول، می‌توانی یکی از چهار خال حکم، نرس، تک نرس، سرس یا برگ وسط یار را انتخاب کنی. هشت کارت باقی‌مانده بعد از انتخاب پخش می‌شود.</p><div id="hakimPreview" class="hand" style="justify-content:flex-start"></div><div id="localContractChoices" class="premium-contract-grid"><button type="button" class="premium-contract-choice selected" data-local-contract="hokm_spades" aria-pressed="true"><span class="symbol">♠</span><b>حکم پیک</b><small>خال حکم‌دار</small></button><button type="button" class="premium-contract-choice" data-local-contract="hokm_hearts" aria-pressed="false"><span class="symbol red">♥</span><b>حکم دل</b><small>خال حکم‌دار</small></button><button type="button" class="premium-contract-choice" data-local-contract="hokm_diamonds" aria-pressed="false"><span class="symbol red">♦</span><b>حکم خشت</b><small>خال حکم‌دار</small></button><button type="button" class="premium-contract-choice" data-local-contract="hokm_clubs" aria-pressed="false"><span class="symbol">♣</span><b>حکم گشنیز</b><small>خال حکم‌دار</small></button><button type="button" class="premium-contract-choice" data-local-contract="naras" aria-pressed="false"><span class="symbol">✧</span><b>نرس</b><small>بدون حکم</small></button><button type="button" class="premium-contract-choice" data-local-contract="tak_naras" aria-pressed="false"><span class="symbol">Ⅱ</span><b>تک نرس</b><small>بدون حکم</small></button><button type="button" class="premium-contract-choice" data-local-contract="saras" aria-pressed="false"><span class="symbol">♛</span><b>سرس</b><small>بدون حکم</small></button><button type="button" class="premium-contract-choice" data-local-contract="partner_middle" aria-pressed="false"><span class="symbol">✦</span><b>برگ وسط یار</b><small>قرارداد ویژه</small></button></div><div class="setup"><div><label>نوع قرارداد</label><select id="nextContract" style="display:none"><option value="" selected disabled>ابتدا حکم را انتخاب کن…</option><option value="hokm_spades">حکم پیک ♠</option><option value="hokm_hearts">حکم دل ♥</option><option value="hokm_diamonds">حکم خشت ♦</option><option value="hokm_clubs">حکم گشنیز ♣</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار</option></select></div><button id="confirmTrump">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div></div><div class="table"><div class="seat north" id="seat2"><div class="name">شمال · هم‌تیمی</div><div class="count" id="count2"></div><div class="played" id="played2"></div></div><div class="seat west" id="seat3"><div class="name">غرب · حریف</div><div class="count" id="count3"></div><div class="played" id="played3"></div></div><div class="table-trump-corner"><div class="muted">حکم</div><div id="trumpBig" style="font-size:28px;color:#e7c879">♠</div></div><div id="centerPile" class="center-pile"></div><div class="center"><div class="table-emblem" aria-hidden="true">
 <svg viewBox="0 0 520 210" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg">
 <defs><linearGradient id="dkGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0b2"/><stop offset=".32" stop-color="#f6ce68"/><stop offset=".62" stop-color="#b87924"/><stop offset="1" stop-color="#ffe7a0"/></linearGradient><filter id="dkGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
 <g fill="none" stroke="url(#dkGold)" stroke-width="3" stroke-linecap="round" filter="url(#dkGlow)">
@@ -419,9 +838,9 @@ html{background-color:#061b16!important;min-height:100%;}body{background-color:#
 <text x="260" y="166" text-anchor="middle" font-family="Georgia,Times New Roman,serif" font-size="62" font-weight="bold" font-style="italic" fill="url(#dkGold)" stroke="#4b2a0c" stroke-width="1.5" paint-order="stroke" filter="url(#dkGlow)">Kout</text>
 <path d="M212 181 Q260 199 308 181" fill="none" stroke="url(#dkGold)" stroke-width="3"/>
 <path d="M260 178 l-8 9 8 9 8-9Z" fill="url(#dkGold)"/>
-</svg></div><div><div class="muted">حکم</div><div id="trumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div id="trickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div><div id="centerPile" class="center-pile"></div><div id="centerTrick" class="center-trick"></div></div><div class="seat east" id="seat1"><div class="name">شرق · حریف</div><div class="count" id="count1"></div><div class="played" id="played1"></div></div><div class="seat south" id="seat0"><div class="name">شما · جنوب</div><div class="count" id="count0"></div><div class="played" id="played0"></div></div></div>
+</svg></div><div id="trickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div><div id="centerTrick" class="center-trick"></div></div><div class="seat east" id="seat1"><div class="name">شرق · حریف</div><div class="count" id="count1"></div><div class="played" id="played1"></div></div><div class="seat south" id="seat0"><div class="name">شما · جنوب</div><div class="count" id="count0"></div><div class="played" id="played0"></div></div></div>
 <h3 class="section-title">کارت‌های شما</h3><div class="hand" id="hand"></div><div class="status" id="status">بازی شروع شد.</div><div class="actions" style="margin-top:10px"><button id="newGame">بازی جدید</button><button id="sortHand">مرتب‌سازی کارت‌ها</button><button id="backToModes">بازگشت به انتخاب بازی</button></div><div id="localRematchPanel" style="display:none;background:#09271f;border:1px solid #d7b66d;border-radius:12px;padding:10px;margin-top:10px;text-align:center"><div style="font-weight:900;color:#ffe3a0">بازی بعدی به‌صورت خودکار آغاز می‌شود</div><div id="localRematchClock" style="font-size:28px;font-weight:900;color:#ffe39a;margin:5px">۱۵</div><div class="actions"><button id="localNextGame">بازی بعدی</button><button id="localExtendRematch" class="secondary">تمدید ۱۵ ثانیه</button></div></div><p class="muted">گروه اول از دست اول آغاز می‌شود: اولین توالی معتبرِ برد دو دست پیاپی توسط یک بازیکن، از توالی دست سوم و چهارم به بعد، کل دست‌های انجام‌شده تا همان لحظه را به تیم او می‌دهد؛ مثلاً اگر توالی در دست چهارم و پنجم رخ دهد، هر پنج دست گروه اول محسوب می‌شود. گروه‌های بعدی نیز از دست بعدی آغاز می‌شوند. اگر تا پایان دست سیزدهم توالی معتبری شکل نگیرد، برنده دست سیزدهم تمام دست‌های باقی‌مانده را می‌برد.</p><div class="history" id="history"></div></section>
-<section class="panel"><h3 class="section-title">محدوده این نسخه آزمایشی</h3><div class="rules">این نسخه شامل میز چهار نفره و میز شش نفره کوت کویتی است. در حالت شش نفره، مزایده، قراردادهای نرس و تک نرس و سرس، ملزوم، حکم مخفی، جوکرها، بازی ۹ دست و بازیکنان هوش مصنوعی فعال هستند. بازی آنلاین چندنفره هنوز فعال نیست.</div></section>
+<section class="panel"><h3 class="section-title">محدوده این نسخه آزمایشی</h3><div class="rules">این نسخه شامل میز چهار نفره و میز شش نفره کوت کویتی است. در حالت شش نفره، مزایده، قراردادهای نرس و تک نرس و سرس، ملزوم، حکم مخفی، جوکرها، بازی ۹ دست و بازیکنان هوش مصنوعی فعال هستند. بازی آنلاین چهار نفره از طریق اتاق اینترنتی در دسترس است؛ حالت آنلاین شش‌نفره هنوز در حال توسعه است.</div></section>
 </main>
 <script src="./engines/standard-hokm/engine.js"></script>
 <script src="./anonymous-learning.js"></script>
@@ -562,7 +981,7 @@ function startGame(){
  G.contract='hokm';G.trump='♠';G.trumpCode='S';G.waitingTrump=false;
  
  if(activeMode==='double-kout'){
-  $('challengePanel').style.display='block';$('status').textContent='بازی اول با حکم ثابت پیک آغاز می‌شود؛ بازی عادی یا چلنج را انتخاب کن.';render();return;
+  G.waitingChallenge=true;$('challengePanel').style.display='block';$('status').textContent='بازی اول با حکم ثابت پیک آغاز می‌شود؛ کارت‌ها را بررسی کن و بازی عادی یا چلنج را انتخاب کن.';render();return;
  }
  $('status').textContent='بازی اول با حکم ثابت پیک آغاز شد.';render();runAI();
 }
@@ -828,30 +1247,60 @@ function royalPortrait(rank){
  return '<svg class="royal-art" viewBox="0 0 64 76" role="img" aria-label="'+({K:'شاه',Q:'بی‌بی',J:'سرباز'})[rank]+'"><defs><linearGradient id="robe'+rank+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+p.coat+'"/><stop offset="1" stop-color="#101b2c"/></linearGradient></defs><rect x="2" y="2" width="60" height="72" rx="8" fill="#f4e7c8" stroke="#a37a3c" stroke-width="1.8"/><path d="M7 70Q9 53 21 49L32 55L43 49Q55 53 57 70Z" fill="url(#robe'+rank+')" stroke="#4b3928" stroke-width="1.5"/><path d="M21 50L32 61L43 50L40 70H24Z" fill="'+p.light+'" opacity=".9"/><path d="M15 69Q18 57 24 56L32 65L40 56Q47 58 49 69" fill="none" stroke="#f6df9a" stroke-width="2"/>'+head+crown+'<path d="M28 52L32 57L36 52" fill="none" stroke="#fff0c4" stroke-width="2"/><path d="M9 9H55M9 66H55" stroke="#b48b4a" stroke-width=".8" opacity=".75"/><circle cx="12" cy="12" r="2" fill="#c9a45d"/><circle cx="52" cy="12" r="2" fill="#c9a45d"/><circle cx="12" cy="64" r="2" fill="#c9a45d"/><circle cx="52" cy="64" r="2" fill="#c9a45d"/></svg>';
 }
 
-var visualChoice={back:'black',table:'marble',layout:'arc'};
+var visualChoice={table:'marble',layout:'arc',back:'classic'};
 function setCardCustomization(){
- document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','six-layout-arc','six-layout-hex','six-layout-wide');
+ document.body.classList.remove('deck-back-classic','deck-back-red','deck-back-black','deck-back-green','table-theme-felt','table-theme-parquet','table-theme-persian','table-theme-marble','table-theme-royal','table-theme-casino','table-theme-shadows','six-layout-arc','six-layout-hex','six-layout-wide');
  document.body.classList.add('deck-back-'+visualChoice.back,'table-theme-'+visualChoice.table,'six-layout-'+visualChoice.layout);
- try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({back:visualChoice.back,table:visualChoice.table,layout:visualChoice.layout,v:2}));}catch(e){}
+ try{localStorage.setItem('doubleKoutCardStyle',JSON.stringify({table:visualChoice.table,layout:visualChoice.layout,back:visualChoice.back,v:4}));}catch(e){}
  document.querySelectorAll('#visualCustomizer .visual-choice').forEach(function(b){b.classList.toggle('selected',visualChoice[b.parentElement.dataset.kind]===b.dataset.value);});
 }
-function resetCardCustomization(){visualChoice={back:'black',table:'marble',layout:'arc'};setCardCustomization();}
+function resetCardCustomization(){visualChoice={table:'marble',layout:'arc',back:'classic'};setCardCustomization();}
 (function loadCardCustomization(){
  let saved={};try{saved=JSON.parse(localStorage.getItem('doubleKoutCardStyle')||'{}')||{};}catch(e){}
- visualChoice.back=saved.v===2&&['classic','red','black','green'].includes(saved.back)?saved.back:'black';
- visualChoice.table=['felt','parquet','persian','marble','royal','casino'].includes(saved.table)?saved.table:'marble';
- visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';setCardCustomization();
+  visualChoice.table=['felt','parquet','persian','marble','royal','casino','shadows'].includes(saved.table)?saved.table:'marble';
+ visualChoice.layout=['arc','hex','wide'].includes(saved.layout)?saved.layout:'arc';visualChoice.back=['classic','red','black','green'].includes(saved.back)?saved.back:'classic';setCardCustomization();
 })();
 (function(){
  const modal=document.getElementById('visualCustomizer'),title=document.getElementById('customizerTitle'),stepLabel=document.getElementById('customizerStep');
- const titles=['پشت کارت‌ها','میز بازی','چینش ۶ نفره'];
+ const titles=['میز بازی','چینش ۶ نفره','پشت کارت‌ها','آواتار من'];
  let step=0;
- function showStep(n){step=Math.max(0,Math.min(2,n));modal.querySelectorAll('.customizer-page').forEach(p=>p.classList.toggle('hidden',Number(p.dataset.step)!==step));modal.querySelectorAll('[data-go-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.goStep)===step));title.textContent=titles[step];stepLabel.textContent=(step+1)+' از ۳';document.getElementById('customizerNext').classList.toggle('hidden',step===2);document.getElementById('customizerDone').classList.toggle('hidden',step!==2);modal.querySelectorAll('.customizer-rail .visual-choice').forEach(b=>{const rail=b.closest('[data-kind]');b.classList.toggle('selected',visualChoice[rail.dataset.kind]===b.dataset.value);});}
- document.getElementById('openVisualCustomizer').addEventListener('click',()=>{modal.classList.remove('hidden');document.body.style.overflow='hidden';showStep(0);});
+ const storeRoot=document.getElementById("storeModal");if(storeRoot&&storeRoot.parentElement!==document.body)document.body.appendChild(storeRoot);if(modal&&modal.parentElement!==document.body)document.body.appendChild(modal);
+ function showStep(n){step=Math.max(0,Math.min(3,n));modal.querySelectorAll('.customizer-page').forEach(p=>p.classList.toggle('hidden',Number(p.dataset.step)!==step));modal.querySelectorAll('[data-go-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.goStep)===step));title.textContent=titles[step];stepLabel.textContent=(step+1)+' از ۴';document.getElementById('customizerNext').classList.toggle('hidden',step===3);document.getElementById('customizerDone').classList.toggle('hidden',step!==3);modal.querySelectorAll('.customizer-rail .visual-choice').forEach(b=>{const rail=b.closest('[data-kind]');b.classList.toggle('selected',visualChoice[rail.dataset.kind]===b.dataset.value);});const selectedAvatar=localStorage.getItem('doubleKoutAvatar')||'♛';modal.querySelectorAll('[data-personal-avatar]').forEach(b=>b.classList.toggle('selected',b.dataset.personalAvatar===selectedAvatar));}
+ // Delegated handlers: the shop button is injected by ensureUI after this script runs.
+ document.addEventListener('click',e=>{
+  const target=e.target;
+  if(target.closest('#openStoreLanding')){
+   const storeModal=document.getElementById('storeModal');
+   const accessNotice=document.getElementById('storeAccessNotice');
+   storeModal.classList.remove('hidden');document.body.style.overflow='hidden';
+   if(accessNotice)accessNotice.classList.add('hidden');
+   // Show the notice only after confirming that this is not a permanent account.
+   // Keep the sign-in notice visible until a real, non-anonymous session is confirmed.
+   if(window.DoubleKoutOnline&&window.DoubleKoutOnline.getSession){
+    window.DoubleKoutOnline.getSession().then(session=>{
+     const signedIn=!!(session&&session.user&&!session.user.is_anonymous);
+     if(accessNotice)accessNotice.classList.toggle('hidden',signedIn);
+    }).catch(()=>{if(accessNotice)accessNotice.classList.remove('hidden');});
+   }
+   if(window.DoubleKoutStore&&window.DoubleKoutStore.refresh)window.DoubleKoutStore.refresh();
+   if(window.DoubleKoutPaymentsAdmin&&window.DoubleKoutPaymentsAdmin.refresh)window.DoubleKoutPaymentsAdmin.refresh();
+   return;
+  }
+  if(target.closest('#closeStore')){
+   document.getElementById('storeModal').classList.add('hidden');document.body.style.overflow='';return;
+  }
+  if(target.id==='storeModal'){
+   const closeButton=document.getElementById('closeStore');if(closeButton)closeButton.click();return;
+  }
+  if(target.closest('#openVisualCustomizer')){
+   modal.classList.remove('hidden');document.body.style.overflow='hidden';showStep(0);return;
+  }
+ });
+ const personalizeButton=document.getElementById('openPersonalization');if(personalizeButton)personalizeButton.addEventListener('click',()=>{modal.classList.remove('hidden');document.body.style.overflow='hidden';showStep(0);});
  function close(){modal.classList.add('hidden');document.body.style.overflow='';}
  document.getElementById('customizerClose').addEventListener('click',close);
  modal.querySelectorAll('[data-go-step]').forEach(b=>b.addEventListener('click',()=>showStep(Number(b.dataset.goStep))));
- modal.addEventListener('click',e=>{const b=e.target.closest('.customizer-rail .visual-choice');if(!b)return;const kind=b.closest('[data-kind]').dataset.kind;visualChoice[kind]=b.dataset.value;setCardCustomization();showStep(step);});
+ modal.addEventListener('click',e=>{const av=e.target.closest('[data-personal-avatar]');if(av){const value=av.dataset.personalAvatar;try{localStorage.setItem('doubleKoutAvatar',value);}catch(_){}modal.querySelectorAll('[data-personal-avatar]').forEach(x=>x.classList.toggle('selected',x===av));window.dispatchEvent(new CustomEvent('doublekout:avatar-changed',{detail:{avatar:value}}));return;}const b=e.target.closest('.customizer-rail .visual-choice');if(!b)return;const kind=b.closest('[data-kind]').dataset.kind;visualChoice[kind]=b.dataset.value;setCardCustomization();showStep(step);});
  document.getElementById('customizerNext').addEventListener('click',()=>showStep(step+1));
  document.getElementById('customizerDone').addEventListener('click',()=>{setCardCustomization();close();const picker=document.getElementById('modePicker');if(picker)picker.classList.remove('hidden');});
 })();
@@ -862,23 +1311,23 @@ function cardEl(c,small=false){
  const corner='<span class="corner corner-top"><b>'+rank+'</b><i>'+c.s+'</i></span><span class="corner corner-bottom"><b>'+rank+'</b><i>'+c.s+'</i></span>';
  let art='';
   if(['K','Q','J'].includes(rank))art=royalPortrait(rank);
- d.innerHTML=corner+(art?'<span class="royal-frame">'+art+'</span>':'<span class="suit">'+c.s+'</span>');
+ d.innerHTML='<span class="face-border" aria-hidden="true"></span>'+corner+'<span class="face-center">'+(art?'<span class="royal-frame">'+art+'</span>':'<span class="suit">'+c.s+'</span>')+'</span><span class="face-bottom-mark" aria-hidden="true">'+c.s+'</span>';
  return d;
 }
-function liveSequenceScores(winners){
+function liveSequenceScores(winners,challengeTeam){
  const scores={A:0,B:0};let start=0,searchFrom=3;
- while(start<winners.length){let close=-1;for(let i=searchFrom;i<winners.length;i++){if(winners[i]===winners[i-1]){close=i;break;}}
+ while(start<winners.length){let close=-1;for(let i=searchFrom;i<winners.length;i++){if(winners[i]===winners[i-1]&&(!challengeTeam||team(winners[i])!==challengeTeam)){close=i;break;}}
  if(close>=0){scores[team(winners[close])]+=close-start+1;start=close+1;searchFrom=start+1;}else{if(winners.length===13)scores[team(winners[12])]+=winners.length-start;break;}}
  return scores;
 }
 function render(){
  if(!G)return;
  const gate=$('hotseatGate');if(gate){const hide=playStyle==='hotseat'&&humanSeats.has(G.turn)&&!hotseatRevealed&&!G.done;gate.classList.toggle('hidden',!hide);if(hide)$('hotseatGateText').textContent='گوشی را به '+(['بازیکن جنوب','بازیکن شرق','بازیکن شمال','بازیکن غرب'][G.turn]||'بازیکن بعدی')+' بدهید. پس از اینکه نفر قبلی دیگر صفحه را نمی‌بیند، دکمه زیر را بزنید.';}
- const liveResult=activeMode==='double-kout'&&!G.challenge?liveSequenceScores(G.trickWinners||[]):null;
+ const liveResult=activeMode==='double-kout'?liveSequenceScores(G.trickWinners||[],G.challenge||null):null;
  const liveA=liveResult?liveResult.A:(G.trickWinners||[]).filter(p=>team(p)==='A').length;
  const liveB=liveResult?liveResult.B:(G.trickWinners||[]).filter(p=>team(p)==='B').length;
  $('liveWonA').textContent=fa(liveA);$('liveWonB').textContent=fa(liveB);
- $('scoreA').textContent=fa(liveA);$('scoreB').textContent=fa(liveB);$('trickNo').textContent=fa(Math.min(G.trickNo,13));
+ $('scoreA').textContent=fa(liveA);$('scoreB').textContent=fa(liveB);const groupLabel=$('groupCounterLabel');if(groupLabel)groupLabel.textContent=activeMode==='double-kout'?'مجموع دست‌های گروه‌های تکمیل‌شده:':'دست‌های انجام‌شده در بازی:';const completedGroupHands=activeMode==='double-kout'?Math.min(13,Number(G.groupStartIndex||0)+(G.done&&G.trickWinners.length===13?13-Number(G.groupStartIndex||0):0)):Math.max(0,Math.min(13,G.trickNo)-1);$('groupTricksPlayed').textContent=fa(completedGroupHands);
  const globalStats=readGlobalStats();$('gamesWonA').textContent=fa(globalStats.double.wins+globalStats.hokm.wins);$('gamesWonB').textContent=fa(globalStats.double.losses+globalStats.hokm.losses);
  const handPlayer=playStyle==='hotseat'?G.turn:0;
  for(let p=0;p<4;p++){
@@ -890,10 +1339,10 @@ function render(){
  $('hand').innerHTML='';
  $('hand').classList.toggle('challenge-thinking',!!G.waitingChallenge);
  const centerTrick=$('centerTrick');if(centerTrick){centerTrick.innerHTML='';G.plays.forEach((x,i)=>{const played=cardEl(x.card,true);played.classList.add('table-played');played.style.setProperty('--play-index',i);centerTrick.append(played);});}
- const pileNode=$('centerPile');if(pileNode){pileNode.innerHTML='';const clearing=Date.now()<Number(G.sequenceClearUntil||0);pileNode.classList.toggle('clearing',clearing);const pile=clearing?(G.sequenceClearCards||[]):(G.groupCards||[]);pile.forEach((x,i)=>{const c=cardEl(x.card||x,true);c.classList.add('pile-card');c.style.setProperty('--px',(((i%5)-2)*3)+'px');c.style.setProperty('--py',(((i%7)-3)*2)+'px');c.style.setProperty('--pr',((((i*17)%13)-6)*1.25)+'deg');c.style.zIndex=String(i+1);pileNode.append(c);});}
+ const pileNode=$('centerPile');if(pileNode){pileNode.innerHTML='';const clearing=Date.now()<Number(G.sequenceClearUntil||0);pileNode.classList.toggle('clearing',clearing);const pile=clearing?(G.sequenceClearCards||[]):(G.groupCards||[]);pile.forEach((x,i)=>{const c=cardEl(x.card||x,true);c.classList.add('pile-card');c.style.setProperty('--px',(((i%5)-2)*3)+'px');c.style.setProperty('--py',(((i%7)-3)*2)+'px');c.style.setProperty('--pr',((((i*17)%13)-6)*1.25)+'deg');c.style.zIndex=String(i+1);const angle=i*2.399963229728653,radius=10+Math.sqrt(i+1)*5;c.style.setProperty('--px',(Math.cos(angle)*radius*1.25)+'px');c.style.setProperty('--py',(Math.sin(angle)*radius*.82)+'px');c.style.setProperty('--pr',(Math.sin(i*1.73)*22)+'deg');c.style.zIndex=String(i+1);pileNode.append(c);});}
  const handTitle=document.querySelector('#game h3.section-title');if(handTitle)handTitle.textContent=playStyle==='hotseat'?'کارت‌های بازیکن نوبت‌دار':'کارت‌های شما';
  const handLegalCards=legalCards(handPlayer);
- (playStyle==='hotseat'&&!humanSeats.has(G.turn)?[]:(G.hands[handPlayer]||[])).forEach((c,i,arr)=>{let b=document.createElement('button'),offset=i-(arr.length-1)/2;b.style.transform='rotate('+(offset*3.4)+'deg) translateY('+(Math.abs(offset)*1.8)+'px)';b.style.zIndex=String(10+i);let legal=(playStyle==='hotseat'?humanSeats.has(G.turn)&&hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&handLegalCards.some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
+ (playStyle==='hotseat'&&!humanSeats.has(G.turn)?[]:sortCardArray((G.hands[handPlayer]||[]).slice())).forEach((c,i,arr)=>{let b=document.createElement('button'),offset=i-(arr.length-1)/2;b.style.transform='rotate('+(offset*4.8)+'deg) translateY('+(-Math.abs(offset)*2.2)+'px)';b.style.zIndex=String(10+i);let legal=(playStyle==='hotseat'?humanSeats.has(G.turn)&&hotseatRevealed&&G.turn===handPlayer:G.turn===0)&&!G.trickCompletePending&&G.plays.length<4&&!G.waitingChallenge&&!G.waitingTrump&&handLegalCards.some(x=>x.id===c.id);b.disabled=!legal||G.done;b.append(cardEl(c));b.onclick=()=>play(handPlayer,c);$('hand').append(b)});
  $('history').innerHTML=G.history.slice(-8).reverse().join('<br>');
  $('trickMsg').textContent=G.trickCompletePending?'در حال اعلام برنده دست…':G.plays.length?`نوبت ${names[G.turn]}`:'منتظر شروع دست…';
 }
@@ -908,7 +1357,7 @@ $('exitAppBtn').onclick=()=>{if(window.AndroidApp&&typeof window.AndroidApp.exit
 $('modeDouble').onclick=()=>{audioReady();matchNo=1;previousWinner=null;previousStarter=null;activeMode='double-kout';$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');};
 $('modeHokm').onclick=()=>{audioReady();matchNo=1;previousWinner=null;previousStarter=null;activeMode='standard-hokm';$('hokmContractPicker').classList.remove('hidden');$('modePicker').classList.add('hidden');$('setup').classList.remove('hidden');$('modeMessage').textContent='حکم چهار نفره: قرارداد را انتخاب کن.';};
 $('modeKuwaiti').onclick=()=>{audioReady();if(typeof window.openKuwaitiMode==='function')window.openKuwaitiMode();else $('modeMessage').textContent='رابط میز شش‌نفره بارگذاری نشده است؛ صفحه را یک‌بار ببند و باز کن.';};
-$('start').onclick=()=>{audioReady();shuffleSound();startGame()};$('confirmTrump').onclick=confirmTrump;$('nextContract').onchange=()=>{/* contract and suit are a single selection */};
+$('start').onclick=()=>{audioReady();shuffleSound();startGame()};$('confirmTrump').onclick=confirmTrump;$('localContractChoices').addEventListener('click',e=>{const b=e.target.closest('[data-local-contract]');if(!b)return;$('nextContract').value=b.dataset.localContract;document.querySelectorAll('#localContractChoices [data-local-contract]').forEach(x=>{const yes=x===b;x.classList.toggle('selected',yes);x.setAttribute('aria-pressed',yes?'true':'false');});});$('nextContract').value='hokm_spades';$('nextContract').onchange=()=>{/* contract and suit are a single selection */};
 $('soundToggle').onclick=()=>{soundEnabled=!soundEnabled;$('soundToggle').textContent=soundEnabled?'🔊 صدا روشن':'🔇 صدا خاموش';if(soundEnabled){audioReady();playCardSound()}else if('speechSynthesis'in window)window.speechSynthesis.cancel()};
 $('takeChallenge').onclick=()=>beginNormalOrChallenge('A');$('skipChallenge').onclick=()=>beginNormalOrChallenge(null);
 $('localNextGame').onclick=startNextLocalGame;$('localExtendRematch').onclick=()=>{if(!G||!G.done||!localRematchDeadline)return;localRematchDeadline=Date.now()+15000;lastLocalRematchBeep=-1;renderLocalRematchClock();};
@@ -919,13 +1368,13 @@ function normalizedRank(c){const x=c&&(c.r!==undefined?c.r:c.rank),m={'2':0,'3':
 function sortCardArray(cards){const o={'♠':0,'♥':1,'♦':2,'♣':3};return cards.sort((x,y)=>(o[normalizedSuit(x)]??9)-(o[normalizedSuit(y)]??9)||normalizedRank(x)-normalizedRank(y));}
 $('sortHand').onclick=()=>{if(!G)return;const p=playStyle==='hotseat'?G.turn:0;if(playStyle==='hotseat'&&!humanSeats.has(p))return;sortCardArray(G.hands[p]);render()};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script><script src="./kuwaiti-six-player-ui.js"></script><script>
+</script><script src="./kuwaiti-six-player-ui.js?v=0.8.58-online-ui-cleanup"></script><script>
 (function(){
 'use strict';
 var PUBLIC_AUTH_REDIRECT='https://ahdehwari-commits.github.io/Doublekout-/';
 var SUPABASE_URL='https://awgzilkxmtyrcxpouxif.supabase.co';
 var SUPABASE_PUBLISHABLE_KEY='sb_publishable_NKmVkAcOJUEAQI7oW7nd0g_3DM3lmCs';
-var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,onlineRosterRows=[],lastLobbyGuestId='',gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastOnlineHandSignature='',onlineChallengeDeadline=0,onlineChallengeExpired=false,confirmedPlayedCardIds=Object.create(null),onlineRematchDeadline=0,lastRematchBeep=-1,rematchBusy=false,myOnlineIsHost=false,rematchAutoAttemptedDeadline=0;
+var client=null,session=null,roomId=null,roomCode='',channel=null,me=null,mode='double-kout',count=4,rosterTimer=null,rosterBusy=false,rosterRefreshQueued=false,onlineRosterRows=[],lastLobbyGuestId='',gameTimer=null,gameBusy=false,gameRefreshQueued=false,gameStartSnapshot=null,aiBusy=false,challengeExpiryBusySeats={},myOnlineSeat=-1,lastGameRevision=-1,lastAcceptedGameRevision=-1,lastOnlineHandSignature='',onlineRoomEpoch=0,onlineChallengeDeadline=0,onlineChallengeExpired=false,confirmedPlayedCardIds=Object.create(null),onlineRematchDeadline=0,lastRematchBeep=-1,rematchBusy=false,myOnlineIsHost=false,rematchAutoAttemptedDeadline=0,kuwaitiStartInFlight=false;
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function say(s){var n=el('onlineStatus');if(n)n.textContent=s;}
@@ -967,23 +1416,68 @@ function ensureUI(){
  '#onlinePanel #onlineHand button:not(:disabled):hover{transform:translateY(-12px) scale(1.04)!important;z-index:50!important}'+
  '#onlineTable .center-trick .table-played{width:54px;height:80px;font-size:17px;margin-left:-23px}'+
  '@media(max-width:520px){#onlineTable{min-height:320px;padding:7px;gap:5px}#onlineTable .center{min-height:140px}#onlinePanel #onlineHand{min-height:120px;overflow-x:auto;justify-content:center;padding:12px 8px 22px}#onlinePanel #onlineHand button{flex-basis:56px;width:56px;height:84px;margin-left:-32px!important}#onlinePanel #onlineHand button:first-child{margin-left:0!important}#onlinePanel #onlineHand button .card{width:56px;height:84px}#onlineTable .center-trick .table-played{width:45px;height:67px;margin-left:-19px}}';
- document.head.appendChild(style);
+ style.textContent += '#onlineGameModeModal{display:none;position:fixed;inset:0;z-index:100010;background:#020b08d9;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:18px}#onlineGameModeModal.open{display:flex}#onlineGameModeModal .online-mode-dialog{width:min(420px,100%);padding:18px;border:1px solid #e7c879;border-radius:22px;background:linear-gradient(145deg,#194b39,#061b15);box-shadow:0 20px 60px #000d;text-align:center}#onlineGameModeModal .online-mode-dialog>b{display:block;color:#ffe4a0;font-size:18px;margin-bottom:12px}#onlineGameModeModal [data-online-mode]{display:flex;flex-direction:column;gap:5px;width:100%;margin:8px 0;text-align:right;background:linear-gradient(145deg,#275c49,#09251c);border:1px solid #d8b66b;color:#fff0c6;padding:13px 15px}#onlineGameModeModal [data-online-mode] strong{font-size:15px}#onlineGameModeModal [data-online-mode] small{font-size:11px;color:#d3e2d8}#onlineGameModeModal [data-online-mode]:active{transform:scale(.98)}';
+ style.textContent+=`
+/* 9.30: stable four-player online oval table; seats stay around the tabletop. */
+#onlineTable{display:block!important;position:relative!important;min-height:460px!important;overflow:visible!important;background-color:#242522!important;background-image:radial-gradient(ellipse at 50% 42%,#55534b 0%,#302f2b 58%,#171816 100%),repeating-linear-gradient(14deg,#ffffff08 0 2px,transparent 2px 8px)!important;border:10px solid #b9944f!important;border-radius:48%/31%!important;box-shadow:inset 0 0 0 3px #f5d995aa,inset 0 0 0 8px #171511,inset 0 0 48px #000d,0 22px 38px #000d!important}
+#onlineTable:before{content:""!important;position:absolute!important;inset:7px!important;border:2px solid #e3c27c!important;border-radius:48%/31%!important;box-shadow:inset 0 0 0 4px #ffffff14,inset 0 0 28px #000b!important;pointer-events:none!important;z-index:0!important}
+#onlineTable>.seat{position:absolute!important;width:25%!important;min-height:90px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;padding:7px 4px!important;border:2px solid #c9a45e!important;border-radius:14px!important;background:linear-gradient(145deg,#25231f,#090a09)!important;box-shadow:0 10px 18px #000c,inset 0 1px 0 #fff3!important;z-index:3!important}
+#onlineTable>.north{top:2%!important;left:37.5%!important;right:auto!important;bottom:auto!important}
+#onlineTable>.south{bottom:2%!important;left:37.5%!important;right:auto!important;top:auto!important}
+#onlineTable>.west{left:1%!important;top:38%!important;right:auto!important;bottom:auto!important}
+#onlineTable>.east{right:1%!important;top:38%!important;left:auto!important;bottom:auto!important}
+#onlineTable>.center{position:absolute!important;left:28%!important;right:28%!important;top:27%!important;bottom:27%!important;min-height:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;border:1px solid #c9a45e!important;border-radius:50%!important;background:radial-gradient(ellipse,#302d25bb,#090a09aa)!important;box-shadow:inset 0 0 24px #000b,0 0 0 5px #d1ad6544!important;z-index:2!important}
+#onlineTable>.table-trump-corner{position:absolute!important;top:9px!important;right:10px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:1000!important}
+#onlineTable .seat .played{min-height:58px!important;overflow:visible!important}
+#onlineTable .center-trick{position:absolute!important;left:50%!important;top:55%!important;transform:translate(-50%,-42%)!important;z-index:45!important;pointer-events:none!important}
+#onlineTable .center-trick .table-played{width:54px;height:80px;margin-left:-23px}
+#onlineGame #onlineDecision,#onlineGame #onlineTrumpSelection{position:fixed!important;left:50%!important;top:calc(50% - 42px)!important;transform:translate(-50%,-50%)!important;width:min(600px,calc(100vw - 24px))!important;max-height:calc(100dvh - 170px)!important;overflow:auto!important;z-index:100002!important;display:block;box-sizing:border-box;padding-bottom:132px!important}
+#onlineGame #onlineHand.challenge-hand{display:flex!important;visibility:visible!important;opacity:1!important;position:fixed!important;left:50%!important;bottom:calc(7px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:min(96vw,850px)!important;max-width:96vw!important;min-height:120px!important;max-height:132px!important;overflow-x:auto!important;overflow-y:visible!important;z-index:100010!important;pointer-events:auto!important;flex-wrap:nowrap!important;align-items:flex-end!important}
+#onlineGame #onlineHandTitle.challenge-hand-title{position:fixed!important;left:50%!important;bottom:calc(119px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:min(96vw,850px)!important;z-index:100010!important;margin:0!important;padding:5px 10px!important;text-align:center!important;border:1px solid #8e713e!important;border-radius:10px 10px 0 0!important;background:#09271f!important;color:#ffe3a0!important}
+#onlineGame #onlineHand.challenge-hand button{display:block!important;visibility:visible!important;opacity:1!important;flex:0 0 46px!important;width:46px!important;height:74px!important}
+#onlineGame #onlineHand.challenge-hand button .card{visibility:visible!important;opacity:1!important;filter:none!important}
+#game #currentGroupCounter,#game .k-live-tricks{display:none!important}
+#onlineGame #onlineLiveScoreTop,#onlineGame #onlineScore{display:none!important}
+#onlineTable .online-seat-tricks{display:block!important;position:relative!important;z-index:8!important;margin:2px auto 0!important;padding:2px 6px!important;min-width:46px!important;border:1px solid #c9a45e!important;border-radius:7px!important;background:linear-gradient(145deg,#171512ee,#080807f2)!important;color:#ffe3a0!important;font-size:10px!important;font-weight:900!important;line-height:1.25!important;text-align:center!important;white-space:nowrap!important;box-shadow:0 2px 6px #0008!important}
+#onlineTable>.seat.active .online-seat-tricks{border-color:#ffe6a1!important;box-shadow:0 0 8px #e7c87999!important}
+@media(max-width:520px){#onlineTable .online-seat-tricks{font-size:9px!important;padding:2px 4px!important;margin-top:1px!important}}
+/* Dark stone tabletop with a raised brass edge, matching the approved 3D table direction. */
+.table{background-color:#242522!important;background-image:radial-gradient(ellipse at 50% 42%,#55534b 0%,#302f2b 58%,#171816 100%),repeating-linear-gradient(14deg,#ffffff08 0 2px,transparent 2px 8px)!important;border-color:#b9944f!important;box-shadow:inset 0 0 0 3px #f5d99588,inset 0 -24px 48px #000b,0 22px 38px #000d!important}
+.table>.seat{position:absolute!important;z-index:18!important}.table>.center{position:absolute!important;z-index:20!important}
+@media(max-width:520px){
+ #onlineTable{min-height:440px!important;border-width:8px!important;border-radius:44%/25%!important}
+ #onlineTable>.seat{width:28%!important;min-height:78px!important;padding:5px 2px!important}
+ #onlineTable>.north,#onlineTable>.south{left:36%!important;width:28%!important}
+ #onlineTable>.west{left:0!important;top:39%!important}
+ #onlineTable>.east{right:0!important;top:39%!important}
+ #onlineTable>.center{left:27%!important;right:27%!important;top:29%!important;bottom:29%!important}
+ #onlineTable .center-trick .table-played{width:45px;height:67px;margin-left:-19px}
+}
+`;
+ style.textContent += "\n/* Final online-table geometry override: history at base, live trick above, hand in normal flow. */\n#onlineTable{min-height:510px!important;height:510px!important;overflow:visible!important;position:relative!important;isolation:isolate!important}\n#onlineTable>#onlineCenterPile{z-index:1!important;opacity:1!important;filter:none!important}\n#onlineTable>.center{z-index:20!important;position:absolute!important;left:25%!important;right:25%!important;top:25%!important;bottom:25%!important;overflow:visible!important}\n#onlineTable>.center>#onlineTrick{z-index:45!important;position:absolute!important}\n#onlineTable>.center>#onlineTrick .table-played{opacity:1!important;filter:none!important}\n#onlineTable>.seat.north{top:1%!important;left:37%!important;right:auto!important;bottom:auto!important}\n#onlineTable>.seat.south{bottom:1%!important;left:37%!important;right:auto!important;top:auto!important}\n#onlineTable>.seat.west{left:0!important;top:38%!important;right:auto!important;bottom:auto!important}\n#onlineTable>.seat.east{right:0!important;top:38%!important;left:auto!important;bottom:auto!important}\n#onlinePanel #onlineHand{position:relative!important;display:flex!important;height:148px!important;min-height:148px!important;margin:10px auto 0!important;padding:12px 8px 22px!important;overflow:visible!important;isolation:isolate!important;z-index:30!important}\n#onlinePanel #onlineHand>button{position:absolute!important;top:auto!important;transform-origin:50% 100%!important;opacity:1!important;filter:none!important}\n@media(max-width:520px){\n #onlineTable{height:490px!important;min-height:490px!important}\n #onlineTable>.seat.north,#onlineTable>.seat.south{left:36%!important;width:28%!important}\n #onlineTable>.seat.west{left:0!important;top:39%!important}\n #onlineTable>.seat.east{right:0!important;top:39%!important}\n #onlineTable>.center{left:24%!important;right:24%!important;top:27%!important;bottom:27%!important}\n #onlinePanel #onlineHand{height:142px!important;min-height:142px!important;margin-top:8px!important}\n}";
+ /* 9.73: keep all four seats anchored to the table, never to the viewport. */
+ style.textContent += "\n#onlineOverlay #onlineTable{position:relative!important}\n#onlineOverlay #onlineTable>.seat{position:absolute!important;z-index:30!important;width:25%!important;min-width:0!important;max-width:none!important;min-height:76px!important;box-sizing:border-box!important;margin:0!important;transform:none!important}\n#onlineOverlay #onlineTable>.seat.north{top:1%!important;left:37.5%!important;right:auto!important;bottom:auto!important}\n#onlineOverlay #onlineTable>.seat.south{bottom:1%!important;left:37.5%!important;right:auto!important;top:auto!important}\n#onlineOverlay #onlineTable>.seat.west{left:0!important;top:38%!important;right:auto!important;bottom:auto!important}\n#onlineOverlay #onlineTable>.seat.east{right:0!important;top:38%!important;left:auto!important;bottom:auto!important}\n@media(max-width:520px){#onlineOverlay #onlineTable>.seat{width:28%!important;min-height:68px!important;padding:4px 3px!important}#onlineOverlay #onlineTable>.seat.north,#onlineOverlay #onlineTable>.seat.south{left:36%!important;width:28%!important}#onlineOverlay #onlineTable>.seat.west{left:0!important;top:39%!important}#onlineOverlay #onlineTable>.seat.east{right:0!important;top:39%!important}}\n";
+document.head.appendChild(style);
  var root=document.createElement('div');root.id='onlineOverlay';root.innerHTML=
  '<section id="onlinePanel"><button id="onlineClose" class="secondary" style="float:left">بستن</button><h2>اتاق آنلاین دابل کوت</h2>'+
+ '<div class="online-store-tools"><button id="openStoreLanding" class="landing-action landing-action-store" type="button"><span class="landing-action-icon" aria-hidden="true">🛍️</span><span class="landing-action-title">فروشگاه</span><span class="landing-action-subtitle">خرید بسته‌های امتیاز و طرح پشت‌کارت</span></button></div>'+
  '<p>بازیکنان با گوشی‌های جداگانه وارد اتاق می‌شوند؛ پس از آماده‌شدن بازیکنان، کارت‌ها پخش می‌شود و هر نفر دست خودش را می‌بیند. پس از انتخاب قرارداد، هر بازیکن انسانی می‌تواند مستقل چلنج را اعلام کند یا از آن عبور کند.</p>'+
- '<div id="onlineAuth"><b style="color:#f4d58b">حساب کاربری</b><div class="auth-note" id="onlineAuthIntro">برای نگهداری حساب روی گوشی‌های مختلف، با هر ایمیل معتبری (از جمله Yahoo، iCloud، Gmail و Outlook) و یک رمز جداگانه برای بازی ثبت‌نام کن؛ رمز ایمیل خودت را وارد نکن. یا با Apple ID وارد شو. برای ثبت امتیاز و رتبه‌بندی، حساب تأییدشده لازم است.</div><label>ایمیل / نام کاربری</label><input id="onlineAuthEmail" type="email" autocomplete="username" placeholder="name@example.com" dir="ltr"><label>رمز عبور</label><input id="onlineAuthPassword" type="password" autocomplete="current-password" placeholder="حداقل ۸ نویسه" dir="ltr"><label>نام نمایشی (برای ثبت‌نام)</label><input id="onlineAuthDisplayName" maxlength="24" placeholder="نامی که دیگران در بازی می‌بینند"><div class="auth-grid"><button id="onlineRegister">ثبت‌نام</button><button id="onlineLogin" class="secondary">ورود با رمز</button><button id="onlineForgotPassword" class="secondary" style="grid-column:1/-1">بازیابی رمز عبور</button><button id="onlineResendConfirmation" class="secondary" style="grid-column:1/-1">ارسال مجدد ایمیل تأیید</button><button id="onlineApple" class="secondary" style="grid-column:1/-1">ورود با Apple ID</button><button id="onlineLogout" class="secondary" style="grid-column:1/-1">خروج از حساب</button></div><div id="onlineAuthStatus">برای بازی امتیازی، ورود با حساب تأییدشده یا Apple ID لازم است.</div><div id="onlineProgress" style="border-top:1px solid #668c78;margin-top:10px;padding-top:10px"><div id="onlineMyPoints">برای دیدن امتیازها وارد حساب شو.</div><button id="onlineRefreshProgress" class="secondary" style="width:100%;margin-top:8px">بروزرسانی امتیاز و رتبه‌بندی</button><div id="onlineLeaderboard" style="font-size:12px;line-height:2;margin-top:8px"></div></div></div>'+
- '<div id="onlineSetup"><label>نوع بازی</label><select id="onlineMode"><option value="double-kout">دابل کوت توالی · چهار نفره</option><option value="standard-hokm">حکم معمولی · چهار نفره</option><option value="kuwaiti" disabled>کوت کویتی · آنلاین شش‌نفره (در حال توسعه)</option></select>'+
+ '<div id="onlineAuth"><b style="color:#f4d58b">حساب کاربری</b><div class="auth-note" id="onlineAuthIntro">برای نگهداری حساب روی گوشی‌های مختلف، با هر ایمیل معتبری (از جمله Yahoo، iCloud، Gmail و Outlook) و یک رمز جداگانه برای بازی ثبت‌نام کن؛ رمز ایمیل خودت را وارد نکن. برای ثبت امتیاز و رتبه‌بندی، حساب تأییدشده لازم است.</div><label>ایمیل / نام کاربری</label><input id="onlineAuthEmail" type="email" autocomplete="username" placeholder="name@example.com" dir="ltr"><label>رمز عبور</label><input id="onlineAuthPassword" type="password" autocomplete="current-password" placeholder="حداقل ۸ نویسه" dir="ltr"><label>نام نمایشی (برای ثبت‌نام)</label><input id="onlineAuthDisplayName" maxlength="24" placeholder="نامی که دیگران در بازی می‌بینند"><div class="auth-grid"><button id="onlineRegister">ثبت‌نام</button><button id="onlineLogin" class="secondary">ورود با رمز</button><button id="onlineForgotPassword" class="secondary" style="grid-column:1/-1">بازیابی رمز عبور</button><button id="onlineResendConfirmation" class="secondary" style="grid-column:1/-1">ارسال مجدد ایمیل تأیید</button><button id="onlineLogout" class="secondary" style="grid-column:1/-1">خروج از حساب</button></div><div id="onlineAuthStatus">برای بازی امتیازی، ورود با حساب ایمیل تأییدشده لازم است.</div><div id="onlinePasswordRecovery" style="display:none;margin-top:10px;padding:12px;border:1px solid #d7b66d;border-radius:10px;background:#102f25"><label>رمز عبور جدید</label><input id="onlineNewPassword" type="password" autocomplete="new-password" minlength="8" placeholder="حداقل ۸ نویسه"><button id="onlineSaveNewPassword" type="button" style="width:100%;margin-top:8px">ثبت رمز جدید</button><div id="onlineRecoveryStatus" class="muted" style="margin-top:6px">پس از بازگشت از ایمیل، رمز جدید را ثبت کن.</div></div><div id="onlineProgress" style="border-top:1px solid #668c78;margin-top:10px;padding-top:10px"><div id="onlineMyPoints">برای دیدن امتیازها وارد حساب شو.</div><button id="onlineRefreshProgress" class="secondary" style="width:100%;margin-top:8px">بروزرسانی امتیاز و رتبه‌بندی</button><div id="onlineLeaderboard" style="font-size:12px;line-height:2;margin-top:8px"></div></div></div>'+
+ '<div id="onlineSetup"><label>نوع بازی</label><select id="onlineMode" style="display:none" aria-hidden="true"><option value="double-kout">دابل کوت توالی · چهار نفره</option><option value="standard-hokm">حکم معمولی · چهار نفره</option><option value="kuwaiti">کوت کویتی · آنلاین شش‌نفره</option></select><button type="button" id="onlineChooseGame" class="secondary" style="width:100%;margin:4px 0 10px">انتخاب بازی</button><div id="onlineGameModeModal" aria-hidden="true"><div class="online-mode-dialog"><b>انتخاب نوع بازی</b><button type="button" data-online-mode="double-kout"><strong>دابل کوت توالی</strong><small>چهارنفره · بازی گروهی و توالی</small></button><button type="button" data-online-mode="standard-hokm"><strong>حکم معمولی</strong><small>چهارنفره · حکم کلاسیک</small></button><button type="button" data-online-mode="kuwaiti"><strong>کوت کویتی</strong><small>شش‌نفره · مزایده و ۵۴ کارت</small></button><button type="button" id="onlineModeCancel" class="secondary">انصراف</button></div></div>'+
  '<label>نام نمایشی</label><input id="onlineName" maxlength="24" value="بازیکن">'+
  '<div class="onrow"><button id="onlineCreate">ساخت اتاق جدید</button><button id="onlineShowJoin" class="secondary">ورود با کد</button></div>'+
  '<div id="onlineJoinBox" style="display:none"><label>کد اتاق</label><input id="onlineJoinCode" maxlength="6" placeholder="مثلاً A1B2C3" style="text-transform:uppercase;direction:ltr;text-align:center"><label>جایگاه تیمی شما</label><select id="onlinePreferredTeam"><option value="1">حریف میزبان (تیم مقابل)</option><option value="2">هم‌تیمی میزبان</option></select><button id="onlineJoin" style="width:100%;margin-top:8px">ورود به اتاق</button></div></div>'+
- '<div id="onlineRoom" style="display:none"><div id="onlineCode"></div><div id="onlineRoster"></div><div id="onlineLobbyDecision"><b id="onlineLobbyNotice">بازیکن جدید وارد اتاق شد.</b><div class="onrow"><button id="onlineAcceptHuman">شروع با بازیکن واقعی</button><button id="onlineUseAI">ادامه با هوش مصنوعی</button></div></div><div class="onrow"><button id="onlineReady">آماده‌ام</button><button id="onlineStart" style="display:none">پایان انتظار</button><button id="onlineLeave" class="secondary">خروج از اتاق</button></div><div id="onlineGame" style="display:none;background:#061b15;border:1px solid #648a73;border-radius:12px;padding:12px;margin-top:12px"><h3 style="margin:0 0 8px;color:#f4d58b">میز آنلاین</h3><div id="onlineGameStatus" style="font-size:12px;line-height:1.8"></div><div id="onlineLiveScoreTop" style="font-size:13px;font-weight:900;color:#ffe3a0;text-align:center;background:#09271f;border:1px solid #b99a5d;border-radius:9px;padding:8px;margin:8px 0">دست‌های برده‌شده در این بازی · در انتظار شروع</div><div id="onlineTurnTimer" style="display:none;text-align:center;font-size:24px;font-weight:900;color:#ffe39a;padding:5px">۱۰</div><div id="onlineDecision" style="display:none;background:#123b2d;border:1px solid #d7b66d;border-radius:10px;padding:10px;margin:10px 0"><b style="color:#f4d58b">فرصت مستقل اعلام چلنج برای همه بازیکنان انسانی</b><p id="onlineDecisionHint" style="font-size:13px;line-height:1.9"></p><div id="onlineChallengeClock" style="font-size:22px;font-weight:bold;color:#ffe39a;text-align:center;margin:6px">۱۰</div><div class="onrow"><button id="onlineChooseChallenge">اعلام چلنج</button><button id="onlineChooseNormal">عبور / بازی عادی</button></div><button id="onlineChallengeExtend" style="width:100%;margin-top:8px;background:#d6e4dc">۱۵ ثانیه وقت بیشتر</button></div><div id="onlineTrumpSelection" style="display:none;background:#123b2d;border:1px solid #d7b66d;border-radius:10px;padding:10px;margin:10px 0"><b style="color:#f4d58b">انتخاب قرارداد پس از پخش پنج کارت</b><p id="onlineTrumpHint" style="font-size:13px;line-height:1.9">منتظر حاکم...</p><select id="onlineTrumpContract" style="display:none;width:100%;margin:8px 0"><option value="" selected disabled>نوع قرارداد را انتخاب کن...</option><option value="hokm_spades">حکم پیک ♠</option><option value="hokm_hearts">حکم دل ♥</option><option value="hokm_diamonds">حکم خشت ♦</option><option value="hokm_clubs">حکم گشنیز ♣</option><option value="naras">نرس · بدون حکم</option><option value="tak_naras">تک نرس · بدون حکم</option><option value="saras">سرس · بدون حکم</option><option value="partner_middle">برگ وسط یار</option></select><button id="onlineTrumpConfirm" style="display:none;width:100%">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div><div id="onlineTable" class="table" style="margin:12px 0;min-height:350px"><div class="seat north" id="onlineSeatNorth"><div class="name" id="onlineNameNorth">شمال</div><div class="count" id="onlineCountNorth"></div><div class="played" id="onlinePlayedNorth"></div></div><div class="seat west" id="onlineSeatWest"><div class="name" id="onlineNameWest">غرب</div><div class="count" id="onlineCountWest"></div><div class="played" id="onlinePlayedWest"></div></div><div class="center"><div><div class="muted">حکم</div><div id="onlineTrumpBig" style="font-size:35px;color:#e7c879">♠</div></div><div id="onlineTrickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div><div id="onlineCenterPile" class="online-center-pile"></div><div id="onlineTrick" class="center-trick"></div></div><div class="seat east" id="onlineSeatEast"><div class="name" id="onlineNameEast">شرق</div><div class="count" id="onlineCountEast"></div><div class="played" id="onlinePlayedEast"></div></div><div class="seat south" id="onlineSeatSouth"><div class="name" id="onlineNameSouth">شما</div><div class="count" id="onlineCountSouth"></div><div class="played" id="onlinePlayedSouth"></div></div></div><div class="online-hand-tools"><h3 class="section-title" id="onlineHandTitle">کارت‌های شما</h3><button type="button" id="onlineSortHand" aria-label="مرتب‌سازی کارت‌ها">↕</button></div><div class="hand" id="onlineHand"></div><div id="onlineScore" style="font-size:12px;text-align:center;margin-top:10px"></div><div id="onlineRematchPanel" style="display:none;background:#09271f;border:1px solid #d7b66d;border-radius:12px;padding:10px;margin-top:12px;text-align:center"><div id="onlineRematchText" style="font-weight:900;color:#ffe3a0">بازی تمام شد</div><div id="onlineRematchClock" style="font-size:30px;font-weight:900;color:#ffe39a;margin:5px">۱۵</div><div class="onrow"><button id="onlineNextGame">بازی بعدی</button><button id="onlineExtendRematch" class="secondary">تمدید ۱۵ ثانیه</button></div></div></div></div>'+
+ '<div id="onlineRoom" style="display:none"><div id="onlineCode"></div><div id="onlineRoster"></div><div id="onlineLobbyDecision"><b id="onlineLobbyNotice">بازیکن جدید وارد اتاق شد.</b><div class="onrow"><button id="onlineAcceptHuman">شروع با بازیکن واقعی</button><button id="onlineUseAI">ادامه با هوش مصنوعی</button></div></div><div class="onrow"><button id="onlineReady">آماده‌ام</button><button id="onlineStart" style="display:none">پایان انتظار</button><button id="onlineLeave" class="secondary">خروج از اتاق</button></div><button id="onlineResumeKuwaiti" class="secondary" style="display:none;width:100%;margin-top:8px">بازگشت به میز کوت کویتی</button><div id="onlineGame" style="display:none;background:#061b15;border:1px solid #648a73;border-radius:12px;padding:12px;margin-top:12px"><h3 style="margin:0 0 8px;color:#f4d58b">میز آنلاین</h3><div id="onlineGameStatus" style="font-size:12px;line-height:1.8"></div><div id="onlineLiveScoreTop" style="font-size:13px;font-weight:900;color:#ffe3a0;text-align:center;background:#09271f;border:1px solid #b99a5d;border-radius:9px;padding:8px;margin:8px 0">دست‌های برده‌شده در این بازی · در انتظار شروع</div><div id="onlineTurnTimer" style="display:none;text-align:center;font-size:24px;font-weight:900;color:#ffe39a;padding:5px">۱۰</div><div id="onlineDecision" style="display:none;background:#123b2d;border:1px solid #d7b66d;border-radius:10px;padding:10px;margin:10px 0"><b style="color:#f4d58b">فرصت مستقل اعلام چلنج برای همه بازیکنان انسانی</b><p id="onlineDecisionHint" style="font-size:13px;line-height:1.9"></p><div id="onlineChallengeTrumpInfo" style="display:none;margin:7px 0;padding:7px 10px;border:1px solid #d7b66d;border-radius:8px;background:#09271f;color:#ffe39a;font-weight:900;text-align:center"></div><div id="onlineChallengeClock" style="font-size:22px;font-weight:bold;color:#ffe39a;text-align:center;margin:6px">۱۰</div><div class="onrow"><button id="onlineChooseChallenge">اعلام چلنج</button><button id="onlineChooseNormal">عبور / بازی عادی</button></div><button id="onlineChallengeExtend" style="width:100%;margin-top:8px;background:#d6e4dc">۱۵ ثانیه وقت بیشتر</button></div><div id="onlineTrumpSelection" style="display:none;background:#123b2d;border:1px solid #d7b66d;border-radius:10px;padding:10px;margin:10px 0"><b style="color:#f4d58b">انتخاب قرارداد پس از پخش پنج کارت</b><p id="onlineTrumpHint" style="font-size:13px;line-height:1.9">منتظر حاکم...</p><div id="onlineTrumpChoices" class="premium-contract-grid"><button type="button" class="premium-contract-choice selected" data-online-contract="hokm_spades"><span class="symbol">♠</span><b>حکم پیک</b><small>خال حکم‌دار</small></button><button type="button" class="premium-contract-choice" data-online-contract="hokm_hearts"><span class="symbol red">♥</span><b>حکم دل</b><small>خال حکم‌دار</small></button><button type="button" class="premium-contract-choice" data-online-contract="hokm_diamonds"><span class="symbol red">♦</span><b>حکم خشت</b><small>خال حکم‌دار</small></button><button type="button" class="premium-contract-choice" data-online-contract="hokm_clubs"><span class="symbol">♣</span><b>حکم گشنیز</b><small>خال حکم‌دار</small></button><button type="button" class="premium-contract-choice" data-online-contract="naras"><span class="symbol">✧</span><b>نرس</b><small>بدون حکم</small></button><button type="button" class="premium-contract-choice" data-online-contract="tak_naras"><span class="symbol">Ⅱ</span><b>تک نرس</b><small>بدون حکم</small></button><button type="button" class="premium-contract-choice" data-online-contract="saras"><span class="symbol">♛</span><b>سرس</b><small>بدون حکم</small></button><button type="button" class="premium-contract-choice" data-online-contract="partner_middle"><span class="symbol">✦</span><b>برگ وسط یار</b><small>قرارداد ویژه</small></button></div><input type="hidden" id="onlineTrumpContract" value="hokm_spades"><button id="onlineTrumpConfirm" style="display:none;width:100%">تأیید قرارداد و پخش هشت کارت باقی‌مانده</button></div><div id="onlineTable" class="table" style="margin:12px 0;min-height:350px"><div class="seat north" id="onlineSeatNorth"><div class="name" id="onlineNameNorth">شمال</div><div class="count" id="onlineCountNorth"></div><div class="played" id="onlinePlayedNorth"></div></div><div class="seat west" id="onlineSeatWest"><div class="name" id="onlineNameWest">غرب</div><div class="count" id="onlineCountWest"></div><div class="played" id="onlinePlayedWest"></div></div><div class="table-trump-corner"><div class="muted">حکم</div><div id="onlineTrumpBig" style="font-size:28px;color:#e7c879">♠</div></div><div id="onlineCenterPile" class="online-center-pile"></div><div class="center"><div id="onlineTrickMsg" class="muted" style="grid-column:1/-1">منتظر شروع…</div><div id="onlineTrick" class="center-trick"></div></div><div class="seat east" id="onlineSeatEast"><div class="name" id="onlineNameEast">شرق</div><div class="count" id="onlineCountEast"></div><div class="played" id="onlinePlayedEast"></div></div><div class="seat south" id="onlineSeatSouth"><div class="name" id="onlineNameSouth">شما</div><div class="count" id="onlineCountSouth"></div><div class="played" id="onlinePlayedSouth"></div></div></div><h3 class="section-title" id="onlineHandTitle">کارت‌های شما</h3><div class="hand" id="onlineHand"></div><div id="onlineScore" style="font-size:12px;text-align:center;margin-top:10px"></div><div id="onlineRematchPanel" style="display:none;background:#09271f;border:1px solid #d7b66d;border-radius:12px;padding:10px;margin-top:12px;text-align:center"><div id="onlineRematchText" style="font-weight:900;color:#ffe3a0">بازی تمام شد</div><div id="onlineFinalResult" aria-live="polite"></div><div id="onlineRematchClock" style="font-size:30px;font-weight:900;color:#ffe39a;margin:5px">۱۵</div><div class="onrow"><button id="onlineNextGame">بازی بعدی</button><button id="onlineExtendRematch" class="secondary">تمدید ۱۵ ثانیه</button></div></div></div></div>'+
  '<div id="onlineStatus">برای شروع، ساخت اتاق یا ورود با کد را انتخاب کن.</div></section>';
  document.body.appendChild(root);
- el('onlineClose').onclick=close;el('onlineRegister').onclick=registerOnlineAccount;el('onlineLogin').onclick=loginOnlineAccount;el('onlineForgotPassword').onclick=resetOnlinePassword;el('onlineResendConfirmation').onclick=resendOnlineConfirmation;el('onlineApple').onclick=appleOnlineAccount;el('onlineLogout').onclick=logoutOnlineAccount;el('onlineCreate').onclick=createRoom;el('onlineShowJoin').onclick=function(){el('onlineJoinBox').style.display='block';};
- el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=function(){if(onlineRosterRows.some(function(x){return x.user_id!==me.id;})){el('onlineLobbyDecision').style.display='block';say('میزبان می‌تواند بازیکن واقعی را بپذیرد یا بازی را با هوش مصنوعی آغاز کند.');}else startOnlineGame('ai');};el('onlineAcceptHuman').onclick=function(){startOnlineGame('human');};el('onlineUseAI').onclick=function(){startOnlineGame('ai');};el('onlineChooseNormal').onclick=function(){submitOnlineChallengeChoice('pass')};el('onlineChooseChallenge').onclick=function(){submitOnlineChallengeChoice('challenge')};el('onlineChallengeExtend').onclick=extendOnlineChallengeTime;el('onlineTrumpConfirm').onclick=function(){submitOnlineTrumpSelection(el('onlineTrumpContract').value,false);};el('onlineNextGame').onclick=function(){startNextOnlineGame(false)};el('onlineExtendRematch').onclick=extendOnlineRematchTime;el('onlineSortHand').onclick=function(){onlineHandSorted=!onlineHandSorted;lastGameRevision=-1;refreshOnlineGame();};el('onlineLeave').onclick=leave;
+ el('onlineTrumpChoices').addEventListener('click',function(e){var b=e.target.closest('[data-online-contract]');if(!b)return;el('onlineTrumpContract').value=b.dataset.onlineContract;document.querySelectorAll('#onlineTrumpChoices [data-online-contract]').forEach(function(x){var yes=x===b;x.classList.toggle('selected',yes);x.setAttribute('aria-pressed',yes?'true':'false');});});el('onlineTrumpContract').value='hokm_spades';
+
+ el('onlineChooseGame').onclick=function(){el('onlineGameModeModal').classList.add('open');el('onlineGameModeModal').setAttribute('aria-hidden','false');};el('onlineModeCancel').onclick=function(){el('onlineGameModeModal').classList.remove('open');el('onlineGameModeModal').setAttribute('aria-hidden','true');};el('onlineGameModeModal').addEventListener('click',function(e){if(e.target===el('onlineGameModeModal')){el('onlineModeCancel').click();return;}var b=e.target.closest('[data-online-mode]');if(!b)return;el('onlineMode').value=b.dataset.onlineMode;el('onlineChooseGame').textContent='انتخاب بازی: '+b.querySelector('strong').textContent;el('onlineGameModeModal').classList.remove('open');el('onlineGameModeModal').setAttribute('aria-hidden','true');});el('onlineResumeKuwaiti').onclick=async function(){var info=window.DoubleKoutOnline.getRoomInfo();if(info&&info.mode==='kuwaiti'){window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-online-started',{detail:info}));if(window.__doubleKoutKuwaitiAttachPromise)await window.__doubleKoutKuwaitiAttachPromise;close();}};
+ el('onlineClose').onclick=close;el('onlineRegister').onclick=registerOnlineAccount;el('onlineLogin').onclick=loginOnlineAccount;el('onlineForgotPassword').onclick=resetOnlinePassword;el('onlineSaveNewPassword').onclick=saveRecoveredPassword;el('onlineResendConfirmation').onclick=resendOnlineConfirmation;el('onlineLogout').onclick=logoutOnlineAccount;el('onlineCreate').onclick=createRoom;el('onlineShowJoin').onclick=function(){el('onlineJoinBox').style.display='block';};
+ el('onlineJoin').onclick=joinRoom;el('onlineReady').onclick=toggleReady;el('onlineStart').onclick=function(){if(mode==='kuwaiti'){startKuwaitiOnlineGame(true);return;}if(onlineRosterRows.some(function(x){return x.user_id!==me.id;})){el('onlineLobbyDecision').style.display='block';say('میزبان می‌تواند بازیکن واقعی را بپذیرد یا بازی را با هوش مصنوعی آغاز کند.');}else startOnlineGame('ai');};el('onlineAcceptHuman').onclick=function(){startOnlineGame('human');};el('onlineUseAI').onclick=function(){startOnlineGame('ai');};el('onlineChooseNormal').onclick=function(){submitOnlineChallengeChoice('pass')};el('onlineChooseChallenge').onclick=function(){submitOnlineChallengeChoice('challenge')};el('onlineChallengeExtend').onclick=extendOnlineChallengeTime;el('onlineTrumpConfirm').onclick=function(){submitOnlineTrumpSelection(el('onlineTrumpContract').value,false);};el('onlineNextGame').onclick=function(){startNextOnlineGame(false)};el('onlineExtendRematch').onclick=extendOnlineRematchTime;el('onlineLeave').onclick=leave;
  root.addEventListener('click',function(e){if(e.target===root)close();});
 }
-function open(preselect){ensureUI();if(preselect&&el('onlineMode'))el('onlineMode').value=preselect;el('onlineOverlay').classList.add('open');}
+function open(preselect){ensureUI();if(preselect&&el('onlineMode'))el('onlineMode').value=preselect;var selected=el('onlineMode')&&el('onlineMode').value||'double-kout',labels={'double-kout':'دابل کوت توالی','standard-hokm':'حکم معمولی','kuwaiti':'کوت کویتی'};if(el('onlineChooseGame'))el('onlineChooseGame').textContent='انتخاب بازی: '+labels[selected];el('onlineOverlay').classList.add('open');}refreshStoreAccess();
 function close(){if(el('onlineOverlay'))el('onlineOverlay').classList.remove('open');}
 var supabaseLoadPromise=null;
 function loadSupabaseScript(url){
@@ -1008,9 +1502,12 @@ async function initClient(){
  }
  if(!window.supabase||!window.supabase.createClient)throw new Error('کتابخانه Supabase در دسترس نیست.');
  client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ client.auth.onAuthStateChange(function(event){if(event==='PASSWORD_RECOVERY'){var box=el('onlinePasswordRecovery');if(box)box.style.display='block';var st=el('onlineRecoveryStatus');if(st)st.textContent='پیوند بازیابی تأیید شد؛ رمز جدید را وارد کن.';var panel=el('onlineOverlay');if(panel)panel.classList.add('open');authMessage('پیوند بازیابی معتبر است. رمز جدیدت را ثبت کن.');}});
+ window.addEventListener('doublekout:avatar-changed',async function(ev){var avatar=ev&&ev.detail&&ev.detail.avatar;if(!['♛','⚔️','🛡️','🏆','🎖️','💎','🔱','🧿','🕶️','🎩','🥇','♠️','♥️','♦️','♣️','⭐'].includes(avatar)||!client)return;try{var current=await client.auth.getSession();if(current.data&&current.data.session&&!current.data.session.user.is_anonymous){var saved=await client.auth.updateUser({data:{avatar:avatar}});if(saved.error)console.warn('Avatar metadata sync:',saved.error.message);}}catch(e){console.warn('Avatar metadata sync skipped:',e);}});
  return true;
 }
 function authMessage(message){var n=el('onlineAuthStatus');if(n)n.textContent=message;}
+async function refreshStoreAccess(){var tools=el('onlineAccountTools');if(!tools)return;tools.style.display='none';try{await initClient();var r=await client.auth.getSession();var u=r.data&&r.data.session&&r.data.session.user;if(u&&!u.is_anonymous&&(u.email_confirmed_at||(u.app_metadata&&u.app_metadata.provider==='apple')))tools.style.display='flex';}catch(_){tools.style.display='none';}}
 function authFields(){return {email:(el('onlineAuthEmail').value||'').trim().toLowerCase(),password:el('onlineAuthPassword').value||'',displayName:(el('onlineAuthDisplayName').value||'').trim()};}
 function validateAuthFields(v,needName){if(!v.email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email))throw new Error('ایمیل معتبر وارد کن؛ ایمیل نقش نام کاربری حساب را دارد.');if(v.password.length<8)throw new Error('رمز عبور باید دست‌کم ۸ نویسه داشته باشد.');if(needName&&!v.displayName)throw new Error('یک نام نمایشی برای بازی وارد کن.');}
 async function registerOnlineAccount(){
@@ -1023,7 +1520,7 @@ async function registerOnlineAccount(){
   }
   if(result.error)throw result.error;
   session=result.data.session||null;me=result.data.user||null;
-  if(session){authMessage('حساب ساخته شد و وارد بازی شدی.');if(el('onlineName'))el('onlineName').value=v.displayName;if(window.DoubleKoutProgress){window.DoubleKoutProgress.refresh();window.DoubleKoutProgress.flushPending();}}
+  if(session){authMessage('حساب ساخته شد و وارد بازی شدی.');if(el('onlineName'))el('onlineName').value=v.displayName;if(window.DoubleKoutProgress){window.DoubleKoutProgress.refresh();window.DoubleKoutProgress.flushPending();}refreshStoreAccess();}
   else authMessage('درخواست ثبت‌نام ثبت شد. ایمیل تأیید را باز کن و سپس با ایمیل و رمز وارد شو. اگر حساب مهمان داشتی، تبدیل حساب پس از تأیید ایمیل کامل می‌شود.');
  }catch(e){var msg=e&& (e.message||e.msg)||String(e);if(/already registered|user already exists|already been registered/i.test(msg))msg='این ایمیل قبلاً حساب دارد؛ از دکمه «ورود با رمز» استفاده کن یا رمزت را بازیابی کن.';else if(/email not confirmed/i.test(msg))msg='ایمیل هنوز تأیید نشده است؛ صندوق ورودی و پوشه هرزنامه را بررسی کن.';else if(/invalid email/i.test(msg))msg='ساختار ایمیل معتبر نیست؛ نشانی را دوباره بررسی کن.';else if(/password.*(weak|short)|weak password/i.test(msg))msg='رمز عبور ضعیف است؛ یک رمز قوی‌تر با حداقل ۸ نویسه انتخاب کن.';authMessage('ثبت‌نام انجام نشد: '+msg);}
  finally{el('onlineRegister').disabled=false;}
@@ -1032,12 +1529,13 @@ async function loginOnlineAccount(){
  try{await initClient();var v=authFields();validateAuthFields(v,false);el('onlineLogin').disabled=true;authMessage('در حال ورود…');
   var r=await client.auth.signInWithPassword({email:v.email,password:v.password});if(r.error)throw r.error;
   session=r.data.session;me=r.data.user;var display=(me.user_metadata&&me.user_metadata.display_name)||v.displayName||'بازیکن';if(el('onlineName'))el('onlineName').value=display;
-  authMessage('با موفقیت وارد شدی: '+v.email);if(window.DoubleKoutProgress){window.DoubleKoutProgress.refresh();window.DoubleKoutProgress.flushPending();}
+  authMessage('با موفقیت وارد شدی: '+v.email);if(window.DoubleKoutProgress){window.DoubleKoutProgress.refresh();window.DoubleKoutProgress.flushPending();}refreshStoreAccess();
  }catch(e){var msg=e&&(e.message||e.msg)||String(e);if(/invalid login credentials|user not found/i.test(msg))msg='حسابی با این ایمیل و رمز پیدا نشد؛ اگر قبلاً ثبت‌نام نکرده‌ای، ابتدا ثبت‌نام کن. اگر حساب داری، رمز را بررسی یا بازیابی کن.';else if(/email not confirmed/i.test(msg))msg='ایمیل حساب هنوز تأیید نشده است؛ ایمیل تأیید را باز کن و سپس دوباره وارد شو.';authMessage('ورود ناموفق بود: '+msg);}
  finally{el('onlineLogin').disabled=false;}
 }
+async function saveRecoveredPassword(){try{await initClient();var password=(el('onlineNewPassword').value||'');if(password.length<8)throw new Error('رمز جدید باید دست‌کم ۸ نویسه داشته باشد.');var r=await client.auth.updateUser({password:password});if(r.error)throw r.error;el('onlinePasswordRecovery').style.display='none';el('onlineNewPassword').value='';authMessage('رمز عبور با موفقیت تغییر کرد. اکنون می‌توانی با رمز جدید وارد شوی.');}catch(e){var n=el('onlineRecoveryStatus');if(n)n.textContent='ثبت رمز ناموفق بود: '+(e.message||e);}}
 async function resetOnlinePassword(){
- try{await initClient();var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');authMessage('در حال ارسال لینک بازیابی…');var r=await client.auth.resetPasswordForEmail(email,{redirectTo:PUBLIC_AUTH_REDIRECT});if(r.error)throw r.error;authMessage('اگر این ایمیل در سامانه ثبت شده باشد، لینک بازیابی رمز برای آن ارسال می‌شود. صندوق ورودی و هرزنامه را بررسی کن.');}
+ try{await initClient();var email=(el('onlineAuthEmail').value||'').trim().toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('ابتدا ایمیل معتبر خود را وارد کن.');authMessage('در حال ارسال لینک بازیابی…');var r=await client.auth.resetPasswordForEmail(email,{redirectTo:PUBLIC_AUTH_REDIRECT});if(r.error)throw r.error;authMessage('لینک بازیابی ارسال شد. پس از بازکردن ایمیل باید به همین بازی برگردی و کادر ثبت رمز جدید نمایش داده شود. پوشه هرزنامه را هم بررسی کن.');}
  catch(e){authMessage('ارسال لینک بازیابی ناموفق بود: '+(e.message||e));}
 }
 async function resendOnlineConfirmation(){
@@ -1053,23 +1551,8 @@ async function resendOnlineConfirmation(){
    authMessage('درخواست ارسال ایمیل به سامانه پذیرفته شد؛ تحویل واقعی ایمیل از داخل بازی قابل تأیید نیست. صندوق ورودی، هرزنامه و در صورت تأخیر محدودیت ارسال ایمیل Supabase را بررسی کن.');
   }catch(e){authMessage('ارسال مجدد ایمیل تأیید ناموفق بود: '+(e.message||e));}
  }
- async function appleOnlineAccount(){
- try{
-  await initClient();el('onlineApple').disabled=true;authMessage('در حال انتقال به صفحه امن Apple…');
-  var current=await client.auth.getSession();if(current.error)throw current.error;
-  var redirectTo=PUBLIC_AUTH_REDIRECT,result;
-  if(current.data.session&&current.data.session.user&&current.data.session.user.is_anonymous&&typeof client.auth.linkIdentity==='function'){
-   result=await client.auth.linkIdentity({provider:'apple',options:{redirectTo:redirectTo,scopes:'name email'}});
-  }else result=await client.auth.signInWithOAuth({provider:'apple',options:{redirectTo:redirectTo,scopes:'name email'}});
-  if(result.error)throw result.error;
- }catch(e){
-  authMessage('ورود با Apple فعلاً فعال نیست: '+(e.message||e)+'. مدیر سامانه باید Apple Provider را در Supabase با اطلاعات Apple Developer فعال کند. اگر ایمیل iCloud داری، می‌توانی همین حالا با ایمیل و رمز ثبت‌نام کنی.');
-  el('onlineApple').disabled=false;
- }
-}
-
-async function logoutOnlineAccount(){
- try{await initClient();var r=await client.auth.signOut();if(r.error)throw r.error;session=null;me=null;authMessage('از حساب خارج شدی؛ برای بازی آنلاین بعدی می‌توانی مهمان بمانی یا دوباره وارد شوی.');}
+ async function logoutOnlineAccount(){
+ try{await initClient();var r=await client.auth.signOut();if(r.error)throw r.error;session=null;me=null;authMessage('از حساب خارج شدی؛ برای بازی آنلاین بعدی می‌توانی مهمان بمانی یا دوباره وارد شوی.');refreshStoreAccess();}
  catch(e){authMessage('خروج از حساب انجام نشد: '+(e.message||e));}
 }
 async function authenticate(setStage){
@@ -1078,15 +1561,16 @@ async function authenticate(setStage){
  setStage('بررسی نشست حساب');
  var got=await client.auth.getSession();if(got.error)throw got.error;
  session=got.data&&got.data.session;
- if(!session)throw new Error('برای بازی امتیازی، ابتدا با ایمیل تأییدشده یا Apple ID ثبت‌نام و وارد حساب شو.');
+ if(!session)throw new Error('برای بازی امتیازی، ابتدا با ایمیل تأییدشده ثبت‌نام و وارد حساب شو.');
  me=session.user;
- if(!me||me.is_anonymous)throw new Error('حساب مهمان برای بازی امتیازی مجاز نیست؛ با ایمیل تأییدشده یا Apple ID وارد شو.');
+ if(!me||me.is_anonymous)throw new Error('حساب مهمان برای بازی امتیازی مجاز نیست؛ با ایمیل تأییدشده وارد شو.');
  var provider=me.app_metadata&&me.app_metadata.provider||'';
  if(!me.email_confirmed_at&&provider!=='apple')throw new Error('ایمیل حساب هنوز تأیید نشده است؛ ایمیل تأیید Supabase را باز کن و دوباره وارد شو.');
  var display=(me.user_metadata&&me.user_metadata.display_name)||'';
  if(display&&el('onlineName'))el('onlineName').value=display;
  if(window.DoubleKoutProgress)window.DoubleKoutProgress.refresh();
- if(el('onlineAuthStatus'))el('onlineAuthStatus').textContent='حساب تأییدشده فعال است: '+(me.email||display||'Apple ID');
+ if(el('onlineAuthStatus'))el('onlineAuthStatus').textContent='حساب تأییدشده فعال است: '+(me.email||display||'حساب کاربری');
+ refreshStoreAccess();
  return me;
 }
 function showRoom(){el('onlineSetup').style.display='none';el('onlineRoom').style.display='block';el('onlineCode').textContent=roomCode;}
@@ -1095,19 +1579,20 @@ function subscribe(){
  if(channel){client.removeChannel(channel);channel=null;}
  channel=client.channel('doublekout-room-'+roomId)
  .on('postgres_changes',{event:'*',schema:'public',table:'room_members',filter:'room_id=eq.'+roomId},refreshRoster)
- .on('postgres_changes',{event:'*',schema:'public',table:'game_rooms',filter:'id=eq.'+roomId},function(){refreshOnlineGame();})
+ .on('postgres_changes',{event:'*',schema:'public',table:'game_rooms',filter:'id=eq.'+roomId},function(){if(mode==='kuwaiti')window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-room-update',{detail:{roomId:roomId}}));else refreshOnlineGame();})
  .subscribe(function(state){
-  if(state==='SUBSCRIBED'){say('اتصال زنده برقرار است.');refreshRoster();refreshOnlineGame();}
+  if(state==='SUBSCRIBED'){say('اتصال زنده برقرار است.');refreshRoster();if(mode==='kuwaiti')window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-room-update',{detail:{roomId:roomId}}));else refreshOnlineGame();}
   else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'||state==='CLOSED')say('اتصال زنده برقرار نشد؛ فهرست بازیکنان به‌صورت دوره‌ای به‌روزرسانی می‌شود.');
  });
  refreshRoster();
  rosterTimer=setInterval(refreshRoster,5000);
  if(gameTimer)clearInterval(gameTimer);
- gameTimer=setInterval(refreshOnlineGame,3000);
+ gameTimer=setInterval(function(){if(mode==='kuwaiti')window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-room-update',{detail:{roomId:roomId}}));else refreshOnlineGame();},3000);
  if(!window.__doubleKoutRosterFocus){
   window.__doubleKoutRosterFocus=true;
   window.addEventListener('focus',function(){refreshRoster();});
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshRoster();});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){refreshRoster();refreshOnlineGame();}});
+  window.addEventListener('online',function(){if(roomId){refreshRoster();refreshOnlineGame();}});
  }
 }
 async function refreshRoster(){
@@ -1120,29 +1605,37 @@ async function refreshRoster(){
   var rows=Array.isArray(r.data)?r.data:[],cap=count,html='';onlineRosterRows=rows;
   for(var i=0;i<cap;i++){var p=rows.find(function(x){return Number(x.seat)===i;});html+='<div>'+(i+1)+'. '+(p?esc(p.display_name)+' · '+Number(p.points||0)+' امتیاز'+(p.is_host?' ★':'')+(p.ready?' ✓ آماده':' · در انتظار'):'صندلی خالی')+'</div>';}
   el('onlineRoster').innerHTML=html;
-  var allReady=rows.length>=2&&rows.every(function(x){return x.ready===true;});
+  var allReady=rows.length>=2&&rows.every(function(x){return x.ready===true;}),allSixReady=rows.length===6&&rows.every(function(x){return x.ready===true;});
   var mine=rows.find(function(x){return x.user_id===me.id;});
   myOnlineSeat=mine?Number(mine.seat):-1;myOnlineIsHost=!!(mine&&mine.is_host);
   el('onlineReady').textContent=mine&&mine.ready?'لغو آمادگی':'آماده‌ام';
   el('onlineReady').dataset.ready=mine&&mine.ready?'true':'false';
   el('onlineReady').disabled=!mine;
-  el('onlineStart').style.display=mine&&mine.is_host&&mode!=='kuwaiti'?'block':'none';
-  el('onlineStart').textContent=rows.length>1?'پایان انتظار · انتخاب میزبان':'پایان انتظار · شروع با هوش مصنوعی';
+  var allCurrentHumansReady=rows.length>=1&&rows.every(function(x){return x.ready===true;});
+  el('onlineStart').style.display=mine&&mine.is_host&&(mode==='kuwaiti'?rows.length>=1:true)?'block':'none';
+  el('onlineStart').disabled=mode==='kuwaiti'?!allCurrentHumansReady:false;
+  el('onlineStart').textContent=mode==='kuwaiti'?(rows.length<6?'پایان انتظار · تکمیل صندلی‌ها با هوش مصنوعی':'شروع کوت کویتی · شش بازیکن'):(rows.length>1?'پایان انتظار · انتخاب میزبان':'پایان انتظار · شروع با هوش مصنوعی');
   var guest=rows.find(function(x){return !x.is_host;});
-  if(mine&&mine.is_host&&guest){el('onlineLobbyDecision').style.display='block';el('onlineLobbyNotice').textContent='بازیکن واقعی «'+guest.display_name+'» وارد اتاق شد؛ شروع را انتخاب کن.';if(lastLobbyGuestId!==guest.user_id){lastLobbyGuestId=guest.user_id;say('بازیکن واقعی وارد اتاق شد. برای انتخاب نوع شروع آماده‌ای.');}}
+  if(mode==='kuwaiti'){el('onlineLobbyDecision').style.display='none';lastLobbyGuestId='';}
+  else if(mine&&mine.is_host&&guest){el('onlineLobbyDecision').style.display='block';el('onlineLobbyNotice').textContent='بازیکن واقعی «'+guest.display_name+'» وارد اتاق شد؛ شروع را انتخاب کن.';if(lastLobbyGuestId!==guest.user_id){lastLobbyGuestId=guest.user_id;say('بازیکن واقعی وارد اتاق شد. برای انتخاب نوع شروع آماده‌ای.');}}
   else if(!guest){el('onlineLobbyDecision').style.display='none';lastLobbyGuestId='';}
   if(!allReady&&rows.length>1&&!guest)say(rows.length+' بازیکن وارد شده‌اند؛ میزبان می‌تواند همین حالا تصمیم بگیرد.');
-  if(mine&&!mine.is_host)say('به اتاق میزبان متصل شدی؛ جایگاه تیمی انتخاب‌شده ثبت شده است.');
+  if(mine&&!mine.is_host)say(mode==='kuwaiti'?'صندلی شما در میز شش‌نفره ثبت شد؛ منتظر تصمیم میزبان بمان. در صورت پایان انتظار، صندلی‌های خالی با هوش مصنوعی تکمیل می‌شوند.':'به اتاق میزبان متصل شدی؛ جایگاه تیمی انتخاب‌شده ثبت شده است.');
  }catch(e){if(/not_a_room_member|not a room member/i.test(String(e&&e.message||e)))say('میزبان اتاق را با هوش مصنوعی آغاز کرد؛ ورود شما پذیرفته نشد.');else say('به‌روزرسانی فهرست بازیکنان: '+(e.message||e));}
  finally{rosterBusy=false;if(rosterRefreshQueued){rosterRefreshQueued=false;Promise.resolve().then(refreshRoster);}}
 }
 async function createRoom(){
  var stage='آماده‌سازی';try{
   say('در حال ورود مهمان و ساخت اتاق...');
-  await authenticate(function(s){stage=s;});mode=el('onlineMode').value;count=mode==='kuwaiti'?6:4;
-  stage='فراخوانی create_game_room';var r=await client.rpc('create_game_room',{p_game_mode:mode,p_player_count:count,p_display_name:el('onlineName').value.trim()||'بازیکن'});
+  await authenticate(function(s){stage=s;});
+  var rawMode=String(el('onlineMode').value||'double-kout').trim().toLowerCase();
+  var modeMap={'double-kout':'double-kout','double_kout':'double-kout','doublekout':'double-kout','standard-hokm':'standard-hokm','standard_hokm':'standard-hokm','hokm':'standard-hokm','kuwaiti':'kuwaiti','kuwaiti-kout':'kuwaiti','kuwaiti_kout':'kuwaiti'};
+  mode=modeMap[rawMode];if(!mode)throw new Error('نوع بازی انتخاب‌شده معتبر نیست: '+rawMode);
+  el('onlineMode').value=mode;count=mode==='kuwaiti'?6:4;
+  stage='فراخوانی create_game_room';var roomPayload={p_game_mode:mode,p_player_count:count,p_display_name:(localStorage.getItem('doubleKoutAvatar')||'♛')+' '+(el('onlineName').value.trim()||'بازیکن')};
+  var r=await client.rpc('create_game_room',roomPayload);
   if(r.error)throw r.error;
-  roomId=r.data.room_id;roomCode=r.data.code;showRoom();subscribe();
+  onlineRoomEpoch++;lastAcceptedGameRevision=-1;lastGameRevision=-1;lastOnlineHandSignature='';roomId=r.data.room_id;roomCode=r.data.code;showRoom();if(el('onlineResumeKuwaiti'))el('onlineResumeKuwaiti').style.display='none';subscribe();
  }catch(e){say('ساخت اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
 }
 async function joinRoom(){
@@ -1150,9 +1643,10 @@ async function joinRoom(){
   say('در حال ورود به اتاق...');
   await authenticate(function(s){stage=s;});var code=el('onlineJoinCode').value.trim().toUpperCase();
   if(!/^[A-F0-9]{6}$/.test(code))throw new Error('کد اتاق باید شش حرف یا عدد باشد.');
-  stage='فراخوانی join_game_room';var preferredSeat=Number(el('onlinePreferredTeam').value||1);var r=await client.rpc('join_game_room',{p_code:code,p_display_name:el('onlineName').value.trim()||'بازیکن',p_preferred_seat:preferredSeat});
+  stage='فراخوانی join_game_room';var preferredSeat=Number(el('onlinePreferredTeam').value||1);var displayName=(localStorage.getItem('doubleKoutAvatar')||'♛')+' '+(el('onlineName').value.trim()||'بازیکن');var rawMode=String(el('onlineMode').value||'double-kout').trim().toLowerCase();var modeMap={'double-kout':'double-kout','double_kout':'double-kout','doublekout':'double-kout','standard-hokm':'standard-hokm','standard_hokm':'standard-hokm','hokm':'standard-hokm','kuwaiti':'kuwaiti','kuwaiti-kout':'kuwaiti','kuwaiti_kout':'kuwaiti'};var selectedMode=modeMap[rawMode];if(!selectedMode)throw new Error('نوع بازی انتخاب‌شده معتبر نیست: '+rawMode);el('onlineMode').value=selectedMode;var r=selectedMode==='kuwaiti'?await client.rpc('join_game_room',{p_code:code,p_display_name:displayName}):await client.rpc('join_game_room',{p_code:code,p_display_name:displayName,p_preferred_seat:preferredSeat});
   if(r.error)throw r.error;
-  roomId=r.data.room_id;roomCode=r.data.code;mode=r.data.game_mode;count=Number(r.data.player_count);showRoom();say('وارد اتاق شدی؛ منتظر تصمیم میزبان بمان.');await refreshRoster();subscribe();
+  if(selectedMode==='kuwaiti'&&r.data.game_mode!=='kuwaiti'){await client.rpc('leave_game_room',{p_room_id:r.data.room_id});throw new Error('این کد متعلق به اتاق چهار‌نفره است؛ کد اتاق کوت کویتی شش‌نفره را وارد کن.');}
+  onlineRoomEpoch++;lastAcceptedGameRevision=-1;lastGameRevision=-1;lastOnlineHandSignature='';roomId=r.data.room_id;roomCode=r.data.code;mode=r.data.game_mode;count=Number(r.data.player_count);showRoom();if(el('onlineResumeKuwaiti'))el('onlineResumeKuwaiti').style.display='none';say('وارد اتاق شدی؛ منتظر تصمیم میزبان بمان.');await refreshRoster();subscribe();
  }catch(e){say('ورود به اتاق انجام نشد\nمرحله: '+stage+'\nخطا: '+(e.message||String(e))+'\nنوع: '+(e.name||'نامشخص')+' | کد: '+(e.code||'-')+'\nجزئیات: '+(e.details||e.hint||'-'));}
 }
 async function toggleReady(){
@@ -1167,6 +1661,67 @@ async function toggleReady(){
  }catch(e){say('تغییر وضعیت آمادگی انجام نشد: '+(e.message||e));}
  finally{if(el('onlineReady'))el('onlineReady').disabled=false;}
 }
+async function ensureKuwaitiUiListener(){
+ if(window.__doubleKoutKuwaitiOnlineListenerReady)return;
+ await new Promise((resolve,reject)=>{
+  const script=document.createElement('script');
+  script.src='./kuwaiti-six-player-ui.js?v=0.8.26-20261120-premium-contract-modal-offline-ready';
+  script.onload=()=>window.__doubleKoutKuwaitiOnlineListenerReady?resolve():reject(new Error('فایل رابط دریافت شد اما شنونده شروع آنلاین ثبت نشد.'));
+  script.onerror=()=>reject(new Error('دریافت فایل رابط شش‌نفره ناموفق بود؛ اتصال یا مسیر فایل را بررسی کن.'));
+  document.head.appendChild(script);
+ });
+}
+async function ensureKuwaitiUiReady(){
+ await ensureKuwaitiUiListener();
+ if(window.__doubleKoutKuwaitiUiReady&&document.getElementById('kuwaitiGame'))return true;
+ var ready=window.__doubleKoutKuwaitiUiReadyPromise;
+ if(!ready)throw new Error('آماده‌سازی رابط میز شش‌نفره آغاز نشده است.');
+ var timer;
+ try{
+  await Promise.race([ready,new Promise(function(_,reject){timer=setTimeout(function(){reject(new Error('بارگذاری موتور یا ساخت میز شش‌نفره بیش از ۱۵ ثانیه طول کشید. صفحه را تازه‌سازی کن.'));},15000);})]);
+ }finally{if(timer)clearTimeout(timer);}
+ if(!window.__doubleKoutKuwaitiUiReady||!document.getElementById('kuwaitiGame'))throw new Error('موتور بازی آماده شد اما اجزای میز ساخته نشدند.');
+ return true;
+}
+async function startKuwaitiOnlineGame(fillAI){
+ if(kuwaitiStartInFlight)return;
+ if(!roomId||mode!=='kuwaiti')return;
+ kuwaitiStartInFlight=true;
+ try{
+  el('onlineStart').disabled=true;
+  say(fillAI?'پایان انتظار؛ صندلی‌های خالی با هوش مصنوعی تکمیل می‌شوند و کارت‌ها پخش می‌شوند...':'در حال پخش ۵۴ کارت و آماده‌سازی مزایده شش‌نفره...');
+  var matchLimit=Number(document.getElementById('kMatchLimit')&&document.getElementById('kMatchLimit').value||54);
+  var r=await client.rpc('kuwaiti_online_start_with_ai',{p_room_id:roomId,p_match_limit:matchLimit,p_fill_ai:!!fillAI});
+  if(r.error&&/room_not_waiting/.test(String(r.error.message||r.error.code||r.error))){
+   var recovered=await client.rpc('kuwaiti_online_snapshot',{p_room_id:roomId});
+   if(recovered.error||!recovered.data||recovered.data.status!=='playing'||!recovered.data.state||recovered.data.state.engine!=='kuwaiti-six-player-v1')throw r.error;
+   r={data:{room_id:roomId,status:'playing',state:recovered.data.state,revision:recovered.data.revision,phase:recovered.data.state.phase}};
+  }else if(r.error)throw r.error;
+  el('onlineGame').style.display='none';el('onlineLobbyDecision').style.display='none';el('onlineStart').style.display='none';if(el('onlineResumeKuwaiti'))el('onlineResumeKuwaiti').style.display='block';
+  var bots=Array.isArray(r.data&&r.data.state&&r.data.state.aiSeats)?r.data.state.aiSeats.length:Math.max(0,6-onlineRosterRows.length);
+  say('کوت کویتی آنلاین آغاز شد؛ '+bots+' صندلی با هوش مصنوعی و '+(6-bots)+' بازیکن انسانی. مزایده از دارنده ۲ خاج شروع می‌شود.');
+  // Refresh the roster after the server start so the attaching client always has its authoritative seat.
+  await refreshRoster();
+  var mine=onlineRosterRows.find(function(x){return me&&x.user_id===me.id;});
+  if(!mine||!Number.isInteger(Number(mine.seat))||Number(mine.seat)<0)throw new Error('صندلی شما پس از شروع اتاق از فهرست بازیکنان دریافت نشد؛ اتاق باز است، دوباره تلاش کن.');
+  myOnlineSeat=Number(mine.seat);myOnlineIsHost=!!mine.is_host;
+  var info={roomId:roomId,code:roomCode,mode:mode,count:count,seat:myOnlineSeat,isHost:myOnlineIsHost,userId:me&&me.id,roster:onlineRosterRows};
+  // The six-player view is switched synchronously by its event listener before this overlay closes.
+  await ensureKuwaitiUiReady();
+  window.__doubleKoutKuwaitiAttachPromise=null;
+  window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-online-started',{detail:info}));
+  if(!window.__doubleKoutKuwaitiAttachPromise)throw new Error('رابط میز شش‌نفره بارگذاری نشده است؛ فایل kuwaiti-six-player-ui.js اجرا نشده.');
+  await window.__doubleKoutKuwaitiAttachPromise;
+  if(!document.getElementById('kuwaitiGame')||document.getElementById('kuwaitiGame').classList.contains('hidden'))throw new Error('وضعیت آنلاین دریافت شد اما صفحه میز شش‌نفره فعال نشد.');
+  close();
+ }catch(e){
+  say('شروع کوت کویتی آنلاین انجام نشد: '+(e.message||e));
+ }finally{
+  kuwaitiStartInFlight=false;
+  if(el('onlineStart')&&el('onlineOverlay')&&el('onlineOverlay').classList.contains('open'))el('onlineStart').disabled=false;
+ }
+}
+
 async function startOnlineGame(choice){
  try{
   if(!roomId||mode==='kuwaiti')return;
@@ -1255,9 +1810,9 @@ function renderOnlineTurnClock(){
  if(left===0)lastTurnBeep=0;
 }
 if(!onlineTurnTimerHandle)onlineTurnTimerHandle=setInterval(renderOnlineTurnClock,200);
-function onlineLiveSequenceScores(winners){
+function onlineLiveSequenceScores(winners,challengeTeam){
  var scores={A:0,B:0},start=0,searchFrom=3,side=function(seat){return Number(seat)%2===0?'A':'B';};
- while(start<winners.length){var close=-1;for(var i=searchFrom;i<winners.length;i++){if(Number(winners[i])===Number(winners[i-1])){close=i;break;}}
+ while(start<winners.length){var close=-1;for(var i=searchFrom;i<winners.length;i++){if(Number(winners[i])===Number(winners[i-1])&&(!challengeTeam||side(winners[i])!==challengeTeam)){close=i;break;}}
  if(close>=0){scores[side(winners[close])]+=close-start+1;start=close+1;searchFrom=start+1;}else{if(winners.length===13)scores[side(winners[12])]+=winners.length-start;break;}}
  return scores;
 }
@@ -1333,8 +1888,10 @@ function cardText(c){
  return rank+suit;
 }
 async function refreshOnlineGame(startPayload){
- if(!roomId||!client)return;
+ if(!roomId||!client||mode==='kuwaiti')return;
  if(gameBusy){gameRefreshQueued=true;if(startPayload)gameStartSnapshot=startPayload;return;}
+ var requestRoomId=roomId,requestRoomEpoch=onlineRoomEpoch;
+ var requestStillCurrent=function(){return roomId===requestRoomId&&onlineRoomEpoch===requestRoomEpoch;};
  gameBusy=true;
  var syncStage='خواندن وضعیت بازی';
  try{
@@ -1342,14 +1899,21 @@ async function refreshOnlineGame(startPayload){
   if(startPayload&&startPayload.status==='playing')q={data:{status:startPayload.status,public_state:startPayload.state,revision:startPayload.revision},error:null};
   else{syncStage='دریافت وضعیت اتاق از سرور';q=await client.rpc('get_room_snapshot',{p_room_id:roomId});}
   if(q.error)throw q.error;
+  if(!requestStillCurrent())return;
+  var revision=Number(q.data.revision||0);
+  if(q.data.status==='playing'||q.data.status==='finished'){
+   if(!Number.isFinite(revision)||revision<0)throw new Error('شماره نسخه وضعیت بازی معتبر نیست.');
+   if(revision<lastAcceptedGameRevision)return;
+  }
   if(q.data.status!=='playing'&&q.data.status!=='finished'){showRoom();el('onlineGame').style.display='none';say('اتاق باز است؛ منتظر شروع میزبان هستیم · وضعیت سرور: '+q.data.status);return;}
   showRoom();
-  var state=q.data.public_state||{},revision=Number(q.data.revision||0);
+  var state=q.data.public_state||{};
   // Always re-read the private hand, even when the public room revision is unchanged.
   // A hand update can arrive before/after its room notification; compare its signature
   // so cards already played never remain as tappable stale cards on screen.
   syncStage='دریافت کارت‌های خصوصی بازیکن';var mine=await client.from('room_game_hands').select('seat,cards').eq('room_id',roomId).eq('owner_user_id',me.id).maybeSingle();
   if(mine.error)throw mine.error;
+  if(!requestStillCurrent())return;
   if(mine.data&&Number.isInteger(Number(mine.data.seat)))myOnlineSeat=Number(mine.data.seat);
   var hand=mine.data&&mine.data.cards||[];
   // iOS PWA can briefly return a stale private-hand snapshot after a successful RPC.
@@ -1364,7 +1928,8 @@ async function refreshOnlineGame(startPayload){
    // Otherwise a timeout checked once before its deadline is never checked again.
    if(q.data.status==='playing'&&(q.data.public_state||{}).phase==='playing'&&!q.data.public_state.trickPendingUntil&&!aiBusy){
     var sameState=q.data.public_state||{},sameTurn=Number(sameState.turn||0);
-    syncStage='بررسی نقش میزبان برای ادامه نوبت';var sameHost=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
+    syncStage='بررسی نقش میزبان برای ادامه نوبت';var sameHost=await client.from('room_members').select('is_host').eq('room_id',requestRoomId).eq('user_id',me.id).maybeSingle();
+    if(!requestStillCurrent())return;
     if(sameHost.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+sameHost.error.message);
     if(!sameHost.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
     if(sameHost.data.is_host){
@@ -1394,7 +1959,7 @@ async function refreshOnlineGame(startPayload){
    onlineTrickResolveTimer=setTimeout(function(){
     onlineTrickResolveScheduled=false;onlineTrickResolveTimer=null;
     refreshOnlineGame();
-   },3100);
+   },950);
   }else if(!trickPending&&onlineTrickResolveTimer){
    clearTimeout(onlineTrickResolveTimer);onlineTrickResolveTimer=null;onlineTrickResolveScheduled=false;
   }
@@ -1411,12 +1976,25 @@ async function refreshOnlineGame(startPayload){
   }else{
    onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;
   }
-  var status=trumpPending?'پنج کارت اول پخش شده؛ حاکم باید قرارداد را انتخاب کند.':(trickPending?'چهار کارت روی میز است؛ تا پایان فرصت نمایش، دست بعدی شروع نمی‌شود.':(decisionPending?'همه بازیکنان انسانی، میزبان و مهمان، فرصت مستقل انتخاب چلنج دارند':'نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳'));
+  var status=trumpPending?'پنج کارت اول پخش شده؛ حاکم باید قرارداد را انتخاب کند.':(trickPending?'کارت چهارم نمایش داده می‌شود؛ برندهٔ دست در حال مشخص‌شدن است.':(decisionPending?'همه بازیکنان انسانی، میزبان و مهمان، فرصت مستقل انتخاب چلنج دارند':''));
   if(state.challengeTeam){var myTeam=(myOnlineSeat%2===0?'A':'B');status+=(state.challengeTeam===myTeam?' · بازیکن هم‌تیمی وارد چلنج شد':' · حریف علیه شما اعلام چلنج کرد');}
   if(finished)status=result?(result.status==='success'?'چلنج با موفقیت انجام شد':result.status==='failed-opponent-sequence'?'چلنج با توالی حریف شکست خورد':'چلنج در دست آخر ناموفق شد'):'بازی تمام شد · نتیجه '+(state.scoreA||0)+' به '+(state.scoreB||0);
   el('onlineGameStatus').textContent=status;
   var rematchPanel=el('onlineRematchPanel');
   rematchPanel.style.display=finished?'block':'none';
+  var finalResultNode=el('onlineFinalResult');
+  if(finalResultNode){
+   if(finished){
+    var myFinalTeam=(myOnlineSeat%2===0?'A':'B');
+    var finalScoreA=Number(state.scoreA||0),finalScoreB=Number(state.scoreB||0);
+    var myFinalWon=myFinalTeam==='A'?finalScoreA:finalScoreB;
+    var myFinalLost=myFinalTeam==='A'?finalScoreB:finalScoreA;
+    var finalOutcome=myFinalWon>myFinalLost?'پیروزی تیم شما':(myFinalWon<myFinalLost?'شکست تیم شما':'بازی مساوی شد');
+    var finalNumber=function(n){return String(n).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];});};
+    var challengeOutcome=result?(result.status==='success'?'چلنج موفق شد':'چلنج شکست خورد'):'';
+    finalResultNode.textContent=finalOutcome+'\\nدست‌های برده: '+finalNumber(myFinalWon)+'  |  دست‌های باخته: '+finalNumber(myFinalLost)+(challengeOutcome?'\\n'+challengeOutcome:'');
+   }else finalResultNode.textContent='';
+  }
   el('onlineRematchText').textContent=myOnlineIsHost
    ?'بازی بعدی پس از پایان شمارش معکوس خودکار آغاز می‌شود.'
    :'منتظر میزبان برای آغاز بازی بعدی بمانید.';
@@ -1427,22 +2005,40 @@ async function refreshOnlineGame(startPayload){
   renderOnlineTurnClock();
   var decision=el('onlineDecision');decision.style.display=decisionPending?'block':'none';var trumpPanel=el('onlineTrumpSelection');trumpPanel.style.display=trumpPending?'block':'none';
   var handTitle=el('onlineHandTitle'),handArea=el('onlineHand'),onlineTable=el('onlineTable');
-  if(decisionPending||trumpPending){
-   decision.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
-   handTitle.classList.add('challenge-hand-title');handArea.classList.add('challenge-hand');
+  var trumpPickerSeat=Number(state.trumpPickerSeat),trumpPickerMeta=players[String(trumpPickerSeat)]||{};
+  var canViewPrivateHand=decisionPending||(trumpPending&&myOnlineSeat===trumpPickerSeat&&trumpPickerMeta.human!==false);
+  if(canViewPrivateHand){
+   // Only the human who is choosing trump may see the five-card private hand.
+   document.body.appendChild(handTitle);handTitle.style.setProperty('display','none','important');handTitle.style.setProperty('visibility','hidden','important');document.body.appendChild(handArea);
+   var portalStyle=document.getElementById('online-private-hand-portal-style');
+   if(!portalStyle){portalStyle=document.createElement('style');portalStyle.id='online-private-hand-portal-style';portalStyle.textContent='#onlineHand.challenge-hand{display:flex!important;justify-content:center!important;align-items:flex-end!important;gap:0!important;padding:12px 8px 20px!important;background:linear-gradient(180deg,#123d30f7,#071e18f7)!important;border:1px solid #f0d18b!important;border-radius:14px!important;box-shadow:0 8px 24px #000c!important}#onlineHand.challenge-hand button{display:block!important;visibility:visible!important;opacity:1!important;flex:0 0 46px!important;width:46px!important;height:74px!important;padding:0!important;background:transparent!important}#onlineHand.challenge-hand button .card{visibility:visible!important;opacity:1!important;filter:none!important}#onlineHandTitle.challenge-hand-title{margin:0!important;padding:5px 10px!important;text-align:center!important;border:1px solid #8e713e!important;border-radius:10px 10px 0 0!important;background:#09271f!important;color:#ffe3a0!important}';document.head.appendChild(portalStyle);}
+   handTitle.classList.add('challenge-hand-title');handArea.classList.add('challenge-hand');handArea.classList.toggle('trump-selection-hand',trumpPending);handArea.classList.toggle('challenge-selection-hand',decisionPending);
+   Object.assign(handArea.style,{position:'fixed',left:'50%',bottom:'calc(7px + env(safe-area-inset-bottom))',transform:'translateX(-50%)',width:'min(96vw,850px)',maxWidth:'96vw',minHeight:'140px',maxHeight:'154px',overflowX:'auto',overflowY:'visible',zIndex:'100020',display:'flex',visibility:'visible',opacity:'1',pointerEvents:'auto'});
+   Object.assign(handTitle.style,{position:'fixed',left:'50%',bottom:'calc(151px + env(safe-area-inset-bottom))',transform:'translateX(-50%)',width:'min(96vw,850px)',zIndex:'100021',display:'block',visibility:'visible',opacity:'1'});
   }else{
    onlineTable.insertAdjacentElement('afterend',handTitle);handTitle.insertAdjacentElement('afterend',handArea);
-   handTitle.classList.remove('challenge-hand-title');handArea.classList.remove('challenge-hand');
+   handTitle.classList.remove('challenge-hand-title');handArea.classList.remove('challenge-hand');handArea.classList.remove('trump-selection-hand','challenge-selection-hand');
+   handArea.removeAttribute('style');handTitle.removeAttribute('style');
+   if(trumpPending){handTitle.style.display='none';handArea.style.display='none';}
   }
   if(trumpPending){
-   var pickerSeat=Number(state.trumpPickerSeat),picker=players[String(pickerSeat)]||{},canPick=myOnlineSeat===pickerSeat&&picker.human!==false;
+   var pickerSeat=trumpPickerSeat,picker=trumpPickerMeta,canPick=myOnlineSeat===pickerSeat&&picker.human!==false;
    el('onlineTrumpHint').textContent=canPick?'پنج کارت خودت را بررسی کن و قرارداد را انتخاب کن؛ پس از تأیید، هشت کارت باقی‌مانده برای همه پخش می‌شود.':(picker.human===false?'حاکم هوش مصنوعی در حال بررسی پنج کارت و انتخاب قرارداد است.':'منتظر انتخاب قرارداد توسط '+(picker.name||'حاکم')+' هستیم.');
-   el('onlineTrumpContract').style.display=canPick?'block':'none';el('onlineTrumpConfirm').style.display=canPick?'block':'none';el('onlineTrumpConfirm').disabled=!canPick;
+   el('onlineTrumpContract').style.setProperty('display','none','important');el('onlineTrumpConfirm').style.display=canPick?'block':'none';el('onlineTrumpConfirm').disabled=!canPick;
   }else{el('onlineTrumpContract').style.display='none';el('onlineTrumpConfirm').style.display='none';}
+  var suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'};
   if(decisionPending){
    var remaining=Math.max(0,Math.ceil(myDeadline-Date.now()/1000));
    var alreadyPassed=(state.challengePassed||[]).includes(myOnlineSeat);
    el('onlineDecisionHint').textContent=alreadyPassed?'انتخاب شما ثبت شد؛ منتظر تصمیم دیگر بازیکنان هستیم.':isMyChallengeTurn?'همه بازیکنان هم‌زمان فرصت دارند؛ اگر دست مناسبی دارید چلنج کنید یا عبور کنید.':'در حال انتظار برای تکمیل انتخاب بازیکنان...';
+   var challengeTrumpInfo=el('onlineChallengeTrumpInfo'),challengeContract=state.contract||state.selectedContract||null;
+   var contractSuit=({'hokm_spades':'S','hokm_hearts':'H','hokm_diamonds':'D','hokm_clubs':'C'})[challengeContract]||null;
+   var challengeTrump=state.trump||state.trumpSuit||contractSuit;
+   var challengeSuitGlyph=challengeTrump?(suitGlyph[challengeTrump]||({'S':'♠','H':'♥','D':'♦','C':'♣'})[challengeTrump]||challengeTrump):'';
+   var challengeSuitName=({'S':'پیک','H':'دل','D':'خشت','C':'گشنیز','♠':'پیک','♥':'دل','♦':'خشت','♣':'گشنیز'})[challengeTrump]||'';
+   var challengeContractName=({'hokm_spades':'حکم پیک','hokm_hearts':'حکم دل','hokm_diamonds':'حکم خشت','hokm_clubs':'حکم گشنیز','naras':'نرس','tak_naras':'تک نرس','saras':'سرس','partner_middle':'برگ وسط یار'})[challengeContract]||challengeContract||'';
+   challengeTrumpInfo.textContent=challengeSuitGlyph?'حکم اعلامی: '+challengeSuitGlyph+' '+challengeSuitName:('قرارداد اعلامی: '+(challengeContractName||'هنوز اعلام نشده'));
+   challengeTrumpInfo.style.display='block';
    el('onlineChallengeClock').textContent=alreadyPassed?'ثبت شد':remaining+' ثانیه';
    el('onlineChooseNormal').style.display=isMyChallengeTurn?'block':'none';
    el('onlineChooseChallenge').style.display=isMyChallengeTurn?'block':'none';
@@ -1452,29 +2048,62 @@ async function refreshOnlineGame(startPayload){
    el('onlineChallengeExtend').disabled=!isMyChallengeTurn||remaining<=0||(state.challengeExtendedSeats||[]).includes(myOnlineSeat);
    if(isMyChallengeTurn&&remaining<=0)expireOnlineChallengeTurn(myOnlineSeat);
   }
-  var suitGlyph={S:'♠',H:'♥',D:'♦',C:'♣'},rankGlyph={A:'A',K:'K',Q:'Q',J:'J'};
+  var rankGlyph={A:'A',K:'K',Q:'Q',J:'J'};
+  var avatarChoices=['♛','⚔️','🛡️','🏆','🎖️','💎','🔱','🧿','🕶️','🎩','🥇','♠️','♥️','♦️','♣️','⭐'];
+  var splitAvatarName=function(value){var raw=String(value||'بازیکن');var av=avatarChoices.find(function(x){return raw.indexOf(x+' ')===0;});return {avatar:av||'👤',name:av?raw.slice(av.length+1):raw};};
   var visualCard=function(c){return {r:rankGlyph[c.rank||c.r]||(c.rank||c.r),s:suitGlyph[c.suit||c.s]||(c.suit||c.s),id:c.id};};
+  var seatCounterScores=mode==='double-kout'?onlineLiveSequenceScores(Array.isArray(state.trickWinners)?state.trickWinners:[],state.challengeTeam||null):null;
   var seatDefs=[{key:'South',offset:0},{key:'East',offset:1},{key:'North',offset:2},{key:'West',offset:3}];
   var playBySeat={};(state.plays||[]).forEach(function(p){playBySeat[Number(p.seat)]=p;});
   var completedTricks=Array.isArray(state.trickWinners)?state.trickWinners.length:Math.max(0,(Number(state.trickNo)||1)-1);
   seatDefs.forEach(function(def){
    var seat=(myOnlineSeat+def.offset)%4,player=players[String(seat)]||{},left=trumpPending?5:Math.max(0,13-completedTricks-((playBySeat[seat])?1:0));
-   var visibleCount=def.offset===0?hand.length:left;
+   var visibleCount=def.offset===0?(trumpPending?Math.min(hand.length,5):hand.length):left;
    var scoreRow=onlineRosterRows.find(function(x){return Number(x.seat)===seat;});
-   el('onlineName'+def.key).textContent=(def.offset===0?'شما · ':'')+(player.name||('بازیکن '+(seat+1)))+(scoreRow?' · '+Number(scoreRow.points||0)+' امتیاز':'');
+   var identity=splitAvatarName((scoreRow&&scoreRow.display_name)||player.name||('بازیکن '+(seat+1)));var nameNode=el('onlineName'+def.key);nameNode.textContent='';var avatarNode=document.createElement('span');avatarNode.className='online-avatar-mini';avatarNode.textContent=identity.avatar;var nameText=document.createElement('span');nameText.textContent=(def.offset===0?'شما · ':'')+identity.name+(scoreRow?' · '+Number(scoreRow.points||0)+' امتیاز':'');nameNode.appendChild(nameText);nameNode.appendChild(avatarNode);
    el('onlineCount'+def.key).textContent=visibleCount+' کارت';
+   var trickBadge=el('onlineTricks'+def.key);
+   if(!trickBadge){trickBadge=document.createElement('div');trickBadge.id='onlineTricks'+def.key;trickBadge.className='online-seat-tricks';el('onlineCount'+def.key).insertAdjacentElement('afterend',trickBadge);}
+   var seatTeam=seat%2;
+   var seatWonTricks=mode==='double-kout'?(seatTeam===0?seatCounterScores.A:seatCounterScores.B):(state.trickWinners||[]).filter(function(winnerSeat){return Number(winnerSeat)%2===seatTeam;}).length;
+   trickBadge.innerHTML='<span class="online-seat-tricks-number">'+String(seatWonTricks).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];})+'</span><span class="online-seat-tricks-label"> دست</span>';
    el('onlineSeat'+def.key).classList.toggle('active',!decisionPending&&!finished&&!trickPending&&turn===seat);
    var slot=el('onlinePlayed'+def.key);slot.innerHTML='';
-   if(def.offset!==0&&left>0){
+   if(def.offset!==0&&left>0&&!trumpPending){
     var fan=document.createElement('div');fan.className='opponent-fan';
     for(var k=0;k<Math.min(left,13);k++){var back=document.createElement('div');back.className='card back';back.style.zIndex=String(k+1);fan.appendChild(back);}
     slot.appendChild(fan);
    }
   });
+  // Keep player seats inside the table so they scroll with it and remain below dialogs.
+  var onlineTableNode=el('onlineTable');
+  ['North','West','East','South'].forEach(function(side){
+   var seatNode=el('onlineSeat'+side);
+   if(seatNode&&onlineTableNode&&seatNode.parentElement!==onlineTableNode)onlineTableNode.appendChild(seatNode);
+  });
   el('onlineTrick').innerHTML='';
   (state.plays||[]).forEach(function(p,i){var played=cardEl(visualCard(p.card),true);played.classList.add('table-played');played.style.setProperty('--play-index',i);el('onlineTrick').appendChild(played);});
-  var onlinePile=el('onlineCenterPile');if(onlinePile){onlinePile.innerHTML='';var clearing=Number(state.sequenceClearUntil||0)>Date.now()/1000;onlinePile.classList.toggle('clearing',clearing);var pile=clearing?(state.sequenceClearCards||[]):(state.groupCards||[]);pile.forEach(function(x,i){var c=cardEl(visualCard(x.card||x),true);c.classList.add('pile-card');c.style.setProperty('--px',(((i%5)-2)*3)+'px');c.style.setProperty('--py',(((i%7)-3)*2)+'px');c.style.setProperty('--pr',((((i*17)%13)-6)*1.25)+'deg');c.style.zIndex=String(i+1);onlinePile.appendChild(c);});if(clearing){var remain=Math.max(50,Number(state.sequenceClearUntil)*1000-Date.now());setTimeout(function(){if(onlinePile&&Number(state.sequenceClearUntil)*1000<=Date.now()){onlinePile.innerHTML='';onlinePile.classList.remove('clearing');}},remain+30);}}
-  el('onlineTrickMsg').textContent=trumpPending?'پنج کارت اول پخش شد؛ منتظر انتخاب قرارداد':(trickPending?'همه کارت‌ها روی میز؛ فرصت دیدن دست: '+Math.max(0,Math.ceil(onlineTrickDeadline-Date.now()/1000))+' ثانیه':(decisionPending?'در حال انتخاب چلنج':('نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳')));
+  // Show the current sequence's earlier tricks as a loose, faded table
+  // background. When a sequence closes, briefly collect that group, then clear.
+  var onlinePile=el('onlineCenterPile');if(onlinePile){
+   onlinePile.replaceChildren();
+   var clearingPile=Number(state.sequenceClearUntil||0)>Date.now()/1000;
+   var pileCards=clearingPile?(state.sequenceClearCards||[]):(state.groupCards||[]);
+   onlinePile.classList.toggle('clearing',clearingPile);
+   onlinePile.style.opacity='1';
+   onlinePile.style.filter='none';
+   pileCards.forEach(function(x,i){
+    var pc=cardEl(visualCard(x.card||x),true);pc.classList.add('pile-card');
+    var angle=i*2.399963229728653,radius=12+Math.sqrt(i+1)*8;
+    pc.style.setProperty('--px',(Math.cos(angle)*radius*1.45)+'px');
+    pc.style.setProperty('--py',(Math.sin(angle)*radius*.95)+'px');
+    pc.style.setProperty('--pr',(Math.sin(i*1.73)*31+(i%3-1)*7)+'deg');
+    pc.style.zIndex=String(i+1);pc.style.opacity='0.98';
+    onlinePile.appendChild(pc);
+   });
+  }
+  el('onlineTrickMsg').textContent=trumpPending?'پنج کارت اول پخش شد؛ منتظر انتخاب قرارداد':(trickPending?'کارت چهارم روی میز؛ لحظه‌ای برای دیدن نتیجه':(decisionPending?'در حال انتخاب چلنج':('نوبت '+names[turn]+' · دست '+(state.trickNo||1)+' از ۱۳')));
+  el('onlineTrickMsg').style.setProperty('display','none','important');
   el('onlineTrumpBig').textContent=state.trump?(suitGlyph[state.trump]||'♠'):(trumpPending?'؟':'♠');
   var teamAName=[players['0']&&players['0'].name,players['2']&&players['2'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۱ و ۳';
   var teamBName=[players['1']&&players['1'].name,players['3']&&players['3'].name].filter(Boolean).join(' و ')||'بازیکنان صندلی‌های ۲ و ۴';
@@ -1492,23 +2121,44 @@ async function refreshOnlineGame(startPayload){
    lastOnlineVoiceTrickCount=completedWinners.length;lastOnlineFourPlays=null;
   }
   if((state.plays||[]).length===4)lastOnlineFourPlays=(state.plays||[]).map(function(p){return {seat:Number(p.seat),card:p.card};});
-  var liveTeamScores=(mode==='double-kout'&&!state.challengeTeam)?onlineLiveSequenceScores(completedWinners):{
+  var liveTeamScores=mode==='double-kout'?onlineLiveSequenceScores(completedWinners,state.challengeTeam||null):{
    A:completedWinners.filter(function(seat){return Number(seat)%2===0;}).length,
    B:completedWinners.filter(function(seat){return Number(seat)%2===1;}).length
   };
-  var rawTeamWins={A:completedWinners.filter(function(seat){return Number(seat)%2===0;}).length,B:completedWinners.filter(function(seat){return Number(seat)%2===1;}).length};
-  var liveScoreText=(mode==='double-kout'&&!state.challengeTeam?'امتیاز توالی تکمیل‌شده':'برد دست‌ها')+' · تیم '+teamAName+': '+faScore(liveTeamScores.A)+' · تیم '+teamBName+': '+faScore(liveTeamScores.B)+'  |  برد خام دست‌ها · تیم '+teamAName+': '+faScore(rawTeamWins.A)+' · تیم '+teamBName+': '+faScore(rawTeamWins.B);
+  var completedGroupHands=liveTeamScores.A+liveTeamScores.B;
+  var liveScoreText=(mode==='double-kout'?'دست‌های گروه‌های تکمیل‌شده':'دست‌های انجام‌شده')+' · تیم '+teamAName+': '+faScore(liveTeamScores.A)+' · تیم '+teamBName+': '+faScore(liveTeamScores.B)+'  |  مجموع دست‌های ثبت‌شده: '+faScore(completedGroupHands);
   el('onlineLiveScoreTop').textContent=liveScoreText;
   el('onlineScore').textContent=liveScoreText;
-  el('onlineHand').innerHTML='';
-  el('onlineHandTitle').textContent='کارت‌های شما · '+hand.length+' کارت';
+  var onlineHandEl=el('onlineHand');
+  onlineHandEl.classList.add('online-hand-isolated');
+  onlineHandEl.innerHTML='';
+  onlineHandEl.style.height='124px';
+  var displayHand=(trumpPending?hand.slice(0,5):(decisionPending?hand.slice(0,13):hand.slice())).sort(function(a,b){var order={'♠':0,'♥':1,'♦':2,'♣':3},sa=order[normalizedSuit(a)]??9,sb=order[normalizedSuit(b)]??9;return sa-sb||normalizedRank(a)-normalizedRank(b);});
+  el('onlineHandTitle').textContent='کارت‌های شما';el('onlineHandTitle').style.setProperty('display','none','important');
   var leadOnlineCard=(state.plays||[])[0]&&((state.plays||[])[0].card||{}),leadOnlineSuit=leadOnlineCard&&(leadOnlineCard.suit||leadOnlineCard.s);
    leadOnlineSuit=({'S':'♠','H':'♥','D':'♦','C':'♣','♠':'♠','♥':'♥','♦':'♦','♣':'♣'})[leadOnlineSuit]||'';
    var followsLead=!!leadOnlineSuit&&hand.some(function(card){return normalizedSuit(card)===leadOnlineSuit;}),hasForcedSuit=!!leadOnlineSuit&&followsLead&&hand.some(function(card){return normalizedSuit(card)!==leadOnlineSuit;});
    var myPlayTurn=turn===myOnlineSeat&&!finished&&!decisionPending&&!trumpPending&&!trickPending;
-   hand.forEach(function(c,i){
-    var b=document.createElement('button'),fanOffset=i-(hand.length-1)/2;b.type='button';b.style.transform='rotate('+(fanOffset*4.2)+'deg) translateY('+(Math.abs(fanOffset)*1.45)+'px)';b.style.zIndex=String(i+1);
-    var legalCard=!followsLead||normalizedSuit(c)===leadOnlineSuit;b.classList.add(myPlayTurn?(hasForcedSuit?(legalCard?'online-card-legal':'online-card-illegal'):'online-card-unrestricted'):'online-card-inactive');b.appendChild(cardEl(visualCard(c)));
+   displayHand.forEach(function(c,i){
+    var b=document.createElement('button');
+    var fanOffset=i-(displayHand.length-1)/2;
+    var handWidth=onlineHandEl.clientWidth||((window.innerWidth||390)-24);
+    var fanStep=displayHand.length>1?Math.max(16,Math.min(42,(handWidth-76)/(displayHand.length-1))):0;
+    b.type='button';
+    b.style.setProperty('position','absolute','important');
+    b.style.setProperty('left','calc(50% + '+(fanOffset*fanStep)+'px)','important');
+    b.style.setProperty('bottom','16px','important');
+    b.style.setProperty('width','72px','important');
+    b.style.setProperty('height','108px','important');
+    b.style.setProperty('margin','0','important');
+    b.style.setProperty('padding','0','important');
+    b.style.setProperty('transform','translateX(-50%) rotate('+(fanOffset*3.2)+'deg)','important');
+    b.style.setProperty('transform-origin','50% 100%','important');
+    b.style.setProperty('z-index',String(1000+i),'important');
+    b.style.setProperty('--hand-index',String(i));
+    var legalCard=!followsLead||normalizedSuit(c)===leadOnlineSuit;
+    b.classList.add(myPlayTurn?(hasForcedSuit?(legalCard?'online-card-legal':'online-card-illegal'):'online-card-unrestricted'):'online-card-inactive');
+    b.appendChild(cardEl(visualCard(c)));
     b.disabled=!myPlayTurn||!legalCard;
     b.onclick=async function(){
     if(b.disabled||onlineCardBusy)return;
@@ -1525,7 +2175,7 @@ async function refreshOnlineGame(startPayload){
      // of waiting for the private-hand query to refresh.
      confirmedPlayedCardIds[String(c.id)]=true;
      b.remove();
-     el('onlineHandTitle').textContent='کارت‌های شما · '+el('onlineHand').querySelectorAll('button').length+' کارت';
+     el('onlineHandTitle').textContent='کارت‌های شما';
      lastGameRevision=-1;
      var playedState=played.data&&played.data.state;
      if((c.rank||c.r)==='A')speakPlayer('ace',myOnlineSeat);
@@ -1544,10 +2194,12 @@ async function refreshOnlineGame(startPayload){
    el('onlineHand').appendChild(b);
   });
   lastGameRevision=revision;
+  if(Number.isFinite(revision)&&revision>lastAcceptedGameRevision)lastAcceptedGameRevision=revision;
   lastOnlineHandSignature=handSignature;
   if(!finished&&myOnlineSeat===-1)myOnlineSeat=-1;
   if(!finished&&!decisionPending&&!trumpPending&&me.id&&!aiBusy){
-   syncStage='بررسی دسترسی میزبان';var hostQ=await client.from('room_members').select('is_host').eq('room_id',roomId).eq('user_id',me.id).maybeSingle();
+   syncStage='بررسی دسترسی میزبان';var hostQ=await client.from('room_members').select('is_host').eq('room_id',requestRoomId).eq('user_id',me.id).maybeSingle();
+   if(!requestStillCurrent())return;
    if(hostQ.error)throw new Error('تشخیص میزبان اتاق ناموفق بود: '+hostQ.error.message);
    if(!hostQ.data)throw new Error('عضویت این گوشی در فهرست بازیکنان اتاق پیدا نشد؛ اجرای خودکار متوقف شد.');
    if(trickPending){
@@ -1578,17 +2230,67 @@ async function refreshOnlineGame(startPayload){
 }
 async function leave(){
  var leavingRoom=roomId;
+ onlineRoomEpoch++;lastAcceptedGameRevision=-1;
  if(rosterTimer){clearInterval(rosterTimer);rosterTimer=null;}
  if(gameTimer){clearInterval(gameTimer);gameTimer=null;}
  if(leavingRoom&&client){
-  try{var left=await client.rpc('leave_game_room',{p_room_id:leavingRoom});if(left.error)throw left.error;}
+  try{var left=mode==='kuwaiti'?await client.rpc('kuwaiti_online_leave',{p_room_id:leavingRoom}):await client.rpc('leave_game_room',{p_room_id:leavingRoom});if(left.error)throw left.error;}
   catch(e){say('خروج محلی انجام شد، اما حذف عضویت از اتاق انجام نشد: '+(e.message||e));}
  }
  if(channel){await client.removeChannel(channel);channel=null;}
- roomId=null;roomCode='';myOnlineSeat=-1;myOnlineIsHost=false;lastGameRevision=-1;lastOnlineHandSignature='';confirmedPlayedCardIds=Object.create(null);onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
+ roomId=null;roomCode='';myOnlineSeat=-1;myOnlineIsHost=false;window.dispatchEvent(new CustomEvent('doublekout:kuwaiti-left'));lastGameRevision=-1;lastOnlineHandSignature='';confirmedPlayedCardIds=Object.create(null);onlineRematchDeadline=0;lastRematchBeep=-1;rematchAutoAttemptedDeadline=0;el('onlineGame').style.display='none';el('onlineRoom').style.display='none';el('onlineSetup').style.display='block';say('از اتاق خارج شدی؛ عضویت سرور هم پاک‌سازی شد (در حالت انتظار).');
 }
-window.DoubleKoutOnline={open:open,leave:leave,getSession:async function(){await initClient();var r=await client.auth.getSession();if(r.error)throw r.error;return r.data.session||null;},rpc:async function(name,args){await initClient();return client.rpc(name,args||{});},invoke:async function(name,body){await initClient();return client.functions.invoke(name,{body:body||{}});}};
+window.DoubleKoutOnline={open:open,close:close,leave:leave,getRoomInfo:function(){return roomId?{roomId:roomId,code:roomCode,mode:mode,count:count,seat:myOnlineSeat,isHost:myOnlineIsHost,userId:me&&me.id,roster:onlineRosterRows}:null;},getSession:async function(){await initClient();var r=await client.auth.getSession();if(r.error)throw r.error;return r.data.session||null;},rpc:async function(name,args){await initClient();return client.rpc(name,args||{});},invoke:async function(name,body){await initClient();return client.functions.invoke(name,{body:body||{}});}};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
 })();
 
-</script><script src="./central-progress.js"></script><script src="./central-store.js"></script><script src="./central-payments-admin.js"></script><script>if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script><script src="./lan-multiplayer.js"></script></body></html>
+</script><script src="./central-progress.js"></script><script src="./central-store.js"></script><script src="./central-payments-admin.js"></script><script>if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script><script src="./lan-multiplayer.js"></script>
+
+<style id="online-ui-final-978">
+/* 9.78: final overrides after legacy rules — stronger card distinction, number-only counters, no historical center halo. */
+#onlineTable .online-seat-tricks{font-size:0!important;min-width:38px!important;width:auto!important;padding:3px 7px!important;line-height:1!important}
+#onlineTable .online-seat-tricks-number{display:inline-block!important;font-size:17px!important;font-weight:1000!important;line-height:1.15!important;color:#ffe39a!important}
+@media(max-width:520px){#onlineTable .online-seat-tricks-number{font-size:16px!important}}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal>.card,
+body>#onlineHand.online-hand-isolated>button.online-card-legal>.card{
+ outline:3px solid #f5c64d!important;border:2px solid #fff1b5!important;
+ box-shadow:0 0 0 2px #9a6b16,0 0 12px #f4c34f99,0 7px 12px #000b!important;
+ filter:brightness(1.06) saturate(1.18)!important
+}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal,
+body>#onlineHand.online-hand-isolated>button.online-card-illegal{opacity:.62!important;filter:grayscale(.62) brightness(.82)!important}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal>.card,
+body>#onlineHand.online-hand-isolated>button.online-card-illegal>.card{outline:1px solid #827b6c!important;box-shadow:0 2px 5px #0009!important;filter:grayscale(.62) brightness(.82)!important}
+/* Keep historical trick cards visible; remove only the circular halo behind the center. */
+#centerPile,#onlineCenterPile{display:block!important;visibility:visible!important;opacity:1!important;filter:none!important}
+.table>.center,#onlineTable>.center{
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+}
+.table>.center .table-emblem,#onlineTable>.center .table-emblem{pointer-events:none!important}
+#centerPile .pile-card,#onlineCenterPile .pile-card{visibility:visible!important;opacity:1!important;filter:none!important}
+</style>
+
+
+<style id="online-ui-final-980">
+/* 9.80: compact legal-card cue, declarer contract fallback, and Persian trick label. */
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-legal>.card,
+body>#onlineHand.online-hand-isolated>button.online-card-legal>.card{
+ transform:translateY(-7px)!important;
+ outline:2px solid #e2c783!important;border:1px solid #fff0c6!important;
+ box-shadow:0 3px 7px #0008!important;filter:none!important;
+}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal>.card,
+body>#onlineHand.online-hand-isolated>button.online-card-illegal>.card{
+ transform:none!important;outline:1px solid #77705f!important;
+ box-shadow:0 3px 6px #0008!important;filter:none!important;
+}
+#onlinePanel #onlineHand.online-hand-isolated>button.online-card-illegal,
+body>#onlineHand.online-hand-isolated>button.online-card-illegal{opacity:.88!important;filter:none!important}
+#onlineTable .online-seat-tricks-label{display:inline-block!important;font-size:11px!important;font-weight:800!important;color:#f3e3bd!important;margin-inline-start:2px!important}
+#onlineTable .online-seat-tricks{font-size:12px!important;min-width:48px!important}
+#onlineTable .online-seat-tricks-number{font-size:16px!important}
+@media(max-width:520px){#onlineTable .online-seat-tricks-label{font-size:10px!important}#onlineTable .online-seat-tricks-number{font-size:15px!important}}
+</style>
+<script src="./shadows-theme.js?v=1"></script>
+</body></html>
