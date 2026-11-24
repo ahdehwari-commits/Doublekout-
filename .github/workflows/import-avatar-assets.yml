@@ -6,6 +6,7 @@ on:
       - feature/shadows-cell-theme
     paths:
       - "assets/import/DoubleKout_Avatars_for_GitHub.zip"
+      - ".github/workflows/import-avatar-assets.yml"
   workflow_dispatch:
 
 permissions:
