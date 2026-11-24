@@ -58,12 +58,14 @@ function cardPower(card,contract,{trickNo=1,isLead=false,isMalzoom=false,trumpAn
 // the second player's normal card establishes the lead suit.
 function effectiveLeadSuit(plays,{trickNo=1}={}){
  if(!Array.isArray(plays)||plays.length===0)return null;
- if(trickNo===9&&isJoker(plays[0].card)){
-   if(plays.length<2)return null;
-   const second=plays[1].card;
-   return second&&second.kind==='normal'?second.suit:null;
- }
  const first=plays[0].card;
+ if(isJoker(first)){
+   // A joker is not a suit lead. Ordinarily this matters on trick nine;
+   // if a player has no ordinary card left and must lead a joker earlier,
+   // the first ordinary card played by the next seat establishes the suit.
+   const firstNormal=plays.find(x=>x.card&&x.card.kind==='normal');
+   return firstNormal?firstNormal.card.suit:null;
+ }
  return first&&first.kind==='normal'?first.suit:null;
 }
 // Jokers cannot be used in the opening trick or led through trick eight.
@@ -73,10 +75,10 @@ function legalCards(hand,leadSuit,{trickNo=1,isFirstPlay=true,trumpSuit=null,fir
  // In the opening trick neither joker may be played, even as a discard.
  const available=trickNo===1?hand.filter(c=>!isJoker(c)):hand;
  if(isFirstPlay&&!leadSuit){
-   if(trickNo<9)return available.filter(c=>!isJoker(c));
+   if(trickNo<9){const ordinary=available.filter(c=>!isJoker(c));return ordinary.length?ordinary:[...available];}
    return [...available];
  }
- if(!leadSuit)return available.filter(c=>!isJoker(c));
+ if(!leadSuit){const ordinary=available.filter(c=>!isJoker(c));return ordinary.length?ordinary:[...available];}
  const follow=available.filter(c=>c.kind==='normal'&&c.suit===leadSuit);
  // Jokers are special cards: after the opening trick they may be played
  // even when the player can follow suit. The normal follow-suit rule still
@@ -151,7 +153,7 @@ function contractProgress(target,bidderTricks,opponentTricks){
 }
 function scoreContract(bid,tricksTaken,{success=null}={}){
  const ok=success===null?(typeof bid==='number'?tricksTaken>=bid:tricksTaken>=5):!!success;
- if(bid==='malzoom'){if(success===null)throw new Error('نتیجه موفقیت ملزوم باید صریح مشخص شود');return ok?5:-5;}
+ if(bid==='malzoom')return ok?5:-5;
  if(bid===6)return ok?6:-12;
  if(bid===7)return ok?7:-14;
  if(bid===8)return ok?8:-16;
@@ -159,20 +161,33 @@ function scoreContract(bid,tricksTaken,{success=null}={}){
  throw new Error('نوع قرارداد یا تعداد دست نامعتبر است');
 }
 
-function newGame({rng=Math.random,firstGame=true,previousAuctionWinner=null,firstAuctionPlayer=null}={}){
+function nextDealer(previousDealer,previousWinningTeam,score={A:0,B:0}){
+ if(!Number.isInteger(previousDealer)||previousDealer<0||previousDealer>5)throw new Error('پخش‌کننده قبلی نامعتبر است');
+ if(!['A','B'].includes(previousWinningTeam))throw new Error('تیم برنده بازی قبل نامعتبر است');
+ const dealerTeam=teamOf(previousDealer),otherTeam=dealerTeam==='A'?'B':'A';
+ if(dealerTeam!==previousWinningTeam)return previousDealer;
+ const ownScore=Number(score[dealerTeam])||0,otherScore=Number(score[otherTeam])||0;
+ return ownScore<=otherScore?(previousDealer+2)%6:(previousDealer+5)%6;
+}
+function newGame({rng=Math.random,firstGame=true,previousAuctionWinner=null,previousDealer=null,previousWinningTeam=null,score={A:0,B:0}}={}){
  const hands=deal(rng);
- const auctionStarter=firstGame?findOpeningPlayer(hands):firstAuctionPlayer;
- if(!firstGame&&(!Number.isInteger(previousAuctionWinner)||previousAuctionWinner<0||previousAuctionWinner>5))
+ let dealer,auctionStarter;
+ if(firstGame){
+  auctionStarter=findOpeningPlayer(hands);
+  dealer=(auctionStarter+1)%6;
+ }else{
+  if(!Number.isInteger(previousAuctionWinner)||previousAuctionWinner<0||previousAuctionWinner>5)
    throw new Error('برای بازی بعدی، برنده مزایده قبلی لازم است');
- if(!firstGame&&(!Number.isInteger(auctionStarter)||auctionStarter<0||auctionStarter>5))
-   throw new Error('تیم برنده باید نفر اول مزایده را مشخص کند');
+  dealer=nextDealer(previousDealer,previousWinningTeam,score);
+  auctionStarter=(dealer+1)%6;
+ }
  const obligatedPlayer=firstGame?(auctionStarter+5)%6:(previousAuctionWinner+5)%6;
  return {mode:'kuwaiti-six-player',players:6,hands,contract:null,leader:null,turn:null,
-   auctionStarter,obligatedPlayer,trick:[],trickNo:1,trickWinners:[],score:{A:0,B:0},
+   dealer,auctionStarter,obligatedPlayer,trick:[],trickNo:1,trickWinners:[],score:{A:0,B:0},
    openingLeadRequired:false,done:false,firstGame,playedCards:[],lastTrick:[]};
 }
 const KuwaitiSixPlayerEngine={SUITS,RANKS,deck,shuffle,deal,teamOf,validateContract,isJoker,isTwoOfClubs,
- findOpeningPlayer,normalPower,cardPower,effectiveLeadSuit,legalCards,findTrickWinner,startPlay,playCard,contractProgress,scoreContract,newGame};
+ findOpeningPlayer,nextDealer,normalPower,cardPower,effectiveLeadSuit,legalCards,findTrickWinner,startPlay,playCard,contractProgress,scoreContract,newGame};
 if(typeof module!=='undefined'&&module.exports)module.exports=KuwaitiSixPlayerEngine;
 if(typeof window!=='undefined')window.KuwaitiSixPlayerEngine=KuwaitiSixPlayerEngine;
 

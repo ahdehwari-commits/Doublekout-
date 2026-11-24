@@ -8,7 +8,7 @@ let selectedUser=null,busy=false;
 async function rpc(name,args){const r=await window.DoubleKoutOnline.rpc(name,args||{});if(r.error)throw r.error;return r.data;}
 async function invoke(name,body){const r=await window.DoubleKoutOnline.invoke(name,body||{});if(r.error)throw r.error;return r.data;}
 function ensure(){
- const host=$('onlineProgress');if(!host||$('pointTopups'))return;
+ const host=$('storeContent');if(!host||$('pointTopups'))return;
  const top=document.createElement('section');top.id='pointTopups';top.style.cssText='border-top:1px solid #668c78;margin-top:12px;padding-top:10px';
  top.innerHTML='<h3 style="color:#f4d58b;margin:0 0 8px">خرید امتیاز</h3><div id="topupHint" class="muted">بسته موردنظر را انتخاب کن. پرداخت پس از تأیید درگاه به‌صورت خودکار ثبت می‌شود.</div><div id="topupPackages" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:8px"></div><div id="topupStatus" role="status" class="muted" style="margin-top:7px"></div>';
  host.appendChild(top);
@@ -19,13 +19,14 @@ function ensure(){
 }
 async function loadPackages(){
  const data=await rpc('get_topup_packages');const items=Array.isArray(data)?data:[];
- $('topupPackages').innerHTML=items.map(p=>'<article style="background:#09271f;border:1px solid #467565;border-radius:10px;padding:9px;text-align:center"><b>'+esc(p.title)+'</b><div style="color:#f4d58b;font-size:18px;margin:5px 0">'+Number(p.points).toLocaleString('fa-IR')+' امتیاز</div><div class="muted">'+money(p.price_toman)+'</div><button data-package="'+esc(p.id)+'" style="width:100%;margin-top:7px">پرداخت آنلاین</button></article>').join('');
+ let permanent=false;try{const session=await window.DoubleKoutOnline.getSession();permanent=!!(session&&session.user&&!session.user.is_anonymous);}catch(_){}
+ $('topupPackages').innerHTML=items.map(p=>'<article style="background:#09271f;border:1px solid #467565;border-radius:10px;padding:9px;text-align:center"><b>'+esc(p.title)+'</b><div style="color:#f4d58b;font-size:18px;margin:5px 0">'+Number(p.points).toLocaleString('fa-IR')+' امتیاز</div><div class="muted">'+money(p.price_toman)+'</div><button data-package="'+esc(p.id)+'" '+(permanent?'':'disabled')+' style="width:100%;margin-top:7px">'+(permanent?'پرداخت آنلاین':'ورود دائمی برای خرید')+'</button></article>').join('');
  $('topupPackages').querySelectorAll('[data-package]').forEach(b=>b.onclick=()=>startPayment(b.dataset.package));
 }
 async function startPayment(id){
  if(busy)return;busy=true;$('topupStatus').textContent='در حال ساخت سفارش امن پرداخت...';
  try{const data=await invoke('zarinpal',{package_id:id});if(!data||!data.url)throw new Error(data&&data.error||'ساخت لینک پرداخت ناموفق بود.');window.location.href=data.url;}
- catch(e){$('topupStatus').textContent='پرداخت آنلاین هنوز فعال نیست: '+(e.message||e)+'. مدیر باید تنظیمات امن درگاه را تکمیل کند.';}
+ catch(e){$('topupStatus').innerHTML='<div style="border:1px solid #b99045;border-radius:12px;padding:12px;background:#09271f;line-height:2;color:#fff"><b style="color:#f4d58b">پرداخت کارت‌به‌کارت</b><br>لطفاً مبلغ بستهٔ انتخاب‌شده را به کارت زیر به نام <b>عبدالحمید دهواری</b> واریز کنید و تصویر فیش واریزی را برای ثبت امتیاز ارسال نمایید:<br><b dir="ltr" style="display:block;text-align:center;font-size:19px;letter-spacing:1px;color:#f4d58b;margin:8px 0">۵۸۵۹۸۳۱۱۷۷۵۴۷۳۶۰</b><div style="text-align:center">واتساپ: <b dir="ltr" style="color:#f4d58b">۰۹۱۵۹۴۸۷۷۰۷</b></div><a href="https://wa.me/989159487707" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;padding:9px;border-radius:8px;background:#1f8f55;color:#fff;text-decoration:none;font-weight:bold">ارسال فیش در واتساپ</a></div>';}
  finally{busy=false;}
 }
 async function loadAdmin(){

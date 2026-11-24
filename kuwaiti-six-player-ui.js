@@ -21,6 +21,8 @@ let game=null,auction=null,firstGame=true,previousAuctionWinner=null,previousWin
 let points={A:0,B:0},trickView=[],locked=false,aiTimer=null,matchLimit=54,playedTricks=0;
 
 let onlineKuwaiti=null,onlineKuwaitiBusy=false,onlineKuwaitiRefreshQueued=false,onlineKuwaitiAiTimer=null,onlineKuwaitiAiBusy=false,onlineKuwaitiBidBusy=false,onlineKuwaitiMalzoomAutoKey=null;
+let onlineKuwaitiTimeoutTimer=null,onlineKuwaitiClockTimer=null;
+let onlineKuwaitiAudio=null,onlineKuwaitiLastBeepKey=null;
 function isOnlineKuwaiti(){return !!(onlineKuwaiti&&onlineKuwaiti.roomId);}
 function onlineKuwaitiStatus(message){if($('kStatus'))setStatus(message);}
 async function onlineKuwaitiRpc(action){
@@ -68,6 +70,58 @@ function scheduleKuwaitiOnlineAI(){
    scheduleKuwaitiOnlineAI();
   }
  },650);
+}
+function clearOnlineKuwaitiTurnTimers(){if(onlineKuwaitiTimeoutTimer){clearTimeout(onlineKuwaitiTimeoutTimer);onlineKuwaitiTimeoutTimer=null;}}
+function renderOnlineKuwaitiTurnClock(){
+ const status=$('kStatus');if(!status)return;let node=$('kTurnCountdown');
+ if(!node){node=document.createElement('div');node.id='kTurnCountdown';status.insertAdjacentElement('afterend',node);}
+ const st=onlineKuwaiti&&onlineKuwaiti.state||{},deadline=Number(st.turnDeadline);
+ if(!isOnlineKuwaiti()||st.phase!=='playing'||!Number.isFinite(deadline)){node.hidden=true;return;}
+ const seat=Number(st.turn),remaining=Math.max(0,Math.ceil(deadline-Date.now()/1000));
+ node.hidden=false;node.textContent='مهلت نوبت '+(playerNames[seat]||'بازیکن')+' : '+fa(remaining)+' ثانیه';
+ node.classList.toggle('urgent',remaining<=3);
+ playOnlineKuwaitiCountdownBeep(remaining,seat,deadline);
+}
+function unlockOnlineKuwaitiAudio(){
+ try{
+  const AudioCtor=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtor)return;
+  if(!onlineKuwaitiAudio)onlineKuwaitiAudio=new AudioCtor();
+  if(onlineKuwaitiAudio.state==='suspended')onlineKuwaitiAudio.resume().catch(()=>{});
+ }catch(_){}
+}
+function playOnlineKuwaitiCountdownBeep(remaining,seat,deadline){
+ if(remaining<0||remaining>3)return;
+ const key=[onlineKuwaiti&&onlineKuwaiti.roomId,seat,deadline,remaining].join(':');
+ if(key===onlineKuwaitiLastBeepKey)return;
+ onlineKuwaitiLastBeepKey=key;
+ try{
+  unlockOnlineKuwaitiAudio();
+  if(!onlineKuwaitiAudio||onlineKuwaitiAudio.state!=='running')return;
+  const now=onlineKuwaitiAudio.currentTime,osc=onlineKuwaitiAudio.createOscillator(),gain=onlineKuwaitiAudio.createGain();
+  osc.type='sine';osc.frequency.value=remaining===0?620:880;
+  gain.gain.setValueAtTime(0.0001,now);gain.gain.exponentialRampToValueAtTime(0.045,now+0.012);gain.gain.exponentialRampToValueAtTime(0.0001,now+0.11);
+  osc.connect(gain);gain.connect(onlineKuwaitiAudio.destination);osc.start(now);osc.stop(now+0.12);
+ }catch(_){}
+}
+document.addEventListener('pointerdown',unlockOnlineKuwaitiAudio,{passive:true});
+function startOnlineKuwaitiClock(){if(!onlineKuwaitiClockTimer)onlineKuwaitiClockTimer=setInterval(renderOnlineKuwaitiTurnClock,250);}
+function scheduleOnlineKuwaitiTimeout(){
+ clearOnlineKuwaitiTurnTimers();
+ if(!isOnlineKuwaiti()||!onlineKuwaiti.isHost)return;
+ const context=onlineKuwaiti,st=context.state||{};if(st.phase!=='playing')return;
+ const seat=Number(st.turn),meta=(st.seatPlayers||{})[String(seat)];
+ if(!meta||meta.human!==true)return;
+ const deadline=Number(st.turnDeadline);if(!Number.isFinite(deadline))return;
+ const roomId=context.roomId,delay=Math.max(0,deadline*1000-Date.now());
+ onlineKuwaitiTimeoutTimer=setTimeout(async()=>{
+  onlineKuwaitiTimeoutTimer=null;
+  if(!isOnlineKuwaiti()||onlineKuwaiti!==context||context.roomId!==roomId||!context.isHost)return;
+  const latest=context.state||{};
+  if(latest.phase!=='playing'||Number(latest.turn)!==seat||Number(latest.turnDeadline)!==deadline)return;
+  try{const r=await window.DoubleKoutOnline.rpc('kuwaiti_online_timeout',{p_room_id:roomId});if(r.error)throw r.error;await refreshOnlineKuwaiti();}
+  catch(e){onlineKuwaitiStatus('اجرای خودکار کارت پس از پایان مهلت: '+(e.message||e));try{await refreshOnlineKuwaiti();}catch(_){}}
+ },delay+80);
 }
 async function refreshOnlineKuwaiti(){
  if(!isOnlineKuwaiti()||!window.DoubleKoutOnline)return false;
@@ -196,6 +250,7 @@ async function refreshOnlineKuwaiti(){
   onlineKuwaitiBusy=false;
   if(onlineKuwaitiRefreshQueued){onlineKuwaitiRefreshQueued=false;Promise.resolve().then(refreshOnlineKuwaiti);}
   else scheduleKuwaitiOnlineAI();
+   renderOnlineKuwaitiTurnClock();scheduleOnlineKuwaitiTimeout();
  }
  return refreshOk;
 }
@@ -217,7 +272,8 @@ function clearKuwaitiAuctionSummaryTimer(){if(window.kuwaitiAuctionSummaryTimer)
 function resetKuwaitiUiForOnlineAttach(){
  clearKuwaitiAuctionSummaryTimer();if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
  if(onlineKuwaitiAiTimer){clearTimeout(onlineKuwaitiAiTimer);onlineKuwaitiAiTimer=null;}
- onlineKuwaitiAiBusy=false;onlineKuwaitiBidBusy=false;onlineKuwaitiMalzoomAutoKey=null;
+ clearOnlineKuwaitiTurnTimers();
+  onlineKuwaitiAiBusy=false;onlineKuwaitiBidBusy=false;onlineKuwaitiMalzoomAutoKey=null;
  game=null;auction=null;locked=false;trickView=[];firstGame=true;previousAuctionWinner=null;previousWinningTeam=null;previousDealer=null;
  points={A:0,B:0};matchGamesWon={A:0,B:0};playedTricks=0;matchLimit=Number($('kMatchLimit')?.value)||54;
  $('kuwaitiGame')?.classList.remove('k-online-mode');$('kAuction').classList.remove('seat-auction-panel');$('kAuction').classList.add('hidden');
@@ -244,6 +300,7 @@ async function attachOnlineKuwaitiRoom(info){
  }
  resetKuwaitiUiForOnlineAttach();
  onlineKuwaiti={roomId:info.roomId,code:info.code,seat:Number(info.seat),isHost:!!info.isHost,roster:info.roster||[],revision:-1,handSignature:null,legalCardIds:[]};
+  startOnlineKuwaitiClock();
  if($('kPlayStyle'))$('kPlayStyle').value='online';
  setScreen('game');
  $('kExit').textContent='بازگشت به اتاق آنلاین';
@@ -266,7 +323,8 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&isOnlineK
 window.addEventListener('doublekout:kuwaiti-left',()=>{
  $('kExit').textContent='بازگشت به انتخاب بازی';
  if(onlineKuwaitiAiTimer){clearTimeout(onlineKuwaitiAiTimer);onlineKuwaitiAiTimer=null;}
- onlineKuwaitiAiBusy=false;onlineKuwaitiBidBusy=false;onlineKuwaitiMalzoomAutoKey=null;onlineKuwaiti=null;auction=null;game=null;locked=false;
+ clearOnlineKuwaitiTurnTimers();if(onlineKuwaitiClockTimer){clearInterval(onlineKuwaitiClockTimer);onlineKuwaitiClockTimer=null;}
+  onlineKuwaitiAiBusy=false;onlineKuwaitiBidBusy=false;onlineKuwaitiMalzoomAutoKey=null;onlineKuwaiti=null;auction=null;game=null;locked=false;
  clearKuwaitiAuctionSummaryTimer();
  if($('kPlayStyle'))$('kPlayStyle').value='ai';
  $('kResult').classList.add('hidden');$('kNewGame').classList.add('hidden');$('kAuctionSummary').classList.add('hidden');
@@ -362,6 +420,8 @@ function addStyle(){
 `;
 
  s.textContent+=`
+#kTurnCountdown{position:fixed;left:8px;right:8px;bottom:calc(56px + env(safe-area-inset-bottom));z-index:2147482999;margin:0;padding:7px 12px;border:1px solid #c8a75d;border-radius:10px;background:#09271f;color:#ffe6a1;text-align:center;font-weight:800;font-size:13px;box-shadow:0 4px 12px #000b}
+#kTurnCountdown.urgent{border-color:#e45d5d;color:#ffb0a8;animation:kTurnPulse .35s ease-in-out infinite alternate}
 /* AI diagnostic banner */\n#kuwaitiGame #kStatus{display:block!important;visibility:visible!important;opacity:1!important;position:fixed!important;left:8px!important;right:8px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:2147483000!important;min-height:42px!important;max-height:25vh!important;overflow:auto!important}\n/* 0.8.13: dual-corner ranks and illustrated face cards */
 .k-card{position:relative;overflow:hidden}
 .k-corner{position:absolute;z-index:4;display:flex;flex-direction:column;align-items:center;font:900 10px/1 Georgia,serif}
@@ -550,6 +610,16 @@ s.textContent+=`
 .k-back{background:linear-gradient(145deg,#050607,#27241d 52%,#050607)!important;border:3px solid #c6a45f!important;box-shadow:inset 0 0 0 2px #f8e2a5,inset 0 0 18px #000,0 9px 16px #000c!important}
 .k-back:before{background:repeating-linear-gradient(45deg,transparent 0 6px,#e6c77825 6px 8px),radial-gradient(circle at 50% 50%,#d7b45a33,transparent 58%)!important;border:1px solid #e4c477!important}
 .k-back:after{color:#ffe6a0!important;text-shadow:0 2px 3px #000!important}
+`;
+
+ s.textContent+=`
+/* Online-only cleanup requested for the six-player table.
+   Keep local hot-seat controls unchanged. */
+#kuwaitiGame.k-online-mode .k-hand-tools h3{display:none!important}
+#kuwaitiGame.k-online-mode .k-seat.active:after{display:none!important;animation:none!important}
+#kuwaitiGame.k-online-mode .k-seat.active{outline:0!important;box-shadow:0 7px 14px #000b,inset 0 0 0 1px #d9bd7b66!important;animation:none!important}
+#kuwaitiGame .k-seat [id^="kSeatTricks"]{font-size:16px!important;font-weight:900!important;line-height:1.35!important;color:#ffe5a1!important;text-shadow:0 1px 3px #000!important}
+@media(max-width:520px){#kuwaitiGame .k-seat [id^="kSeatTricks"]{font-size:15px!important}}
 `;
 document.head.appendChild(s);
  const cornerStyle=document.createElement('style');cornerStyle.textContent="/* 9.2 contract indicator fixed to upper-right table corner */\n.k-table{position:relative}\n.k-trump-corner{position:absolute;top:9px;right:9px;transform:none;z-index:30;min-width:76px;justify-content:center;padding:5px 9px;border:1px solid #f0d58b;border-radius:10px;background:linear-gradient(145deg,#09271fee,#031711f5);box-shadow:0 4px 12px #0009;text-align:center;pointer-events:none}\n.k-trump-corner span{font-size:10px;color:#e9d39a}\n.k-trump-corner b{font-size:14px!important;color:#ffe19a}\n.k-table .k-seat[data-p=\"2\"]{padding-top:30px}\n";cornerStyle.textContent+="\n/* Online is single-device per user: hide hotseat title and manual sort button. */\n#kuwaitiGame .k-hand-tools{display:none!important}\n/* Readable team trick totals on every seat. */\n#kTable .k-seat .k-seat-tricks{font-size:17px!important;font-weight:1000!important;line-height:1.25!important}\n@media(max-width:520px){#kTable .k-seat .k-seat-tricks{font-size:15px!important}}\n/* Seat labels sit below the card fans; individual trick wins stay on each chair. */\n.k-seat{display:flex!important;flex-direction:column!important;align-items:center!important;gap:3px!important}\n.k-seat .k-played{order:-1!important;position:relative!important;z-index:8!important;min-height:88px!important;margin:0 0 3px!important;overflow:visible!important;transform:translateY(-3px)!important}\n.k-seat .k-opponent-fan{position:relative!important;z-index:9!important}\n .k-seat .k-name{order:0!important;position:relative!important;z-index:10!important;width:100%;margin-top:20px!important;padding:7px 2px 3px!important;border-top:1px solid #d9bd78aa!important;background:linear-gradient(180deg,#0b3025,#061b15)!important;border-radius:7px 7px 10px 10px!important}\n.k-seat .k-count{order:1!important;margin:0!important;font-size:9px!important;line-height:1.1!important}\n/* Remaining cards are already counted on each chair; hide the duplicate oversized trick-card counter. */\n#kTrickCards{display:none!important}\n.k-seat .k-seat-tricks{order:2!important;font-size:17px!important;font-weight:1000!important;color:#ffe5a1!important;line-height:1.3!important}\n.k-team-tricks{font-size:11px;font-weight:900;color:#ffe5a1;background:#09271f;border:1px solid #b99a5d;border-radius:8px;padding:4px 8px;margin:1px auto;max-width:max-content}\n/* Corner trump marker and two-layer trick pile: previous trick remains underneath current plays. */\n.k-table{position:relative!important;isolation:isolate!important;overflow:visible!important}\n.k-table>.k-seat{z-index:3!important}\n.k-table>.k-center{z-index:12!important;overflow:visible!important}\n.k-table>.k-table-card-layer{position:absolute!important;inset:0!important;z-index:24!important;pointer-events:none!important;overflow:visible!important}\n .k-trump-corner{position:absolute!important;top:9px!important;right:9px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:45!important;display:flex!important;align-items:center!important;gap:6px!important;max-width:34%!important;white-space:nowrap!important}\n.k-center{position:absolute!important}\n.k-previous-cards,.k-center-cards{position:absolute!important;left:50%!important;top:50%!important;width:100%!important;height:116px!important;min-height:0!important;transform:translate(-50%,-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;direction:ltr!important;overflow:visible!important;pointer-events:none!important}\n.k-previous-cards{z-index:2!important;opacity:.58!important;filter:brightness(.72) saturate(.78)!important}\n.k-center-cards{z-index:7!important}\n.k-previous-cards .k-pile-played{position:absolute!important;left:calc(50% - 30px)!important;top:calc(50% - 44px)!important;width:60px!important;height:88px!important;margin:0!important;transform:translate(var(--pile-x),var(--pile-y)) rotate(var(--pile-r))!important;box-shadow:0 8px 15px #000c!important}\n.k-center-cards .k-table-played{position:relative!important;z-index:8!important}\n@media(max-width:520px){.k-previous-cards,.k-center-cards{height:96px!important}.k-previous-cards .k-pile-played{width:49px!important;height:74px!important;left:calc(50% - 24px)!important;top:calc(50% - 37px)!important} .k-trump-corner{top:118px!important;right:118px!important;font-size:11px!important}.k-seat .k-played{min-height:60px!important}.k-seat-tricks{font-size:15px!important}}";

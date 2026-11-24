@@ -1,0 +1,122 @@
+/* Double Kout in the Shadows — lightweight CSS-only environment and table skin.
+   No external images, fonts, libraries, WebGL changes, or game-engine hooks. */
+body.table-theme-shadows{
+  --shadow-bg:#090a0c;--shadow-stone:#1b1d20;--shadow-gold:#bd9147;
+  --shadow-gold-light:#f0d28a;--shadow-gold-deep:#503817;
+  background:
+    radial-gradient(ellipse at 82% 17%,rgba(255,158,62,.19),transparent 24%),
+    radial-gradient(ellipse at 16% 12%,rgba(111,145,190,.15),transparent 27%),
+    linear-gradient(180deg,#111316 0%,#090a0c 58%,#050607 100%)!important;
+  color:#f5ead1!important;
+  position:relative;isolation:isolate;
+}
+body.table-theme-shadows:before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.72;
+  background:
+    /* moonlit barred window */
+    linear-gradient(90deg,transparent 0 7.8%,#71849a66 8% 8.5%,transparent 8.8% 12.5%,#71849a66 12.7% 13.2%,transparent 13.5% 17.2%,#71849a66 17.4% 17.9%,transparent 18.2%),
+    linear-gradient(0deg,transparent 0 9%,#71849a55 9.2% 9.8%,transparent 10% 19%,#71849a55 19.2% 19.8%,transparent 20%),
+    radial-gradient(ellipse at 13% 13%,#91b4dc33,transparent 18%),
+    /* warm lantern halo */
+    radial-gradient(ellipse at 88% 22%,#f39a3a35,transparent 22%),
+    repeating-linear-gradient(178deg,transparent 0 54px,#d4c5a015 55px 57px,transparent 58px 112px),
+    linear-gradient(90deg,#08090b,#171719 48%,#08090b);
+  background-size:170px 150px,170px 150px,100% 100%,100% 100%,100% 100%,100% 100%;
+  background-repeat:no-repeat,no-repeat,no-repeat,no-repeat,repeat, no-repeat;
+  background-position:7% 7%,7% 7%,center,center,center,center;
+  filter:contrast(1.05);
+}
+body.table-theme-shadows:after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 32%,rgba(0,0,0,.36) 72%,rgba(0,0,0,.82) 100%);
+}
+/* Four-player, online and six-player tables share the same material treatment. */
+body.table-theme-shadows .table,
+body.table-theme-shadows #onlineTable,
+body.table-theme-shadows .k-table{
+  background-color:#17191b!important;
+  background-image:
+    radial-gradient(ellipse at 30% 23%,rgba(255,177,83,.12),transparent 42%),
+    radial-gradient(ellipse at 70% 78%,rgba(113,142,177,.08),transparent 48%),
+    repeating-linear-gradient(17deg,rgba(255,255,255,.018) 0 1px,transparent 1px 8px),
+    repeating-linear-gradient(103deg,rgba(0,0,0,.12) 0 2px,transparent 2px 13px),
+    linear-gradient(145deg,#343333 0%,#1b1d20 48%,#0b0c0e 100%)!important;
+  border:8px solid #9c7436!important;
+  /* Preserve each game's existing table silhouette and responsive geometry. */
+  box-shadow:
+    inset 0 0 0 2px #f3d58b,
+    inset 0 0 0 6px #4a3518,
+    inset 0 14px 38px rgba(0,0,0,.88),
+    inset 0 -22px 48px rgba(0,0,0,.62),
+    0 22px 48px rgba(0,0,0,.88),
+    0 0 25px rgba(202,158,76,.13)!important;
+  isolation:isolate;
+}
+body.table-theme-shadows .table:before,
+body.table-theme-shadows #onlineTable:before,
+body.table-theme-shadows .k-table:before{
+  content:""!important;position:absolute!important;inset:8px!important;z-index:0!important;
+  border:2px solid #e4c477!important;border-radius:inherit!important;
+  box-shadow:inset 0 0 0 4px rgba(255,231,174,.08),inset 0 0 28px #000b,0 0 12px #e2bd6b22!important;
+  pointer-events:none!important;
+}
+body.table-theme-shadows .seat,
+body.table-theme-shadows .k-seat,
+body.table-theme-shadows #onlineTable>.seat{
+  background:linear-gradient(145deg,rgba(43,42,39,.98),rgba(8,9,10,.98))!important;
+  border:1px solid #c49a51!important;border-radius:13px!important;
+  color:#f2e1ba!important;
+  box-shadow:inset 0 0 0 1px #ffe4a522,0 10px 20px #000c!important;
+}
+body.table-theme-shadows .seat .name,
+body.table-theme-shadows .seat .count,
+body.table-theme-shadows .k-seat .k-name,
+body.table-theme-shadows .k-seat .k-count{
+  color:#f1dca9!important;text-shadow:0 1px 4px #000!important;
+}
+body.table-theme-shadows .seat.active,
+body.table-theme-shadows .k-seat.active{
+  outline:2px solid #f1d58c!important;
+  box-shadow:0 0 0 2px #8e642b,0 0 20px #e8c36b66,0 10px 20px #000c!important;
+}
+body.table-theme-shadows .center,
+body.table-theme-shadows #onlineTable>.center{
+  background:radial-gradient(ellipse,rgba(47,43,35,.58),rgba(8,9,10,.16) 72%,transparent 100%)!important;
+}
+body.table-theme-shadows .table-emblem{opacity:.23!important;filter:drop-shadow(0 3px 8px #000)!important}
+body.table-theme-shadows .card,
+body.table-theme-shadows .k-card{
+  box-shadow:0 8px 16px #000c,0 0 0 1px rgba(232,198,123,.24),inset 1px 1px 2px #fff!important;
+}
+body.table-theme-shadows .card.back,
+body.table-theme-shadows .k-card.k-back{
+  border-color:#e0c17a!important;
+  box-shadow:inset 0 0 0 2px #76572a,0 8px 16px #000d,0 0 8px #d8ae5b22!important;
+}
+body.table-theme-shadows .card.red{color:#b72f3b!important}
+body.table-theme-shadows .table-trump-corner{
+  background:linear-gradient(145deg,#211d16,#090909)!important;
+  border:1px solid #bd9147!important;border-radius:10px!important;
+  box-shadow:0 6px 14px #000b!important;
+}
+body.table-theme-shadows .status,
+body.table-theme-shadows .panel{
+  background:linear-gradient(145deg,rgba(30,30,29,.96),rgba(8,9,10,.96))!important;
+  border-color:#80602e!important;color:#f1e2c1!important;
+}
+body.table-theme-shadows .section-title{color:#e9cb83!important}
+.mini-table.shadows{
+  background:
+    radial-gradient(ellipse at 80% 15%,#e99b4655,transparent 28%),
+    repeating-linear-gradient(17deg,transparent 0 9px,#fff1 10px 11px,transparent 12px 20px),
+    linear-gradient(145deg,#343333,#101113 72%)!important;
+  border:5px solid #a77c39!important;
+  box-shadow:inset 0 0 0 3px #f0d58c,inset 0 0 20px #000!important;
+}
+.mini-table.shadows:before{border-color:#e4c477!important}
+@media(max-width:520px){
+ body.table-theme-shadows .table,body.table-theme-shadows #onlineTable,body.table-theme-shadows .k-table{border-width:6px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ body.table-theme-shadows *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}

@@ -1,0 +1,91 @@
+name: Import and sync avatar WebP assets
+
+on:
+  push:
+    branches:
+      - feature/shadows-cell-theme
+    paths:
+      - "assets/import/DoubleKout_Avatars_for_GitHub.zip"
+      - "assets/avatars/**"
+      - ".github/workflows/import-avatar-assets.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: avatar-assets-import-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
+
+      - name: Validate archive or existing avatar assets, then sync Android
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import re, shutil
+
+          archive = Path("assets/import/DoubleKout_Avatars_for_GitHub.zip")
+          source = Path("assets/avatars")
+          source.mkdir(parents=True, exist_ok=True)
+
+          if archive.is_file():
+              with ZipFile(archive) as z:
+                  entries = [n for n in z.namelist() if n.lower().endswith(".webp")]
+                  if len(entries) != 60:
+                      raise SystemExit(f"Expected exactly 60 WebP images; found {len(entries)}.")
+                  names = set()
+                  for entry in entries:
+                      name = Path(entry).name
+                      if not re.fullmatch(r"[a-z0-9_]+\.webp", name):
+                          raise SystemExit(f"Unexpected image filename: {entry}")
+                      if name in names:
+                          raise SystemExit(f"Duplicate image filename: {name}")
+                      names.add(name)
+                      data = z.read(entry)
+                      if len(data) < 16 or data[:4] != b"RIFF" or data[8:12] != b"WEBP":
+                          raise SystemExit(f"Invalid WebP file: {entry}")
+                      (source / name).write_bytes(data)
+
+          images = sorted(source.glob("*.webp"))
+          if len(images) != 60:
+              raise SystemExit(f"Expected 60 committed WebP assets; found {len(images)}.")
+          for image in images:
+              data = image.read_bytes()
+              if len(data) < 16 or data[:4] != b"RIFF" or data[8:12] != b"WEBP":
+                  raise SystemExit(f"Invalid WebP file: {image.name}")
+
+          android = Path("android/app/src/main/assets/assets/avatars")
+          android.mkdir(parents=True, exist_ok=True)
+          for image in images:
+              shutil.copy2(image, android / image.name)
+          if len(list(android.glob("*.webp"))) != 60:
+              raise SystemExit("Android avatar asset count is not 60.")
+
+          if archive.exists():
+              archive.unlink()
+          print("Verified 60 WebP images and synchronized web + Android asset folders.")
+          PY
+
+      - name: Commit synchronized avatar assets
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/avatars android/app/src/main/assets/assets/avatars assets/import
+          if git diff --cached --quiet; then
+            echo "Avatar assets are already synchronized."
+            exit 0
+          fi
+          git commit -m "Sync avatar images to Android app assets"
+          git push origin "HEAD:${{ github.ref_name }}"
