@@ -57,7 +57,7 @@ function renderAvatarItems(){
   if(!/^[a-z0-9_]{3,48}$/.test(id)||!/^[a-z0-9_]+\.webp$/.test(file))return '';
   const src='./assets/avatars/'+file,owned=!!item.owned||Number(item.price)===0,active=avatarEquipped===id;
   const action=active?'<span style="color:#a8efbd;font-size:11px">آواتار فعال</span>':
-   !avatarBackendReady?'<button type="button" disabled style="width:100%;padding:7px 3px;font-size:10px">پس از فعال‌سازی فروشگاه</button>':
+   !avatarBackendReady?(Number(item.price)===0?'<button type="button" data-avatar-local="'+esc(id)+'" style="width:100%;padding:7px 3px;font-size:10px">انتخاب روی این دستگاه</button>':'<button type="button" disabled style="width:100%;padding:7px 3px;font-size:10px">خرید پس از فعال‌سازی</button>'):
    owned?'<button type="button" data-avatar-equip="'+esc(id)+'" style="width:100%;padding:7px 3px;font-size:10px">انتخاب</button>':
    avatarCanBuy?'<button type="button" data-avatar-buy="'+esc(id)+'" style="width:100%;padding:7px 3px;font-size:10px">خرید · ۱۰۰ امتیاز</button>':'<button type="button" disabled style="width:100%;padding:7px 3px;font-size:10px">ورود دائمی برای خرید</button>';
   return '<article style="min-width:0;background:#09271f;border:1px solid '+(active?'#e7c879':'#467565')+';border-radius:11px;padding:7px;text-align:center">'+
@@ -67,6 +67,7 @@ function renderAvatarItems(){
  }).join('')||'<div style="grid-column:1/-1;text-align:center;padding:12px;color:#c4d5cd">در این گروه آواتاری وجود ندارد.</div>';
  host.querySelectorAll('[data-avatar-buy]').forEach(b=>b.addEventListener('click',()=>buyAvatar(b.dataset.avatarBuy)));
  host.querySelectorAll('[data-avatar-equip]').forEach(b=>b.addEventListener('click',()=>equipAvatar(b.dataset.avatarEquip)));
+ host.querySelectorAll('[data-avatar-local]').forEach(b=>b.addEventListener('click',()=>selectAvatarLocally(b.dataset.avatarLocal)));
 }
 let avatarEquipped=null;
 async function loadAvatarStore(){
@@ -93,6 +94,15 @@ async function loadAvatarStore(){
   renderAvatarItems();
   status.textContent='نمایش تصاویر فعال است؛ خرید و ثبت انتخاب پس از فعال‌سازی سرویس حساب انجام می‌شود. موجودی و امتیاز بازیکنان دست‌نخورده است.';
  }finally{avatarBusy=false;}
+}
+function selectAvatarLocally(id){
+ const item=avatarItems.find(x=>x.id===id);if(!item||Number(item.price)!==0)return;
+ const image='./assets/avatars/'+item.image_file;
+ try{localStorage.setItem('doubleKoutAvatarId',id);localStorage.setItem('doubleKoutAvatarImage',image);}catch(_){}
+ avatarEquipped=id;renderAvatarItems();
+ const preview=$('selectedAvatarPreview');if(preview){preview.src=image;preview.classList.remove('hidden');}
+ const status=$('avatarStoreStatus');if(status)status.textContent='آواتار رایگان روی همین دستگاه انتخاب شد؛ ثبت در حساب پس از فعال‌سازی سرویس فروشگاه ممکن می‌شود.';
+ window.dispatchEvent(new CustomEvent('doublekout:avatar-changed',{detail:{avatarId:id,image,localOnly:true}}));
 }
 async function buyAvatar(id){
  const status=$('avatarStoreStatus');if(!status)return;
