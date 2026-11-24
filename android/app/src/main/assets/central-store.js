@@ -88,7 +88,7 @@ async function loadAvatarStore(){
   renderAvatarItems();
  }catch(e){
   avatarBackendReady=false;avatarCanBuy=false;avatarItems=avatarStaticCatalog;
-  avatarEquipped=localStorage.getItem('doubleKoutAvatarId')||null;
+  try{avatarEquipped=localStorage.getItem('doubleKoutAvatarId')||null;}catch(_){avatarEquipped=null;}
   balance.textContent='۶۰ آواتار تصویری آماده نمایش · ۲۷ رایگان · ۳۳ آواتار ۱۰۰ امتیازی';
   renderAvatarItems();
   status.textContent='نمایش تصاویر فعال است؛ خرید و ثبت انتخاب پس از فعال‌سازی سرویس حساب انجام می‌شود. موجودی و امتیاز بازیکنان دست‌نخورده است.';
