@@ -26,7 +26,12 @@ async function loadPackages(){
 async function startPayment(id){
  if(busy)return;busy=true;$('topupStatus').textContent='در حال ساخت سفارش امن پرداخت...';
  try{const data=await invoke('zarinpal',{package_id:id});if(!data||!data.url)throw new Error(data&&data.error||'ساخت لینک پرداخت ناموفق بود.');window.location.href=data.url;}
- catch(e){$('topupStatus').innerHTML='<div style="border:1px solid #b99045;border-radius:12px;padding:12px;background:#09271f;line-height:2;color:#fff"><b style="color:#f4d58b">پرداخت کارت‌به‌کارت</b><br>لطفاً مبلغ بستهٔ انتخاب‌شده را به کارت زیر به نام <b>عبدالحمید دهواری</b> واریز کنید و تصویر فیش واریزی را برای ثبت امتیاز ارسال نمایید:<br><b dir="ltr" style="display:block;text-align:center;font-size:19px;letter-spacing:1px;color:#f4d58b;margin:8px 0">۵۸۵۹۸۳۱۱۷۷۵۴۷۳۶۰</b><div style="text-align:center">واتساپ: <b dir="ltr" style="color:#f4d58b">۰۹۱۵۹۴۸۷۷۰۷</b></div><a href="https://wa.me/989159487707" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;padding:9px;border-radius:8px;background:#1f8f55;color:#fff;text-decoration:none;font-weight:bold">ارسال فیش در واتساپ</a></div>';}
+ catch(e){
+  let gatewayCode='';
+  try{const response=e&&e.context;if(response&&typeof response.clone==='function'){const payload=await response.clone().json();gatewayCode=String(payload&&payload.error||'');}}catch(_){}
+  const configNotice=gatewayCode==='zarinpal_not_configured'?'<div style="padding:9px;margin-bottom:8px;border:1px solid #c58b3d;border-radius:9px;color:#ffe2a3;background:#382b16"><b>درگاه آنلاین هنوز پیکربندی نشده است.</b><br>مدیرکل باید در تنظیمات امن Edge Functions پروژه Supabase، مقدار <b dir="ltr">ZARINPAL_MERCHANT_ID</b> را ثبت کند و حالت <b dir="ltr">ZARINPAL_SANDBOX</b> را مطابق حساب آزمایشی یا واقعی تنظیم کند. تا آن زمان پرداخت آنلاین انجام نمی‌شود.</div>':'';
+  $('topupStatus').innerHTML=configNotice+'<div style="border:1px solid #b99045;border-radius:12px;padding:12px;background:#09271f;line-height:2;color:#fff"><b style="color:#f4d58b">روش جایگزین: کارت‌به‌کارت</b><br>لطفاً مبلغ بستهٔ انتخاب‌شده را به کارت زیر به نام <b>عبدالحمید دهواری</b> واریز کنید و تصویر فیش واریزی را برای ثبت امتیاز ارسال نمایید:<br><b dir="ltr" style="display:block;text-align:center;font-size:19px;letter-spacing:1px;color:#f4d58b;margin:8px 0">۵۸۵۹۸۳۱۱۷۷۵۴۷۳۶۰</b><div style="text-align:center">واتساپ: <b dir="ltr" style="color:#f4d58b">۰۹۱۵۹۴۸۷۷۰۷</b></div><a href="https://wa.me/989159487707" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;padding:9px;border-radius:8px;background:#1f8f55;color:#fff;text-decoration:none;font-weight:bold">ارسال فیش در واتساپ</a></div>';
+ }
  finally{busy=false;}
 }
 async function loadAdmin(){
