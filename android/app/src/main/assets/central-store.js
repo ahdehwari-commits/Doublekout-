@@ -72,7 +72,7 @@ async function loadAvatarStore(){
  if(!balance||avatarBusy)return;
  avatarBusy=true;
  try{
-  status.textContent='';balance.textContent='در حال دریافت فهرست آواتارها...';
+  status.textContent='';avatarCanBuy=false;balance.textContent='در حال دریافت فهرست آواتارها...';
   const api=window.DoubleKoutOnline;
   if(!api||!api.getSession)throw new Error('اتصال حساب مرکزی در دسترس نیست.');
   const session=await api.getSession();
